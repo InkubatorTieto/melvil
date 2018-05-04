@@ -1,7 +1,21 @@
-#How to run melvil app
+# Project description:  
 
-1. Install virtualenv: pip install virtualenv
-2. Create virtual environment: virtualenv venv
-3. Install requirements: pip install -r requirements.txt
-4. Copy config.example as a config.py: cp config.example config.py
-5. Run application: sh run.sh
+Melvil application for Tieto Python Incubator.  
+
+## Project configuration:  
+
+(a) Clone repository from: git@github.com:InkubatorTieto/melvil.git  
+(b) [Install docker and docker-compose:](https://docs.docker.com/install/).  
+(c) To build docker image run:  
+
+```bash
+docker-compose up
+```  
+
+(d) Go to: localhost:5000  
+
+## Running application:  
+
+```bash
+docker-compose run web
+```  

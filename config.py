@@ -1,3 +1,6 @@
+from os import getenv
+
+
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -6,8 +9,8 @@ class Config(object):
 
 class DevConfig(Config):
     DEBUG = True
-    DATABASE_URI = ''
+    DATABASE_URI = getenv('DEV_DATABASE_URI', '')
 
 
 class ProdConfig(Config):
-    DATABASE_URI = ''
+    DATABASE_URI = getenv('PROD_DATABASE_URI', '')

@@ -1,5 +1,5 @@
 .idea/*
-config.py
 venv
 env
 *.pyc
+*.*~
