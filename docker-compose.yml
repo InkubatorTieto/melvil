@@ -8,3 +8,14 @@ services:
       - .:/code
     ports:
       - "5000:5000"
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=qwerty1234
+      - POSTGRES_USER=super_user
+      - POSTGRES_DB=psql_db
+    volumes:
+      - ./postgresql:/var/lib/postgresql
