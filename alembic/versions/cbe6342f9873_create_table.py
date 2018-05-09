@@ -1,5 +1,4 @@
 """create table
-
 Revision ID: cbe6342f9873
 Revises: 
 Create Date: 2018-05-09 15:13:03.857397

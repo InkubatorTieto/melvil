@@ -10,7 +10,8 @@ class Config(object):
 class DevConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = (
-        getenv('DEV_DATABASE_URI', 'postgresql://super_user:qwerty1234@127.0.0.1:5432/psql_db'))
+        getenv('DEV_DATABASE_URI',
+               'postgresql://super_user:qwerty1234@127.0.0.1:5432/psql_db'))
 
 
 class ProdConfig(Config):
