@@ -8,3 +8,17 @@ services:
       - .:/code
     ports:
       - "5000:5000"
+
+  postgresql:
+      image: postgres
+      restart: always
+#      volumes:
+#       - "./data/postgresql:/var/lib/postgresql"
+#       - "$POSTGRES_PATH:/var/lib/postgresql"
+      environment:
+        - "POSTGRES_USER=psql_user"
+        - "POSTGRES_PASSWORD=Ab132xw"
+        - "POSTGRES_DB=psql_db"
+      ports:
+        - "5432:5432"
+
