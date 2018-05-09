@@ -4,7 +4,7 @@ from os import getenv
 class Config(object):
     DEBUG = False
     TESTING = False
-    DATABASE_URI = ''
+    DATABASE_URI = 'postgres://Lukasz:pass:@localhost:5000'
 
 
 class DevConfig(Config):
