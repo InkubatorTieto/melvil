@@ -1,7 +1,7 @@
 """create books table
 
 Revision ID: cb0416ee0cbc
-Revises: 
+Revises:
 Create Date: 2018-05-09 14:37:25.484216
 
 """
