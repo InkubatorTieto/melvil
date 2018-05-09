@@ -1,7 +1,7 @@
 """create table
 
 Revision ID: 50ad2794d56c
-Revises: 
+Revises:
 Create Date: 2018-05-09 14:05:11.572347
 
 """
@@ -23,6 +23,7 @@ def upgrade():
         sa.Column('name', sa.String(50), nullable=False),
         sa.Column('description', sa.Unicode(200)),
     )
+
 
 def downgrade():
     op.drop_table('account')

@@ -9,4 +9,3 @@ app.config.from_object(DevConfig)
 app.register_blueprint(library)
 
 db = SQLAlchemy(app)
-
