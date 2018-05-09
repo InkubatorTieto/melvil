@@ -3,4 +3,4 @@ venv
 env
 *.pyc
 *.*~
-./data/*
+data/
