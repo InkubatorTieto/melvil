@@ -8,3 +8,15 @@ services:
       - .:/code
     ports:
       - "5000:5000"
+
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=name
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data1
