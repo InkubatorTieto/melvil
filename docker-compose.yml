@@ -18,4 +18,4 @@ services:
       - POSTGRES_USER=super_user
       - POSTGRES_DB=psql_db
     volumes:
-      - ./postgresql:/var/lib/psql_db
+      - .data/postgres-data:/var/lib/postgresql

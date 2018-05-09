@@ -1,6 +1,6 @@
 """create table
 Revision ID: cbe6342f9873
-Revises: 
+Revises:
 Create Date: 2018-05-09 15:13:03.857397
 
 """
@@ -25,4 +25,4 @@ def upgrade():
 
 
 def downgrade():
-    op.drop_table('account')
+    op.drop_table('user')
