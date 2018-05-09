@@ -6,11 +6,10 @@ class Config(object):
     TESTING = False
     DATABASE_URI = ''
 
-
 class DevConfig(Config):
     DEBUG = True
     DATABASE_URI = getenv('DEV_DATABASE_URI', '')
-
+    SQLALCHEMY_DATABASE_URI = 'postgresql://test:test@localhost:5432/test_db'
 
 class ProdConfig(Config):
     DATABASE_URI = getenv('PROD_DATABASE_URI', '')
