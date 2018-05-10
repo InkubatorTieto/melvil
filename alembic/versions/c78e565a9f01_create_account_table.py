@@ -1,9 +1,7 @@
 """create account table
-
 Revision ID: c78e565a9f01
 Revises: 
 Create Date: 2018-05-09 14:09:45.993790
-
 """
 from alembic import op
 import sqlalchemy as sa
