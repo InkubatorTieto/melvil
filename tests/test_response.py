@@ -11,5 +11,5 @@ class TestClass(object):
                 assert True
             else:
                 assert False
-        except :
+        except:
             assert False
