@@ -8,7 +8,7 @@ class Config(object):
 
 
 class DevConfig(Config):
-
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = True
     DB_ENGINE = getenv('DB_ENGINE')
     DB_USER = getenv('DB_USER')
