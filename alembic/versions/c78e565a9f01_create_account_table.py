@@ -8,7 +8,6 @@ Create Date: 2018-05-09 14:09:45.993790
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = 'c78e565a9f01'
 down_revision = None
@@ -23,6 +22,7 @@ def upgrade():
         sa.Column('name', sa.String(50), nullable=False),
         sa.Column('description', sa.Unicode(200)),
     )
+
 
 def downgrade():
     op.drop_table('account')
