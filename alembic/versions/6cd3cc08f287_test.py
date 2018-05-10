@@ -1,7 +1,7 @@
 """test
 
 Revision ID: 6cd3cc08f287
-Revises: 
+Revises:
 Create Date: 2018-05-10 09:07:16.106589
 
 """
