@@ -9,7 +9,6 @@ class Config(object):
 
 class DevConfig(Config):
     DEBUG = True
-    DATABASE_URI = getenv('DEV_DATABASE_URI', '')
     SQLALCHEMY_DATABASE_URI = 'postgresql://Liza:0810@localhost:5432/test_db'
 
 
