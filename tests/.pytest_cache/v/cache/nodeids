@@ -1,0 +1,4 @@
+[
+  "test_app.py::FlaskBookshelfTests::test_home_data",
+  "test_app.py::FlaskBookshelfTests::test_home_status_code"
+]
