@@ -6,4 +6,4 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config.from_object(DevConfig)
 app.register_blueprint(library)
-db=SQLAlchemy(app)
+db = SQLAlchemy(app)
