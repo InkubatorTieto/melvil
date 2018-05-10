@@ -1,12 +1,8 @@
 """test
-
 Revision ID: b29871892778
-Revises: 
+Revises:
 Create Date: 2018-05-09 15:45:08.547817
-
 """
-from alembic import op
-import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
