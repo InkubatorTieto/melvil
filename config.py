@@ -9,8 +9,7 @@ class Config(object):
 
 class DevConfig(Config):
     DEBUG = True
-    DATABASE_URI = getenv('DEV_DATABASE_URI', '')
-
+    SQLALCHEMY_DATABASE_URI=getenv('postgres://Lukasz:pass:@localhost:5000','')
 
 class ProdConfig(Config):
     DATABASE_URI = getenv('PROD_DATABASE_URI', '')
