@@ -6,3 +6,4 @@ MarkupSafe==1.0
 Werkzeug==0.14.1
 SQLAlchemy==1.2
 Alembic==0.9.9
+pytest=3.5.1
