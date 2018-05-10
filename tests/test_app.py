@@ -35,4 +35,4 @@ class FlaskBookshelfTests(unittest.TestCase):
         result = self.app.get('/')
 
         # assert the response data
-        self.assertIn("Witamy",result.data.decode('utf-8'))
+        self.assertIn("Witamy", result.data.decode('utf-8'))
