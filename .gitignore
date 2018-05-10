@@ -3,3 +3,5 @@ venv
 env
 *.pyc
 *.*~
+postgres-data/
+.pytest_cache/
