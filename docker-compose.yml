@@ -17,3 +17,5 @@ services:
       POSTGRES_PASSWORD: "test"
       POSTGRES_USER: "test"
       POSTGRES_DB: "test_db"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql
