@@ -4,3 +4,10 @@ itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
 Werkzeug==0.14.1
+sqlalchemy==1.2.0
+flask_sqlalchemy==2.3
+flask_alembic==2.0.1
+alembic==0.9.9
+pytest
+pytest-flask
+
