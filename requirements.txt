@@ -10,4 +10,4 @@ flask_alembic==2.0.1
 alembic==0.9.9
 pytest
 pytest-flask
-flask_api
+

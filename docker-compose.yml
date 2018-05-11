@@ -8,6 +8,13 @@ services:
       - .:/code
     ports:
       - "5000:5000"
+    environment:
+       - DB_USER=Liza
+       - DB_PASSWORD=0810
+       - DB_NAME=test_db
+       - DB_HOST=127.0.0.1
+       - DB_PORT=5432
+       - DB_ENGINE=postgresql
 
   db:
     image: postgres
@@ -16,6 +23,6 @@ services:
     ports:
     - "5432:5432"
     environment:
-      POSTGRES_USER: "Liza"
-      POSTGRES_PASSWORD: "0810"
-      POSTGRES_DB: "test_db"
+      - POSTGRES_USER=Liza
+      - POSTGRES_PASSWORD=0810
+      - POSTGRES_DB=test_db
