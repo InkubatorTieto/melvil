@@ -1,5 +1,0 @@
-{
-  "test_app.py::TestApp::()::test_ping": true,
-  "test_app.py::test_empty_db": true,
-  "tests/test_app.py::TestApp::()::test_ping": true
-}
