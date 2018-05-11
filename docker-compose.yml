@@ -6,5 +6,25 @@ services:
     command: sh run.sh
     volumes:
       - .:/code
+    environment:
+        - DB_USER=psql_user
+        - DB_PASSWORD=Ab132xw
+        - DB_NAME=psql_db
+        - DB_HOST=127.0.0.1
+        - DB_PORT=5432
+        - DB_ENGINE=postgresql
     ports:
       - "5000:5000"
+
+  postgresql:
+      image: postgres
+      restart: always
+      volumes:
+       - ./data/postgresql:/var/lib/postgresql
+      environment:
+        - POSTGRES_USER=psql_user
+        - POSTGRES_PASSWORD=Ab132xw
+        - POSTGRES_DB=psql_db
+      ports:
+        - "5432:5432"
+
