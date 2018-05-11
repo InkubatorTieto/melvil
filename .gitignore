@@ -4,4 +4,4 @@ env
 *.pyc
 *.*~
 /.data/
-.pytest_cache/
+/.pytest_cache/*
