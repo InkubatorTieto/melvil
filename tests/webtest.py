@@ -7,24 +7,16 @@ def inc(x):  # one more example
 
 class TestClass(object):
 
-    def test_web_response(self): #every test function has to begin : test_
+    # every test function has to begin : test_
+    def test_web_response(self):
         try:
-            handler = request.urlopen('http://localhost:5000/') #handler
-            code = handler.getcode()
-            if code == 200:
-                assert True
-            else:
-                assert False
+            handler = request.urlopen('http://localhost:5000/')
+            assert 200 == handler.getcode()
         except:
             assert False
 
-
-    def test_simple(self): # one more, another type test
+    def test_simple(self):
         assert True
 
-
-
     def test_answer(self):
-        assert inc(3) == 5
-
-
+        assert inc(4) == 5
