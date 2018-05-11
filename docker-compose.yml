@@ -8,3 +8,11 @@ services:
       - .:/code
     ports:
       - "5000:5000"
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "Maria"
+      POSTGRES_USER: "Maria"
+      POSTGRES_DB: "baza"

@@ -1,0 +1,5 @@
+[
+  "webtest.py::TestClass::()::test_web_response",
+  "webtest.py::TestClass::()::test_simple",
+  "webtest.py::TestClass::()::test_answer"
+]
