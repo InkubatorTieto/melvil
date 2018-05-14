@@ -9,4 +9,3 @@ pytest==3.5.1
 pytest-flask==0.10.0
 Werkzeug==0.14.1
 psycopg2
-instagram

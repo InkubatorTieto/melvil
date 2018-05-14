@@ -2,7 +2,6 @@ from flask import Flask
 from views import library
 from config import DevConfig
 from flask_sqlalchemy import SQLAlchemy
-from flask_simplelogin import SimpleLogin
 
 db = SQLAlchemy()
 
