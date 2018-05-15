@@ -19,3 +19,8 @@ def search():
     return render_template('browse.html')
 
 
+@library.route('/logout')
+def logout():
+    pass
+
+

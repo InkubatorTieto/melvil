@@ -5,7 +5,7 @@ p.form-title
     font-size: 20px;
     font-weight: 600;
     text-align: center;
-    color: #FFFFFF;
+    color: #505050;
     margin-top: 5%;
     text-transform: uppercase;
     letter-spacing: 4px;
@@ -78,7 +78,7 @@ form.login a
 
 form.login a:hover
 {
-    color: #2ecc71;
+    color: #cce6ff;
 }
 
 .pr-wrap
