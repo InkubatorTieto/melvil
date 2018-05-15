@@ -13,6 +13,7 @@ services:
         - DB_HOST=postgresql
         - DB_PORT=5432
         - DB_ENGINE=postgresql
+        - SECRET_KEY=lalala
     ports:
       - "5000:5000"
     depends_on:

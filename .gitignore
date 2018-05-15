@@ -4,3 +4,5 @@ env
 *.pyc
 *.*~
 data/
+__pycahce__/
+views/__pycache__
