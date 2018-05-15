@@ -1,0 +1,11 @@
+{
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_ddl.py": true,
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_dialect.py": true,
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_insert.py": true,
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_reflection.py": true,
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_results.py": true,
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_select.py": true,
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_sequence.py": true,
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_types.py": true,
+  "venv/Lib/site-packages/sqlalchemy/testing/suite/test_update_delete.py": true
+}
