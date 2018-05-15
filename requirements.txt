@@ -9,3 +9,6 @@ pytest==3.5.1
 pytest-flask==0.10.0
 Werkzeug==0.14.1
 psycopg2
+gunicorn==19.7.1
+whitenoise==3.2.2
+psycopg2
