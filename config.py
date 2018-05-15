@@ -25,7 +25,14 @@ class DevConfig(Config):
         DB_PORT,
         DB_NAME,
     )
-
+    # email server
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = 'tieto.library@gmail.com'
+    MAIL_PASSWORD = 'library-tieto'
+    ADMINS = ['tieto.library@gmail.com']
 
 class ProdConfig(Config):
     DATABASE_URI = getenv('PROD_DATABASE_URI', '')

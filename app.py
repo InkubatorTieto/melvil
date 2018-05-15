@@ -2,6 +2,7 @@ from flask import Flask
 from views import library
 from config import DevConfig
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 
 db = SQLAlchemy()
 
@@ -14,3 +15,10 @@ def create_app():
     db.init_app(app)
 
     return app
+
+
+mail = Mail(create_app())
+
+
+
+
