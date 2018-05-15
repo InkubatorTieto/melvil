@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.6"
+# command to install dependencies
+services:
+  - docker
+install:
+  - pip install -r requirements.txt
+# command to run tests
+before_script:
+  - docker-compose up --build --no-start
+  - docker-compose start
+script:
+  - pytest -v tests/test_index.py
+
