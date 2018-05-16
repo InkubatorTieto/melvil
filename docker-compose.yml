@@ -11,7 +11,7 @@ services:
         - DB_PASSWORD=Ab132xw
         - DB_NAME=psql_db
         - DB_HOST=postgresql
-        - DB_PORT=5432
+        - DB_PORT=5032
         - DB_ENGINE=postgresql
     ports:
       - "5000:5000"
@@ -28,5 +28,5 @@ services:
         - POSTGRES_PASSWORD=Ab132xw
         - POSTGRES_DB=psql_db
       ports:
-        - "5432:5432"
+        - "5032:5032"
 
