@@ -17,5 +17,6 @@ class SearchForm(FlaskForm):
 
 class ContactForm(FlaskForm):
     email = StringField('email', validators=[DataRequired()])
+    title = StringField('title', validators=[DataRequired()])
     message = TextAreaField('message', validators=[DataRequired()])
     send_message = SubmitField('Send message')
