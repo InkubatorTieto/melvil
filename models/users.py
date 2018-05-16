@@ -13,9 +13,16 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean)
     roles = db.relationship('Role', secondary='user_roles',
                             lazy='select', backref='users')
+    rental_logs = db.relationship('RentalLog',
+                                  backref=db.backref('users', lazy='joined'),
+                                  lazy='dynamic',
+                                  cascade='all, delete-orphan')
 
     def __init__(self, email):
         self.email = email
+
+    def __repr__(self):
+        return "Book: ".format(self.title)
 
 
 class UserRoles(db.Model):
@@ -33,3 +40,6 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)  # EMUM
+
+    def __repr__(self):
+        return "Role: ".format(self.name)
