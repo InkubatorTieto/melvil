@@ -1,8 +1,8 @@
-from app import db
 from flask_user import UserMixin
+from app import db
 
 
-class User(UserMixin, db.Model):
+class User(db.Model, UserMixin):
 
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -13,6 +13,9 @@ class User(UserMixin, db.Model):
     active = db.Column(db.Boolean)
     roles = db.relationship('Role', secondary='user_roles',
                             lazy='select', backref='users')
+
+    def __init__(self, email):
+        self.email = email
 
 
 class UserRoles(db.Model):
@@ -29,4 +32,4 @@ class Role(db.Model):
 
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64), unique=True)  # EMUM
