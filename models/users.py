@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
         self.email = email
 
     def __repr__(self):
-        return "Book: ".format(self.title)
+        return "User: {} {}".format(self.first_name, self.surname)
 
 
 class UserRoles(db.Model):
@@ -42,4 +42,4 @@ class Role(db.Model):
     name = db.Column(db.String(64), unique=True)  # EMUM
 
     def __repr__(self):
-        return "Role: ".format(self.name)
+        return "Role: {}".format(self.name)
