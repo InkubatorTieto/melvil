@@ -10,6 +10,10 @@ install:
 before_script:
   - docker-compose up --build --no-start
   - docker-compose start
+# blocklist
+branches:
+  except:
+  - /wip*/
 script:
   - pytest -v tests/test_index.py
 
