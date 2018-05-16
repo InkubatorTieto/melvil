@@ -1,6 +1,6 @@
-from __future__ import with_statement
+from send_email import send_email
 from app import mail
-from emails import *
+import pytest
 
 
 def test_send(app):
@@ -9,5 +9,4 @@ def test_send(app):
         send_email('testing', 'tieto.library@gmail.com', ['tieto.library@gmail.com'], 'test', 'test')
         assert len(outbox) == 1
         msg = outbox[0]
-
         assert msg.subject == "testing"
