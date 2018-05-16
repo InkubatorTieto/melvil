@@ -1,1 +1,1 @@
-web: gunicorn melvil:app
+web: gunicorn app:"app:create_app()"
