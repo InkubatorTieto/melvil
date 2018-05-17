@@ -18,10 +18,12 @@ docker-compose up
 
 ```bash
 docker-compose run web
-```  
+```
+
 ## Deploy the app
-(a) Register on Heroku https://devcenter.heroku.com/
-(b) Download and install Heroku CLI. https://devcenter.heroku.com/articles/heroku-cli
+
+(a) [Register on Heroku](https://devcenter.heroku.com/)
+(b) [Download and install Heroku CLI.](https://devcenter.heroku.com/articles/heroku-cli)
 (c) Clone repository from: git@github.com: InkubatorTieto/melvil.git
 
 ```bash
@@ -34,18 +36,17 @@ $ cd melvil
 
 In order to deploy app you must have either admin permission (login & password) or be one of the collaborators in the project
 
-(d)  In terminal:
+(d) In terminal:
 
 ```bash
 $ heroku login
 ```
 
 Set heroku remote repo (if collaborator)
-
-```
-heroku git:remote -a incubatormelvil
 ```
 
+$ heroku git:remote -a incubatormelvil
+```
 Log in to container registry
 
 ```bash
