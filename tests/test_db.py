@@ -1,20 +1,37 @@
-from models.users import User, Role
-from models.library import RentalLog
-from models.books import Book, Copy, Author, Tag
+from models.users import Role
+from tests.populate import *
+
+role1 = Role(name='ADMIN')
+role2 = Role(name='USER')
 
 
 def test_user(session):
-    user1 = User(email='user1@test.com')
-    user2 = User(email='user2@test.com')
-    session.add(user1)
-    session.add(user2)
+
+    # session.add_all([user1, user2])
+    users = populate_users()
+    session.add_all(users)
     session.commit()
+
     assert len(User.query.all()) > 1
+    # print(User.query.all())
 
-
-def test_role(session):
-    role1 = Role(name='Admin')
-    role2 = Role(name='User')
     session.add(role1)
     session.add(role2)
     assert len(Role.query.all()) == 2
+
+    user = User.query.all()
+    # role = Role.query.filter_by(name='ADMIN').first()
+
+    # user.roles.append(role)
+
+    # print('U: ', user)
+    # print('R: ', role.users)
+
+    books = populate_books()
+    session.add_all(books)
+    session.commit()
+    # print('B: ', Book.query.all())
+
+    authors = populate_authors()
+    session.add_all(authors)
+    session.commit()

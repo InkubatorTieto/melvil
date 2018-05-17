@@ -1,5 +1,6 @@
 from flask_user import UserMixin
 from app import db
+import enum
 
 
 class User(db.Model, UserMixin):
@@ -18,11 +19,16 @@ class User(db.Model, UserMixin):
                                   lazy='dynamic',
                                   cascade='all, delete-orphan')
 
-    def __init__(self, email):
-        self.email = email
+    # def __init__(self, email):
+    #      self.email = email
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "User: {} {}".format(self.first_name, self.surname)
+        return "User: {} {} {}".format(self.first_name, self.surname, self.roles)
+
+    # def __repr__(self):
+        # return "User: {} - {}".format(self.email, self.roles)
 
 
 class UserRoles(db.Model):
@@ -35,11 +41,19 @@ class UserRoles(db.Model):
                         ondelete='CASCADE'))
 
 
+class RoleEnum(enum.Enum):
+    ADMIN = 0
+    USER = 1
+
+    def __str__(self):
+        return self.name
+
+
 class Role(db.Model):
 
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True)  # EMUM
+    name = db.Column(db.Enum(RoleEnum), unique=True)
 
     def __repr__(self):
         return "Role: {}".format(self.name)

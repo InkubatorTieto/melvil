@@ -6,6 +6,7 @@ Flask-User
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
+mimesis==2.0.1
 pytest==3.5.1
 pytest-flask==0.10.0
 Werkzeug==0.14.1

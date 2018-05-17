@@ -18,10 +18,13 @@ class Book(db.Model):
                            lazy='subquery', backref='books')
     description = db.Column(db.Text)
     copies = db.relationship('Copy', backref='books', lazy='select',
-                             cascade='delete')
+                             cascade='all, delete-orphan')
+
+    def __init__(self, **kwargs):
+        super(Book, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "Book: {}".format(self.title)
+        return "Book: {}".format(self.pub_date)
 
 
 class Copy(db.Model):
