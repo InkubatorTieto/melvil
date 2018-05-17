@@ -12,3 +12,4 @@ Werkzeug==0.14.1
 psycopg2
 flask-wtf
 Flask-Mail
+Flask-fillin

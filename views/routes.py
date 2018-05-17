@@ -3,11 +3,11 @@ from . import library
 from forms import LoginForm, SearchForm, ContactForm
 from send_email.emails import send_email
 from config import DevConfig
-
+import os
 
 @library.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', title='Welcome!')
 
 
 @library.route('/login')
@@ -23,8 +23,13 @@ def search():
 @library.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm()
-    email_template = open('./templates/emails/contact_confirmation.html','r').read()
+    print(os.path.abspath(os.curdir))
     if form.validate_on_submit():
+        try:
+            email_template = open('./templates/emails/contact_confirmation.html', 'r').read()
+        except:
+            email_template = open(os.path.abspath(os.curdir) + './templates/emails/contact_confirmation.html',
+                                  'r').read()
         send_email(
             'Contact confirmation, title: '+form.title.data,
             DevConfig.MAIL_USERNAME,
@@ -35,7 +40,7 @@ def contact():
             'Contact form: ' + form.title.data,
             DevConfig.MAIL_USERNAME,
             [DevConfig.MAIL_USERNAME],
-            'Send by: '+form.email.data+'\n'+form.message.data,
+            'Send by: '+form.email.data+'\n\n'+form.message.data,
             None)
         return redirect('/')
     return render_template('contact.html', title='Contact', form=form)

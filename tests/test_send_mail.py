@@ -1,6 +1,5 @@
 from send_email import send_email
 from app import mail
-import pytest
 
 
 def test_send(app):
