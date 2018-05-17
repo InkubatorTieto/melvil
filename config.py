@@ -26,6 +26,5 @@ class DevConfig(Config):
         DB_NAME,
     )
 
-
 class ProdConfig(Config):
     DATABASE_URI = getenv('PROD_DATABASE_URI', '')
