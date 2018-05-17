@@ -8,9 +8,19 @@
             {{ form.email(size=32) }}
         </p>
         <p>
+            {{ form.first_name.label }}<br>
+            {{ form.first_name(size=32) }}
+        </p>
+        <p>
+            {{ form.surname.label }}<br>
+            {{ form.surname(size=32) }}
+        </p>
+        <p>
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}
         </p>
         <p>{{ form.submit() }}</p>
     </form>
+
+
 {% endblock %}

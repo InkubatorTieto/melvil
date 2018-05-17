@@ -2,11 +2,10 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 from flask import Flask
 from config import DevConfig
-from flask_login import LoginManager
 from views import library
 import os
+from views.index import login_manager
 
-login_manager = LoginManager()
 
 
 def create_app():
