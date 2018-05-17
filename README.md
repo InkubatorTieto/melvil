@@ -19,3 +19,7 @@ docker-compose up
 ```bash
 docker-compose run web
 ```  
+
+## Using Travis CI:
+
+[Travis CI short manual](docs/Travis_CI/Travis_ci.md)
