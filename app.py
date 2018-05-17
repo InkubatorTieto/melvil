@@ -2,8 +2,12 @@ from flask import Flask
 from views import library
 from config import DevConfig
 from flask_sqlalchemy import SQLAlchemy
+from raven.contrib.flask import Sentry
+from raven import Client
 
 db = SQLAlchemy()
+sentry = Sentry()
+client = Client()
 
 
 def create_app():
@@ -12,5 +16,12 @@ def create_app():
     app.register_blueprint(library)
 
     db.init_app(app)
+
+    sentry.init_app(app)
+
+    try:
+        1 / 0
+    except ZeroDivisionError:
+       client.captureException()
 
     return app

@@ -5,3 +5,4 @@ WORKDIR /code
 ADD requirements.txt /code
 RUN pip install -r requirements.txt
 ADD . /code/
+CMD gunicorn "app:create_app()"
