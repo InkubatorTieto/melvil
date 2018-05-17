@@ -32,8 +32,8 @@ class Copy(db.Model):
                         nullable=False)
     shelf = db.Column(db.String(56))
     cd_disk = db.Column(db.Boolean)
-    rental_logs = db.relationship('RentalLog', backref=db.backref('copy'
-                                  , lazy='joined'), lazy='dynamic',
+    rental_logs = db.relationship('RentalLog', backref='copy',
+                                  lazy='dynamic',
                                   cascade='all, delete-orphan')
 
     def __repr__(self):
@@ -44,7 +44,7 @@ class Author(db.Model):
 
     __tablename__ = 'authors'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.Strin(64))
+    first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
 
     def __repr__(self):

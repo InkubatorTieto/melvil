@@ -29,3 +29,10 @@ class DevConfig(Config):
 
 class ProdConfig(Config):
     DATABASE_URI = getenv('PROD_DATABASE_URI', '')
+
+
+class TestConfig(object):
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    TESTING = True
+    DEBUG = True
