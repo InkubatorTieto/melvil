@@ -22,6 +22,6 @@ def create_app():
     try:
         1 / 0
     except ZeroDivisionError:
-       client.captureException()
+        client.captureException()
 
     return app
