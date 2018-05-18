@@ -6,8 +6,9 @@
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="static/css/home.css">
     <link rel="stylesheet" type="text/css" href="static/css/authentication.css">
+      <script type="text/javascript" src="static/js/main.js"></script>
     {% block head %}
-      <title>{% block title %}{% endblock %} Melvil library </title>
+      <title> Melvil library - {% block title %}{% endblock %}</title>
     {% endblock %}
   </head>
   <body class="text-center">
@@ -17,10 +18,11 @@
                 <div class="inner">
                   <h3 class="masthead-brand">Melvil</h3>
                   <nav class="nav nav-masthead justify-content-center">
-                        <a class="nav-link" href="{{ url_for('library.index') }}">Home</a>
-                        <a class="nav-link" href="{{ url_for('library.search') }}">Search</a>
-                        <a class="nav-link" href="{{ url_for('library.login') }}">Login</a>
-                        <a class="nav-link" href="{{ url_for('library.register') }}">New user?</a>
+                        <a id="home" class="nav-link" href="{{ url_for('library.index') }}">Home</a>
+                        <a id="search" class="nav-link" href="{{ url_for('library.search') }}">Search</a>
+                        <a id="contact" class="nav-link" href="{{ url_for('library.contact') }}">Contact Us</a>
+                        <a id="login" class="nav-link" href="{{ url_for('library.login') }}">Login</a>
+                        <a id="register" class="nav-link" href="{{ url_for('library.register') }}">New user?</a>
                         <a class="nav-link" href="{{ url_for('library.logout') }}">Logout</a>
                   </nav>
                 </div>

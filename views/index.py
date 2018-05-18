@@ -25,3 +25,8 @@ def search():
 @library.route('/logout')
 def logout():
     return render_template('index.html')
+
+
+@library.route('/contact')
+def contact():
+    return render_template('contact.html')

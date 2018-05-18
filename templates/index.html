@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Index{% endblock %}
+{% block title %}Home{% endblock %}
 {% block content %}
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
@@ -8,7 +8,7 @@
         Feel free to browse, choose books that you like and develop your knowledge in the fields
          of computer science and management.</p>
         <p class="lead">
-          <a href="{{ url_for('library.search') }}" class="btn btn-lg btn-secondary">Search book</a>
+          <a href="{{ url_for('library.search') }}" class="btn btn-primary">Search book</a>
         </p>
       </main>
     </div>
