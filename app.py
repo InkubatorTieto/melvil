@@ -4,7 +4,8 @@ from flask import Flask
 from views import library
 from config import DevConfig
 from flask_mail import Mail
-from models import *
+
+
 mail = Mail()
 
 
@@ -15,6 +16,5 @@ def create_app():
     db.init_app(app)
     '''with app.test_request_context():
         db.create_all()'''
-    #db.drop_all()
     mail.init_app(app)
     return app

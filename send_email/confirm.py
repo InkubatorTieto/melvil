@@ -2,7 +2,6 @@ from .emails import send_email
 from itsdangerous import URLSafeTimedSerializer
 from config import DevConfig
 from flask import url_for, render_template
-from templates import *
 
 
 def send_confirmation_email(user_email):
