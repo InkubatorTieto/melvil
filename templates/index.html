@@ -4,9 +4,11 @@
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
         <h1 class="cover-heading">Melvil Library</h1>
-        <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
+        <p class="lead">Welcome to Tieto online library, where you can view all available book resources.
+        Feel free to browse, choose books that you like and develop your knowledge in the fields
+         of computer science and management.</p>
         <p class="lead">
-          <a href="#" class="btn btn-lg btn-secondary">Search book</a>
+          <a href="{{ url_for('library.search') }}" class="btn btn-lg btn-secondary">Search book</a>
         </p>
       </main>
     </div>

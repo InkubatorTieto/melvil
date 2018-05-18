@@ -12,5 +12,3 @@ def create_app():
     app.register_blueprint(library)
     db.init_app(app)
     return app
-
-

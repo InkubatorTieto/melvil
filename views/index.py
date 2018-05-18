@@ -6,13 +6,16 @@ from . import library
 def index():
     return render_template('index.html')
 
+
 @library.route('/login')
 def login():
     return render_template('login.html')
 
+
 @library.route('/register')
 def register():
     return render_template('register.html')
+
 
 @library.route('/search')
 def search():
@@ -21,6 +24,4 @@ def search():
 
 @library.route('/logout')
 def logout():
-    pass
-
-
+    return render_template('index.html')

@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="static/css/home.css">
     <link rel="stylesheet" type="text/css" href="static/css/authentication.css">
     {% block head %}
-      <title>{% block title %}{% endblock %} - My Webpage</title>
+      <title>{% block title %}{% endblock %} Melvil library </title>
     {% endblock %}
   </head>
   <body class="text-center">
@@ -17,7 +17,7 @@
                 <div class="inner">
                   <h3 class="masthead-brand">Melvil</h3>
                   <nav class="nav nav-masthead justify-content-center">
-                        <a class="nav-link active" href="{{ url_for('library.index') }}">Home</a>
+                        <a class="nav-link" href="{{ url_for('library.index') }}">Home</a>
                         <a class="nav-link" href="{{ url_for('library.search') }}">Search</a>
                         <a class="nav-link" href="{{ url_for('library.login') }}">Login</a>
                         <a class="nav-link" href="{{ url_for('library.register') }}">New user?</a>
@@ -27,9 +27,7 @@
               </header>
           </div>
       {% endblock %}
-
       {% block content %}{% endblock %}
-
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
             integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
             crossorigin="anonymous"></script>
