@@ -1,0 +1,3 @@
+login = {
+    'password': 'library-tieto',
+}

@@ -1,6 +1,8 @@
 from send_email import send_email
 from app import mail
 from config import DevConfig
+import unittest
+import mock
 
 
 def test_send(app):
@@ -14,3 +16,5 @@ def test_send(app):
         assert len(outbox) == 1
         msg = outbox[0]
         assert msg.subject == "testing"
+
+

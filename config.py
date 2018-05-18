@@ -1,4 +1,5 @@
 from os import getenv
+import local_settings
 
 
 class Config(object):
@@ -8,6 +9,8 @@ class Config(object):
 
 
 class DevConfig(Config):
+    SECRET_KEY = '4f\g45t45gfjerkfefker'
+    SECURITY_PASSWORD_SALT = 'my_precious_two'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = True
     DB_ENGINE = getenv('DB_ENGINE')
@@ -25,14 +28,16 @@ class DevConfig(Config):
         DB_PORT,
         DB_NAME,
     )
+
     # email server
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
     MAIL_USERNAME = 'tieto.library@gmail.com'
-    MAIL_PASSWORD = 'library-tieto'
+    MAIL_PASSWORD = local_settings.login['password']
     ADMINS = ['tieto.library@gmail.com']
+
 
 class ProdConfig(Config):
     DATABASE_URI = getenv('PROD_DATABASE_URI', '')
