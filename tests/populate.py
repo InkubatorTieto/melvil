@@ -4,7 +4,7 @@ from models.books import Book, Copy, Author, Tag
 from models.library import RentalLog
 
 t_en = Text('en')
-g = Generic('pl')
+g = Generic('en')
 
 
 def populate_db():
@@ -30,16 +30,17 @@ def populate_users(n=20, role=None):
             surname=surname,
             password_hash=password_hash,
             active=active,
-            roles=[role] if role else []))
+            roles=[role] if role else []
+        ))
     return users
 
 
-def populate_books(n=30, authors=None):
+def populate_books(n=30, authors=None, tags=None):
     books = []
     while len(books) < n:
         isbn = g.code.isbn()
-        title = g.development.programming_language()
-        original_title = t_en.title()
+        title = g.text.title()
+        original_title = g.text.title()
         publisher = g.business.company()
         pub_date = g.datetime.date()
         language = g.person.language()
@@ -53,6 +54,7 @@ def populate_books(n=30, authors=None):
             publisher=publisher,
             pub_date=pub_date,
             language=language,
+            tags=tags if tags else [],
             description=description
         ))
     return books
@@ -91,9 +93,9 @@ def populate_tags(n=15):
     while len(tags) < n:
         name = g.text.word()
 
-    tags.append(Tag(
-        name=name
-    ))
+        tags.append(Tag(
+            name=name
+        ))
     return tags
 
 
@@ -110,4 +112,3 @@ def populate_rental_logs(n=30):
             returned=returned
         ))
     return logs
-

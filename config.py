@@ -33,6 +33,6 @@ class ProdConfig(Config):
 
 class TestConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///C:/Windows/Temp/app.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////Windows/Temp/app.db'
     TESTING = True
     DEBUG = True
