@@ -13,7 +13,12 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary='user_roles',
                             lazy='select', backref='users')
 
-    def __init__(self, email, first_name, surname, password_hash, active=False):
+    def __init__(self,
+                 email,
+                 first_name,
+                 surname,
+                 password_hash,
+                 active=False):
         self.first_name = first_name
         self.surname = surname
         self.email = email

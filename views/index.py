@@ -23,7 +23,9 @@ def register():
         form = RegistrationForm()
         if form.validate():
             try:
-                new_user = User(email=form.email.data, first_name=form.first_name.data, surname=form.surname.data,
+                new_user = User(email=form.email.data,
+                                first_name=form.first_name.data,
+                                surname=form.surname.data,
                                 password_hash=generate_password_hash(form.password.data))
                 print("TO JA:", new_user)
                 db.session.add(new_user)
@@ -39,7 +41,9 @@ def register():
 def confirm_email(token):
     try:
         confirm_serializer = URLSafeTimedSerializer(DevConfig.SECRET_KEY)
-        email = confirm_serializer.loads(token, salt=DevConfig.SECURITY_PASSWORD_SALT, max_age=3600)
+        email = confirm_serializer.loads(token,
+                                         salt=DevConfig.SECURITY_PASSWORD_SALT,
+                                         max_age=3600)
     except:
         return 'The confirmation link is invalid or has expired.', 'error'
 
