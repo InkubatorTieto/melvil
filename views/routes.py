@@ -1,6 +1,6 @@
 from flask import render_template, redirect
 from . import library
-from forms import LoginForm, SearchForm, ContactForm
+from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm
 from send_email.emails import send_email
 from config import DevConfig
 import os
@@ -23,7 +23,6 @@ def search():
 @library.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm()
-    print(os.path.abspath(os.curdir))
     if form.validate_on_submit():
         try:
             email_template = open('./templates/emails/contact_confirmation.html', 'r').read()
@@ -44,3 +43,8 @@ def contact():
             None)
         return redirect('/')
     return render_template('contact.html', title='Contact', form=form)
+
+
+@library.route('/register', methods=['GET', 'POST'])
+def register():
+    return render_template('registration.html', title='Register', form=RegistrationForm())

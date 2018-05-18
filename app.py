@@ -1,10 +1,11 @@
-from flask import Flask
-from views import library
-from config import DevConfig
 from flask_sqlalchemy import SQLAlchemy
-from flask_mail import Mail
-
 db = SQLAlchemy()
+from flask_mail import Mail
+from flask import Flask
+from config import DevConfig
+from views import library
+
+
 mail = Mail()
 
 
@@ -14,10 +15,5 @@ def create_app():
     app.register_blueprint(library)
     db.init_app(app)
     mail.init_app(app)
+
     return app
-
-
-
-
-
-

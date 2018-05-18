@@ -20,3 +20,12 @@ class ContactForm(FlaskForm):
     title = StringField('title', validators=[DataRequired()])
     message = TextAreaField('message', validators=[DataRequired()])
     send_message = SubmitField('Send message')
+
+
+class RegistrationForm(FlaskForm):
+    email = StringField('Email')
+    first_name = StringField('First name')
+    surname = StringField('Surname')
+    password = PasswordField('Password')
+    confirmPass = PasswordField('Confirm password')
+    submit = SubmitField('Sign In')

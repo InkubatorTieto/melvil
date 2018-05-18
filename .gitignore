@@ -7,3 +7,4 @@ data/
 __pycahce__/
 views/__pycache__
 tests/.pytest_cache/
+models/.pytest_cache
