@@ -1,9 +1,10 @@
-from flask import render_template, redirect
+from flask import render_template, redirect, flash
 from . import library
 from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm
 from send_email.emails import send_email
 from config import DevConfig
 import os
+
 
 @library.route('/')
 def index():
@@ -24,6 +25,7 @@ def search():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
+        flash('Message send', 'ok')
         try:
             email_template = open('./templates/emails/contact_confirmation.html', 'r').read()
         except:
@@ -41,7 +43,7 @@ def contact():
             [DevConfig.MAIL_USERNAME],
             'Send by: '+form.email.data+'\n\n'+form.message.data,
             None)
-        return redirect('/')
+        return redirect('/contact')
     return render_template('contact.html', title='Contact', form=form)
 
 
