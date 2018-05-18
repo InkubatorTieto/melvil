@@ -26,16 +26,11 @@ class User(db.Model, UserMixin):
                                   lazy='dynamic',
                                   cascade='all, delete-orphan')
 
-    # def __init__(self, email):
-    #      self.email = email
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
 
     def __repr__(self):
         return "User: {} {} {}".format(self.first_name, self.surname, self.roles)
-
-    # def __repr__(self):
-        # return "User: {} - {}".format(self.email, self.roles)
 
 
 class RoleEnum(enum.Enum):

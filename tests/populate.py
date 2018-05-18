@@ -1,16 +1,19 @@
 from mimesis import Generic, Text
 from models.users import User
 from models.books import Book, Copy, Author, Tag
-import random
+from models.library import RentalLog
 
 t_en = Text('en')
-
 g = Generic('pl')
+
 
 def populate_db():
     users = populate_users()
     books = populate_books()
-    return users, books
+    copies = populate_copies()
+    author = populate_authors()
+    tags = populate_tags()
+    return users, books, copies, author, tags
 
 
 def populate_users(n=20, role=None):
@@ -55,7 +58,7 @@ def populate_books(n=30, authors=None):
     return books
 
 
-def populate_copy(n=35):
+def populate_copies(n=35):
     copies = []
     while len(copies) < n:
         asset_code = g.code.imei()
@@ -92,3 +95,19 @@ def populate_tags(n=15):
         name=name
     ))
     return tags
+
+
+def populate_rental_logs(n=30):
+    logs = []
+    while len(logs) < n:
+        borrow_time = g.datetime.datetime()
+        return_time = g.datetime.datetime()
+        returned = g.development.boolean()
+
+        logs.append(RentalLog(
+            borrow_time=borrow_time,
+            return_time=return_time,
+            returned=returned
+        ))
+    return logs
+

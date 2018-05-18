@@ -31,8 +31,8 @@ class ProdConfig(Config):
     DATABASE_URI = getenv('PROD_DATABASE_URI', '')
 
 
-class TestConfig(object):
+class TestConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///C:/Windows/Temp/app.db'
     TESTING = True
     DEBUG = True

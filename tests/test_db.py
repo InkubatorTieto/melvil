@@ -36,3 +36,10 @@ def test_books(session):
 
         assert Book.query.filter(Book.authors.contains(a)).count() == a.id
 
+
+def test_logs(session):
+    logs = populate_rental_logs(n=3)
+    session.add_all(logs)
+    session.commit()
+    print(RentalLog.query.all())
+
