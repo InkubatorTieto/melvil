@@ -13,7 +13,7 @@ def populate_db():
     return users, books
 
 
-def populate_users(n=20):
+def populate_users(n=20, role=None):
     users = []
     while len(users) < n:
         email = g.person.email()
@@ -21,17 +21,17 @@ def populate_users(n=20):
         surname = g.person.surname()
         password_hash = g.cryptographic.hash()
         active = g.development.boolean()
-        # roles = random.choice(list(RoleEnum.__members__.values()))
         users.append(User(
             email=email,
             first_name=first_name,
             surname=surname,
             password_hash=password_hash,
-            active=active))
+            active=active,
+            roles=[role] if role else []))
     return users
 
 
-def populate_books(n=30):
+def populate_books(n=30, authors=None):
     books = []
     while len(books) < n:
         isbn = g.code.isbn()
@@ -44,6 +44,7 @@ def populate_books(n=30):
 
         books.append(Book(
             isbn=isbn,
+            authors=authors if authors else [],
             title=title,
             original_title=original_title,
             publisher=publisher,

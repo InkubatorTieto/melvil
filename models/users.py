@@ -2,6 +2,13 @@ from flask_user import UserMixin
 from app import db
 import enum
 
+user_roles = db.Table('user_roles',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id',
+              ondelete='CASCADE'), primary_key=True),
+    db.Column('role_id', db.Integer, db.ForeignKey('roles.id',
+              ondelete='CASCADE'), primary_key=True)
+)
+
 
 class User(db.Model, UserMixin):
 
@@ -12,7 +19,7 @@ class User(db.Model, UserMixin):
     surname = db.Column(db.String(64))
     password_hash = db.deferred(db.Column(db.String(128)))
     active = db.Column(db.Boolean)
-    roles = db.relationship('Role', secondary='user_roles',
+    roles = db.relationship('Role', secondary=user_roles,
                             lazy='select', backref='users')
     rental_logs = db.relationship('RentalLog',
                                   backref=db.backref('users', lazy='joined'),
@@ -29,16 +36,6 @@ class User(db.Model, UserMixin):
 
     # def __repr__(self):
         # return "User: {} - {}".format(self.email, self.roles)
-
-
-class UserRoles(db.Model):
-
-    __tablename__ = 'user_roles'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id',
-                        ondelete='CASCADE'))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id',
-                        ondelete='CASCADE'))
 
 
 class RoleEnum(enum.Enum):

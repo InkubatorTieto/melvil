@@ -1,37 +1,38 @@
-from models.users import Role
 from tests.populate import *
+from models import *
 
 role1 = Role(name='ADMIN')
 role2 = Role(name='USER')
 
 
 def test_user(session):
+    session.add(role1)
+    session.add(role2)
+    session.commit()
+    assert Role.query.count() == 2
 
-    # session.add_all([user1, user2])
-    users = populate_users()
+    users = populate_users(n=10)
     session.add_all(users)
     session.commit()
 
-    assert len(User.query.all()) > 1
+    assert User.query.count() == 10, "database does not contain 10 Users"
     # print(User.query.all())
 
-    session.add(role1)
-    session.add(role2)
-    assert len(Role.query.all()) == 2
+    users = User.query.all()
+    for u in users:
+        assert u.roles == []
 
-    user = User.query.all()
-    # role = Role.query.filter_by(name='ADMIN').first()
 
-    # user.roles.append(role)
-
-    # print('U: ', user)
-    # print('R: ', role.users)
-
-    books = populate_books()
-    session.add_all(books)
-    session.commit()
-    # print('B: ', Book.query.all())
-
-    authors = populate_authors()
+def test_books(session):
+    authors = populate_authors(n=5)
     session.add_all(authors)
     session.commit()
+    assert Author.query.count() == 5
+
+    for a in Author.query.all():
+        books = populate_books(n=a.id, authors=[a])
+        session.add_all(books)
+        session.commit()
+
+        assert Book.query.filter(Book.authors.contains(a)).count() == a.id
+
