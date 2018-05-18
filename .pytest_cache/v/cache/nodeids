@@ -1,4 +1,0 @@
-[
-  "tests/test_config.py::test_development_config",
-  "tests/test_index.py::test_app"
-]

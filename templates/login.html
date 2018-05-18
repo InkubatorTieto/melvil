@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+{% if session['logged_in']%}
+<p>You are already logged</p>
+{% else %}
 <h2>Login</h2>
     <form action="" method="post">
         {{ form.hidden_tag() }}
@@ -13,4 +16,5 @@
         </p>
         <p>{{ form.submit() }}</p>
     </form>
+{% endif %}
 {% endblock %}

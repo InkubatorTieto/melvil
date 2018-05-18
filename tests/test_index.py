@@ -4,11 +4,6 @@ def test_app(app):
     assert resp.status_code == 200
 
 
-def test_login(app):
-    client = app.test_client()
-    resp = client.get('/login')
-    assert resp.status_code == 200
-
 
 def test_config_access(config):
     assert config['SECRET_KEY'] == 24
