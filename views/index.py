@@ -90,7 +90,12 @@ def contact():
             'Send by: '+form.email.data+'\n\n'+form.message.data,
             None)
         return redirect('/contact')
-    return render_template('contact.html', title='Contact', form=form, error=form.errors)
+    return render_template('contact.html',
+                           title='Contact',
+                           form=form,
+                           error=form.errors)
+
+
 @library.route('/logout')
 def logout():
     return render_template('index.html')
