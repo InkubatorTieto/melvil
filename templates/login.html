@@ -3,36 +3,38 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block content %}
-    <h1>Sign In</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}
-            {% if error %}
-            <p class = "error">
-                {% for m in error['username'] %}
-                {{m}}
-                {% endfor %}
-            </p>
-            {% endif %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}
-            {% if error %}
-            <p class = "error">
-                {% for m in error['password'] %}
-                {{m}}
-                {% endfor %}
-            </p>
-            {% endif %}
-        </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit() }}</p>
-    </form>
-{% endblock %}
 {% if session['logged_in']%}
-<p>You are already logged</p>
+    <p>You are already logged</p>
 {% else %}
+        <h1>Sign In</h1>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.email.label }}<br>
+                {{ form.email(size=32) }}
+                {% if error %}
+                <p class = "error">
+                    {% for m in error['username'] %}
+                    {{m}}
+                    {% endfor %}
+                </p>
+                {% endif %}
+            </p>
+            <p>
+                {{ form.password.label }}<br>
+                {{ form.password(size=32) }}
+                {% if error %}
+                <p class = "error">
+                    {% for m in error['password'] %}
+                    {{m}}
+                    {% endfor %}
+                </p>
+                {% endif %}
+            </p>
+            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+            <p>{{ form.submit() }}</p>
+        </form>
 {% endif %}
+{% endblock %}
+
+

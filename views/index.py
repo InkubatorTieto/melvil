@@ -1,12 +1,14 @@
-from flask import render_template, request, session
+from config import DevConfig
+from flask import render_template, request, session, redirect, flash
 from flask_login import LoginManager
-from forms.login_form import LoginForm
-from forms.registration_forms import RegistrationForm
+from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
+from send_email.emails import send_email
 from . import library
 from models.user import User
 from app import db
-login_manager = LoginManager()
+import os
+
 
 login_manager = LoginManager()
 
@@ -32,10 +34,10 @@ def login():
                     session['email'] = data.email
                     return render_template('index.html', session=session)
                 else:
-                    return 'Login failed'
+                    return 'Login failed' # Łukasz napisze do tego komunikat
             else:
-                return 'Incorrect data'
-        except request.exceptions.RequestException:
+                return render_template('login.html', title='Sign In', form=form, error=form.errors)
+        except request.exceptions.RequestException as e:
             return 'Something went wrong'
 
 
@@ -52,6 +54,40 @@ def registration():
                                 password_hash=generate_password_hash(form.password.data))
                 db.session.add(new_user)
                 db.session.commit()
-            except request.exceptions.RequestException:
+            except request.exceptions.RequestException as e:
                 return 'Registration failed'
+        else:
+            return render_template('registration.html', title='Register', form=form, error=form.errors)
         return 'The registration was successful'
+
+
+@library.route('/search')
+def search():
+    return render_template('search.html', title='Search', form=SearchForm())
+
+
+@library.route('/contact', methods=['GET', 'POST'])
+def contact():
+    form = ContactForm()
+    if form.validate_on_submit():
+        flash('Message send', 'ok')
+        try:
+            email_template = open('./templates/emails/contact_confirmation.html', 'r').read()
+        except:
+            email_template = open(os.path.abspath(os.curdir) + './templates/emails/contact_confirmation.html',
+                                  'r').read()
+        send_email(
+            'Contact confirmation, title: '+form.title.data,
+            DevConfig.MAIL_USERNAME,
+            [form.email.data],
+            None,
+            email_template)
+        send_email(
+            'Contact form: ' + form.title.data,
+            DevConfig.MAIL_USERNAME,
+            [DevConfig.MAIL_USERNAME],
+            'Send by: '+form.email.data+'\n\n'+form.message.data,
+            None)
+        return redirect('/contact')
+    print(form.errors)
+    return render_template('contact.html', title='Contact', form=form, error=form.errors)
