@@ -51,3 +51,27 @@
         </p>
     </form>
 {% endblock %}
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <main role="main" class="inner cover">
+        <div class="container my_container register_container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="wrap">
+                        <p class="form-title">
+                            Contact Us</p>
+                        <form class="login" action="" method="post">
+                            <input type="text" placeholder="Email" />
+                            <input type="text" placeholder="Title" />
+                            <textarea type="text" placeholder="Message" ></textarea>
+                            <input type="submit" value="Send your message" class="btn btn-primary" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </main>
+    </div>
+{% endblock %}

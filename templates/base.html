@@ -9,11 +9,43 @@
 </style>
 <html>
   <head>
-      <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+          crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="static/css/home.css">
+    <link rel="stylesheet" type="text/css" href="static/css/authentication.css">
+      <script type="text/javascript" src="static/js/main.js"></script>
+    {% block head %}
+      <title> Melvil library - {% block title %}{% endblock %}</title>
+    {% endblock %}
   </head>
-  <body>
-    <a href="/">Home   </a><a href="/login">Log In   </a><a href="/search">Search   </a><a href="/contact">Contact   </a><a href="/registration">Register   </a>
-    <hr>
-    <div id="content">{% block content %}{% endblock %}</div>
-  </body>
+  <body class="text-center">
+      {% block nav %}
+          <div class="cover-container d-flex h-20 p-3 mx-auto flex-column">
+                <header class="masthead mb-auto">
+                <div class="inner">
+                  <h3 class="masthead-brand">Melvil</h3>
+                  <nav class="nav nav-masthead justify-content-center">
+                        <a id="home" class="nav-link" href="{{ url_for('library.index') }}">Home</a>
+                        <a id="search" class="nav-link" href="{{ url_for('library.search') }}">Search</a>
+                        <a id="contact" class="nav-link" href="{{ url_for('library.contact') }}">Contact Us</a>
+                        <a id="login" class="nav-link" href="{{ url_for('library.login') }}">Login</a>
+                        <a id="register" class="nav-link" href="{{ url_for('library.register') }}">New user?</a>
+                        <a class="nav-link" href="{{ url_for('library.logout') }}">Logout</a>
+                  </nav>
+                </div>
+              </header>
+          </div>
+      {% endblock %}
+      {% block content %}{% endblock %}
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+            integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+            crossorigin="anonymous"></script>
+    </body>
 </html>

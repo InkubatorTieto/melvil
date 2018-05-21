@@ -2,5 +2,15 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block content %}
-    <h1>Welcome in library</h1>
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <main role="main" class="inner cover">
+        <h1 class="cover-heading">Melvil Library</h1>
+        <p class="lead">Welcome to Tieto online library, where you can view all available book resources.
+        Feel free to browse, choose books that you like and develop your knowledge in the fields
+         of computer science and management.</p>
+        <p class="lead">
+          <a href="{{ url_for('library.search') }}" class="btn btn-primary">Search book</a>
+        </p>
+      </main>
+    </div>
 {% endblock %}

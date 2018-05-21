@@ -91,3 +91,6 @@ def contact():
         return redirect('/contact')
     print(form.errors)
     return render_template('contact.html', title='Contact', form=form, error=form.errors)
+@library.route('/logout')
+def logout():
+    return render_template('index.html')
