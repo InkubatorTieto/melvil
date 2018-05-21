@@ -33,7 +33,7 @@ def login():
                     return 'Login failed'
             else:
                 return 'Incorrect data'
-        except request.exceptions.RequestException as e:
+        except request.exceptions.RequestException:
             return 'Something went wrong'
 
 
@@ -50,6 +50,6 @@ def registration():
                                 password_hash=generate_password_hash(form.password.data))
                 db.session.add(new_user)
                 db.session.commit()
-            except request.exceptions.RequestException as e:
+            except request.exceptions.RequestException:
                 return 'Registration failed'
         return 'The registration was successful'

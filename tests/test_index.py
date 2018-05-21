@@ -1,4 +1,5 @@
-from flask import url_for, session
+from flask import url_for
+
 
 def test_app(app):
     client = app.test_client()
