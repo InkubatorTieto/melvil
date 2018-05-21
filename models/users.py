@@ -24,8 +24,7 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role',
                             secondary=user_roles,
                             lazy='select',
-                            backref=db.backref('users', lazy='select'),
-                            )
+                            backref=db.backref('users', lazy='select'))
     rental_logs = db.relationship('RentalLog',
                                   backref=db.backref('users', lazy='joined'),
                                   lazy='dynamic',

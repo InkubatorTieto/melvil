@@ -2,8 +2,10 @@ from random import randint
 
 from sqlalchemy import func
 
-from tests.populate import *
-from models import *
+from tests.populate import populate_users,\
+    populate_copies, populate_tags, populate_authors,\
+    populate_books, populate_rental_logs
+from models import Role, User, Author, Tag, Book, RentalLog
 
 
 def test_users(session):
@@ -65,6 +67,5 @@ def test_library(session):
     logs = populate_rental_logs(b.id, u.id, n=1)
     session.add_all(logs)
     session.commit()
-    print(RentalLog.query.all())
     assert RentalLog.book_copy_id != [], "rental log does not contain book id"
     assert RentalLog.user_id != [], "rental log does not contain user id"

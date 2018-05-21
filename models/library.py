@@ -14,5 +14,5 @@ class RentalLog(db.Model):
     returned = db.Column(db.Boolean)
 
     def __repr__(self):
-        return "User ID: {} - Book ID: {}".\
+        return "<User ID: {} - Book ID: {}>".\
             format(self.user_id, self.book_copy_id)
