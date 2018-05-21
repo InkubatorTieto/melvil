@@ -17,6 +17,11 @@
                             <form class="login" action="/login" method="post">
                                 {{ form.hidden_tag() }}
                             <input type="text" placeholder="Email" name="email" value= "{{ request.form.email }}" />
+                                {% if error %}
+                                <p>
+                                    {{error['email'][0]}}
+                                </p>
+                                {% endif %}
                             <input type="password" placeholder="Password" name="password" value= "{{  request.form.password }}" />
                             <input type="submit" value="Sign In" name="submit" class="btn btn-primary" />
                             </form>
