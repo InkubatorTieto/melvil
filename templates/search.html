@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+    <h1>Search</h1>
+    <form action="" method="post">
+       {{form.query.label}} {{form.query}}{{ form.submit() }}
+    </form>
+{% endblock %}

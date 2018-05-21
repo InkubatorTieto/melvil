@@ -4,4 +4,6 @@ env
 *.pyc
 *.*~
 data/
-.pytest_cache/
+views/__pycache__
+tests/.pytest_cache/
+__pycahce__/

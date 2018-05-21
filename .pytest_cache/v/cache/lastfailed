@@ -1,0 +1,6 @@
+{
+  "test_app.py::TestApp::()::test_ping": true,
+  "test_app.py::test_empty_db": true,
+  "tests/test_app.py::TestApp::()::test_ping": true,
+  "tests/test_send_mail.py::test_send_email": true
+}

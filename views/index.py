@@ -8,6 +8,8 @@ from models.user import User
 from app import db
 login_manager = LoginManager()
 
+login_manager = LoginManager()
+
 
 @library.route('/')
 def index():

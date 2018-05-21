@@ -9,9 +9,11 @@ WTForms-Alchemy
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
+mock==2.0.0
 pytest==3.5.1
 pytest-flask==0.10.0
 Werkzeug==0.14.1
 psycopg2
-wtforms
+flask-wtf
+Flask-Mail
 

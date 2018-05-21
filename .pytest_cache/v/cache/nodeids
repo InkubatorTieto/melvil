@@ -1,0 +1,9 @@
+[
+  "tests/test_config.py::test_development_config",
+  "tests/test_contact.py::test_app",
+  "tests/test_contact_email.py::test_send",
+  "tests/test_index.py::test_app",
+  "tests/test_login.py::test_app",
+  "tests/test_search.py::test_app",
+  "tests/test_send_mail.py::test_send"
+]
