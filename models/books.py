@@ -22,22 +22,37 @@ class Book(db.Model):
                            backref=db.backref('books'))
     description = db.Column(db.Text)
     copies = db.relationship('Copy',
-                             backref=db.backref('books'),
+                             backref=db.backref('book', uselist=False),
                              lazy='select',
                              cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
         super(Book, self).__init__(**kwargs)
 
+    def __str__(self):
+        return "'{}' by {}".format(
+            self.title,
+            ', '.join([str(a) for a in self.authors])
+        )
+
     def __repr__(self):
-        return "Book: {}".format(self.tags)
+        return "<Book: '{}' tags={} authors={} copies={}>".format(
+            self.title,
+            self.tags,
+            self.authors,
+            self.copies
+        )
 
 
 class Copy(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     asset_code = db.Column(db.Integer, unique=True)
-    book_id = db.Column(db.Integer, db.ForeignKey('books.id'),)
+    book_id = db.Column(db.Integer,
+                        db.ForeignKey('books.id'),
+                        nullable=False)
+    # book = db.relationship('Book', foreign_keys=book_id, backref=db.backref(
+    #     'copies', lazy='select', cascade='all, delete-orphan'))
     shelf = db.Column(db.String(56))
     cd_disk = db.Column(db.Boolean)
     rental_logs = db.relationship('RentalLog',
@@ -46,7 +61,7 @@ class Copy(db.Model):
                                   cascade='all, delete-orphan')
 
     def __repr__(self):
-        return "Copy: {}".format(self.asset_code)
+        return "<Copy: {} book_id={}>".format(self.asset_code, self.book_id)
 
 
 class Author(db.Model):
@@ -56,8 +71,11 @@ class Author(db.Model):
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
 
+    def __str__(self):
+        return "{} {}".format(self.first_name, self.last_name)
+
     def __repr__(self):
-        return "Author: {} {}".format(self.first_name, self.last_name)
+        return "<Author: {} {}>".format(self.first_name, self.last_name)
 
 
 class Tag(db.Model):
@@ -67,7 +85,7 @@ class Tag(db.Model):
     name = db.Column(db.String(64))
 
     def __repr__(self):
-        return "Tag: {}".format(self.name)
+        return "<Tag: {}>".format(self.name)
 
 
 book_tag = db.Table('books_tags',

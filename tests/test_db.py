@@ -37,18 +37,32 @@ def test_books(session):
         books = populate_books(n=a.id, authors=[a])
         session.add_all(books)
         session.commit()
+        for b in books:
+            assert a in b.authors
+            copies = populate_copies(b, n=randint(1, 3))
+            session.add_all(copies)
+            for c in copies:
+                assert c in b.copies
+                assert c.book is b
+        session.commit()
 
         assert Book.query.filter(Book.authors.contains(a)).count() == a.id
 
     for t in Tag.query.all():
-        row_id = Book.query.order_by(func.random()).first().id
-        row = Book.query.get(row_id)
-        row.tags.append(t)
+        book = Book.query.order_by(func.random()).first()
+        book.tags.append(t)
+        session.commit()
+        assert t.books != []
+        assert t in book.tags
 
 
 def test_library(session):
-    logs = populate_rental_logs(n=3)
+    b = Book.query.order_by(func.random()).first()
+    u = User.query.order_by(func.random()).first()
+    logs = populate_rental_logs(b.id, u.id, n=1)
     session.add_all(logs)
     session.commit()
     print(RentalLog.query.all())
+    assert RentalLog.book_copy_id != []
+    assert RentalLog.user_id != []
 

@@ -1,3 +1,5 @@
+from random import randint
+
 from mimesis import Generic, Text
 from models.users import User
 from models.books import Book, Copy, Author, Tag
@@ -39,14 +41,14 @@ def populate_books(n=30, authors=None, tags=None):
     books = []
     while len(books) < n:
         isbn = g.code.isbn()
-        title = g.text.title()
+        title = ' '.join(g.text.title().split(' ')[:5])
         original_title = g.text.title()
         publisher = g.business.company()
         pub_date = g.datetime.date()
         language = g.person.language()
         description = g.text.sentence()
 
-        books.append(Book(
+        book = Book(
             isbn=isbn,
             authors=authors if authors else [],
             title=title,
@@ -56,11 +58,12 @@ def populate_books(n=30, authors=None, tags=None):
             language=language,
             tags=tags if tags else [],
             description=description
-        ))
+        )
+        books.append(book)
     return books
 
 
-def populate_copies(n=35):
+def populate_copies(book, n=35):
     copies = []
     while len(copies) < n:
         asset_code = g.code.imei()
@@ -69,6 +72,7 @@ def populate_copies(n=35):
 
         copies.append(Copy(
             asset_code=asset_code,
+            book=book,
             shelf=shelf,
             cd_disk=cd_disk
         ))
@@ -99,7 +103,7 @@ def populate_tags(n=15):
     return tags
 
 
-def populate_rental_logs(n=30):
+def populate_rental_logs(book, user, n=30):
     logs = []
     while len(logs) < n:
         borrow_time = g.datetime.datetime()
@@ -107,6 +111,8 @@ def populate_rental_logs(n=30):
         returned = g.development.boolean()
 
         logs.append(RentalLog(
+            book_copy_id=book,
+            user_id=user,
             borrow_time=borrow_time,
             return_time=return_time,
             returned=returned

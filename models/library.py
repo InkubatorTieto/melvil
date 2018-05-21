@@ -4,9 +4,11 @@ from app import db
 class RentalLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     book_copy_id = db.Column(db.Integer,
-                             db.ForeignKey('copy.id'))
+                             db.ForeignKey('copy.id'),
+                             nullable=False)
     user_id = db.Column(db.Integer,
-                        db.ForeignKey('users.id'))
+                        db.ForeignKey('users.id'),
+                        nullable=False)
     borrow_time = db.Column(db.DateTime)
     return_time = db.Column(db.DateTime)
     returned = db.Column(db.Boolean)
