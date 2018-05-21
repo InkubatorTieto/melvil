@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from send_email.emails import send_email
 from . import library
 from models.user import User
-from app import db
+from init_db import db
 import os
 
 

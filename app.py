@@ -1,12 +1,10 @@
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
 from flask_mail import Mail
 from flask import Flask
 from config import DevConfig
 from views import library
 import os
 from views.index import login_manager
-
+from init_db import db
 
 mail = Mail()
 
