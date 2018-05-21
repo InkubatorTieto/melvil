@@ -25,25 +25,19 @@ def login():
         return render_template('login.html', form=form)
     else:
         form = LoginForm()
-        print(request.form['email'])
-        print(request.form['password'])
         try:
-            print("to ja 1")
-            #print(form.validate_on_submit():)
-            #if form.validate_on_submit():
-            print("to ja 2")
-            data = User.query.filter_by(email=request.form['email']).first()
-            if data is not None and check_password_hash(data.password_hash,  request.form['password']):
-                print("to ja 3")
-                session['logged_in'] = True
-                session['id'] = data.id
-                session['email'] = data.email
-                print(session)
-                return render_template('index.html', session=session)
+
+            if form.validate_on_submit():
+                data = User.query.filter_by(email=request.form['email']).first()
+                if data is not None and check_password_hash(data.password_hash,  request.form['password']):
+                    session['logged_in'] = True
+                    session['id'] = data.id
+                    session['email'] = data.email
+                    return render_template('index.html', session=session)
+                else:
+                    return 'Login failed' # Łukasz napisze do tego komunikat
             else:
-                return 'Login failed' # Łukasz napisze do tego komunikat
-            # else:
-            #     return render_template('login.html', title='Sign In', form=form, error=form.errors)
+                return render_template('login.html', title='Sign In', form=form, error=form.errors)
         except request.exceptions.RequestException as e:
             return 'Something went wrong'
 
