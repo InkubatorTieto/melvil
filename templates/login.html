@@ -9,10 +9,24 @@
         <p>
             {{ form.username.label }}<br>
             {{ form.username(size=32) }}
+            {% if error %}
+            <p class = "error">
+                {% for m in error['username'] %}
+                {{m}}
+                {% endfor %}
+            </p>
+            {% endif %}
         </p>
         <p>
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}
+            {% if error %}
+            <p class = "error">
+                {% for m in error['password'] %}
+                {{m}}
+                {% endfor %}
+            </p>
+            {% endif %}
         </p>
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
         <p>{{ form.submit() }}</p>
