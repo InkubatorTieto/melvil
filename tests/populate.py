@@ -1,21 +1,9 @@
-from random import randint
-
-from mimesis import Generic, Text
+from mimesis import Generic
 from models.users import User
 from models.books import Book, Copy, Author, Tag
 from models.library import RentalLog
 
-t_en = Text('en')
 g = Generic('en')
-
-
-def populate_db():
-    users = populate_users()
-    books = populate_books()
-    copies = populate_copies()
-    author = populate_authors()
-    tags = populate_tags()
-    return users, books, copies, author, tags
 
 
 def populate_users(n=20, role=None):
@@ -42,7 +30,7 @@ def populate_books(n=30, authors=None, tags=None):
     while len(books) < n:
         isbn = g.code.isbn()
         title = ' '.join(g.text.title().split(' ')[:5])
-        original_title = g.text.title()
+        original_title = ' '.join(g.text.title().split(' ')[:5])
         publisher = g.business.company()
         pub_date = g.datetime.date()
         language = g.person.language()

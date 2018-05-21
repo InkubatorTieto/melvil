@@ -7,6 +7,9 @@ from config import TestConfig
 
 @pytest.fixture(scope='module')
 def app():
+    """
+        Returns flask app with context for testing.
+    """
     app = create_app(config=TestConfig)
     ctx = app.app_context()
     ctx.push()
