@@ -1,23 +1,17 @@
 from flask import render_template, request, session
-from . import library
-from models.user import User
+from flask_login import LoginManager
 from forms.login_form import LoginForm
 from forms.registration_forms import RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
+from . import library
+from models.user import User
 from app import db
-from flask_login import LoginManager
-
 login_manager = LoginManager()
 
 
 @library.route('/')
 def index():
     return render_template('index.html')
-
-
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return user_id
 
 
 @library.route('/login', methods=['GET', 'POST'])
@@ -34,17 +28,13 @@ def login():
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
-                    print(session)
-                    # load_user(data.email)
-                    return render_template('index.html')
+                    return render_template('index.html', session=session)
                 else:
                     return 'Login failed'
             else:
                 return 'Incorrect data'
-        except:
-             return 'Something went wrong'
-
-
+        except request.exceptions.RequestException as e:
+            return 'Something went wrong'
 
 
 @library.route('/registration', methods=['GET', 'POST'])
@@ -60,6 +50,6 @@ def registration():
                                 password_hash=generate_password_hash(form.password.data))
                 db.session.add(new_user)
                 db.session.commit()
-            except:
+            except request.exceptions.RequestException as e:
                 return 'Registration failed'
         return 'The registration was successful'
