@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     build: .
-    command: gunicorn app:create_app()
+    command: gunicorn -b 0.0.0.0:8000 app:create_app()
     volumes:
       - .:/code
     environment:
