@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <main role="main" class="inner cover">
+        <div class="container my_container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="wrap">
+                        <p class="form-title">
+                            Sign In</p>
+                        <form class="login" action="" method="post">
+                        <input class="inputs" type="text" placeholder="Email" />
+                        <input class="inputs" type="password" placeholder="Password" />
+                        <input type="submit" value="Sign In" class="btn btn-primary submits" />
+                        <div class="remember-forgot">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" />
+                                            Remember Me
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 forgot-pass-content">
+                                    <a href="javascription:void(0)" class="forgot-pass">Forgot Password</a>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </main>
+    </div>
+{% endblock %}

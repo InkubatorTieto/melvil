@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <main role="main" class="inner cover">
+        <div class="container my_container register_container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="wrap">
+                        <p class="form-title">
+                            Register</p>
+                        <form class="login" action="" method="post">
+                            <input class="inputs" type="text" placeholder="Email" />
+                            <input class="inputs" type="text" placeholder="First Name" />
+                            <input class="inputs" type="text" placeholder="Last Name" />
+                            <input class="inputs" type="password" placeholder="Password" />
+                            <input class="inputs" type="password" placeholder="Confirm Password" />
+                            <input type="submit" value="Register" class="btn btn-primary submits" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </main>
+    </div>
+{% endblock %}

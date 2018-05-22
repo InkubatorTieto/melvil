@@ -4,3 +4,6 @@ env
 *.pyc
 *.*~
 data/
+ENV/
+.pytest_cache/
+.cache/
