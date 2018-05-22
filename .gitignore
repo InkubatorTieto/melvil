@@ -5,3 +5,5 @@ env
 *.*~
 data/
 ENV/
+.pytest_cache/
+.cache/
