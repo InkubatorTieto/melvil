@@ -35,7 +35,6 @@ def test_users(session):
     session.commit()
 
     assert User.query.count() == 10, "db does not contain 10 Users"
-
     users = User.query.all()
     for u in users:
         u.roles.append(role_user)
@@ -61,7 +60,6 @@ def test_books(session):
             for c in copies:
                 assert c in b.copies, "copy not added to book copy field"
                 assert c.library_item is b, "copy reference to book is wrong"
-
         session.commit()
 
         assert Book.query.filter(Book.authors.contains(a)).count() == a.id
@@ -80,7 +78,6 @@ def test_magazine(session):
         for c in copies:
             assert c in m.copies, "copy not added to magazine copy field"
             assert c.library_item is m, "copy reference to magazine is wrong"
-
         session.commit()
 
 

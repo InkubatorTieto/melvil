@@ -2,7 +2,6 @@ from app import db
 
 
 class Copy(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     asset_code = db.Column(db.String(8), unique=True)
     library_item_id = db.Column(db.Integer,
@@ -11,19 +10,31 @@ class Copy(db.Model):
     library_item = db.relationship('LibraryItem',
                                    foreign_keys=library_item_id,
                                    uselist=False,
-                                   backref=db.backref('copies',
-                                                      lazy='select',
-                                                      cascade='all, delete-orphan'))
+                                   backref=db.backref(
+                                       'copies',
+                                       lazy='select',
+                                       cascade='all, delete-orphan'))
     shelf = db.Column(db.String(56))
     has_cd_disk = db.Column(db.Boolean)
     rental_logs = db.relationship('RentalLog',
-                                  backref=db.backref('copy',
-                                                     uselist=False),
                                   lazy='dynamic',
-                                  cascade='all, delete-orphan')
+                                  cascade='all, delete-orphan',
+                                  backref=db.backref(
+                                      'copy',
+                                      uselist=False))
+
+    def __str__(self):
+        return "Copy asset_code: {}, type/title: {}/{}".format(
+            self.asset_code,
+            self.library_item.type,
+            self.library_item.title
+        )
 
     def __repr__(self):
-        return "<Copy: {} library_item_id={}>".format(self.asset_code, self.library_item_id)
+        return "<Copy: {} library_item_id={}>".format(
+            self.asset_code,
+            self.library_item_id
+        )
 
 
 class RentalLog(db.Model):
@@ -38,13 +49,20 @@ class RentalLog(db.Model):
     return_time = db.Column(db.DateTime)
     returned = db.Column(db.Boolean)
 
+    def __str__(self):
+        return "RENTAL LOG: user: {} copy: {}".format(
+            self.user.full_name,
+            self.copy.asset_code
+        )
+
     def __repr__(self):
-        return "<RentalLog: user_id={} copy_id={}>".\
-            format(self.user_id, self.copy_id)
+        return "<RentalLog: user_id={} copy_id={}>".format(
+            self.user_id,
+            self.copy_id
+        )
 
 
 class Tag(db.Model):
-
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
@@ -63,7 +81,6 @@ item_tags = db.Table('item_tags',
 
 
 class LibraryItem(db.Model):
-
     __tablename__ = 'library_item'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256))

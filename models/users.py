@@ -33,11 +33,15 @@ class User(db.Model, UserMixin):
                                   lazy='dynamic',
                                   cascade='all, delete-orphan')
 
+    @property
+    def full_name(self):
+        return "{} {}".format(self.first_name, self.surname)
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "User: {} {} {}". \
+        return "<User: {} {} role={}>". \
             format(self.first_name, self.surname, self.roles)
 
 
