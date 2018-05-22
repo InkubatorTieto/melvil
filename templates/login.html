@@ -10,16 +10,22 @@
                         <p class="form-title">
                             Sign In</p>
                         <form class="login" action="" method="post">
-                        <input class="inputs" type="text" placeholder="Email" />
-                        <input class="inputs" type="password" placeholder="Password" />
-                        <input type="submit" value="Sign In" class="btn btn-primary submits" />
+                            {{ form.hidden_tag() }}
+                            {{ form.email }}
+                            {% for error in error['email'] %}
+                                {{error}}
+                            {% endfor %}
+                            {{ form.password }}
+                            {% for error in error['password'] %}
+                                {{error}}
+                            {% endfor %}
+                            {{ form.submit }}
                         <div class="remember-forgot">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" />
-                                            Remember Me
+                                            {{ form.remember_me() }} {{ form.remember_me.label }}
                                         </label>
                                     </div>
                                 </div>

@@ -10,12 +10,24 @@
                         <p class="form-title">
                             Register</p>
                         <form class="login" action="" method="post">
-                            <input class="inputs" type="text" placeholder="Email" />
-                            <input class="inputs" type="text" placeholder="First Name" />
-                            <input class="inputs" type="text" placeholder="Last Name" />
-                            <input class="inputs" type="password" placeholder="Password" />
-                            <input class="inputs" type="password" placeholder="Confirm Password" />
-                            <input type="submit" value="Register" class="btn btn-primary submits" />
+                            {{ form.email }}
+                            {% for error in error['email'] %}
+                                {{error}}
+                            {% endfor %}
+                            {{ form.first_name}}
+                            {% for error in error['first_name'] %}
+                                {{error}}
+                            {% endfor %}
+                            {{ form.surname }}
+                            {{ form.password }}
+                            {% for error in error['password'] %}
+                                {{error}}
+                            {% endfor %}
+                            {{ form.confirmPass }}
+                            {% for error in error['confirmPass'] %}
+                                {{error}}
+                            {% endfor %}
+                            {{ form.submit() }}
                         </form>
                     </div>
                 </div>

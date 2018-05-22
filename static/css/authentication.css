@@ -62,6 +62,11 @@ form
     outline: 0;
 }
 
+.message{
+    height: 100px;
+}
+
+
 .submits
 {
     width: 100%;
@@ -72,6 +77,7 @@ form
     outline: 0;
     cursor: pointer;
     letter-spacing: 1px;
+    margin-bottom: 30px;
 }
 
 .submits:hover
