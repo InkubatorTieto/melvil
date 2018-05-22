@@ -22,14 +22,14 @@ def index():
 def login():
     if request.method == 'GET':
         form = LoginForm()
-        return render_template('login.html', form=form)
+        return render_template('login.html', form=form, error=form.errors)
     else:
         form = LoginForm()
         try:
 
             if form.validate_on_submit():
-                data = User.query.filter_by(email=request.form['email']).first()
-                if data is not None and check_password_hash(data.password_hash,  request.form['password']):
+                data = User.query.filter_by(email=form.email.data).first()
+                if data is not None and check_password_hash(data.password_hash, form.password.data):
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
@@ -38,7 +38,7 @@ def login():
                     return 'Login failed' # Łukasz napisze do tego komunikat
             else:
                 return render_template('login.html', title='Sign In', form=form, error=form.errors)
-        except request.exceptions.RequestException as e:
+        except:
             return 'Something went wrong'
 
 
@@ -46,10 +46,10 @@ def login():
 def registration():
     if request.method == 'GET':
         form = RegistrationForm()
-        return render_template('registration.html', form=form)
+        return render_template('registration.html', form=form, error=form.errors)
     else:
         form = RegistrationForm()
-        if form.validate():
+        if form.validate_on_submit():
             try:
                 new_user = User(email=form.email.data, first_name=form.first_name.data, surname=form.surname.data,
                                 password_hash=generate_password_hash(form.password.data))
@@ -91,6 +91,8 @@ def contact():
             None)
         return redirect('/contact')
     return render_template('contact.html', title='Contact', form=form, error=form.errors)
+
+
 @library.route('/logout')
 def logout():
     return render_template('index.html')
