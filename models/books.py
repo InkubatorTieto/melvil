@@ -44,8 +44,12 @@ class Author(db.Model):
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
 
-    def __str__(self):
+    @property
+    def full_name(self):
         return "{} {}".format(self.first_name, self.last_name)
+
+    def __str__(self):
+        return "{}".format(self.full_name)
 
     def __repr__(self):
         return "<Author: {} {}>".format(self.first_name, self.last_name)

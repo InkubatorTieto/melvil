@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from mimesis import Generic
 from random import randint
 
@@ -36,7 +38,7 @@ def populate_books(n=30, authors=None, tags=None):
         language=g.person.language(),
         tags=tags if tags else [],
         description=g.text.sentence()
-    ) for i in range(n)]
+    ) for _ in range(n)]
 
 
 def populate_magazines(n=10, tags=None):
@@ -68,7 +70,6 @@ def populate_authors(n=40):
     ) for _ in range(n)]
 
 
-# todo: unique tags
 def populate_tags(n=15):
     return [Tag(
         name=g.text.word()
@@ -79,7 +80,7 @@ def populate_rental_logs(copy_id, user_id, n=30):
     return [RentalLog(
         copy_id=copy_id,
         user_id=user_id,
-        borrow_time=g.datetime.datetime(),
+        borrow_time=datetime.now(),
         return_time=g.datetime.datetime(),
         returned=g.development.boolean()
     ) for _ in range(n)]
