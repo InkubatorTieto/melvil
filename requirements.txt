@@ -9,8 +9,7 @@ Jinja2==2.10
 MarkupSafe==1.0
 pytest==3.5.1
 pytest-flask==0.10.0
+psycopg2
 raven==6.8.0
 Werkzeug==0.14.1
-psycopg2
-gunicorn==19.7.1
 whitenoise==3.2.2
