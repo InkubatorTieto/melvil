@@ -16,12 +16,7 @@ def create_app():
     app.register_blueprint(library)
 
     db.init_app(app)
-
     sentry.init_app(app)
 
-    try:
-        1 / 0
-    except ZeroDivisionError:
-        client.captureException()
 
     return app
