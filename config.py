@@ -33,6 +33,20 @@ class ProdConfig(Config):
 
 class TestConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////Windows/Temp/app.db'
     TESTING = True
     DEBUG = True
+    DB_ENGINE = getenv('TEST_DB_ENGINE')
+    DB_USER = getenv('TEST_DB_USER')
+    DB_PASSWORD = getenv('TEST_DB_PASSWORD')
+    DB_HOST = getenv('TEST_DB_HOST')
+    DB_PORT = getenv('TEST_DB_PORT')
+    DB_NAME = getenv('TEST_DB_NAME')
+
+    SQLALCHEMY_DATABASE_URI = '{0}://{1}:{2}@{3}:{4}/{5}'.format(
+        DB_ENGINE,
+        DB_USER,
+        DB_PASSWORD,
+        DB_HOST,
+        DB_PORT,
+        DB_NAME,
+    )
