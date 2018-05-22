@@ -113,6 +113,13 @@ form.login a:hover
     color: rgba(255,255,255,1);
 }
 
+form.login .form_errors{
+    font-style: italic;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255, 26, 26,1);
+}
+
 
 
 

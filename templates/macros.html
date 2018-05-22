@@ -5,3 +5,15 @@
     <a  class="nav-link" href="{{url_for(function)}}">{{name}}</a>
 {% endif %}
 {% endmacro %}
+
+
+{% macro input(form, errors) %}
+{{ form }}
+{% for error in errors %}
+<p class="form_errors">{{error}}</p>
+{% endfor %}
+{% endmacro %}
+
+
+
+

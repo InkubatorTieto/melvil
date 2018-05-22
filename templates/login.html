@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
+{% from "macros.html" import input with context %}
    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
         <div class="container my_container">
@@ -11,14 +12,8 @@
                             Sign In</p>
                         <form class="login" action="" method="post">
                             {{ form.hidden_tag() }}
-                            {{ form.email }}
-                            {% for error in error['email'] %}
-                                {{error}}
-                            {% endfor %}
-                            {{ form.password }}
-                            {% for error in error['password'] %}
-                                {{error}}
-                            {% endfor %}
+                            {{ input( form.email ,error['email'])}}
+                            {{ input( form.password ,error['password'])}}
                             {{ form.submit }}
                         <div class="remember-forgot">
                             <div class="row">
