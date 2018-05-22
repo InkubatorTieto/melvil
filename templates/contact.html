@@ -1,16 +1,7 @@
 {% extends "base.html" %}
-
-{% block title %}{{title}}{% endblock %}
+{% block title %}Contact{% endblock %}
 {% block content %}
-    <h1>Contact</h1>
-{% with messages = get_flashed_messages(category_filter=['ok']) %}
-{% if messages %}
-<p class = 'ok'>
-    {{ messages[0] }}
-</p>
-{% endif %}
-{% endwith %}
- <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
         <div class="container my_container register_container">
             <div class="row">
@@ -18,47 +9,13 @@
                     <div class="wrap">
                         <p class="form-title">
                             Contact Us</p>
-                            <form action="" method="post">
-                                 {{ form.hidden_tag() }}
-                                {{ form.csrf_token }}
-                                <p>
-                                    {{form.email.label}}<br>
-                                    {{form.email(size='100')}}
-                                    {% if error %}
-                                    <p class = "error">
-                                        {% for m in error['email'] %}
-                                        {{m}}
-                                        {% endfor %}
-                                    </p>
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {{form.title.label}}<br>
-                                    {{form.title(size='100')}}
-                                     {% if error %}
-                                    <p class = "error">
-                                        {% for m in error['title'] %}
-                                        {{m}}
-                                        {% endfor %}
-                                    </p>
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {{form.message.label}}<br>
-                                    {{form.message(rows='10', cols='100')}}
-                                     {% if error %}
-                                    <p class = "error">
-                                        {% for m in error['message'] %}
-                                        {{m}}
-                                        {% endfor %}
-                                    </p>
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {{form.send_message()}}
-                                </p>
-                            </form>
-                        </div>
+                        <form class="login" action="" method="post">
+                            {{ form.email }}
+                            {{ form.title }}
+                            {{ form.message }}
+                            {{ form.send_message() }}
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

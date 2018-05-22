@@ -11,3 +11,6 @@ __pycahce__/\.pytest_cache/v/cache/
 \.pytest_cache/v/cache/
 \.cache/v/cache/lastfailed
 models/.pytest_cache/
+
+.pytest_cache/
+.cache/

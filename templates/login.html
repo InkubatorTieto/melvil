@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
-
 {% block content %}
-{% if session['logged_in']%}
-    <p>You are already logged</p>
-{% else %}
    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
         <div class="container my_container">
@@ -13,39 +9,36 @@
                     <div class="wrap">
                         <p class="form-title">
                             Sign In</p>
-
-                            <form class="login" action="/login" method="post">
-                                {{ form.hidden_tag() }}
-                            <input type="text" placeholder="Email" name="email" value= "{{ request.form.email }}" />
-                                {% if error %}
-                                <p>
-                                    {{error['email'][0]}}
-                                </p>
-                                {% endif %}
-                            <input type="password" placeholder="Password" name="password" value= "{{  request.form.password }}" />
-                            <input type="submit" value="Sign In" name="submit" class="btn btn-primary" />
-                            </form>
-                            <div class="remember-forgot">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" />
-                                                Remember Me
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 forgot-pass-content">
-                                        <a href="javascription:void(0)" class="forgot-pass">Forgot Password</a>
+                        <form class="login" action="" method="post">
+                            {{ form.hidden_tag() }}
+                            {{ form.email }}
+                            {% for error in error['email'] %}
+                                {{error}}
+                            {% endfor %}
+                            {{ form.password }}
+                            {% for error in error['password'] %}
+                                {{error}}
+                            {% endfor %}
+                            {{ form.submit }}
+                        <div class="remember-forgot">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="checkbox">
+                                        <label>
+                                            {{ form.remember_me() }} {{ form.remember_me.label }}
+                                        </label>
                                     </div>
                                 </div>
+                                <div class="col-md-6 forgot-pass-content">
+                                    <a href="javascription:void(0)" class="forgot-pass">Forgot Password</a>
+                                </div>
                             </div>
-
+                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
       </main>
     </div>
-{% endif %}
 {% endblock %}
