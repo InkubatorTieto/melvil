@@ -1,3 +1,4 @@
-from .books import Book, Tag, Author, Copy
-from .users import Role, User
-from .library import RentalLog
+from models.books import Book, Author
+from models.users import Role, User
+from models.library import RentalLog, Copy, Tag, LibraryItem
+from models.magazines import Magazine

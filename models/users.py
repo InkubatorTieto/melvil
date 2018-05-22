@@ -26,7 +26,10 @@ class User(db.Model, UserMixin):
                             lazy='select',
                             backref=db.backref('users', lazy='select'))
     rental_logs = db.relationship('RentalLog',
-                                  backref=db.backref('users', lazy='joined'),
+                                  backref=db.backref('user',
+                                                     uselist=False,
+                                                     single_parent=True,
+                                                     lazy='joined'),
                                   lazy='dynamic',
                                   cascade='all, delete-orphan')
 

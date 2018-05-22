@@ -5,7 +5,7 @@ from sqlalchemy import event
 from config import TestConfig
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def app():
     """
     Returns flask app with context for testing.
@@ -19,19 +19,20 @@ def app():
     ctx.pop()
 
 
-@pytest.fixture(scope="module")
-def db():
+@pytest.fixture(scope="module", autouse=True)
+def db(app):
     """
     Returns session-wide initialised database.
     """
-    _db.drop_all()
     _db.create_all()
 
     yield _db
 
+    _db.drop_all()
 
-@pytest.fixture(scope="function", autouse=True)
-def session(app, db):
+
+@pytest.fixture(scope="module")
+def session(db):
     """
     Returns function-scoped session.
     """

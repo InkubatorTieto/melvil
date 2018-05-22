@@ -2,10 +2,25 @@ from random import randint
 
 from sqlalchemy import func
 
-from tests.populate import populate_users,\
-    populate_copies, populate_tags, populate_authors,\
-    populate_books, populate_rental_logs
-from models import Role, User, Author, Tag, Book, RentalLog
+from tests.populate import (
+    populate_users,
+    populate_copies,
+    populate_tags,
+    populate_authors,
+    populate_books,
+    populate_rental_logs,
+    populate_magazines
+)
+from models import (
+    Role,
+    User,
+    Author,
+    Tag,
+    Book,
+    Copy,
+    LibraryItem,
+    Magazine
+)
 
 
 def test_users(session):
@@ -33,39 +48,62 @@ def test_books(session):
     session.commit()
     assert Author.query.count() == 5, "db does not contain 5 authors"
 
-    tags = populate_tags(n=10)
-    session.add_all(tags)
-    session.commit()
-    assert Tag.query.count() == 10, "db does not contain 10 tags"
-
     for a in Author.query.all():
         books = populate_books(n=a.id, authors=[a])
         session.add_all(books)
         session.commit()
         for b in books:
             assert a in b.authors, "authors not added to book authors field"
+
             copies = populate_copies(b, n=randint(1, 3))
             session.add_all(copies)
+            session.commit()
             for c in copies:
-                assert c in b.copies, "copies not added to book copies field"
-                assert c.book is b, "copy reference to book is wrong"
+                assert c in b.copies, "copy not added to book copy field"
+                assert c.library_item is b, "copy reference to book is wrong"
+
         session.commit()
 
         assert Book.query.filter(Book.authors.contains(a)).count() == a.id
+
+
+def test_magazine(session):
+    magazines = populate_magazines()
+    session.add_all(magazines)
+    session.commit()
+    assert Magazine.query.count() == 10, "db does not contain 10 magazines"
+
+    for m in magazines:
+        copies = populate_copies(m, n=randint(1, 2))
+        session.add_all(copies)
+        session.commit()
+        for c in copies:
+            assert c in m.copies, "copy not added to magazine copy field"
+            assert c.library_item is m, "copy reference to magazine is wrong"
+
+        session.commit()
+
+
+def test_library(session):
+    tags = populate_tags(n=10)
+    session.add_all(tags)
+    session.commit()
+    assert Tag.query.count() == 10, "db does not contain 10 tags"
 
     for t in Tag.query.all():
         book = Book.query.order_by(func.random()).first()
         book.tags.append(t)
         session.commit()
-        assert t.books != [], "tags book field is empty"
+        assert t.library_items != [], "tags item field is empty"
         assert t in book.tags, "tags not added to book tags field"
 
-
-def test_library(session):
-    b = Book.query.order_by(func.random()).first()
+    c = Copy.query.order_by(func.random()).first()
     u = User.query.order_by(func.random()).first()
-    logs = populate_rental_logs(b.id, u.id, n=1)
-    session.add_all(logs)
+    log = populate_rental_logs(c.id, u.id, n=1)[0]
+    session.add(log)
     session.commit()
-    assert RentalLog.book_copy_id != [], "rental log does not contain book id"
-    assert RentalLog.user_id != [], "rental log does not contain user id"
+    assert log.copy_id == c.id, "rental log has wrong copy id"
+    assert log.user_id == u.id, "rental log has wrong user id"
+
+    i = LibraryItem.query.get(c.library_item_id)
+    assert log.copy in i.copies, "copy relates to wrong item"
