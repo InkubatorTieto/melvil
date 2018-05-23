@@ -12,7 +12,7 @@ Melvil application for Tieto Python Incubator.
 docker-compose up
 ```
 
-(d) Go to: localhost:5000  
+(d) Go to: localhost:8000  
 
 ## Running application:  
 
@@ -20,53 +20,14 @@ docker-compose up
 docker-compose run web
 ```
 
-## Deploy the app
+## Heroku configuration  
 
-(a) [Register on Heroku](https://devcenter.heroku.com/)  <br/>
-(b) [Download and install Heroku CLI.](https://devcenter.heroku.com/articles/heroku-cli)  <br/>
-(c) Clone repository from: git@github.com: InkubatorTieto/melvil.git  <br/>
+```
+[Heroku About](docs/Heroku/Heroku.md)
+```
+## Using Travis CI:  
 
-```bash
-$ git clone https://github.com/InkubatorTieto/melvil.git
 ```
 
-```bash
-$ cd melvil
-```
-
-In order to deploy app you must have either admin permission (login & password) or be one of the collaborators in the project
-
-(d) In terminal: <br/>
-
-```bash
-$ heroku login
-```
-
-Set heroku remote repo (if collaborator)
-```
-
-$ heroku git:remote -a incubatormelvil
-```
-Log in to container registry
-
-```bash
-$ heroku container:login
-```
-
-To deploy app type:
-
-```bash
-$ heroku container:push web -a incubatormelvil
-```
-
-and to open it:
-
-```bash
-$ heroku open -a incubatormelvil
-```
-
-To run heroku locally type:
-
-```bash
-$ heroku local web -f Procfile.windows
+[Travis CI short manual](docs/Travis_CI/Travis_ci.md)
 ```
