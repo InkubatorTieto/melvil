@@ -1,5 +1,4 @@
 from os import getenv
-import local_settings
 
 
 class Config(object):
@@ -31,12 +30,12 @@ class DevConfig(Config):
 
     # email server
     MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 465
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
-    MAIL_USERNAME = 'tieto.library@gmail.com'
-    MAIL_PASSWORD = local_settings.login['password']
-    ADMINS = ['tieto.library@gmail.com']
+    MAIL_PORT = 25
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = getenv('MAIL_PASSWORD')
+    ADMINS = [getenv('MAIL_USERNAME')]
 
 
 class ProdConfig(Config):

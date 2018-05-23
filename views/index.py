@@ -27,12 +27,10 @@ def register():
                                 first_name=form.first_name.data,
                                 surname=form.surname.data,
                                 password_hash=generate_password_hash(form.password.data))
-                print("TO JA:", new_user)
                 db.session.add(new_user)
                 db.session.commit()
-                print(new_user.email)
                 send_confirmation_email(new_user.email)
-            except:
+            except RuntimeError:
                 return 'Registration failed'
         return 'The registration was successful'
 
@@ -42,9 +40,9 @@ def confirm_email(token):
     try:
         confirm_serializer = URLSafeTimedSerializer(DevConfig.SECRET_KEY)
         email = confirm_serializer.loads(token,
-                                         salt=DevConfig.SECURITY_PASSWORD_SALT,
+                                         salt='email-confirmation-salt',
                                          max_age=3600)
-    except:
+    except RuntimeError:
         return 'The confirmation link is invalid or has expired.', 'error'
 
     user = User.query.filter_by(email=email).first()
@@ -56,3 +54,6 @@ def confirm_email(token):
         db.session.add(user)
         db.session.commit()
         return 'Thank you for confirming your email address!'
+
+
+
