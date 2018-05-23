@@ -10,3 +10,6 @@ tests/.pytest_cache/
 .cache/
 .pytest_cache
 models/.pytest_cache/
+
+.pytest_cache/
+.cache/

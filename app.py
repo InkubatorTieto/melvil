@@ -19,3 +19,5 @@ def create_app():
     mail.init_app(app)
 
     return app
+
+import init_db

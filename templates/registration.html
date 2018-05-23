@@ -1,17 +1,8 @@
 {% extends "base.html" %}
-
-{% block title %}{{title}}{% endblock %}
-
+{% block title %}Register{% endblock %}
 {% block content %}
-<h1>Register</h1>
-{% with messages = get_flashed_messages(category_filter=['ok']) %}
-{% if messages %}
-<p class = 'ok'>
-    {{ messages[0] }}
-</p>
-{% endif %}
-{% endwith %}
- <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+{% from "macros.html" import input with context %}
+   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
         <div class="container my_container register_container">
             <div class="row">
@@ -19,66 +10,16 @@
                     <div class="wrap">
                         <p class="form-title">
                             Register</p>
-                            <form action="" method="post">
-                                {{ form.hidden_tag() }}
-                                <p>
-                                    {{ form.email.label }}<br>
-                                    {{ form.email(size=32) }}
-                                     {% if error %}
-                                    <p class = "error">
-                                        {% for m in error['email'] %}
-                                        {{m}}
-                                        {% endfor %}
-                                    </p>
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {{ form.first_name.label }}<br>
-                                    {{ form.first_name(size=32) }}
-                                     {% if error %}
-                                    <p class = "error">
-                                        {% for m in error['first_name'] %}
-                                        {{m}}
-                                        {% endfor %}
-                                    </p>
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {{ form.surname.label }}<br>
-                                    {{ form.surname(size=32) }}
-                                     {% if error %}
-                                    <p class = "error">
-                                        {% for m in error['surname'] %}
-                                        {{m}}
-                                        {% endfor %}
-                                    </p>
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {{ form.password.label }}<br>
-                                    {{ form.password(size=32) }}
-                                     {% if error %}
-                                    <p class = "error">
-                                        {% for m in error['password'] %}
-                                        {{m}}
-                                        {% endfor %}
-                                    </p>
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {{ form.confirmPass.label }}<br>
-                                    {{ form.confirmPass(size=32) }}
-                                     {% if error %}
-                                    <p class = "error">
-                                        {% for m in error['password'] %}
-                                        {{m}}
-                                        {% endfor %}
-                                    </p>
-                                    {% endif %}
-                                </p>
-                                <p>{{ form.submit() }}</p>
-                            </form>
-                        </div>
+                        <form class="login" action="" method="post">
+                            {{ form.hidden_tag() }}
+                            {{ input( form.email ,error['email'])}}
+                            {{ input( form.first_name ,error['first_name'])}}
+                            {{ input( form.surname ,error['surname'])}}
+                            {{ input( form.password ,error['password'])}}
+                            {{ input( form.confirmPass ,error['confirmPass'])}}
+                            {{ form.submit() }}
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
