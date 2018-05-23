@@ -42,7 +42,7 @@ To see server logs
 $ heroku logs
 ```
 
-# Heroku on localhost  
+### Heroku on localhost  
 
 \*NIX OS  
 ```bash
@@ -54,7 +54,7 @@ Windows OS:
 PS C:\> heroku local web -f Procfile.windows
 ```
 
-# More info about multi-environment deployment (staging, production)  
+### More info about multi-environment deployment (staging, production)  
 [here](https://devcenter.heroku.com/articles/multiple-environments)  
-# Pipelines  
+### Pipelines  
 [Pipelines](https://devcenter.heroku.com/articles/pipelines)
