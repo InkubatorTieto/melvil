@@ -24,8 +24,11 @@ def index():
 @library.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        form = LoginForm()
-        return render_template('login.html', form=form, error=form.errors)
+        if 'logged_in' in session:
+            return "You are already logged"
+        else:
+            form = LoginForm()
+            return render_template('login.html', form=form, error=form.errors)
     else:
         form = LoginForm()
         try:
