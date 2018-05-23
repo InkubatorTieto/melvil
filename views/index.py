@@ -99,9 +99,4 @@ def contact():
 @library.route('/logout')
 def logout():
     session.clear()
-    #session.pop()
-    # session.pop('logged_in', None)
-    # session.pop('id', None)
-    # session.pop('email', None)
     return render_template('index.html')
-
