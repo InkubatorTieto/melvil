@@ -1,7 +1,7 @@
 from config import DevConfig
 from flask import render_template, request, session, redirect, flash
 from flask_login import LoginManager
-from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm
+from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm, ForgotPass
 from werkzeug.security import generate_password_hash, check_password_hash
 from send_email.emails import send_email
 from . import library
@@ -102,3 +102,8 @@ def contact():
 def logout():
     session.clear()
     return render_template('index.html')
+
+
+@library.route('/forgotPass',  methods=['GET', 'POST'])
+def restore_password():
+    return render_template('forgot_pass.html', form=ForgotPass())
