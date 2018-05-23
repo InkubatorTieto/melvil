@@ -22,12 +22,8 @@ docker-compose run web
 
 ## Heroku configuration  
 
-```
 [Heroku About](docs/Heroku/Heroku.md)
-```
+
 ## Using Travis CI:  
 
-```
-
 [Travis CI short manual](docs/Travis_CI/Travis_ci.md)
-```
