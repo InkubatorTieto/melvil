@@ -1,5 +1,15 @@
+from config import DevConfig
+from flask import render_template, request, session, redirect, flash
+from flask_login import LoginManager
+from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm
+from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import URLSafeTimedSerializer
 from flask import render_template
 from . import library
+from models.user import User
+from init_db import db
+from send_email import send_confirmation_email
+import os
 from send_email.emails import *
 
 
@@ -22,7 +32,7 @@ def login():
 
             if form.validate_on_submit():
                 data = User.query.filter_by(email=form.email.data).first()
-                if data is not None and check_password_hash(data.password_hash, form.password.data):
+                if data is not None and check_password_hash(data.password_hash, form.password.data) and data.active:
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
@@ -48,6 +58,7 @@ def registration():
                                 password_hash=generate_password_hash(form.password.data))
                 db.session.add(new_user)
                 db.session.commit()
+                send_confirmation_email(new_user.email)
             except request.exceptions.RequestException as e:
                 return 'Registration failed'
         else:
@@ -93,27 +104,6 @@ def contact():
 def logout():
     session.clear()
     return render_template('index.html')
-
-
-@library.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'GET':
-        form = RegistrationForm()
-        return render_template('registration.html', form=form)
-    else:
-        form = RegistrationForm()
-        if form.validate():
-            try:
-                new_user = User(email=form.email.data,
-                                first_name=form.first_name.data,
-                                surname=form.surname.data,
-                                password_hash=generate_password_hash(form.password.data))
-                db.session.add(new_user)
-                db.session.commit()
-                send_confirmation_email(new_user.email)
-            except RuntimeError:
-                return 'Registration failed'
-        return 'The registration was successful'
 
 
 @library.route('/confirm/<token>')
