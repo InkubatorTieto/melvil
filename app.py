@@ -13,7 +13,9 @@ sentry = Sentry()
 client = Client()
 
 
+
 def create_app(config=DevConfig):
+
     app = Flask(__name__)
     app.config.from_object(config)
     app.register_blueprint(library)
@@ -25,4 +27,8 @@ def create_app(config=DevConfig):
     with app.app_context():
         db.create_all()
 
+    ##
+    from xlsx_reader import insertDb
+    insertDb()
+    ##
     return app
