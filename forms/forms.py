@@ -52,3 +52,9 @@ class ContactForm(FlaskForm):
 class SearchForm(FlaskForm):
     query = StringField('Search')
     submit = SubmitField('Search')
+
+
+class ForgotPass(FlaskForm):
+    email = StringField('email', validators=[Email()], render_kw=({'class': 'inputs', 'placeholder': 'Email'}))
+    submit = SubmitField('Sign In',
+                         render_kw=({'class': 'btn btn-primary submits'}
