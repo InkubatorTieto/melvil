@@ -14,7 +14,10 @@ def create_app():
     app.config.from_object(DevConfig)
     app.register_blueprint(library)
     app.secret_key = os.urandom(24)
+
     db.init_app(app)
+
+
     login_manager.init_app(app)
     mail.init_app(app)
 

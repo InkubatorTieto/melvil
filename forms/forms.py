@@ -17,9 +17,9 @@ class RegistrationForm(FlaskForm):
     surname = StringField('Surname', validators=[DataRequired()], render_kw=({'class': 'inputs',
                                                                               'placeholder': 'Surname'}))
     password = PasswordField('Password', validators=[DataRequired(),
-                                                     EqualTo('confirmPass', message='Passwords must match.')],
+                                                     EqualTo('confirm_pass', message='Passwords must match.')],
                              render_kw=({'class': 'inputs', 'placeholder': 'Password'}))
-    confirmPass = PasswordField('Confirm password', validators=[DataRequired()],
+    confirm_pass = PasswordField('Confirm password', validators=[DataRequired()],
                                 render_kw=({'class': 'inputs', 'placeholder': 'Confirm Password'}))
     submit = SubmitField('Sign In', render_kw=({'class': 'btn btn-primary submits'}))
 

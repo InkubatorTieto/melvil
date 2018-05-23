@@ -22,6 +22,8 @@ def index():
 def login():
     if request.method == 'GET':
         form = LoginForm()
+        for u in User.query.all():
+            print(u)
         return render_template('login.html', form=form, error=form.errors)
     else:
         form = LoginForm()
