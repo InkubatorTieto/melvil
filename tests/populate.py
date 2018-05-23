@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import pytz
 from mimesis import Generic
 from random import randint
 
@@ -80,7 +80,7 @@ def populate_rental_logs(copy_id, user_id, n=30):
     return [RentalLog(
         copy_id=copy_id,
         user_id=user_id,
-        borrow_time=datetime.now(),
-        return_time=g.datetime.datetime(),
+        borrow_time=datetime.now(tz=pytz.utc),
+        return_time=datetime.now(tz=pytz.utc),
         returned=g.development.boolean()
     ) for _ in range(n)]

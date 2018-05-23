@@ -1,5 +1,4 @@
 from random import randint
-
 from sqlalchemy import func
 
 from tests.populate import (
@@ -19,7 +18,7 @@ from models import (
     Book,
     Copy,
     LibraryItem,
-    Magazine
+    Magazine,
 )
 
 

@@ -1,3 +1,5 @@
+import pytz
+
 from app import db
 
 
@@ -45,9 +47,32 @@ class RentalLog(db.Model):
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.id'),
                         nullable=False)
-    borrow_time = db.Column(db.DateTime)
-    return_time = db.Column(db.DateTime)
+    _borrow_time = db.Column(db.DateTime)
+    _return_time = db.Column(db.DateTime)
+    reserved = db.Column(db.Boolean)
     returned = db.Column(db.Boolean)
+
+    @property
+    def borrow_time(self):
+        return self._borrow_time.replace(tzinfo=pytz.utc).\
+            astimezone(tz=pytz.timezone('Europe/Warsaw'))
+
+    @borrow_time.setter
+    def borrow_time(self, dt):
+        if dt.tzinfo is None:
+            raise ValueError("borrow_time has to be timezone aware")
+        self._borrow_time = dt.astimezone(tz=pytz.utc)
+
+    @property
+    def return_time(self):
+        return self._return_time.replace(tzinfo=pytz.utc). \
+            astimezone(tz=pytz.timezone('Europe/Warsaw'))
+
+    @return_time.setter
+    def return_time(self, dt):
+        if dt.tzinfo is None:
+            raise ValueError("return_time has to be timezone aware")
+        self._return_time = dt.astimezone(tz=pytz.utc)
 
     def __str__(self):
         return "RENTAL LOG: user: {} copy: {}".format(
