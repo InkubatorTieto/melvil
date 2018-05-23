@@ -7,7 +7,6 @@ data/
 ENV/
 views/__pycache__
 tests/.pytest_cache/
-__pycahce__/\.pytest_cache/v/cache/
-\.pytest_cache/v/cache/
-\.cache/v/cache/lastfailed
+.cache/
+.pytest_cache
 models/.pytest_cache/
