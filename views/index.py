@@ -144,7 +144,6 @@ def reset():
             return 'Please check your email for a password reset link.', 'success'
         else:
             return 'Your email address must be confirmed before attempting a password reset.', 'error'
-        return redirect(url_for('library.login'))
 
     return render_template('forgot_pass.html', form=form)
 
