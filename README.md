@@ -20,7 +20,7 @@ docker-compose up
 docker-compose run web
 ```  
 
-## Running tests:
+## Running database tests:
 
 ```bash
 docker-compose -f test-docker-compose.yml up --abort-on-container-exit

@@ -106,19 +106,15 @@ def test_library(session):
 
 
 def test_delete(session):
-    copies = []
-    users = []
     logs = []
+
+    copies = Copy.query.order_by(func.random()).limit(3).all()
+    users = User.query.order_by(func.random()).limit(3).all()
     for i in range(3):
-        c = Copy.query.order_by(func.random()).first()
-        u = User.query.order_by(func.random()).first()
-        log = populate_rental_logs(c.id, u.id, n=1)[0]
+        log = populate_rental_logs(copies[i].id, users[i].id, n=1)[0]
         session.add(log)
         session.commit()
-        copies.append(c)
-        users.append(u)
         logs.append(log)
-
     num_users = User.query.count()
     num_copies = Copy.query.count()
     num_logs = RentalLog.query.count()
@@ -126,33 +122,33 @@ def test_delete(session):
     session.delete(users[0])
     session.commit()
     num_users = num_users - 1
-    assert User.query.count() == num_users,\
+    assert User.query.count() == num_users, \
         "number of users after User delete is wrong"
-    assert Copy.query.count() == num_copies,\
+    assert Copy.query.count() == num_copies, \
         "number of copies after User delete is wrong"
     num_logs = num_logs - 1
-    assert RentalLog.query.count() == num_logs,\
+    assert RentalLog.query.count() == num_logs, \
         "number of rental logs after User delete is wrong"
 
     session.delete(copies[1])
     session.commit()
-    assert User.query.count() == num_users,\
+    assert User.query.count() == num_users, \
         "number of users after Copy delete is wrong"
     num_copies = num_copies - 1
-    assert Copy.query.count() == num_copies,\
+    assert Copy.query.count() == num_copies, \
         "number of copies after Copy delete is wrong"
     num_logs = num_logs - 1
-    assert RentalLog.query.count() == num_logs,\
+    assert RentalLog.query.count() == num_logs, \
         "number of rental logs after Copy delete is wrong"
 
     session.delete(logs[2])
     session.commit()
-    assert User.query.count() == num_users,\
+    assert User.query.count() == num_users, \
         "number of users after RentalLog delete is wrong"
-    assert Copy.query.count() == num_copies,\
+    assert Copy.query.count() == num_copies, \
         "number of copies after RentalLog delete is wrong"
     num_logs = num_logs - 1
-    assert RentalLog.query.count() == num_logs,\
+    assert RentalLog.query.count() == num_logs, \
         "number of rental logs after RentalLog delete is wrong"
 
     b = Book.query.order_by(func.random()).first()
@@ -166,26 +162,26 @@ def test_delete(session):
 
     session.delete(t)
     session.commit()
-    assert Book.query.count() == num_books,\
+    assert Book.query.count() == num_books, \
         "number of books after Tag delete is wrong"
-    assert Magazine.query.count() == num_magazines,\
+    assert Magazine.query.count() == num_magazines, \
         "number of magazines after Tag delete is wrong"
-    num_tags = num_tags-1
-    assert Tag.query.count() == num_tags,\
+    num_tags = num_tags - 1
+    assert Tag.query.count() == num_tags, \
         "number of tags after Tag delete is wrong"
 
     copy_b = b.copies[0].id
     session.delete(b)
     session.commit()
-    num_books = num_books-1
-    assert Book.query.count() == num_books,\
+    num_books = num_books - 1
+    assert Book.query.count() == num_books, \
         "number of books after Book delete is wrong"
-    assert Magazine.query.count() == num_magazines,\
+    assert Magazine.query.count() == num_magazines, \
         "number of magazines after Book delete is wrong"
-    assert Tag.query.count() == num_tags,\
+    assert Tag.query.count() == num_tags, \
         "number of tags after Book delete is wrong"
-    num_copies = num_copies-len(b.copies)
-    assert Copy.query.count() == num_copies,\
+    num_copies = num_copies - len(b.copies)
+    assert Copy.query.count() == num_copies, \
         "number of copies after Book delete is wrong"
     assert Copy.query.get(copy_b) is None, \
         "there are remaining copies without book parent"
@@ -193,15 +189,15 @@ def test_delete(session):
     copy_m = m.copies[0].id
     session.delete(m)
     session.commit()
-    assert Book.query.count() == num_books,\
+    assert Book.query.count() == num_books, \
         "number of books after Magazine delete is wrong"
-    num_magazines = num_magazines-1
-    assert Magazine.query.count() == num_magazines,\
+    num_magazines = num_magazines - 1
+    assert Magazine.query.count() == num_magazines, \
         "number of magazines after Magazine delete is wrong"
-    assert Tag.query.count() == num_tags,\
+    assert Tag.query.count() == num_tags, \
         "number of tags after Magazine delete is wrong"
     num_copies = num_copies - len(m.copies)
-    assert Copy.query.count() == num_copies,\
+    assert Copy.query.count() == num_copies, \
         "number of copies after Magazine delete is wrong"
-    assert Copy.query.get(copy_m) is None,\
+    assert Copy.query.get(copy_m) is None, \
         "there are remaining copies without magazine parent"
