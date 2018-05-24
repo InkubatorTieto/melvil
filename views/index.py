@@ -134,16 +134,16 @@ def confirm_email(token):
 def reset():
     form = ForgotPass()
     if form.validate_on_submit():
-        try:
-            user = User.query.filter_by(email=form.email.data).first_or_404()
-        except ValueError:
-            return 'Invalid email address!', 'error'
 
-        if user.active:
-            send_password_reset_email(user.email)
-            return 'Please check your email for a password reset link.', 'success'
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is None:
+            return 'Invalid email address!'
         else:
-            return 'Your email address must be confirmed before attempting a password reset.', 'error'
+            if user.active:
+                send_password_reset_email(user.email)
+                return 'Please check your email for a password reset link.', 'success'
+            else:
+                return 'Your email address must be confirmed before attempting a password reset.', 'error'
 
     return render_template('forgot_pass.html', form=form)
 
