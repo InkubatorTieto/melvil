@@ -1,0 +1,126 @@
+/*!
+ * Licensed under the MIT license - http://opensource.org/licenses/MIT
+ * @author BhaumikPatel
+ * @site https://bootsnipp.com/snippets/featured/full-page-sign-in
+ */
+
+/*
+Placeholders
+*/
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgba(224,224,224,1);
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgba(224,224,224,1);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgba(224,224,224,1);
+}
+
+/*
+Forms
+*/
+.my_message_input{
+    height: 40px;
+}
+p.form-title
+{
+    font-family: 'Open Sans' , sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    color: rgba(255,255,255,1);
+    margin-top: 5%;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+}
+
+form
+{
+    width: 250px;
+    margin: 0 auto;
+}
+
+.inputs
+{
+    width: 100%;
+    margin: 0;
+    padding: 5px 10px;
+    background: 0;
+    border: 0;
+    border-bottom: 1px solid rgba(255,255,255,1);
+    outline: 0;
+    font-style: italic;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: rgba(255,255,255,1);
+    outline: 0;
+}
+
+.message{
+    height: 100px;
+}
+
+
+.submits
+{
+    width: 100%;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-top: 16px;
+    outline: 0;
+    cursor: pointer;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+}
+
+.submits:hover
+{
+    transition: background-color 0.5s ease;
+}
+
+form.login .remember-forgot
+{
+    float: left;
+    width: 100%;
+    margin: 10px 0 0 0;
+}
+form.login .forgot-pass-content
+{
+    min-height: 20px;
+    margin-bottom: 10px;
+}
+form.login label, form.login a
+{
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255,255,255,1);
+}
+
+form.login a
+{
+    transition: color 0.5s ease;
+}
+
+form.login a:hover
+{
+    color: rgba(255,255,255,1);
+}
+
+form.login .form_errors{
+    font-style: italic;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255, 26, 26,1);
+}
+
+
+
+
+
