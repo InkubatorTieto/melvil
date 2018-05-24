@@ -1,14 +1,14 @@
 from config import DevConfig
-from flask import render_template, request, session, redirect, flash
+from flask import render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
-from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm
+from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm, ForgotPass, PasswordForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from flask import render_template
 from . import library
 from models.users import User
 from init_db import db
-from send_email import send_confirmation_email
+from send_email import send_confirmation_email, send_password_reset_email
 import os
 from send_email.emails import *
 
@@ -130,4 +130,44 @@ def confirm_email(token):
         return 'Thank you for confirming your email address!'
 
 
+@library.route('/reset',  methods=['GET', 'POST'])
+def reset():
+    form = ForgotPass()
+    if form.validate_on_submit():
+        try:
+            user = User.query.filter_by(email=form.email.data).first_or_404()
+        except ValueError:
+            return 'Invalid email address!', 'error'
 
+        if user.active:
+            send_password_reset_email(user.email)
+            return 'Please check your email for a password reset link.', 'success'
+        else:
+            return 'Your email address must be confirmed before attempting a password reset.', 'error'
+
+    return render_template('forgot_pass.html', form=form)
+
+
+@library.route('/reset/<token>', methods=["GET", "POST"])
+def reset_with_token(token):
+    try:
+        password_reset_serializer = URLSafeTimedSerializer(DevConfig.SECRET_KEY)
+        email = password_reset_serializer.loads(token, salt='password-reset-salt', max_age=3600)
+    except RuntimeError:
+        return 'The password reset link is invalid or has expired.', 'error'
+
+    form = PasswordForm()
+
+    if form.validate_on_submit():
+        try:
+            user = User.query.filter_by(email=email).first_or_404()
+        except ValueError:
+            return 'Invalid email address!', 'error'
+
+        user.password_hash = generate_password_hash(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('library.login'))
+
+    return render_template('reset_password_with_token.html', form=form, token=token)
