@@ -6,6 +6,8 @@ services:
     command: sh run.sh
     volumes:
       - .:/code
+    env_file:
+        - .env
     environment:
         - DB_USER=psql_user
         - DB_PASSWORD=Ab132xw
@@ -13,6 +15,8 @@ services:
         - DB_HOST=postgresql
         - DB_PORT=5432
         - DB_ENGINE=postgresql
+        - MAIL_USERNAME=tieto.library@gmail.com
+        - MAIL_PASSWORD=boqlnwdrntrukffj
     ports:
       - "5000:5000"
     depends_on:
@@ -22,7 +26,7 @@ services:
       image: postgres
       restart: always
       volumes:
-       - ./data/postgresql:/var/lib/postgresql
+       - ./data/web/postgresql:/var/lib/postgresql
       environment:
         - POSTGRES_USER=psql_user
         - POSTGRES_PASSWORD=Ab132xw
