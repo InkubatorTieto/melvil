@@ -16,8 +16,8 @@ def create_app():
     app.secret_key = os.urandom(24)
 
     db.init_app(app)
-    with app.test_request_context():
-        db.create_all()
+    '''with app.test_request_context():
+        db.drop_all()'''
 
     login_manager.init_app(app)
     mail.init_app(app)
