@@ -1,4 +1,4 @@
-from app import db
+from init_db import db
 from models.library import LibraryItem
 
 

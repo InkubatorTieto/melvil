@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from flask import render_template
 from . import library
-from models.user import User
+from models.users import User
 from init_db import db
 from send_email import send_confirmation_email
 import os
@@ -35,7 +35,7 @@ def login():
 
             if form.validate_on_submit():
                 data = User.query.filter_by(email=form.email.data).first()
-                if data is not None and check_password_hash(data.password_hash, form.password.data) and data.active:
+                if data is not None and check_password_hash(data.password_hash, form.password.data): # and data.active:
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email

@@ -1,6 +1,6 @@
 import pytz
 
-from app import db
+from init_db import db
 
 
 class Copy(db.Model):

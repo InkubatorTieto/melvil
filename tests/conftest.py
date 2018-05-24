@@ -1,44 +1,24 @@
 import pytest
 from app import create_app
-from app import db as _db
+# from config import TestConfig
+from init_db import db as _db
 from sqlalchemy import event
-from config import TestConfig
 
 
 @pytest.fixture(scope='session')
 def app():
-    """
-    Returns flask app with context for testing.
-    """
-    app = create_app(config=TestConfig)
-    ctx = app.app_context()
-    ctx.push()
+    app = create_app()
     app.config['SECRET_KEY'] = 24
 
-
-@pytest.fixture
-def user(app):
-    app = create_app()
-    client = app.test_client()
-    data = {
-        'email': 'test1@test.com',
-        'first_name': 'Testowy',
-        'surname': 'test',
-        'password': '5354',
-        'client': client}
-    return data
-
+    ctx = app.test_request_context()
+    ctx.push()
 
     yield app
 
-    ctx.pop()
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope='module', autouse=True)
 def db(app):
-    """
-    Returns session-wide initialised database.
-    """
     _db.create_all()
 
     yield _db
@@ -71,3 +51,21 @@ def session(db):
     sess.remove()
     txn.rollback()
     conn.close()
+
+
+@pytest.fixture(scope='module')
+def user(app):
+    client = app.test_client()
+    data = {
+        'email': 'test1@test.com',
+        'first_name': 'Testowy',
+        'surname': 'test',
+        'password': '5354',
+        'client': client}
+    yield data
+
+
+# @pytest.fixture()
+# def teardown(app):
+#     ctx = app.app_context()
+#     ctx.pop()

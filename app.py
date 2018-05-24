@@ -14,15 +14,11 @@ def create_app(config=DevConfig):
     app.config.from_object(config)
     app.register_blueprint(library)
     app.secret_key = os.urandom(24)
+    login_manager.init_app(app)
+    mail.init_app(app)
 
     db.init_app(app)
     with app.app_context():
         db.create_all()
 
-
-    login_manager.init_app(app)
-    mail.init_app(app)
-
     return app
-
-import init_db
