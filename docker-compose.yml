@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     build: .
-    command: sh run.sh
+    command: gunicorn -b 0.0.0.0:8000 app:create_app()
     volumes:
       - .:/code
     env_file:
@@ -18,7 +18,7 @@ services:
         - MAIL_USERNAME=tieto.library@gmail.com
         - MAIL_PASSWORD=boqlnwdrntrukffj
     ports:
-      - "5000:5000"
+      - "8000:8000"
     depends_on:
       - "postgresql"
 
@@ -33,4 +33,3 @@ services:
         - POSTGRES_DB=psql_db
       ports:
         - "5432:5432"
-
