@@ -9,7 +9,7 @@ from models import User, Book
 g = Generic('en')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def app():
     """
     Returns flask app with context for testing.
@@ -21,6 +21,12 @@ def app():
     yield app
 
     ctx.pop()
+
+
+@pytest.fixture
+def client(app):
+    with app.test_client() as client:
+        return client
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -61,6 +67,16 @@ def session(db):
     sess.remove()
     txn.rollback()
     conn.close()
+
+
+@pytest.fixture(scope='module')
+def user(app):
+    data = {
+        'email': 'test1@test.com',
+        'first_name': 'Testowy',
+        'surname': 'test',
+        'password': '5354'}
+    yield data
 
 
 @pytest.fixture(scope="function")

@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-{% from "macros.html" import input with context %}
-   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-      <main role="main" class="inner cover">
-        <div class="container my_container register_container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="wrap">
-                        <p class="form-title">
-                            Register</p>
-                        <form class="login" action="" method="post">
-                            {{ form.hidden_tag() }}
-                            {{ input( form.email ,error['email'])}}
-                            {{ input( form.first_name ,error['first_name'])}}
-                            {{ input( form.surname ,error['surname'])}}
-                            {{ input( form.password ,error['password'])}}
-                            {{ input( form.confirm_pass ,error['confirmPass'])}}
-                            {{ form.submit() }}
-                        </form>
+    {% from "macros.html" import input with context %}
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+        <main role="main" class="inner cover">
+            <div class="container my_container register_container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="wrap">
+                            <p class="form-title">
+                                Register</p>
+                            <form class="login" action="" method="post">
+                                {{ form.hidden_tag() }}
+                                {{ input( form.email ,error['email']) }}
+                                {{ input( form.first_name ,error['first_name']) }}
+                                {{ input( form.surname ,error['surname']) }}
+                                {{ input( form.password ,error['password']) }}
+                                {{ input( form.confirm_pass ,error['confirmPass']) }}
+                                {{ form.submit() }}
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-      </main>
+        </main>
     </div>
 {% endblock %}

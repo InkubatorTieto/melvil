@@ -132,18 +132,18 @@ def test_delete_user(session, db_user, db_book):
     session.commit()
 
     assert User.query.get(user_id) is not None, "User add failed"
-    assert RentalLog.query.filter_by(user_id=user_id).count() == 1,\
+    assert RentalLog.query.filter_by(user_id=user_id).count() == 1, \
         "RentalLog add failed"
-    assert Copy.query.filter_by(library_item=db_book).count() == 1,\
+    assert Copy.query.filter_by(library_item=db_book).count() == 1, \
         "Copy add failed"
 
     session.delete(db_user)
     session.commit()
 
     assert User.query.get(user_id) is None, "User delete failed"
-    assert RentalLog.query.filter_by(user_id=user_id).count() == 0,\
+    assert RentalLog.query.filter_by(user_id=user_id).count() == 0, \
         "RentalLog was not deleted with the User"
-    assert Copy.query.filter_by(library_item=db_book).count() == 1,\
+    assert Copy.query.filter_by(library_item=db_book).count() == 1, \
         "Copy got deleted with the User"
 
 
@@ -170,25 +170,25 @@ def test_delete_book(session, db_user, db_book):
     session.add(log)
     session.commit()
 
-    assert User.query.get(user_id) is not None,\
+    assert User.query.get(user_id) is not None, \
         "User does not exist"
-    assert RentalLog.query.filter_by(user_id=user_id).count() == 1,\
+    assert RentalLog.query.filter_by(user_id=user_id).count() == 1, \
         "RentalLog add failed"
-    assert Copy.query.filter_by(library_item=db_book).count() == 1,\
+    assert Copy.query.filter_by(library_item=db_book).count() == 1, \
         "Copy add failed"
-    assert Book.query.get(db_book.id) is not None,\
+    assert Book.query.get(db_book.id) is not None, \
         "Book does not exist"
 
     session.delete(db_book)
     session.commit()
 
-    assert Book.query.get(db_book.id) is None,\
+    assert Book.query.get(db_book.id) is None, \
         "Book delete failed"
-    assert User.query.get(user_id) is not None,\
+    assert User.query.get(user_id) is not None, \
         "User was deleted with the Book"
-    assert Copy.query.get(copy.id) is None,\
+    assert Copy.query.get(copy.id) is None, \
         "Copy was not deleted with the Book"
-    assert RentalLog.query.get(log.id) is None,\
+    assert RentalLog.query.get(log.id) is None, \
         "RentalLog was not deleted with the Book"
 
 
@@ -215,23 +215,23 @@ def test_delete_copy(session, db_user, db_book):
     session.add(log)
     session.commit()
 
-    assert User.query.get(user_id) is not None,\
+    assert User.query.get(user_id) is not None, \
         "User does not exist"
-    assert RentalLog.query.filter_by(user_id=user_id).count() == 1,\
+    assert RentalLog.query.filter_by(user_id=user_id).count() == 1, \
         "RentalLog add failed"
-    assert Copy.query.filter_by(library_item=db_book).count() == 1,\
+    assert Copy.query.filter_by(library_item=db_book).count() == 1, \
         "Copy add failed"
-    assert Book.query.get(db_book.id) is not None,\
+    assert Book.query.get(db_book.id) is not None, \
         "Book does not exist"
 
     session.delete(copy)
     session.commit()
 
-    assert Copy.query.get(copy.id) is None,\
+    assert Copy.query.get(copy.id) is None, \
         "Copy delete failed"
-    assert Book.query.get(db_book.id) is not None,\
+    assert Book.query.get(db_book.id) is not None, \
         "Book was deleted with the Copy"
-    assert User.query.get(user_id) is not None,\
+    assert User.query.get(user_id) is not None, \
         "User was deleted with the Copy"
-    assert RentalLog.query.get(log.id) is None,\
+    assert RentalLog.query.get(log.id) is None, \
         "RentalLog was not deleted with the Copy"

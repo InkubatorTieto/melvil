@@ -1,24 +1,22 @@
 body {
-  background: url("/static/img/book.jpg") no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+    background: url("/static/img/book.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .cover-container {
-  max-width: 42em;
+    max-width: 42em;
 }
 
-.my_container
-{
-    background: rgba(0,0,0,0.5);
+.my_container {
+    background: rgba(0, 0, 0, 0.5);
     width: 360px;
     margin-top: 100px;
 }
 
-.register_container
-{
+.register_container {
     min-height: 305px;
 }
 
