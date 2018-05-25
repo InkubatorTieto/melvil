@@ -21,10 +21,10 @@ class RegistrationForm(FlaskForm):
                         validators=[tieto_email],
                         render_kw=({'class': 'inputs', 'placeholder': 'Email'}))
     first_name = StringField('First name',
-                             validators=[DataRequired(), Length(3, 50), name],
+                             validators=[DataRequired(), Length(3), name],
                              render_kw=({'class': 'inputs', 'placeholder': 'First Name'}))
     surname = StringField('Surname',
-                          validators=[DataRequired(), Length(3, 50), surname],
+                          validators=[DataRequired(), Length(3), surname],
                           render_kw=({'class': 'inputs', 'placeholder': 'Surname'}))
     password = PasswordField('Password',
                              validators=[DataRequired(), EqualTo('confirm_pass', message='Passwords must match.')],

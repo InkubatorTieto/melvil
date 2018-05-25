@@ -77,7 +77,7 @@ def search():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        flash('Message send', 'ok')
+        flash('Message send')
         try:
             email_template = open('./templates/emails/contact_confirmation.html', 'r').read()
         except:
