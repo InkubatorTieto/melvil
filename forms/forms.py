@@ -6,7 +6,7 @@ from forms.custom_validators import tieto_email, name, surname
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
-                        validators=[DataRequired(), tieto_email],
+                        validators=[DataRequired()],
                         render_kw=({'class': 'inputs', 'placeholder': 'Email'}))
     password = PasswordField('Password',
                              validators=[DataRequired()],
@@ -18,7 +18,7 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email',
-                        validators=[tieto_email],
+                        validators=[Email()],
                         render_kw=({'class': 'inputs', 'placeholder': 'Email'}))
     first_name = StringField('First name',
                              validators=[DataRequired(), Length(3), name],
@@ -32,7 +32,7 @@ class RegistrationForm(FlaskForm):
     confirm_pass = PasswordField('Confirm password',
                                  validators=[DataRequired()],
                                  render_kw=({'class': 'inputs', 'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Sign In',
+    submit = SubmitField('Submit',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
@@ -56,7 +56,7 @@ class SearchForm(FlaskForm):
 
 
 class ForgotPass(FlaskForm):
-    email = StringField('email', validators=[tieto_email], render_kw=({'class': 'inputs', 'placeholder': 'Email'}))
+    email = StringField('email', validators=[Email()], render_kw=({'class': 'inputs', 'placeholder': 'Email'}))
     submit = SubmitField('Submit',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
