@@ -29,7 +29,7 @@ def get_author_name(authors):
 
 def get_book_data():
     book_list = []
-    # book_dict = {}
+
     for sheet_index in range(workbook.nsheets-1):   # -2 excludes and deleted magazines sheet
         current_sheet = workbook.sheet_by_index(sheet_index)
         rows = current_sheet.nrows
@@ -48,19 +48,16 @@ def get_book_data():
                 author = get_author_name(authors)
                 book_properties = {'authors': author, 'title': title, 'asset': asset, 'user': user}
                 book_list.append(book_properties)
-                # book_dict.update({'authors': author, 'title': title, 'asset': asset, 'user': user})
             elif current_shelf == 'Magazines':
                 author = ' '
                 title = ' '
                 edition = current_sheet.cell_value(row_index, 2)
                 number = current_sheet.cell_value(row_index, 3)# ISSUE
                 magazine_properties = {'authors': author, 'title': title, 'asset': asset, 'user': user, 'edition': edition, 'number': number}
-                # book_dict.update({'authors': author, 'title': title, 'asset': asset, 'user': user, 'edition': edition, 'number': number})
                 book_list.append(magazine_properties)
             else:
-                pass #TODO: ensure if there is any exception to cover in Managers section?
-                # book ={'authors': author, 'current_shelf': current_shelf, 'title': title, 'asset': asset, 'user': user,
-                    # 'date_of_rental': date_of_rental, 'status': status}
+                pass #TODO: ensure if there is any exception to cover in Managers section
+
                 book_properties = {'authors': author, 'current_shelf': current_shelf, 'title': title, 'asset': asset, 'user': user,
                     'date_of_rental': date_of_rental, 'status': status}
                 book_list.append(book_properties)
@@ -74,9 +71,7 @@ def get_book():
     for elem in books_properties:
         title = elem['title']
         asset = elem['asset']
-        # title = book['title']
-        # book = Book(title = title)
-        # book.title = title
+
         authors = elem['authors']
         book_authors = []
         if type(authors) is tuple:
@@ -95,8 +90,6 @@ def get_book():
                 db.session.add(author)
                 book_authors.append(author)
         else:
-            # author = None # for list of authors
-            # print(authors, 'other type!', type(authors), author)
             book_authors = []
         book = Book(title=title, authors=book_authors, asset_code=asset)
     db.session.add(book)
@@ -105,10 +98,8 @@ def get_book():
     # print(db.session.query(Author).all())
     print(db.session.query(Book).all())
 
-# TODO: check if exists already in db!
-
-# TODO: find inapropriate names -->  customize parser configuration
-# TODO: find the solution for magazines - checked
-# TODO: connect with DB - checked
+# TODO: check if record already exists db!
+# TODO: find authors categorised in a wrong way
+# TODO: def separate function for magazines?
 # TODO: push parameters into db - under construction
-# TODO: def func in order not to repeat code
+# TODO: do not take any null rows into consideration
