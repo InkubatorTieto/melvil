@@ -3,9 +3,11 @@ version: '3'
 services:
   web:
     build: .
-    command: sh run.sh
+    command: gunicorn --bind=0.0.0.0:8000 app:create_app()
     volumes:
       - .:/code
+    env_file:
+        - .env
     environment:
         - DB_USER=psql_user
         - DB_PASSWORD=Ab132xw
@@ -13,10 +15,8 @@ services:
         - DB_HOST=postgresql
         - DB_PORT=5432
         - DB_ENGINE=postgresql
-        - SECRET_KEY=lalala
-        - WTF_CSRF_SECRET_KEY=True
     ports:
-      - "5000:5000"
+      - "8000:8000"
     depends_on:
       - "postgresql"
 
@@ -24,11 +24,10 @@ services:
       image: postgres
       restart: always
       volumes:
-       - ./data/postgresql:/var/lib/postgresql
+       - ./data/web/postgresql:/var/lib/postgresql
       environment:
         - POSTGRES_USER=psql_user
         - POSTGRES_PASSWORD=Ab132xw
         - POSTGRES_DB=psql_db
       ports:
         - "5432:5432"
-
