@@ -1,5 +1,7 @@
 import xlrd
 from nameparser import HumanName
+from models import (Book, Author)
+from init_db import db
 
 data = './data/biblioteka.xlsx'
 workbook = xlrd.open_workbook(data)
@@ -64,6 +66,45 @@ def get_book_data():
                 book_list.append(book_properties)
    # print(book_list)
     return book_list
+
+def get_book():
+    books_properties = get_book_data()
+
+    for elem in books_properties:
+        title = elem['title']
+        asset = elem['asset']
+        #   title = book['title']
+        #   book = Book(title = title)
+        #   book.title = title
+        authors = elem['authors']
+        book_authors = []
+        if type(authors) is tuple:
+            f_name = str(authors[0])
+            l_name = str(authors[1])
+            author = Author(first_name=f_name, last_name=l_name)
+            book_authors.append(author)
+            # print(f_name, l_name)
+            db.session.add(author)
+        elif type(authors) is list:
+            for i in authors:
+                f_name = str(i[0])
+                l_name = str(i[1])
+                author = Author(first_name=f_name, last_name=l_name)
+                # print(authors, i, 'list!', author)
+                db.session.add(author)
+                book_authors.append(author)
+        else:
+            # author = None # for list of authors
+            # print(authors, 'other type!', type(authors), author)
+            book_authors = []
+        book = Book(title=title, authors=book_authors)  # TODO: add asset_code = asset
+    db.session.add(book)
+    db.session.commit()
+
+    # print(db.session.query(Author).all())
+    print(db.session.query(Book).all())
+
+#TODO: check if exists already in db!
 
 # TODO: find inapropriate names -->  customize parser configuration
 # TODO: find the solution for magazines - checked
