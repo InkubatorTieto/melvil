@@ -8,6 +8,4 @@ def test_app(app):
 
 
 def test_config_access(config):
-    assert config['SECRET_KEY'] == 24
-
-
+    assert len(config['SECRET_KEY']) == 24
