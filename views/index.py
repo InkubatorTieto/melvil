@@ -4,7 +4,6 @@ from flask_login import LoginManager
 from forms.forms import LoginForm, SearchForm, ContactForm, RegistrationForm, ForgotPass, PasswordForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
-from flask import render_template
 from . import library
 from models.users import User
 from init_db import db
@@ -78,7 +77,7 @@ def search():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        flash('Message send', 'ok')
+        flash('Message send')
         try:
             email_template = open('./templates/emails/contact_confirmation.html', 'r').read()
         except:
