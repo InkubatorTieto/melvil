@@ -3,6 +3,7 @@ from mimesis import Generic
 
 from app import create_app
 from app import db as _db
+from app import mail as _mail
 from sqlalchemy import event
 from models import User, Book
 
@@ -15,6 +16,7 @@ def app():
     Returns flask app with context for testing.
     """
     app = create_app()
+    _mail.init_app(app)
     ctx = app.app_context()
     ctx.push()
 
@@ -122,3 +124,9 @@ def db_book(session):
     if Book.query.get(b.id):
         session.delete(b)
         session.commit()
+
+
+@pytest.fixture
+def mailbox(app):
+    mailbox=_mail.record_messages()
+    return mailbox
