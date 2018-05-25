@@ -13,15 +13,15 @@ def get_author_name(authors):
         last_names = []
         for auth in splited_authors:
             name = HumanName(str(auth))
-            first_name = name.first
-            last_name = name.last
+            first_name = name.first + " " + name.middle
+            last_name = name.last + " " + name.suffix
             first_names.append(first_name)
             last_names.append(last_name)
             ath = list(zip(first_names, last_names))
     else:
         name = HumanName(str(authors))
-        first_name = name.first
-        last_name = name.last
+        first_name = name.first + " " + name.middle
+        last_name = name.last + " " + name.suffix
         ath = (first_name, last_name)
     return ath
 
