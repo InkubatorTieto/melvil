@@ -22,12 +22,12 @@ def get_author_name(authors):
         name = HumanName(str(authors))
         first_name = name.first
         last_name = name.last
-        ath = first_name, last_name
+        ath = (first_name, last_name)
     return ath
 
 def get_book_data():
     book_list = []
-    book_dict = {}
+    #book_dict = {}
     for sheet_index in range(workbook.nsheets-1):   # -2 excludes and deleted magazines sheet
         current_sheet = workbook.sheet_by_index(sheet_index)
         rows = current_sheet.nrows
@@ -46,15 +46,14 @@ def get_book_data():
                 author = get_author_name(authors)
                 book_properties = {'authors': author, 'title': title, 'asset': asset, 'user': user}
                 book_list.append(book_properties)
-
-                book_dict.update({'authors': author, 'title': title, 'asset': asset, 'user': user})
+                #book_dict.update({'authors': author, 'title': title, 'asset': asset, 'user': user})
             elif current_shelf == 'Magazines':
                 author = ' '
                 title = ' '
                 edition = current_sheet.cell_value(row_index, 2)
                 number = current_sheet.cell_value(row_index, 3) # ISSUE
                 magazine_properties = {'authors': author, 'title': title, 'asset': asset, 'user': user, 'edition': edition, 'number': number}
-                book_dict.update({'authors': author, 'title': title, 'asset': asset, 'user': user, 'edition': edition, 'number': number})
+                #book_dict.update({'authors': author, 'title': title, 'asset': asset, 'user': user, 'edition': edition, 'number': number})
                 book_list.append(magazine_properties)
             else:
                 pass #TODO: ensure if there is any exception to cover in Managers section?

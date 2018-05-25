@@ -30,50 +30,43 @@ def create_app(config=DevConfig):
     with app.app_context():
         db.create_all()
 
-        # test book object
-        book1 = Book()
-        book1.title = 'SPRZEDAM OPLA'
-        db.session.add(book1)
-
-#add tile
         books_properties = get_book_data()
-        book = Book()
-        authors = Author()
 
         for elem in books_properties:
             title = elem['title']
-        #    asset = elem['asset']
-        #    title = book['title']
-            book = Book(title = title)
-        #    book.title = title
-
+            asset = elem['asset']
+        #   title = book['title']
+        #    book = Book(title = title)
+        #   book.title = title
             authors = elem['authors']
-            #print(type(authors))
-
-            #under construction:
-            # TODO: HANDLE WITH DIFFERENT TYPES OF AUTHORS
-            '''for i in authors:
-                type_i = type(i)
-                if type_i is str:
-                    print(i, 'string!')
-                elif type_i is tuple:
-                    f_name = i[0]
-                    l_name = i[1]
-                    author = Author(first_name = f_name, last_name = l_name)
-                    print(i, 'tuple!', author)
-                    db.session.add(author)
-                else: # for list of authors
-                    for elem in i:
-                        print(i, 'list!')'''
+            book_authors = []
+            if type(authors) is tuple:
+                f_name = str(authors[0])
+                l_name = str(authors[1])
+                author = Author(first_name=f_name, last_name=l_name)
+                book_authors.append(author)
                 #print(f_name, l_name)
-                    #db.session.add(author)
-                #else:
-                #    pass
-            db.session.add(book)
+                db.session.add(author)
+            elif type(authors) is list:
+                for i in authors:
+                    f_name = str(i[0])
+                    l_name = str(i[1])
+                    author = Author(first_name = f_name, last_name = l_name)
+                    #print(authors, i, 'list!', author)
+                    db.session.add(author)
+                    book_authors.append(author)
+            else:
+                #author = None # for list of authors
+                #print(authors, 'other type!', type(authors), author)
+                book_authors = []
+            book = Book(title = title, authors = book_authors) # TODO: add asset_code = asset
+        db.session.add(book)
         db.session.commit()
-        print(Book.query.all()) #shows elements added to the database
 
+        #print(db.session.query(Author).all())
+        print(db.session.query(Book).all())
     return app
 
 create_app(DevConfig)
+
 
