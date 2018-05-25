@@ -14,7 +14,7 @@ client = Client()
 from flask_sqlalchemy import SQLAlchemy
 from xlsx_reader import get_book
 from init_db import db
-#db = SQLAlchemy()
+# db = SQLAlchemy()
 
 def create_app(config=DevConfig):
 
@@ -32,6 +32,6 @@ def create_app(config=DevConfig):
         get_book()
     return app
 
-create_app(DevConfig)
 
+create_app(DevConfig)
 
