@@ -170,12 +170,26 @@ def test_delete_book(session, db_user, db_book):
     session.add(log)
     session.commit()
 
+    authors = populate_authors(n=2)
+    session.add_all(authors)
+    db_book.authors = authors
+    session.commit()
+
     assert User.query.get(user_id) is not None, \
         "User does not exist"
     assert RentalLog.query.filter_by(user_id=user_id).count() == 1, \
         "RentalLog add failed"
     assert Copy.query.filter_by(library_item=db_book).count() == 1, \
         "Copy add failed"
+
+    book_one = Book.query.join(Author.books).filter(
+        Author.id == authors[0].id).all()
+    book_two = Book.query.join(Author.books).filter(
+        Author.id == authors[1].id).all()
+    assert book_two[0].id == book_one[0].id, \
+        "Authors should write the same book"
+    assert book_one[0].id == db_book.id,\
+        "Author does not point the right book"
     assert Book.query.get(db_book.id) is not None, \
         "Book does not exist"
 
@@ -188,8 +202,39 @@ def test_delete_book(session, db_user, db_book):
         "User was deleted with the Book"
     assert Copy.query.get(copy.id) is None, \
         "Copy was not deleted with the Book"
+
+    assert Book.query.join(Author.books).filter(
+        Author.id == authors[0].id).all() == [],\
+        "Author 0 should not contain the Book"
+    assert Book.query.join(Author.books).filter(
+        Author.id == authors[1].id).all() == [], \
+        "Author 1 should not contain the Book"
     assert RentalLog.query.get(log.id) is None, \
         "RentalLog was not deleted with the Book"
+
+
+def test_delete_authors(session, db_book):
+    authors = populate_authors(2)
+    session.add_all(authors)
+    session.commit()
+    db_book.authors = authors
+    session.commit()
+
+    assert Book.query.join(Author.books).filter(
+        Book.id == db_book.id).count() == 2, \
+        "The book should have two authors"
+
+    session.delete(authors[0])
+    session.commit()
+    assert Book.query.join(Author.books).filter(
+        Book.id == db_book.id).count() == 1, \
+        "The book should have one author"
+
+    session.delete(authors[1])
+    session.commit()
+    assert Book.query.join(Author.books).filter(
+        Book.id == db_book.id).count() == 0, \
+        "The book should have zero authors"
 
 
 def test_delete_copy(session, db_user, db_book):
