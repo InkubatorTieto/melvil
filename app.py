@@ -21,8 +21,14 @@ def create_app(config=DevConfig):
     login_manager.init_app(app)
     mail.init_app(app)
 
-    db.init_app(app)
-    with app.app_context():
-        db.create_all()
-
+    db_not_ready = True
+    while (db_not_ready):
+        try:
+            db.init_app(app)
+            with app.app_context():
+                db.create_all()
+            db_not_ready = False
+        except:
+            print("DB not ready!")
+            print("Polling DB..")
     return app
