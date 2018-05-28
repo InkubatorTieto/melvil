@@ -19,7 +19,7 @@ psycopg2
 raven==6.8.0
 Werkzeug==0.14.1
 pytz
-psycopg2
+psycopg2-binary
 flask_mail==0.9.0
 flask-login
 flask-user
