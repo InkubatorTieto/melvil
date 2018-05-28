@@ -77,13 +77,16 @@ class ForgotPass(FlaskForm):
     email = StringField('email',
                         validators=[tieto_email],
                         render_kw=({'class': 'inputs',
-                                    'placeholder': 'Email'}))
+                                    'placeholder': 'Enter Email Address'}))
     submit = SubmitField('Submit',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
 class PasswordForm(FlaskForm):
     password = PasswordField('Password',
-                             validators=[DataRequired()])
+                             validators=[DataRequired()],
+                             render_kw=({'class': 'inputs',
+                                         'placeholder': 'Enter new password'})
+                             )
     submit = SubmitField('Submit',
                          render_kw=({'class': 'btn btn-primary submits'}))
