@@ -7,6 +7,7 @@ from init_db import db
 from raven.contrib.flask import Sentry
 from raven import Client
 from flask_mail import Mail
+import time
 
 mail = Mail()
 sentry = Sentry()
@@ -21,6 +22,7 @@ def create_app(config=DevConfig):
     login_manager.init_app(app)
     mail.init_app(app)
 
+
     db_not_ready = True
     while (db_not_ready):
         try:
@@ -31,4 +33,5 @@ def create_app(config=DevConfig):
         except:
             print("DB not ready!")
             print("Polling DB..")
+            time.sleep(1)
     return app

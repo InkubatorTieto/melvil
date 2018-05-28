@@ -11,6 +11,7 @@ class DevConfig(Config):
     SECRET_KEY = '4f\g45t45gfjerkfefker'
     SECURITY_PASSWORD_SALT = 'my_precious_two'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_POOL_TIMEOUT = 30
     DEBUG = True
     DB_ENGINE = getenv('DB_ENGINE')
     DB_USER = getenv('DB_USER')
