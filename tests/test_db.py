@@ -1,8 +1,7 @@
-# Magda chce tu zrobic parę fixów
-
-
-
+from datetime import datetime
 from random import randint
+import pytz
+from mimesis import Generic
 from sqlalchemy import func
 
 from tests.populate import (
@@ -23,8 +22,7 @@ from models import (
     Copy,
     LibraryItem,
     Magazine,
-    RentalLog
-)
+    RentalLog)
 
 
 def test_users(session):
@@ -110,99 +108,175 @@ def test_library(session):
     assert log.copy in i.copies, "copy relates to wrong item"
 
 
-# def test_delete(session):
-#     logs = []
-#
-#     copies = Copy.query.order_by(func.random()).limit(3).all()
-#     users = User.query.order_by(func.random()).limit(3).all()
-#     for i in range(3):
-#         log = populate_rental_logs(copies[i].id, users[i].id, n=1)[0]
-#         session.add(log)
-#         session.commit()
-#         logs.append(log)
-#     num_users = User.query.count()
-#     num_copies = Copy.query.count()
-#     num_logs = RentalLog.query.count()
-#
-#     session.delete(users[0])
-#     session.commit()
-#     num_users = num_users - 1
-#     assert User.query.count() == num_users, \
-#         "number of users after User delete is wrong"
-#     assert Copy.query.count() == num_copies, \
-#         "number of copies after User delete is wrong"
-#     num_logs = num_logs - 1
-#     assert RentalLog.query.count() == num_logs, \
-#         "number of rental logs after User delete is wrong"
-#
-#     session.delete(copies[1])
-#     session.commit()
-#     assert User.query.count() == num_users, \
-#         "number of users after Copy delete is wrong"
-#     num_copies = num_copies - 1
-#     assert Copy.query.count() == num_copies, \
-#         "number of copies after Copy delete is wrong"
-#     num_logs = num_logs - 1
-#     assert RentalLog.query.count() == num_logs, \
-#         "number of rental logs after Copy delete is wrong"
-#
-#     session.delete(logs[2])
-#     session.commit()
-#     assert User.query.count() == num_users, \
-#         "number of users after RentalLog delete is wrong"
-#     assert Copy.query.count() == num_copies, \
-#         "number of copies after RentalLog delete is wrong"
-#     num_logs = num_logs - 1
-#     assert RentalLog.query.count() == num_logs, \
-#         "number of rental logs after RentalLog delete is wrong"
-#
-#     b = Book.query.order_by(func.random()).first()
-#     m = Magazine.query.order_by(func.random()).first()
-#     t = Tag.query.order_by(func.random()).first()
-#
-#     num_books = Book.query.count()
-#     num_magazines = Magazine.query.count()
-#     num_tags = Tag.query.count()
-#     num_copies = Copy.query.count()
-#
-#     session.delete(t)
-#     session.commit()
-#     assert Book.query.count() == num_books, \
-#         "number of books after Tag delete is wrong"
-#     assert Magazine.query.count() == num_magazines, \
-#         "number of magazines after Tag delete is wrong"
-#     num_tags = num_tags - 1
-#     assert Tag.query.count() == num_tags, \
-#         "number of tags after Tag delete is wrong"
-#
-#     copy_b = b.copies[0].id
-#     session.delete(b)
-#     session.commit()
-#     num_books = num_books - 1
-#     assert Book.query.count() == num_books, \
-#         "number of books after Book delete is wrong"
-#     assert Magazine.query.count() == num_magazines, \
-#         "number of magazines after Book delete is wrong"
-#     assert Tag.query.count() == num_tags, \
-#         "number of tags after Book delete is wrong"
-#     num_copies = num_copies - len(b.copies)
-#     assert Copy.query.count() == num_copies, \
-#         "number of copies after Book delete is wrong"
-#     assert Copy.query.get(copy_b) is None, \
-#         "there are remaining copies without book parent"
-#
-#     copy_m = m.copies[0].id
-#     session.delete(m)
-#     session.commit()
-#     assert Book.query.count() == num_books, \
-#         "number of books after Magazine delete is wrong"
-#     num_magazines = num_magazines - 1
-#     assert Magazine.query.count() == num_magazines, \
-#         "number of magazines after Magazine delete is wrong"
-#     assert Tag.query.count() == num_tags, \
-#         "number of tags after Magazine delete is wrong"
-#     num_copies = num_copies - len(m.copies)
-#     assert Copy.query.count() == num_copies, \
-#         "number of copies after Magazine delete is wrong"
-#     assert Copy.query.get(copy_m) is None, \
-#         "there are remaining copies without magazine parent"
+def test_delete_user(session, db_user, db_book):
+    g = Generic('en')
+    user_id = db_user.id
+    copy = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        shelf=g.code.pin(),
+        has_cd_disk=g.development.boolean()
+    )
+    session.add(copy)
+    session.commit()
+    log = RentalLog(
+        copy_id=copy.id,
+        user_id=user_id,
+        borrow_time=datetime.now(tz=pytz.utc),
+        return_time=datetime.now(tz=pytz.utc),
+        returned=g.development.boolean()
+    )
+    session.add(log)
+    session.commit()
+
+    assert User.query.get(user_id) is not None, "User add failed"
+    assert RentalLog.query.filter_by(user_id=user_id).count() == 1, \
+        "RentalLog add failed"
+    assert Copy.query.filter_by(library_item=db_book).count() == 1, \
+        "Copy add failed"
+
+    session.delete(db_user)
+    session.commit()
+
+    assert User.query.get(user_id) is None, "User delete failed"
+    assert RentalLog.query.filter_by(user_id=user_id).count() == 0, \
+        "RentalLog was not deleted with the User"
+    assert Copy.query.filter_by(library_item=db_book).count() == 1, \
+        "Copy got deleted with the User"
+
+
+def test_delete_book(session, db_user, db_book):
+    g = Generic('en')
+    user_id = db_user.id
+    copy = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        shelf=g.code.pin(),
+        has_cd_disk=g.development.boolean()
+    )
+    session.add(copy)
+    session.commit()
+    log = RentalLog(
+        copy_id=copy.id,
+        user_id=user_id,
+        borrow_time=datetime.now(tz=pytz.utc),
+        return_time=datetime.now(tz=pytz.utc),
+        returned=g.development.boolean()
+    )
+    session.add(log)
+    session.commit()
+
+    authors = populate_authors(n=2)
+    session.add_all(authors)
+    db_book.authors = authors
+    session.commit()
+
+    assert User.query.get(user_id) is not None, \
+        "User does not exist"
+    assert RentalLog.query.filter_by(user_id=user_id).count() == 1, \
+        "RentalLog add failed"
+    assert Copy.query.filter_by(library_item=db_book).count() == 1, \
+        "Copy add failed"
+
+    book_one = Book.query.join(Author.books).filter(
+        Author.id == authors[0].id).all()
+    book_two = Book.query.join(Author.books).filter(
+        Author.id == authors[1].id).all()
+    assert book_two[0].id == book_one[0].id, \
+        "Authors should write the same book"
+    assert book_one[0].id == db_book.id,\
+        "Author does not point the right book"
+    assert Book.query.get(db_book.id) is not None, \
+        "Book does not exist"
+
+    session.delete(db_book)
+    session.commit()
+
+    assert Book.query.get(db_book.id) is None, \
+        "Book delete failed"
+    assert User.query.get(user_id) is not None, \
+        "User was deleted with the Book"
+    assert Copy.query.get(copy.id) is None, \
+        "Copy was not deleted with the Book"
+
+    assert Book.query.join(Author.books).filter(
+        Author.id == authors[0].id).all() == [],\
+        "Author 0 should not contain the Book"
+    assert Book.query.join(Author.books).filter(
+        Author.id == authors[1].id).all() == [], \
+        "Author 1 should not contain the Book"
+    assert RentalLog.query.get(log.id) is None, \
+        "RentalLog was not deleted with the Book"
+
+
+def test_delete_authors(session, db_book):
+    authors = populate_authors(2)
+    session.add_all(authors)
+    session.commit()
+    db_book.authors = authors
+    session.commit()
+
+    assert Book.query.join(Author.books).filter(
+        Book.id == db_book.id).count() == 2, \
+        "The book should have two authors"
+
+    session.delete(authors[0])
+    session.commit()
+    assert Book.query.join(Author.books).filter(
+        Book.id == db_book.id).count() == 1, \
+        "The book should have one author"
+
+    session.delete(authors[1])
+    session.commit()
+    assert Book.query.join(Author.books).filter(
+        Book.id == db_book.id).count() == 0, \
+        "The book should have zero authors"
+
+
+def test_delete_copy(session, db_user, db_book):
+    g = Generic('en')
+    user_id = db_user.id
+    copy = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        shelf=g.code.pin(),
+        has_cd_disk=g.development.boolean()
+    )
+    session.add(copy)
+    session.commit()
+    log = RentalLog(
+        copy_id=copy.id,
+        user_id=user_id,
+        borrow_time=datetime.now(tz=pytz.utc),
+        return_time=datetime.now(tz=pytz.utc),
+        returned=g.development.boolean()
+    )
+    session.add(log)
+    session.commit()
+
+    assert User.query.get(user_id) is not None, \
+        "User does not exist"
+    assert RentalLog.query.filter_by(user_id=user_id).count() == 1, \
+        "RentalLog add failed"
+    assert Copy.query.filter_by(library_item=db_book).count() == 1, \
+        "Copy add failed"
+    assert Book.query.get(db_book.id) is not None, \
+        "Book does not exist"
+
+    session.delete(copy)
+    session.commit()
+
+    assert Copy.query.get(copy.id) is None, \
+        "Copy delete failed"
+    assert Book.query.get(db_book.id) is not None, \
+        "Book was deleted with the Copy"
+    assert User.query.get(user_id) is not None, \
+        "User was deleted with the Copy"
+    assert RentalLog.query.get(log.id) is None, \
+        "RentalLog was not deleted with the Copy"

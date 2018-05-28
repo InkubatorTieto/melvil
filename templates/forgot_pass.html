@@ -1,16 +1,23 @@
- {% extends "base.html" %}
- {% from "_form_macros.html" import render_field %}
- {% block content %}
-<div class="add-recipe">
-  <div class="page-header">
-    <h2>Email Address:</h2>
-  </div>
-  <form action="{{ url_for('library.reset') }}" method="POST">
-    {{ form.csrf_token }}
-    <dl>
-      {{ render_field(form.email, placeholder="Enter Email Address") }}
-    </dl>
-    <button class="btn btn-sm btn-success" type="submit">Submit</button>
-  </form>
-</div>
- {% endblock %}
+{% extends "base.html" %}
+{% block content %}
+ {% from "macros.html" import input with context %}
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+        <main role="main" class="inner cover">
+            <div class="container my_container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="wrap">
+                            <p class="form-title">
+                                Reset password</p>
+                            <form class="login" action="" method="post">
+                                {{ form.csrf_token }}
+                                {{ input( form.email ,error['email']) }}
+                                {{ form.submit() }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}

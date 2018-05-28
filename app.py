@@ -1,4 +1,3 @@
-from flask_mail import Mail
 from flask import Flask
 from config import DevConfig
 from views import library
@@ -7,6 +6,7 @@ from views.index import login_manager
 from init_db import db
 from raven.contrib.flask import Sentry
 from raven import Client
+from flask_mail import Mail
 
 mail = Mail()
 sentry = Sentry()
@@ -24,6 +24,5 @@ def create_app(config=DevConfig):
     db.init_app(app)
     with app.app_context():
         db.create_all()
-
 
     return app

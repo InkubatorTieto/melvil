@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Message{% endblock %}
+{% block content %}
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <main role="main" class="inner cover">
+        <h1 class="cover-heading">
+            {{ message_title }}
+        </h1>
+          <p class="lead">
+              {{ message_body }}
+          </p>
+      </main>
+    </div>
+{% endblock %}

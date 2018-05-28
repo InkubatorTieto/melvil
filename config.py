@@ -18,7 +18,6 @@ class DevConfig(Config):
     DB_HOST = getenv('DB_HOST')
     DB_PORT = getenv('DB_PORT')
     DB_NAME = getenv('DB_NAME')
-    SECRET_KEY = getenv('SECRET_KEY') or 'blaah'
 
     SQLALCHEMY_DATABASE_URI = '{0}://{1}:{2}@{3}:{4}/{5}'.format(
         DB_ENGINE,
@@ -41,4 +40,3 @@ class DevConfig(Config):
 
 class ProdConfig(Config):
     DATABASE_URI = getenv('PROD_DATABASE_URI', '')
-

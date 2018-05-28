@@ -1,24 +1,42 @@
 import pytest
+from mimesis import Generic
+
 from app import create_app
-# from config import TestConfig
-from init_db import db as _db
+from app import db as _db
+from app import mail as _mail
 from sqlalchemy import event
+from models import User, Book
+
+g = Generic('en')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def app():
+    """
+    Returns flask app with context for testing.
+    """
     app = create_app()
-    app.config['SECRET_KEY'] = 24
-
-    ctx = app.test_request_context()
+    _mail.init_app(app)
+    ctx = app.app_context()
     ctx.push()
 
     yield app
 
+    ctx.pop()
 
 
-@pytest.fixture(scope='module', autouse=True)
+@pytest.fixture
+def client(app):
+    with app.test_client() as client:
+        return client
+
+
+@pytest.fixture(scope="module", autouse=True)
 def db(app):
+    """
+    Returns module-wide initialised database.
+    """
+    _db.drop_all()
     _db.create_all()
 
     yield _db
@@ -29,7 +47,7 @@ def db(app):
 @pytest.fixture(scope="module")
 def session(db):
     """
-    Returns function-scoped session.
+    Returns module-scoped session.
     """
     conn = db.engine.connect()
     txn = conn.begin()
@@ -55,17 +73,60 @@ def session(db):
 
 @pytest.fixture(scope='module')
 def user(app):
-    client = app.test_client()
     data = {
         'email': 'test1@test.com',
         'first_name': 'Testowy',
         'surname': 'test',
-        'password': '5354',
-        'client': client}
+        'password': '5354'}
     yield data
 
 
-# @pytest.fixture()
-# def teardown(app):
-#     ctx = app.app_context()
-#     ctx.pop()
+@pytest.fixture(scope="function")
+def db_user(session):
+    """
+    Creates and return function-scoped User database entry
+    """
+    u = User(email=g.person.email(),
+             first_name=g.person.name(),
+             surname=g.person.surname(),
+             password_hash=g.cryptographic.hash(),
+             active=g.development.boolean(),
+             roles=[])
+    session.add(u)
+    session.commit()
+
+    yield u
+
+    if User.query.get(u.id):
+        session.delete(u)
+        session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_book(session):
+    """
+    Creates and return function-scoped Book database entry
+    """
+    b = Book(isbn=g.code.isbn(),
+             authors=[],
+             title=' '.join(g.text.title().split(' ')[:5]),
+             original_title=' '.join(g.text.title().split(' ')[:5]),
+             publisher=g.business.company(),
+             pub_date=g.datetime.datetime().date(),
+             language=g.person.language(),
+             tags=[],
+             description=g.text.sentence())
+    session.add(b)
+    session.commit()
+
+    yield b
+
+    if Book.query.get(b.id):
+        session.delete(b)
+        session.commit()
+
+
+@pytest.fixture
+def mailbox(app):
+    mailbox=_mail.record_messages()
+    return mailbox
