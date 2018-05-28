@@ -11,6 +11,7 @@ class DevConfig(Config):
     SECRET_KEY = '4f\g45t45gfjerkfefker'
     SECURITY_PASSWORD_SALT = 'my_precious_two'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_POOL_TIMEOUT = 30
     DEBUG = True
     DB_ENGINE = getenv('DB_ENGINE')
     DB_USER = getenv('DB_USER')
@@ -18,7 +19,6 @@ class DevConfig(Config):
     DB_HOST = getenv('DB_HOST')
     DB_PORT = getenv('DB_PORT')
     DB_NAME = getenv('DB_NAME')
-    SECRET_KEY = getenv('SECRET_KEY', 24)
 
     SQLALCHEMY_DATABASE_URI = '{0}://{1}:{2}@{3}:{4}/{5}'.format(
         DB_ENGINE,
@@ -40,4 +40,4 @@ class DevConfig(Config):
 
 
 class ProdConfig(Config):
-    DATABASE_URI = getenv('PROD_DATABASE_URI', '')
+    SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URL', '')

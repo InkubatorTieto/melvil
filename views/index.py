@@ -177,7 +177,7 @@ def reset():
             message_body = "This email doesn't exist"
             message_title = 'Error!'
             return render_template('message.html', message_title=message_title, message_body=message_body)
-    return render_template('forgot_pass.html', form=form)
+    return render_template('forgot_pass.html', form=form, error=form.errors)
 
 
 @library.route('/reset/<token>', methods=["GET", "POST"])
@@ -210,4 +210,5 @@ def reset_with_token(token):
 
     return render_template('reset_password_with_token.html',
                            form=form,
-                           token=token)
+                           token=token,
+                           error=form.errors)
