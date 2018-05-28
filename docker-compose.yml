@@ -6,6 +6,8 @@ services:
     command: gunicorn --bind=0.0.0.0:8000 app:create_app()
     volumes:
       - .:/code
+    env_file:
+      - .env
 
     environment:
         - DB_USER=psql_user
