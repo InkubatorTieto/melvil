@@ -12,7 +12,7 @@ mail = Mail()
 sentry = Sentry()
 client = Client()
 from flask_sqlalchemy import SQLAlchemy
-from xlsx_reader import get_book
+from xlsx_reader import get_book, get_magazines
 from init_db import db
 # db = SQLAlchemy()
 
@@ -30,6 +30,8 @@ def create_app(config=DevConfig):
     with app.app_context():
         db.create_all()
         get_book()
+        get_magazines()
+
     return app
 
 
