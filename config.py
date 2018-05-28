@@ -19,16 +19,14 @@ class DevConfig(Config):
     DB_PORT = getenv('DB_PORT')
     DB_NAME = getenv('DB_NAME')
 
-    '''SQLALCHEMY_DATABASE_URI = '{0}://{1}:{2}@{3}:{4}/{5}'.format(
+    SQLALCHEMY_DATABASE_URI = '{0}://{1}:{2}@{3}:{4}/{5}'.format(
         DB_ENGINE,
         DB_USER,
         DB_PASSWORD,
         DB_HOST,
         DB_PORT,
         DB_NAME,
-    )'''
-
-    SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URL', '')
+    )
 
     # email server
     MAIL_SERVER = 'smtp.gmail.com'
@@ -41,4 +39,4 @@ class DevConfig(Config):
 
 
 class ProdConfig(Config):
-    DATABASE_URI = getenv('PROD_DATABASE_URI', '')
+    SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URL', '')
