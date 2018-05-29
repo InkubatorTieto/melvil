@@ -9,10 +9,10 @@ Melvil application for Tieto Python Incubator.
 (c) To build docker image run:  
 
 ```bash
-docker-compose up
+docker-compose -f docker-compose-dev.yml up
 ```
 
-(d) Go to: localhost:8000  
+(d) Go to: localhost:5000  
 
 ## Running application:  
 
