@@ -84,10 +84,11 @@ def registration():
         form = RegistrationForm()
         if form.validate_on_submit():
             try:
-                new_user = User(email=form.email.data,
-                                first_name=form.first_name.data,
-                                surname=form.surname.data,
-                                password_hash=generate_password_hash(form.password.data))
+                new_user = User(
+                    email=form.email.data,
+                    first_name=form.first_name.data,
+                    surname=form.surname.data,
+                    password_hash=generate_password_hash(form.password.data))
                 db.session.add(new_user)
                 db.session.commit()
                 send_confirmation_email(new_user.email)
