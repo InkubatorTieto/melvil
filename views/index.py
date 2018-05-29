@@ -46,9 +46,10 @@ def login():
 
             if form.validate_on_submit():
                 data = User.query.filter_by(email=form.email.data).first()
-                if data is not None and
-                check_password_hash(data.password_hash,
-                                    form.password.data):  # and data.active:
+                if (data is not None and
+                        check_password_hash(data.password_hash,
+                                            form.password.data)):
+                        # and data.active:
                         session['logged_in'] = True
                         session['id'] = data.id
                         session['email'] = data.email
