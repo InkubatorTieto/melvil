@@ -23,8 +23,7 @@ def upgrade():
         sa.Column('name', sa.String, index=True, unique=True),
         sa.Column('email', sa.String, index=True, unique=True),
         sa.Column('password_hash', sa.String)
-        )
-
+    )
 
 
 def downgrade():
