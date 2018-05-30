@@ -37,16 +37,18 @@ class RegistrationForm(FlaskForm):
                           validators=[DataRequired(), Length(3), surname],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Surname'}))
-    password = PasswordField('Password',
-                             validators=[DataRequired(),
-                                         EqualTo('confirm_pass',
-                                                 message='Passwords must match.')],
-                             render_kw=({'class': 'inputs',
-                                         'placeholder': 'Password'}))
-    confirm_pass = PasswordField('Confirm password',
-                                 validators=[DataRequired()],
-                                 render_kw=({'class': 'inputs',
-                                             'placeholder': 'Confirm Password'}))
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired(),
+                    EqualTo('confirm_pass',
+                            message='Passwords must match.')],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Password'}))
+    confirm_pass = PasswordField(
+        'Confirm password',
+        validators=[DataRequired()],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Confirm Password'}))
     submit = SubmitField('Sign In',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
@@ -64,8 +66,9 @@ class ContactForm(FlaskForm):
                             validators=[DataRequired()],
                             render_kw=({'class': 'inputs message',
                                         'placeholder': 'Message'}))
-    send_message = SubmitField('Send message',
-                               render_kw=({'class': 'btn btn-primary submits'}))
+    send_message = SubmitField(
+        'Send message',
+        render_kw=({'class': 'btn btn-primary submits'}))
 
 
 class SearchForm(FlaskForm):
