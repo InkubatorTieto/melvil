@@ -6,8 +6,13 @@ from app import db as _db
 from app import mail as _mail
 from sqlalchemy import event
 from models import User, Book
+from faker import Faker
+import random
+import string
+
 
 g = Generic('en')
+faker = Faker()
 
 
 @pytest.fixture(scope='module')
@@ -73,11 +78,19 @@ def session(db):
 
 @pytest.fixture(scope='module')
 def user(app):
+    def email_generator(chars=string.ascii_letters + string.digits +'.' +'-'):
+        size = random.randint(5, 25)
+        return ''.join(random.choice(chars) for _ in range(size))+'@tieto.com'
+
+    def text_generator(chars=string.ascii_letters+'ąćęłóżź'):
+        size = random.randint(5, 25)
+        return ''.join(random.choice(chars) for _ in range(size))
+
     data = {
-        'email': 'test1@test.com',
-        'first_name': 'Testowy',
-        'surname': 'test',
-        'password': '5354'}
+        'email': email_generator(),
+        'first_name': text_generator(),
+        'surname': text_generator,
+        'password': text_generator}
     yield data
 
 
