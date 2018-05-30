@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from config import DevConfig
 from flask import render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
@@ -77,8 +76,8 @@ def registration():
         form = RegistrationForm()
         if form.validate_on_submit():
             try:
-                new_user = User(email=form.email.data, first_name=form.first_name.data.encode('UTF8'), surname=form.surname.dataencode('UTF8'),
-                                password_hash=generate_password_hash(form.password.dataencode('UTF8')))
+                new_user = User(email=form.email.data, first_name=form.first_name.data, surname=form.surname.data,
+                                password_hash=generate_password_hash(form.password.data))
                 db.session.add(new_user)
                 db.session.commit()
                 send_confirmation_email(new_user.email)
@@ -102,11 +101,7 @@ def search():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        try:
-            email_template = open('./templates/contact_confirmation.html', 'r').read()
-        except:
-            email_template = open(os.path.abspath(os.curdir) + './templates/contact_confirmation.html',
-                                  'r').read()
+        email_template = open('./templates/contact_confirmation.html', 'r').read()
         send_email(
             'Contact confirmation, title: ' + form.title.data,
             DevConfig.MAIL_USERNAME,
@@ -114,10 +109,10 @@ def contact():
             None,
             email_template)
         send_email(
-            'Contact form: ' + form.title.data,
+            ('Contact form: ' + form.title.data),
             DevConfig.MAIL_USERNAME,
             [DevConfig.MAIL_USERNAME],
-            'Send by: ' + form.email.data + '\n\n' + form.message.data,
+            ('Send by: ' + form.email.data + '\n\n' + form.message.data),
             None)
         return redirect('/contact')
     return render_template('contact.html',

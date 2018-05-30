@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .emails import send_email
 from itsdangerous import URLSafeTimedSerializer
 from config import DevConfig
