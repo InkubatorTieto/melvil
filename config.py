@@ -8,7 +8,10 @@ class Config(object):
 
 
 class DevConfig(Config):
+    SECRET_KEY = '4f\g45t45gfjerkfefker'
+    SECURITY_PASSWORD_SALT = 'my_precious_two'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_POOL_TIMEOUT = 30
     DEBUG = True
     DB_ENGINE = getenv('DB_ENGINE')
     DB_USER = getenv('DB_USER')
@@ -26,6 +29,15 @@ class DevConfig(Config):
         DB_NAME,
     )
 
+    # email server
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 25
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = getenv('MAIL_PASSWORD')
+    ADMINS = [getenv('MAIL_USERNAME')]
+
 
 class ProdConfig(Config):
-    DATABASE_URI = getenv('PROD_DATABASE_URI', '')
+    SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URL', '')

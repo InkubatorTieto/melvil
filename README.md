@@ -9,8 +9,8 @@ Melvil application for Tieto Python Incubator.
 (c) To build docker image run:  
 
 ```bash
-docker-compose up
-```  
+docker-compose -f docker-compose-dev.yml up
+```
 
 (d) Go to: localhost:5000  
 
@@ -18,4 +18,12 @@ docker-compose up
 
 ```bash
 docker-compose run web
-```  
+```
+
+## Heroku configuration  
+
+[Heroku About](docs/Heroku/Heroku.md)
+
+## Using Travis CI:  
+
+[Travis CI short manual](docs/Travis_CI/Travis_ci.md)
