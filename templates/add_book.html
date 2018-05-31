@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/static/css/books.css">
+{% endblock %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+    {% from "macros.html" import input with context %}
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+        <main role="main" class="inner cover">
+            <div class="container my_container register_container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="wrap">
+                            <p class="form-title">
+                                Register</p>
+                            <form class="login" action="" method="post">
+                                {{ form.hidden_tag() }}
+                                <div class="container">
+                                  <div class="row">
+                                    <div class="col">
+                                       {{ input( form.title ,error['title']) }}
+                                    </div>
+                                    <div class="col">
+                                      {{ input( form.table_of_contents ,error['table_of_contents']) }}
+                                    </div>
+                                  </div>
+
+                                    <div class="row">
+                                    <div class="col">
+                                       <p id="myText">Leanguage:</p>
+                                        {{ input( form.leanguage ,error['leanguage']) }}
+                                    </div>
+                                    <div class="col">
+                                      <p id="myText">Category:</p>
+                                        {{ input( form.category ,error['category']) }}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!--{{ input( form.title ,error['title']) }}-->
+                                <!--{{ input( form.table_of_contents ,error['table_of_contents']) }}-->
+                                <!--<p id="myText">Leanguage:</p>-->
+                                <!--{{ input( form.leanguage ,error['leanguage']) }}-->
+                                <!--<p id="myText">Category:</p>-->
+                                <!--{{ input( form.category ,error['category']) }}-->
+                                {{ input( form.tag ,error['tag']) }}
+                                {{ input( form.description ,error['description']) }}
+
+
+                                {{ input( form.original_title ,error['original_title']) }}
+                                {{ input( form.isbn ,error['isbn']) }}
+                                {{ input( form.publisher ,error['publisher']) }}
+                                {{ input( form.pub_date ,error['pub_date']) }}
+                                <p id="myText">Autors:</p>
+                                {{ input( form.first_name ,error['first_name']) }}
+                                {{ input( form.surname ,error['surname']) }}
+
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}

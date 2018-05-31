@@ -1,0 +1,28 @@
+#mySelect{
+    display: inline-block;
+    width: 100%;
+    height: calc(1.75rem);
+    padding: .175rem 1.75rem .175rem .75rem;
+    line-height: 1.10;
+    color: #000000;
+}
+
+#myText{
+    color: #fff;
+    text-align: left;
+    font-size: 13px;
+    margin-bottom: 5px;
+    padding-left: 8px;
+}
+
+
+.my_container {
+    background: rgba(0, 0, 0, 0.5);
+    width: 720px;
+    margin-top: 100px;
+}
+form {
+    width: 475px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+}

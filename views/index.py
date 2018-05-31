@@ -18,6 +18,8 @@ from send_email import send_confirmation_email, send_password_reset_email
 import os
 from send_email.emails import send_email
 
+
+
 login_manager = LoginManager()
 
 
@@ -250,3 +252,4 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
