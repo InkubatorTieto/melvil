@@ -22,6 +22,7 @@
                     {{ nav_button('index', 'library.index', 'Home' ) }}
                     {{ nav_button('search', 'library.search', 'Search' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
+                    {{ nav_button('add_book', 'library_books.add_book', 'Add new book' ) }}
                     {% if session['id'] %}
                     {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                     {% else %}
