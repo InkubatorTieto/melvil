@@ -7,11 +7,59 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="wrap">
-                            <ul>
-                                {% for col in item.columns() %}
-                                    <li>{{ col }}: {{ item.category }}</li>
-                                {% endfor %}
-                            </ul>
+                            <table>
+                            <tr>
+                                <th>Title</th>
+                                <td>{{ item.title }}</td>
+                            </tr>
+                            <tr>
+                                <th>Language</th>
+                                <td>{{ item.language }}</td>
+                            </tr>
+                            <tr>
+                                <th>Category</th>
+                                <td>{{ item.category }}</td>
+                            </tr>
+                            <tr>
+                                <th>Tags</th>
+                                <td>{{ item.tags }}</td>
+                            </tr>
+                            <tr>
+                                <th>Description</th>
+                                <td>{{ item.description }}</td>
+                            </tr>
+                            {%  if item.type == magazine %}
+                            <tr>
+                                <th>Year</th>
+                                <td>{{ item.year }}</td>
+                            </tr>
+                            <tr>
+                                <th>Issue</th>
+                                <td>{{ item.issue }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <th>Original title</th>
+                                <td>{{ item.original_tile }}</td>
+                            </tr>
+                            <tr>
+                                <th>Authors</th>
+                                <td>{{ item.authors }}</td>
+                            </tr>
+                            <tr>
+                                <th>ISBN</th>
+                                <td>{{ item.isbn }}</td>
+                            </tr>
+                            <tr>
+                                <th>Publication date</th>
+                                <td>{{ item.pub_date }}</td>
+                            </tr>
+                            <tr>
+                                <th>Publisher</th>
+                                <td>{{ item.publisher }}</td>
+                            </tr>
+                            {% endif %}
+                            </table>
                         </div>
                     </div>
                 </div>
