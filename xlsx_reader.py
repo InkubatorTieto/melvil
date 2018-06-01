@@ -8,6 +8,18 @@ from sqlalchemy import exists
 data = './data/biblioteka_oczyszczona.xlsx'
 workbook = xlrd.open_workbook(data)
 
+def get_or_create(session, model, **kwargs):
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        #print('already an instance', instance)
+        #pass
+        return instance
+    else:
+        instance = model(**kwargs)
+        session.add(instance)
+        session.commit()
+        #print('instance added ', instance)
+        return instance
 
 def get_author_name(authors):
     if (',' in authors and 'Jr.' not in authors) or (' and ' in authors) or ('&' in authors):
@@ -88,42 +100,45 @@ def get_book():
         #users_l_name = user_name.last
 
         if type(authors) is tuple:
+            authors_id = []
             f_name = str(authors[0])
             l_name = str(authors[1])
-            author = Author(first_name=f_name, last_name=l_name)
-            book_authors.append(author)
+            #author = Author(first_name=f_name, last_name=l_name)
+            #book_authors.append(author)
+            my_Auth = get_or_create(db.session, Author, last_name=l_name, first_name=f_name)
+            id_of_auth = my_Auth.id
+            authors_id.append(id_of_auth)
 
-            if db.session.query(db.exists().where(Author == author)): # FIXME
-                pass
-            else:
-                db.session.add(author)
         elif type(authors) is list:
+            authors_id = []
             for i in authors:
                 f_name = str(i[0])
                 l_name = str(i[1])
-                author = Author(first_name=f_name, last_name=l_name)
-                book_authors.append(author)
-                a = db.session.query(Author).filter((Author == author))
-                if db.session.query(a.exists()):
-                    pass
-                else:
-                    db.session.add(author)
+                #author = Author(first_name=f_name, last_name=l_name)
+                #book_authors.append(author)
+                my_Auth = get_or_create(db.session, Author, last_name = l_name, first_name = f_name)
+                id_of_auth = my_Auth.id
+                authors_id.append(id_of_auth)
+
         else:
             book_authors = []
-
-        book = Book(title=title, authors=book_authors)
-        db.session.add(book)
+        #book = Book(title=title)
+        #book_copy = get_or_create(db.session, Copy, title = title, asset_code = asset)
+        #print(book_copy)
+        #db.session.add(book)
         if asset and (asset != 'brak') and (asset != "płyta"):
             current_book = Book.query.filter_by(title=title).first()
-            c = db.session.query(Copy).filter(Copy.asset_code == asset)
-            if db.session.query(c.exists()):
-                pass
-            else:
-                copy = Copy(library_item=current_book, asset_code=asset)
-                db.session.add(copy)
+            # c = db.session.query(Copy).filter(Copy.asset_code == asset)
+            # if db.session.query(c.exists()):
+            #     pass
+            # else:
+            #     copy = Copy(library_item=current_book, asset_code=asset)
+            #     db.session.add(copy)
         else:
             pass
     db.session.commit()
+    #print(db.session.query(Author).filter(Author.last_name=="Begg ").all())
+    print(db.session.query(Book).filter(Book.title == "Feedback czyli informacja zwrotna").all())
     #print(db.session.query(Author).all())
     #print(db.session.query(Book).all())
 
@@ -135,16 +150,17 @@ def get_magazines():
         issue = i['issue']
         year = i['year']
         magazine = Magazine(title = title, issue = issue, year = year)
-        m = db.session.query(Magazine).filter(Magazine.title == title)
-        if db.session.query(m.exists()):
-            pass
-        else:
-            db.session.add(magazine)
-    db.session.commit()
+    #     m = db.session.query(Magazine).filter(Magazine.title == title)
+    #     if db.session.query(m.exists()):
+    #         pass
+    #     else:
+    #         db.session.add(magazine)
+    # db.session.commit()
     #print(db.session.query(Magazine).all())
 
-# TODO: check if record already exists db! -> check if done properly -> NOPE
+# FIXME: checking if record exists already in database -> under construction, works for Authors
 # TODO: find authors categorised in a wrong way -> manually from csv export -> manage with it in original file
-# TODO: def separate function for magazines? - YEP
+# TODO: def separate function for magazines? - DONE
 # TODO: do not take any null rows into consideration
 # TODO: HOW TO HANDLE COPIES - DONE
+# TODO: verify magazine adding
