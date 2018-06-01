@@ -1,3 +1,5 @@
+from sqlalchemy.orm import class_mapper, ColumnProperty
+
 from init_db import db
 from models.library import LibraryItem
 
@@ -11,6 +13,12 @@ class Magazine(LibraryItem):
     __mapper_args__ = {
         'polymorphic_identity': 'magazine',
     }
+
+    def columns(self):
+        """Return the actual columns of a SQLAlchemy-mapped object"""
+        return [prop.key
+                for prop in class_mapper(self.__class__).iterate_properties
+                if isinstance(prop, ColumnProperty)]
 
     def __str__(self):
         return "'{}' issue: {}/{}".format(

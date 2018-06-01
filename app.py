@@ -3,6 +3,7 @@ from config import DevConfig
 from views import library
 import os
 from views.index import login_manager
+from views.item_description import item_desc
 from init_db import db
 from raven.contrib.flask import Sentry
 from raven import Client
@@ -18,6 +19,7 @@ def create_app(config=DevConfig):
     app = Flask(__name__)
     app.config.from_object(config)
     app.register_blueprint(library)
+    app.register_blueprint(item_desc)
     app.secret_key = os.urandom(24)
     login_manager.init_app(app)
     mail.init_app(app)

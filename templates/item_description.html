@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %} {{ item.type }} description {% endblock %}
+{% block content %}
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+        <main role="main" class="inner cover">
+            <div class="container my_container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="wrap">
+                            <ul>
+                                {% for col in item.columns() %}
+                                    <li>{{ col }}: {{ item.category }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+{% endblock %}

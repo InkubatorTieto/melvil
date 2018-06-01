@@ -1,9 +1,10 @@
+from sqlalchemy.orm import class_mapper, ColumnProperty
+
 from init_db import db
 from models.library import LibraryItem
 
 
 class Book(LibraryItem):
-
     __tablename__ = 'books'
     id = db.Column(db.ForeignKey('library_item.id'), primary_key=True)
     isbn = db.Column(db.String(128), unique=True)
@@ -18,6 +19,12 @@ class Book(LibraryItem):
     __mapper_args__ = {
         'polymorphic_identity': 'book',
     }
+
+    def columns(self):
+        """Return the actual columns of a SQLAlchemy-mapped object"""
+        return [prop.key
+                for prop in class_mapper(self.__class__).iterate_properties
+                if isinstance(prop, ColumnProperty)]
 
     def __init__(self, **kwargs):
         super(Book, self).__init__(**kwargs)
@@ -38,7 +45,6 @@ class Book(LibraryItem):
 
 
 class Author(db.Model):
-
     __tablename__ = 'authors'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64))
