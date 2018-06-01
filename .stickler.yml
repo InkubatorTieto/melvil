@@ -5,4 +5,4 @@ linters:
     fixer: false
 files:
   ignore:
-      - 'alembic/versions/*'
+    - 'alembic/versions/*.py'

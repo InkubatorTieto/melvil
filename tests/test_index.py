@@ -1,8 +1,7 @@
 from flask import url_for
 
 
-def test_app(app):
-    client = app.test_client()
+def test_app(client):
     resp = client.get(url_for('library.index'))
     assert resp.status_code == 200
 
