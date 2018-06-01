@@ -14,10 +14,10 @@
 <body class="text-center">
 {% block nav %}
     {% from "macros.html" import nav_button with context %}
+    <img class="tieto_logo" src="/static/img/logo.png" alt="logo">
     <div class="cover-container d-flex h-20 p-3 mx-auto flex-column">
         <header class="masthead mb-auto">
             <div class="inner">
-                <h3 class="masthead-brand">Melvil</h3>
                 <nav class="nav nav-masthead justify-content-center">
                     {{ nav_button('index', 'library.index', 'Home' ) }}
                     {{ nav_button('search', 'library.search', 'Search' ) }}
