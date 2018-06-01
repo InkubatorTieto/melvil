@@ -6,14 +6,15 @@ from wtforms import (
     SubmitField,
     TextAreaField,
     SelectField,
-    DateField
+    DateField,
+    FieldList,
+    FormField
 )
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from forms.custom_validators import tieto_email, name, surname
 
 
 class BookForm(FlaskForm):
-
     leanguages = [('polish', 'Polish'), ('english', 'English'), ('other', 'Other')]
     categories = [('developers', 'Developers'),
                   ('managers', 'Managers'),
@@ -26,31 +27,31 @@ class BookForm(FlaskForm):
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
 
-    table_of_contents = StringField('Table of contents',
-                        validators=[DataRequired(), Length(3), name],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Table of contents'}))
+    table_of_contents = TextAreaField('Table of contents',
+                                      validators=[DataRequired(), Length(3), name],
+                                      render_kw=({'class': 'inputs',
+                                                  'placeholder': 'Table of contents'}))
 
     leanguage = SelectField('Leanguage',
-                                    choices=leanguages,
-                                    render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
-                                                'id': 'mySelect',
-                                                'placeholder': 'Leanguage'}))
-
-    category = SelectField('Category',
-                            choices=categories,
+                            choices=leanguages,
                             render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
                                         'id': 'mySelect',
-                                        'placeholder': 'Category'}))
+                                        'placeholder': 'Leanguage'}))
+
+    category = SelectField('Category',
+                           choices=categories,
+                           render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                                       'id': 'mySelect',
+                                       'placeholder': 'Category'}))
 
     tag = StringField('Tag',
-                        validators=[DataRequired(), Length(3), name],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Tag'}))
-    description = StringField('Description',
-                        validators=[DataRequired(), Length(3), name],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Description'}))
+                      validators=[DataRequired(), Length(3), name],
+                      render_kw=({'class': 'inputs',
+                                  'placeholder': 'Tag'}))
+    description = TextAreaField('Description',
+                                validators=[DataRequired(), Length(3), name],
+                                render_kw=({'class': 'inputs',
+                                            'placeholder': 'Description'}))
 
     # Book
 
@@ -60,18 +61,18 @@ class BookForm(FlaskForm):
                                    'placeholder': 'ISBN number'}))
 
     original_title = StringField('Original title',
-                             validators=[DataRequired(), Length(3), name],
-                             render_kw=({'class': 'inputs',
-                                         'placeholder': 'Original title'}))
+                                 validators=[DataRequired(), Length(3), name],
+                                 render_kw=({'class': 'inputs',
+                                             'placeholder': 'Original title'}))
     publisher = StringField('Publisher',
-                       validators=[DataRequired()],
-                       render_kw=({'class': 'inputs',
-                                   'placeholder': 'Publisher'}))
-
-    pub_date = DateField('Date',
-                            format='%Y-%m-%d',
+                            validators=[DataRequired()],
                             render_kw=({'class': 'inputs',
                                         'placeholder': 'Publisher'}))
+
+    pub_date = DateField('Date of publication',
+                         render_kw=({'class': 'input-group date',
+                                     'placeholder': "MM/DD/YYY"
+                                     }))
 
     # AUTORZY
     first_name = StringField('First name',
@@ -82,6 +83,10 @@ class BookForm(FlaskForm):
                           validators=[DataRequired(), Length(3), surname],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Surname'}))
+
+
+
+
 
     # submit = SubmitField('Sign In',
     #                      render_kw=({'class': 'btn btn-primary submits'}))

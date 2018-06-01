@@ -1,68 +1,161 @@
 {% extends "base.html" %}
 {% block head %}
 <link rel="stylesheet" type="text/css" href="/static/css/books.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
 {% endblock %}
-{% block title %}Register{% endblock %}
+{% block title %}Add new book{% endblock %}
 
 {% block content %}
-    {% from "macros.html" import input with context %}
-    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-        <main role="main" class="inner cover">
-            <div class="container my_container register_container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="wrap">
-                            <p class="form-title">
-                                Register</p>
-                            <form class="login" action="" method="post">
-                                {{ form.hidden_tag() }}
-                                <div class="container">
-                                  <div class="row">
-                                    <div class="col">
-                                       {{ input( form.title ,error['title']) }}
-                                    </div>
-                                    <div class="col">
-                                      {{ input( form.table_of_contents ,error['table_of_contents']) }}
-                                    </div>
-                                  </div>
+{% from "macros.html" import input with context %}
+<div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+    <main role="main" class="inner cover">
+        <p class="form-title">Add new book</p>
+        <form class="login" action="" method="post">
+            {{ form.hidden_tag() }}
+            <div class="container">
 
-                                    <div class="row">
-                                    <div class="col">
-                                       <p id="myText">Leanguage:</p>
-                                        {{ input( form.leanguage ,error['leanguage']) }}
-                                    </div>
-                                    <div class="col">
-                                      <p id="myText">Category:</p>
-                                        {{ input( form.category ,error['category']) }}
-                                    </div>
-                                  </div>
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.title ,error['title']) }}
+                    </div>
+                    <div class="col">
+                        {{ input( form.original_title ,error['original_title']) }}
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.publisher ,error['publisher']) }}
+                    </div>
+                    <div class="col">
+                            <br>
+                            <p id="myText">Date of publication:</p>
+                            {{ input(form.pub_date(class='dtpick'), error['pub_date'])}}
+                    </div>
+                </div>
+
+
+
+                    <br>
+                         <!--### DYNAMIC FORMS ###-->
+                    <div class="form-group dynamic-element" style="display:none">
+                        <div class="row">
+                            <div class="col-md-2"></div>
+
+                            <!-- Replace these fields -->
+                            <div class="row">
+                                <div class="col">
+                                    {{ input( form.first_name) }}
+                                </div>
+                                <div class="col">
+                                    {{ input( form.surname) }}
+                                </div>
+                            </div>
+                            <!-- End of fields-->
+                            <div class="col-md-1">
+                                <p class="delete">x</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END OF HIDDEN ELEMENT -->
+
+                    <div class="form-container">
+                        <form class="form-horizontal">
+                            <fieldset>
+                                <!-- Form Name -->
+                                <legend class="title" id="myText">Autorzy:</legend>
+
+                                <div class="dynamic-stuff">
+                                    <!-- Dynamic element will be cloned here -->
+                                    <!-- You can call clone function once if you want it to show it a first element-->
                                 </div>
 
-                                <!--{{ input( form.title ,error['title']) }}-->
-                                <!--{{ input( form.table_of_contents ,error['table_of_contents']) }}-->
-                                <!--<p id="myText">Leanguage:</p>-->
-                                <!--{{ input( form.leanguage ,error['leanguage']) }}-->
-                                <!--<p id="myText">Category:</p>-->
-                                <!--{{ input( form.category ,error['category']) }}-->
-                                {{ input( form.tag ,error['tag']) }}
-                                {{ input( form.description ,error['description']) }}
+                                <!-- Button -->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p class="add-one" id="myText">+ Dodaj autora</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                     <!--### END OF DYNAMIC FORMS ###-->
+
+                    <div class="row">
+                        <div class="col">
+                            <br>
+                            {{ input( form.isbn ,error['isbn']) }}
+                        </div>
+                        <div class="col">
+                            <p id="myText">Leanguage:</p>
+                            {{ input( form.leanguage ,error['leanguage']) }}
+                        </div>
+                    </div>
 
 
-                                {{ input( form.original_title ,error['original_title']) }}
-                                {{ input( form.isbn ,error['isbn']) }}
-                                {{ input( form.publisher ,error['publisher']) }}
-                                {{ input( form.pub_date ,error['pub_date']) }}
-                                <p id="myText">Autors:</p>
-                                {{ input( form.first_name ,error['first_name']) }}
-                                {{ input( form.surname ,error['surname']) }}
+                    <div class="row">
+                        <div class="col">
+                            <br>
+                            {{ input( form.tag ,error['tag']) }}
+                        </div>
+                        <div class="col">
+                            <p id="myText">Category:</p>
+                            {{ input( form.category ,error['category']) }}
+                        </div>
+                    </div>
 
 
-
-                            </form>
+                    <div class="row">
+                        <div class="col">
+                            {{ input( form.table_of_contents ,error['table_of_contents']) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ input( form.description ,error['description']) }}
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
-    </div>
+        </form>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+
+        $(function() {
+            $( ".dtpick" ).datepicker();
+        });
+    </script>
+
+    <script>
+        //Clone the hidden element and shows it
+        $('.add-one').click(function(){
+          $('.dynamic-element').first().clone().appendTo('.dynamic-stuff').show();
+          attach_delete();
+        });
+
+
+        //Attach functionality to delete buttons
+        function attach_delete(){
+          $('.delete').off();
+          $('.delete').click(function(){
+            console.log("click");
+            $(this).closest('.form-group').remove();
+          });
+        }
+    </script>
+
+
 {% endblock %}

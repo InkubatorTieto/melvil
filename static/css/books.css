@@ -15,14 +15,49 @@
     padding-left: 8px;
 }
 
-
-.my_container {
-    background: rgba(0, 0, 0, 0.5);
-    width: 720px;
-    margin-top: 100px;
+.cover{
+    background: rgba(0, 0, 0, 0.7);
 }
 form {
     width: 475px;
     margin: 0 auto;
     padding-bottom: 30px;
+}
+
+#pub_date{
+    border-radius: 3pt;
+    border-style: hidden;
+    padding-left: 8px;
+    min-height: 28px;
+    font-size: 12px;
+    width: -webkit-fill-available;
+}
+
+
+.add-one{
+  color:green;
+  text-align:center;
+  font-weigth:bolder;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.delete{
+  color:white;
+  text-align:center;
+  margin-top:6px;
+  font-weight:700;
+  border-radius:5px;
+  min-width:20px;
+  cursor:pointer;
+}
+
+.title{
+  text-align:center;
+  font-size:40px;
+  margin-bottom:40px;
+}
+
+.dynamic-element{
+  margin-bottom:0px;
 }
