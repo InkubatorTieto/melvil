@@ -126,6 +126,8 @@ def test_delete_user(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
+        reservation_status=True,
+        reservation_timestamp=datetime.now(tz=pytz.utc),
         returned=g.development.boolean()
     )
     session.add(log)
@@ -165,6 +167,8 @@ def test_delete_book(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
+        reservation_status=True,
+        reservation_timestamp=datetime.now(tz=pytz.utc),
         returned=g.development.boolean()
     )
     session.add(log)
@@ -255,6 +259,8 @@ def test_delete_copy(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
+        reservation_status=True,
+        reservation_timestamp=datetime.now(tz=pytz.utc),
         returned=g.development.boolean()
     )
     session.add(log)
