@@ -7,7 +7,8 @@
 ```bash
 $ git clone https://github.com/InkubatorTieto/melvil.git
 ```
-4. Go to the repo dir
+
+4. Go to the repo dir  
 ```bash
 $ cd melvil
 ```
@@ -25,19 +26,28 @@ $ heroku create <app_name>
 ```
 
 6. Check if remote heroku repo is set  
+
 ```bash
 $ git remote -v
 ```
 Default name of heroku git should be _heroku_  
 
-7. To deploy app to host and open in the browser type:
+7. To deploy app to host and open in the browser type:  
 
 ```bash
 $ git push heroku master
 $ heroku open
 ```
 
-To see server logs  
+8. In order to deploy dockerized app on heroku service set these environment variables on heroku dashboard:  
+
+```
+APP_SETTINGS
+MAIL_USERNAME
+MAIL_PASSWORD
+```
+
+To see server logs type  
 ```bash
 $ heroku logs
 ```
