@@ -95,6 +95,9 @@ class Tag(db.Model):
     def __repr__(self):
         return "<Tag: {}>".format(self.name)
 
+    def __str__(self):
+        return "Tag: {}".format(self.name)
+
 
 item_tags = db.Table('item_tags',
                      db.Column('item_id',
@@ -123,3 +126,9 @@ class LibraryItem(db.Model):
         'polymorphic_identity': 'library_item',
         'polymorphic_on': type
     }
+
+    def tags_string(self):
+        if self.tags:
+            return ', '.join(t.name for t in self.tags)
+        else:
+            return '-'

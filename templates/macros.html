@@ -15,5 +15,18 @@
 {% endmacro %}
 
 
+{% macro table_row(label, content) %}
+    <tr>
+        <th>{{ label }}</th>
+        <td>{{ content|default('-', true) }}</td>
+    </tr>
+{% endmacro %}
 
-
+{% macro copy_row(copy, index) %}
+    <tr>
+        <td>{{ index }}</td>
+        <td>{{ copy.asset_code }}</td>
+        <td>{{ copy.has_cd_disk }}</td>
+        <td>AVAILABLE</td>
+    </tr>
+{% endmacro %}

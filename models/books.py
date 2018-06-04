@@ -43,6 +43,12 @@ class Book(LibraryItem):
             self.copies
         )
 
+    def authors_string(self):
+        if self.authors:
+            return ', '.join(a.full_name for a in self.authors)
+        else:
+            return '-'
+
 
 class Author(db.Model):
     __tablename__ = 'authors'
