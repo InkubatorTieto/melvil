@@ -1,5 +1,5 @@
 from config import DevConfig
-from flask import render_template, request, session, redirect, flash, url_for
+from flask import Flask, render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
 from forms.forms import (
     LoginForm,
@@ -9,16 +9,20 @@ from forms.forms import (
     ForgotPass,
     PasswordForm
 )
+from flask_user import login_required, UserManager, SQLAlchemyAdapter
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from . import library
-from models.users import User
+from models.users import User, Role
 from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
 import os
 from send_email.emails import send_email
+import app
+
 
 login_manager = LoginManager()
+login_manager.login_view = '/login'
 
 
 @library.route('/')
@@ -46,6 +50,7 @@ def login():
 
             if form.validate_on_submit():
                 data = User.query.filter_by(email=form.email.data).first()
+
                 if (data is not None and
                         check_password_hash(data.password_hash,
                                             form.password.data)):
@@ -89,6 +94,7 @@ def registration():
                     first_name=form.first_name.data,
                     surname=form.surname.data,
                     password_hash=generate_password_hash(form.password.data))
+                new_user.roles.append(Role(name='ADMIN'))
                 db.session.add(new_user)
                 db.session.commit()
                 send_confirmation_email(new_user.email)
@@ -110,7 +116,9 @@ def registration():
 
 
 @library.route('/search')
+@login_required
 def search():
+    print(request.values.get('next'))
     return render_template('search.html', title='Search', form=SearchForm())
 
 

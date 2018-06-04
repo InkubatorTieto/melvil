@@ -38,6 +38,9 @@ class DevConfig(Config):
     MAIL_PASSWORD = getenv('MAIL_PASSWORD')
     ADMINS = [getenv('MAIL_USERNAME')]
 
+    # flask_user config
+    USER_ENABLE_EMAIL = False
+
 
 class ProdConfig(Config):
     SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URL', '')

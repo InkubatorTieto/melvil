@@ -4,10 +4,12 @@ from wtforms import (
     PasswordField,
     BooleanField,
     SubmitField,
-    TextAreaField
+    TextAreaField,
+    HiddenField
 )
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from forms.custom_validators import tieto_email, name, surname
+from flask_user.forms import RegisterForm, LoginForm
 
 
 class LoginForm(FlaskForm):
@@ -22,9 +24,11 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In',
                          render_kw=({'class': 'btn btn-primary submits'}))
+    next = HiddenField('/login')
+    reg_next = HiddenField('/index')
 
 
-class RegistrationForm(FlaskForm):
+class RegistrationForm(RegisterForm):
     email = StringField('Email',
                         validators=[tieto_email],
                         render_kw=({'class': 'inputs',

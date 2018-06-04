@@ -8,7 +8,7 @@ def test_send(mailbox):
         send_email('testing',
                    DevConfig.ADMINS[0],
                    ['ktos.ktos@cos.com'],
-                   'test',
+                   'tesśt',
                    None)
         assert len(outbox) == 1
         msg = outbox[0]
