@@ -22,16 +22,23 @@ class Book(LibraryItem):
     def __init__(self, **kwargs):
         super(Book, self).__init__(**kwargs)
 
-    def __str__(self):
-        return "'{}' by {}".format(
-            self.title,
-            ', '.join([str(a) for a in self.authors])
-        )
+    # def __str__(self):
+    #     return "'{}' by {}".format(
+    #         self.title,
+    #         ', '.join([str(a) for a in self.authors])
+    #     )
+
+    # def __repr__(self):
+    #     return "<Book: '{}' tags={} authors={} copies={}>".format(
+    #         self.title,
+    #         self.tags,
+    #         self.authors,
+    #         self.copies
+    #     )
 
     def __repr__(self):
-        return "<Book: '{}' tags={} authors={} copies={}>".format(
+        return "<Book: '{}' authors={} copies={}>".format(
             self.title,
-            self.tags,
             self.authors,
             self.copies
         )

@@ -1,7 +1,7 @@
 import pytz
 
 from init_db import db
-
+import enum
 
 class Copy(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,18 +25,27 @@ class Copy(db.Model):
                                       'copy',
                                       uselist=False))
 
-    def __str__(self):
-        return "Copy asset_code: {}, type/title: {}/{}".format(
-            self.asset_code,
-            self.library_item.type,
-            self.library_item.title
-        )
+    # def __str__(self):
+    #     return "Copy asset_code: {}, type/title: {}/{}".format(
+    #         self.asset_code,
+    #         self.library_item.type,
+    #         self.library_item.title
+    #     )
 
     def __repr__(self):
         return "<Copy: {} library_item_id={}>".format(
             self.asset_code,
             self.library_item_id
         )
+
+
+class Book_status_enum(enum.Enum):
+    AVAILABLE = 0
+    RESERVED = 1
+    BORROWED = 2
+
+    def __str__(self):
+        return self.name
 
 
 class RentalLog(db.Model):
@@ -49,8 +58,7 @@ class RentalLog(db.Model):
                         nullable=False)
     _borrow_time = db.Column(db.DateTime)
     _return_time = db.Column(db.DateTime)
-    reserved = db.Column(db.Boolean)
-    returned = db.Column(db.Boolean)
+    book_status = db.Column(db.Enum(Book_status_enum))
 
     @property
     def borrow_time(self):
@@ -74,10 +82,17 @@ class RentalLog(db.Model):
             raise ValueError("return_time has to be timezone aware")
         self._return_time = dt.astimezone(tz=pytz.utc)
 
+    # def __str__(self):
+    #     return "RENTAL LOG: user: {} copy: {}".format(
+    #         self.user.full_name,
+    #         self.copy.asset_code
+    #     )
+
     def __str__(self):
-        return "RENTAL LOG: user: {} copy: {}".format(
+        return "RENTAL LOG: user: {} copy: {} book_status: {}".format(
             self.user.full_name,
-            self.copy.asset_code
+            self.copy.asset_code,
+            self.book_status
         )
 
     def __repr__(self):

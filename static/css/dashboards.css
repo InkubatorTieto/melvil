@@ -1,0 +1,21 @@
+
+.book_borrowing_dashboard {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    color: rgba(255, 255, 255, 1);
+    display : inline-block;
+}
+
+.book_dashboard_button{
+    width: 45%;
+    margin: 0px 10px 20px 10px;
+}
+
+.reserved_books_table_rows{
+    display:block;
+}
+
+.borrowed_books_table_rows{
+    display: none;
+}
+
