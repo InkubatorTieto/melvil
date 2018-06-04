@@ -118,13 +118,7 @@ def search():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        try:
-            email_template = open(
-                './templates/contact_confirmation.html', 'r').read()
-        except:
-            email_template = open(os.path.abspath(os.curdir) +
-                                  './templates/contact_confirmation.html',
-                                  'r').read()
+        email_template = open('./templates/contact_confirmation.html', 'r').read()
         send_email(
             'Contact confirmation, title: ' + form.title.data,
             DevConfig.MAIL_USERNAME,

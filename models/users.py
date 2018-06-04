@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask_user import UserMixin
 from init_db import db
 import enum

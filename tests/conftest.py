@@ -1,13 +1,33 @@
+# -*- coding: utf-8 -*-
 import pytest
 from mimesis import Generic
-
 from app import create_app
 from app import db as _db
 from app import mail as _mail
 from sqlalchemy import event
 from models import User, Book
+from faker import Faker
+import random
+import string
+
+
+def email_generator(chars=string.ascii_letters + string.digits + '.' + '-'):
+    size = random.randint(10, 25)
+    return ''.join(random.choice(chars) for _ in range(size)) + '@tieto.com'
+
+
+def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
+    size = random.randint(25, 40)
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+def password_generator(chars=string.ascii_letters):
+    size = random.randint(10, 25)
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 g = Generic('en')
+faker = Faker()
 
 
 @pytest.fixture(scope='module')
@@ -74,21 +94,11 @@ def session(db):
 @pytest.fixture(scope='module')
 def user(app):
 
-    def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
-        size = random.randint(25, 40)
-        return ''.join(random.choice(chars) for _ in range(size))
-
-    def password_generator(chars=string.ascii_letters):
-        size = random.randint(25, 40)
-        return ''.join(random.choice(chars) for _ in range(size))
-
     data = {
-        'email': g.person.email(),
-        'first_name': g.person.name(),
-        'surname': g.person.surname(),
-        'password': password_generator(),
-        'title':text_generator(),
-        'message':text_generator()}
+        'email': email_generator(),
+        'first_name': text_generator(),
+        'surname': text_generator(),
+        'password': password_generator()}
     yield data
 
 
