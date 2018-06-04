@@ -93,3 +93,17 @@ class PasswordForm(FlaskForm):
                              )
     submit = SubmitField('Submit',
                          render_kw=({'class': 'btn btn-primary submits'}))
+
+
+class WishlistForm(FlaskForm):
+    author = StringField('author',
+                         validators=[DataRequired()],
+                         render_kw=({'class': 'inputs message',
+                                     'placeholder': 'Author'}))
+    title = StringField('title',
+                        validators=[DataRequired()],
+                        render_kw=({'class': 'inputs',
+                                   'placeholder': 'Title'}))
+    submit = SubmitField('Add',
+                         render_kw=({'class': 'btn btn-primary submits'}))
+

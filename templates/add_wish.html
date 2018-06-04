@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+    {% from "macros.html" import input with context %}
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+        <main role="main" class="inner cover">
+            <div class="container my_container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="wrap">
+                            <p class="form-title">
+                                Sign In</p>
+                            <form class="login" action="" method="post">
+                                {{ form.hidden_tag() }}
+                                {{ input( form.author ) }}
+                                {{ input( form.title ) }}
+                                {{ form.submit }}
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}

@@ -1,19 +1,21 @@
 from config import DevConfig
-from flask import render_template, request, session, redirect, flash, url_for
-from flask_login import LoginManager
+from flask import render_template, request, session, redirect, flash, url_for, jsonify
+from flask_login import LoginManager, login_required
 from forms.forms import (
     LoginForm,
     SearchForm,
     ContactForm,
     RegistrationForm,
     ForgotPass,
-    PasswordForm
+    PasswordForm,
+    WishlistForm
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from . import library
 from models.users import User
-from init_db import db
+from models.wishlist import WishListItem, Like, WishListItemSchema, LikeSchema
+from init_db import db, ma
 from send_email import send_confirmation_email, send_password_reset_email
 import os
 from send_email.emails import send_email
@@ -75,6 +77,9 @@ def login():
 
 @library.route('/registration', methods=['GET', 'POST'])
 def registration():
+    # me = User.query.filter_by(email='lizaveta.panineyeva@tieto.com').first()
+    # db.session.delete(me)
+    # db.session.commit()
     if request.method == 'GET':
         form = RegistrationForm()
         return render_template('registration.html',
@@ -250,3 +255,49 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
+
+@library.route('/wishlist', methods=['GET', 'POST'])
+#@login_required
+def wishlist():
+    data = db.session.query(WishListItem).all()
+    wish_list_schema = WishListItemSchema(many=True)
+    like_schema = LikeSchema(many=True)
+    output = wish_list_schema.dump(data)
+    return render_template('wishlist.html', wishes=output)
+
+
+@library.route('/addWish', methods=['GET', 'POST'])
+#@login_required
+def add_wish():
+    form = WishlistForm()
+    if form.validate_on_submit():
+        try:
+            new_wish_item = WishListItem(authors=form.author.data, title=form.title.data)
+            db.session.add(new_wish_item)
+            db.session.commit()
+            print(db.session.query(WishListItem).all())
+        except:
+            print('cant add to database')
+    return render_template('add_wish.html', form=form)
+
+
+@library.route('/addLike/<int:wish_id>', methods=['GET','POST'])
+#@login_required
+def add_like(wish_id):
+    user = User.query.filter_by(id=session['id']).first()
+    print(wish_id)
+    # rows = db.session.query(Like.user_id).first()
+    # if rows is not None:
+    #     exists = db.session.query(db.exists().where(Like.user_id == user.id and Like.wish_item_id == wish_id)).scalar()
+    #     if not exists:
+    #         new_like = Like(user_id=user.id, wish_item_id=wish_id)
+    #         db.session.add(new_like)
+    #         db.session.commit()
+    #     else:
+    #         unlike = Like.query.filter_by(user_id=user.id, wish_item_id=wish_id).first()
+    #         db.session.delete(unlike)
+    #         db.session.commit()
+    #     print(Like.query.all())
+    return redirect(url_for('library.wishlist'))
+
