@@ -6,7 +6,7 @@ class Config(object):
     TESTING = False
     DATABASE_URI = ''
 
-        # email server
+    # email server
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 25
     MAIL_USE_TLS = True
