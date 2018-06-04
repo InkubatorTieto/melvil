@@ -15,16 +15,16 @@ a:visited {
     text-decoration: none;
 }
 
-.search_container {
-    margin-top: 50px;
+.my_container {
+    margin-top: 1px;
     width: 100%;
-    color: white;
     font-size: 16px;
-    padding-bottom: 1px;
-    padding-top: 1px;
 }
 
-.col {
-    padding: 5px;
-    text-align: left;
+.col-lg-6 {
+    float: left;
+}
+
+.list-group {
+    margin-top: 10px;
 }
