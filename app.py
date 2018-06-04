@@ -34,8 +34,7 @@ def create_app(config=DevConfig):
             with app.app_context():
                 db.create_all()
                 get_book()
-                #get_magazines()
-                #db.drop_all() # TODO: remember to erase
+                get_magazines()
             db_not_ready = False
         except:
             print("DB not ready!")
