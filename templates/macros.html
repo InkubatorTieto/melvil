@@ -22,11 +22,9 @@
     </tr>
 {% endmacro %}
 
-{% macro copy_row(copy, index) %}
-    <tr>
+{% macro copy_info_row(copy, index) %}
         <td>{{ index }}</td>
         <td>{{ copy.asset_code }}</td>
         <td>{{ copy.has_cd_disk }}</td>
         <td>AVAILABLE</td>
-    </tr>
 {% endmacro %}

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block head %}
-<link rel="stylesheet" type="text/css" href="/static/css/item_description.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/item_description.css">
 {% endblock %}
 {% block title %} {{ item.type }} description {% endblock %}
 {% block content %}
-    {% from "macros.html" import table_row, copy_row with context %}
+    {% from "macros.html" import table_row, copy_info_row with context %}
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
         <main role="main" class="inner cover">
             <div class="container my_container">
@@ -42,20 +42,42 @@
                                 </tr>
 
                             </table>
+                            {% if admin %}
+                                <div>
+                                    <a type="button" class="btn btn-primary btn-sm"
+                                       href="#">Edit {{ item.type|upper }}</a>
+                                    <a type="button" class="btn btn-danger btn-sm"
+                                       href="#">Delete {{ item.type|upper }}</a>
+                                </div>
+                            {% endif %}
                             {% if item.copies %}
                                 <table>
                                     COPIES of {{ item.type }}
-                                <tr>
-                                    <th>#</th>
-                                    <th>Asset Code</th>
-                                    <th>Has CD?</th>
-                                    <th>Status</th>
-                                </tr>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Asset Code</th>
+                                        <th>Has CD?</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
                                     {% for copy in item.copies %}
-                                        {{ copy_row(copy, loop.index) }}
+                                        <tr>
+                                            {{ copy_info_row(copy, loop.index) }}
+                                            <td><a type="button" class="btn btn-success btn-sm"
+                                                   href="#">Borrow</a></td>
+
+                                            {% if admin %}
+                                                <td><a type="button" class="btn btn-primary btn-sm"
+                                                       href="#">Edit</a></td>
+                                                <td><a type="button" class="btn btn-danger btn-sm"
+                                                       href="#">Delete</a></td>
+                                            {% endif %}
+
+                                        </tr>
                                     {% endfor %}
+
                                 </table>
-                                {% else %}
+                            {% else %}
                                 <p>No Copies - nothing to borrow.</p>
                             {% endif %}
                         </div>
