@@ -2,14 +2,12 @@ import xlrd
 from nameparser import HumanName
 from models import (Book, Author, Copy, Magazine, User)
 from init_db import db
-from sqlalchemy import exists
 
-
-data = './data/biblioteka_oczyszczona.xlsx'
+data = './data/biblioteka_oczyszczona.xlsx'     # please ensure if you have proper file in data folder
 workbook = xlrd.open_workbook(data)
 
 
-def get_or_create(session, model, **kwargs):
+def get_or_create(session, model, **kwargs):    # checks if element exist, creates new if not
     instance = session.query(model).filter_by(**kwargs).first()
     if instance:
         return instance
@@ -20,28 +18,30 @@ def get_or_create(session, model, **kwargs):
         return instance
 
 
-def get_author_name(authors):
+def get_author_name(authors):   # reads author's data from file
     if (',' in authors and 'Jr.' not in authors) or (' and ' in authors) or ('&' in authors):
         split_authors = authors.replace(' and ', ',').replace('&', ',').split(',')
         ath = []
         first_names = []
         last_names = []
+
         for auth in split_authors:
             name = HumanName(str(auth))
-            first_name = name.first + " " + name.middle
-            last_name = name.last + " " + name.suffix
+            first_name = (name.first + " " + name.middle).strip()
+            last_name = (name.last + " " + name.suffix).strip()
             first_names.append(first_name)
             last_names.append(last_name)
             ath = list(zip(first_names, last_names))
     else:
         name = HumanName(str(authors))
-        first_name = name.first + " " + name.middle
-        last_name = name.last + " " + name.suffix
+        first_name = (name.first + " " + name.middle).strip()
+        last_name = (name.last + " " + name.suffix).strip()
         ath = (first_name, last_name)
+
     return ath
 
 
-def get_book_data():
+def get_book_data():    # reads book's data from file
     book_list = []
 
     for sheet_index in range(workbook.nsheets-2):   # -2 excludes deleted books, magazines sheets
@@ -50,7 +50,7 @@ def get_book_data():
 
         for row_index in range(1, rows):    # there is no need to load title of the column
             current_shelf = current_sheet.name
-            title = current_sheet.cell_value(row_index, 1)
+            title = (current_sheet.cell_value(row_index, 1)).strip()
             authors = current_sheet.cell_value(row_index, 2)
             author = get_author_name(authors)
 
@@ -67,24 +67,25 @@ def get_book_data():
                 asset = current_sheet.cell_value(row_index, 3)
                 book_properties = {'authors': author, 'current_shelf': current_shelf, 'title': title, 'asset': asset, 'user': user, 'date_of_rental': date_of_rental, 'status': status}     # delete unused parameters
                 book_list.append(book_properties)
+
     return book_list
 
 
-def get_magazine_data():
+def get_magazine_data():    # reads magazine's data from file
     magazines_list = []
     current_sheet = workbook.sheet_by_index(2)
     rows = current_sheet.nrows
 
     for row_index in range(1, rows):  # there is no need to load title of the column
-        title = current_sheet.cell_value(row_index, 1)
+        title = (current_sheet.cell_value(row_index, 1)).strip()
         year = current_sheet.cell_value(row_index, 2)
-        issue = current_sheet.cell_value(row_index, 3)  # ISSUE
+        issue = current_sheet.cell_value(row_index, 3)
         magazine_properties = {'title': title, 'year': year, 'issue': issue}
         magazines_list.append(magazine_properties)
     return magazines_list
 
 
-def get_book():
+def get_book():     # writes authors, books and copies data in database
     books_properties = get_book_data()
     asset_codes = []
 
@@ -118,27 +119,15 @@ def get_book():
                 book = get_or_create(db.session, Book, title=title)
                 book.authors.append(author)
                 if asset in asset_codes:
-                    copy = get_or_create(db.session, Copy, library_item_id=book.id, library_item=book)
+                    get_or_create(db.session, Copy, library_item_id=book.id, library_item=book)
                 else:
-                    copy = get_or_create(db.session, Copy, library_item_id=book.id, library_item=book, asset_code=asset)
-    #print(db.session.query(Author).filter(Author.last_name=="Begg ").all())
-    #print(db.session.query(Book).filter(Book.title == "Just for fun").all())
-    #print(db.session.query(Author).all())
-    #print(db.session.query(Book).all())
+                    get_or_create(db.session, Copy, library_item_id=book.id, library_item=book, asset_code=asset)
 
 
-def get_magazines():
+def get_magazines():    # writes magazine's data in database
     magazines_properties = get_magazine_data()
     for i in magazines_properties:
         title = i['title']
         issue = str(i['issue'])
         year = str(i['year'])
-        magazine_item = get_or_create(db.session, Magazine, title=title, year=year, issue=issue)
-    #print(db.session.query(Magazine).all())
-
-# FIXME: checking if record exists already in database -> DONE
-# TODO: find authors categorised in a wrong way -> manually from csv export -> manage with it in original file
-# TODO: def separate function for magazines? -> DONE
-# TODO: do not take any null rows into consideration -> null cell remains the same in db
-# TODO: HOW TO HANDLE COPIES -> DONE
-# TODO: verify magazine adding -> DONE
+        get_or_create(db.session, Magazine, title=title, year=year, issue=issue)
