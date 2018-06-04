@@ -73,11 +73,22 @@ def session(db):
 
 @pytest.fixture(scope='module')
 def user(app):
+
+    def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
+        size = random.randint(25, 40)
+        return ''.join(random.choice(chars) for _ in range(size))
+
+    def password_generator(chars=string.ascii_letters):
+        size = random.randint(25, 40)
+        return ''.join(random.choice(chars) for _ in range(size))
+
     data = {
-        'email': 'test1@test.com',
-        'first_name': 'Testowy',
-        'surname': 'test',
-        'password': '5354'}
+        'email': g.person.email(),
+        'first_name': g.person.name(),
+        'surname': g.person.surname(),
+        'password': password_generator(),
+        'title':text_generator(),
+        'message':text_generator()}
     yield data
 
 
