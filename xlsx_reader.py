@@ -3,7 +3,7 @@ from nameparser import HumanName
 from models import (Book, Author, Copy, Magazine, User)
 from init_db import db
 
-data = './data/biblioteka_oczyszczona.xlsx'     # please ensure if you have proper file in data folder
+data = './biblioteka_probna.xlsx'     # please ensure if you have a proper file in folder
 workbook = xlrd.open_workbook(data)
 
 
