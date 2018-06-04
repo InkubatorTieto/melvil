@@ -141,5 +141,5 @@ def db_book(session):
 
 @pytest.fixture
 def mailbox(app):
-    mailbox=_mail.record_messages()
+    mailbox = _mail.record_messages()
     return mailbox

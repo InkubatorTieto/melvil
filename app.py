@@ -23,7 +23,6 @@ def create_app(config=DevConfig):
     login_manager.init_app(app)
     mail.init_app(app)
 
-
     db_not_ready = True
     while (db_not_ready):
         try:
