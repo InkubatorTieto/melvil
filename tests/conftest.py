@@ -95,10 +95,12 @@ def session(db):
 def user(app):
 
     data = {
-        'email': email_generator(),
-        'first_name': text_generator(),
-        'surname': text_generator(),
-        'password': password_generator()}
+        'email': g.person.email(),
+        'first_name': g.person.name(),
+        'surname': g.person.surname(),
+        'password': password_generator(),
+        'title': text_generator(),
+        'message': text_generator()}
     yield data
 
 

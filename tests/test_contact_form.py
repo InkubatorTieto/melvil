@@ -1,19 +1,12 @@
-# -*- coding: utf-8 -*-
 from flask import url_for
-from faker import Faker
-import random
-import string
-
-
-fake = Faker()
 
 
 def test_contact(user, client):
 
     data = {
-        'email': user[fake.email()],
-        'title': user[text_generator()],
-        'message': user[text_generator()]
+        'email': user['email'],
+        'title': user['title'],
+        'message': user['message']
     }
     resp = client.get(url_for('library.contact'))
     assert resp.status_code == 200
