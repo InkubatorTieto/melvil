@@ -11,7 +11,10 @@ from forms.forms import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy.exc import TimeoutError
+
 from . import library
+from models.books import Book
 from models.users import User
 from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
@@ -109,9 +112,37 @@ def registration():
                                message_body=message_body)
 
 
-@library.route('/search')
+@library.route('/search', methods=['GET', 'POST'])
 def search():
-    return render_template('search.html', title='Search', form=SearchForm())
+    #TEST FUNCS TO POPULATE PROTOTYPE FUNCTIONALITY
+    #from tests.test_db import test_books
+    #test_base = test_books(db.session)
+
+    if request.method == 'GET':
+        try:
+            retrieve_book_data = db.session.query(Book).all()
+            books = []
+            for row in retrieve_book_data:
+                book = []
+                book.append(row.id)
+                book.append(row.original_title)
+                for author in row.authors:
+                    book.append(author.last_name + ' ' + author.first_name)
+                books.append(book)
+            books.sort(key=lambda x: x[2])
+        except TimeoutError:
+            return redirect('/')
+
+    return render_template('search.html',
+                           title='Search',
+                           form=SearchForm(),
+                           books=books)
+
+
+#DL-55 task
+@library.route('/book/<id_book>', methods=['GET'])
+def book_detail(id_book):
+    return "{}".format(id_book), 200
 
 
 @library.route('/contact', methods=['GET', 'POST'])
