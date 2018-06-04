@@ -1,18 +1,30 @@
+# -*- coding: utf-8 -*-
 import pytest
 from send_email import send_email
 from config import DevConfig
-from binascii import a2b_uu
+from faker import Faker
+import random
+import string
 
 
-@pytest.mark.skip(reason="This needs better test enviroment config.")
+fake = Faker()
+
+
+def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
+    size = random.randint(25, 40)
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+@pytest.mark.skip(reason="This needs better test environment config.")
 def test_send(mailbox):
 
+    subject = text_generator()
     with mailbox as outbox:
-        send_email('testing',
+        send_email(subject,
                    DevConfig.ADMINS[0],
-                   ['ktos.ktos@cos.com'],
-                   'śśś',
+                   [fake.email()],
+                   text_generator(),
                    None)
         assert len(outbox) == 1
         msg = outbox[0]
-        assert msg.subject == "testing"
+        assert msg.subject == subject
