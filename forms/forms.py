@@ -93,3 +93,26 @@ class PasswordForm(FlaskForm):
                              )
     submit = SubmitField('Submit',
                          render_kw=({'class': 'btn btn-primary submits'}))
+
+
+class WishlistForm(FlaskForm):
+    author = StringField('authors',
+                         validators=[DataRequired(), Length(3), name],
+                         render_kw=({'class': 'inputs',
+                                    'placeholder': 'Authors'}))
+    title = StringField('title',
+                        validators=[DataRequired(), Length(3), name],
+                        render_kw=({'class': 'inputs',
+                                    'placeholder': 'Title'}))
+    pub_date = StringField('pub_date',
+                        validators=[DataRequired()],
+                        render_kw=({'class': 'inputs',
+                                    'placeholder': 'Publication Date'}))
+    add = SubmitField('Add new wish',
+                         render_kw=({'class': 'btn btn-primary add'}))
+
+    close = SubmitField('Close',
+                        render_kw=({'class': 'btn btn-default close'}))
+
+    heart = SubmitField('',
+                        render_kw=({'class': 'btn btn-outline-danger'}))

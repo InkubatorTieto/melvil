@@ -11,7 +11,7 @@ body {
 }
 
 .my_container {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
     width: 360px;
     margin-top: 100px;
 }
@@ -20,3 +20,19 @@ body {
     min-height: 305px;
 }
 
+.my_wishlist{
+    background: rgba(0, 0, 0, 0.7);
+    width: 500px;
+    border-radius: 15px;
+    height: auto;
+    margin-top: 50px;
+    }
+
+.wish{
+    background: rgba(1, 1, 1, 1);
+    border: double thick red;
+    border-radius: 15px;
+    width: 400px;
+    margin-top: 100px;
+    height: 300px;
+}
