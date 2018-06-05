@@ -24,6 +24,7 @@
                     {{ nav_button('search', 'library.search', 'Search' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
                     {% if session['id'] %}
+                    {{ nav_button('borrowedBooks', 'library.book_borrowing_dashboad', 'My Books' ) }}
                     {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                     {% else %}
                     {{ nav_button('login', 'library.login', 'Login' ) }}

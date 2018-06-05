@@ -269,7 +269,7 @@ def my_db():
     # )
     # author3 = Author(
     #     first_name="Katarzyna",
-    #     last_name="Żółta krzczkowaczxdasdasafsasasdasd"
+    #     last_name="Żółta Krzżzywiafuyu"
     # )
     # db.session.add(author1)
     # db.session.add(author2)
@@ -315,7 +315,7 @@ def my_db():
     # db.session.add(copy3)
     # db.session.add(copy4)
     # db.session.commit()
-
+    #
     # reservation1 = RentalLog(
     #     user_id='1',
     #     copy_id='1',
@@ -339,18 +339,18 @@ def my_db():
     #     )
     # reservation4 = RentalLog(
     #     user_id='2',
-    #     copy_id='5',
+    #     copy_id='4',
     #     book_status = Book_status_enum['BORROWED'],
     #     borrow_time=datetime.now(tz=pytz.utc),
     #     return_time=datetime.now(tz=pytz.utc),
     #     )
-
+    #
     # db.session.add(reservation1)
     # db.session.add(reservation2)
     # db.session.add(reservation3)
     # db.session.add(reservation4)
     # db.session.commit()
-
+    #
     authors=db.session.query(Author).all()
     books=db.session.query(Book).all()
     copies = db.session.query(Copy).all()
@@ -360,22 +360,56 @@ def my_db():
                            users=users)
 
 
-@library.route('/borrowed_books', methods=["GET", "POST"])
+@library.route('/borrowedBooks', methods=["GET", "POST"])
 def book_borrowing_dashboad():
-    session['id']=1
-    reserved_books=db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time).\
-                    filter(RentalLog.book_status=='RESERVED').\
-                    filter(RentalLog.user_id==session['id']).\
-                    filter(RentalLog.copy_id==Copy.id).\
-                    filter(Book.id==Copy.library_item_id).\
-                    all()
-    print(reserved_books)
-    borrowed_books=db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time).\
-                    filter(RentalLog.book_status=='BORROWED').\
-                    filter(RentalLog.user_id==session['id']).\
-                    filter(RentalLog.copy_id==Copy.id).\
-                    filter(Book.id==Copy.library_item_id).\
-                    all()
+    session['logged_in'] = True
+    session['id'] =2
 
-    return render_template('book_borrowing_dashboard.html',
-                           reserved_books=reserved_books, borrowed_books=borrowed_books)
+    if 'logged_in' in session:
+        reserved_books = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time).\
+            filter(RentalLog.book_status == 'RESERVED').\
+            filter(RentalLog.user_id == session['id']).\
+            filter(RentalLog.copy_id == Copy.id).\
+            filter(Book.id == Copy.library_item_id).\
+            all()
+
+######################################################
+
+        borrowed_books = db.session.query(Book.title, Author.first_name, Author.last_name, RentalLog._borrow_time, RentalLog._return_time).\
+            filter(RentalLog.book_status == 'BORROWED').\
+            filter(RentalLog.user_id == session['id']).\
+            filter(RentalLog.copy_id == Copy.id).\
+            filter(Book.id == Copy.library_item_id).\
+            join(Book.authors).\
+            all()
+        result_dict = list(map(lambda column: column._asdict(), borrowed_books))
+
+
+        num_of_reserved = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time). \
+            filter(RentalLog.book_status == 'RESERVED'). \
+            filter(RentalLog.user_id == session['id']). \
+            filter(RentalLog.copy_id == Copy.id). \
+            filter(Book.id == Copy.library_item_id). \
+            count()
+
+        num_of_borrowed = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time). \
+            filter(RentalLog.book_status == 'BORROWED'). \
+            filter(RentalLog.user_id == session['id']). \
+            filter(RentalLog.copy_id == Copy.id). \
+            filter(Book.id == Copy.library_item_id). \
+            count()
+        message_title = "Login Required"
+        message_body = result_dict[0]['title']
+        return render_template('message.html',
+                               message_title=message_title,
+                               message_body=message_body)
+
+    #     return render_template('book_borrowing_dashboard.html',
+    #                            reserved_books=reserved_books, borrowed_books=borrowed_books,
+    #                            num_of_borrowed=num_of_borrowed, num_of_reserved=num_of_reserved)
+    else:
+        message_title = "Login Required"
+        message_body = "You must log in first!"
+        return render_template('message.html',
+                               message_title=message_title,
+                               message_body=message_body)

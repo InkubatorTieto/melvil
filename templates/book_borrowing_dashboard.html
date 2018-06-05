@@ -4,11 +4,13 @@
   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main">
             <div class="book_borrowing_dashboard">
-                <div style="color=pink;">
-                    <button type="button" onclick="reserv()" class="btn btn-light book_dashboard_button">Reserved books: 0</button>
-                    <button type="button" onclick="booked()" class="btn btn-light book_dashboard_button">Borrowed books: 0</button>
+                <div >
+                    <button id="reserv_button" type="button" class="btn btn-primary book_dashboard_button">
+                        Reserved books: {{ num_of_reserved }}</button>
+                    <button id="booked_button" type="button" class="btn btn-primary book_dashboard_button">
+                        Borrowed books: {{ num_of_borrowed }}</button>
                 </div>
-                <table id="reserv" class="table">
+                <table id="reserved_table" class="table">
                   <thead>
                     <tr>
                         <th scope="col">Title</th>
@@ -41,13 +43,13 @@
                   {% endif %}
                   </tbody>
                 </table>
-                <table id="booked" class="table" >
+                <table id="booked_table" class="table" >
                   <thead>
                     <tr>
                         <th scope="col">Title</th>
                         <th scope="col">Author</th>
                         <th scope="col">Book rental date</th>
-                        <th scope="col">Rental due date</th>
+                        <th scope="col">Book rental due date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -78,13 +80,19 @@
       </main>
   </div>
 <script>
-function reserv() {
-    document.getElementById("booked").style.display = "none";
-    document.getElementById("reserv").style.display = "block";
-}
-function booked() {
-    document.getElementById("reserv").style.display = "none";
-    document.getElementById("booked").style.display = "block";
-}
+    function reserved_books() {
+        document.getElementById("booked_table").style.display = "none";
+        document.getElementById("reserved_table").style.display = "block";
+        document.getElementById("reserv_button").style.textDecoration = "underline";
+        document.getElementById("booked_button").style.textDecoration = "none";
+    }
+    function booked_books() {
+        document.getElementById("reserved_table").style.display = "none";
+        document.getElementById("booked_table").style.display = "block";
+        document.getElementById("reserv_button").style.textDecoration = "none";
+        document.getElementById("booked_button").style.textDecoration = "underline";
+    }
+        document.getElementById("reserv_button").addEventListener("click", reserved_books);
+        document.getElementById("booked_button").addEventListener("click", booked_books);
 </script>
 {% endblock %}
