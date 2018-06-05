@@ -1,11 +1,13 @@
 import pytest
+
 from mimesis import Generic
+from sqlalchemy import event
 
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from sqlalchemy import event
 from models import User, Book
+
 
 g = Generic('en')
 

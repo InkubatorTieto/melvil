@@ -1,13 +1,17 @@
-from flask import Flask
-from config import DevConfig
-from views import library
 import os
-from views.index import login_manager
-from init_db import db
-from raven.contrib.flask import Sentry
-from raven import Client
-from flask_mail import Mail
 import time
+
+from raven import Client
+from raven.contrib.flask import Sentry
+
+from flask import Flask
+from flask_mail import Mail
+
+from config import DevConfig
+from init_db import db
+from views import library
+from views.index import login_manager
+
 
 mail = Mail()
 sentry = Sentry()

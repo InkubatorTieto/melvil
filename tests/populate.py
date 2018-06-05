@@ -1,7 +1,8 @@
 from datetime import datetime
+from random import randint
+
 import pytz
 from mimesis import Generic
-from random import randint
 
 from models import (
     RentalLog,
@@ -12,6 +13,7 @@ from models import (
     User,
     Magazine
 )
+
 
 g = Generic('en')
 

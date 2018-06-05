@@ -1,6 +1,8 @@
-from flask_user import UserMixin
-from init_db import db
 import enum
+
+from flask_user import UserMixin
+
+from init_db import db
 
 user_roles = db.Table('user_roles',
                       db.Column('user_id',

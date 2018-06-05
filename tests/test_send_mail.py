@@ -1,6 +1,7 @@
 import pytest
-from send_email import send_email
+
 from config import DevConfig
+from send_email import send_email
 
 
 @pytest.mark.skip(reason="This needs better test enviroment config.")

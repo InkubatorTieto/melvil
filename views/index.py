@@ -1,25 +1,27 @@
-from config import DevConfig
+import os
+
 from flask import render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
+
+from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy.exc import TimeoutError
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from . import library
+from config import DevConfig
 from forms.forms import (
     LoginForm,
-    SearchForm,
     ContactForm,
     RegistrationForm,
     ForgotPass,
     PasswordForm
 )
-from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy.exc import TimeoutError
-
-from . import library
+from init_db import db
 from models.books import Book
 from models.users import User
-from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
-import os
 from send_email.emails import send_email
+
 
 login_manager = LoginManager()
 
