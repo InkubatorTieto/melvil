@@ -80,14 +80,21 @@ def get_book_data():
                 status = current_sheet.cell(row_index, 5)
                 author = get_authors_data(authors)
                 asset = current_sheet.cell_value(row_index, 3)
-                book_properties = {'authors': author, 'title': title, 'asset': asset, 'user': user}
+                book_properties = {'authors': author,
+                                   'title': title,
+                                   'asset': asset,
+                                   'user': user}
                 book_list.append(book_properties)
 
             else:
                 asset = current_sheet.cell_value(row_index, 3)
-                book_properties = {'authors': author, 'current_shelf': current_shelf,
-                                   'title': title, 'asset': asset, 'user': user,
-                                   'date_of_rental': date_of_rental, 'status': status}
+                book_properties = {'authors': author,
+                                   'current_shelf': current_shelf,
+                                   'title': title,
+                                   'asset': asset,
+                                   'user': user,
+                                   'date_of_rental': date_of_rental,
+                                   'status': status}
                 book_list.append(book_properties)
 
     return book_list
