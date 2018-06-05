@@ -27,3 +27,4 @@ WTForms-Alchemy
 psycopg2-binary
 xlrd
 nameparser
+pytest_click
