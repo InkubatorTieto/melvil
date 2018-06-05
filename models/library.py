@@ -1,4 +1,7 @@
+from enum import Enum
+
 import pytz
+from sqlalchemy_utils import ChoiceType
 
 from init_db import db
 
@@ -39,7 +42,15 @@ class Copy(db.Model):
         )
 
     def can_borrow(self):
-        return True
+        return BookStatus.AVAILABLE in [l.book_status
+                                        for l in self.rental_logs]
+
+
+# from branch: wip_database_insert_choiceType:
+class BookStatus(Enum):
+    AVAILABLE = 1
+    RESERVED = 2
+    BORROWED = 3
 
 
 class RentalLog(db.Model):
@@ -52,7 +63,9 @@ class RentalLog(db.Model):
                         nullable=False)
     _borrow_time = db.Column(db.DateTime)
     _return_time = db.Column(db.DateTime)
-    reserved = db.Column(db.Boolean)
+    # from branch: wip_database_insert_choiceType:
+    book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
+
     returned = db.Column(db.Boolean)
 
     @property
