@@ -67,7 +67,8 @@
                                         <tr>
                                             {{ copy_info_row(copy, loop.index) }}
                                             <td>
-                                                <a type="button" role="button" class="btn btn-success btn-sm"
+                                                <a type="button" role="button"
+                                                   class="btn btn-success btn-sm {{ 'disabled' if not copy.can_borrow() }}"
                                                    href="#">Borrow</a>
                                             </td>
 

@@ -38,6 +38,9 @@ class Copy(db.Model):
             self.library_item_id
         )
 
+    def can_borrow(self):
+        return True
+
 
 class RentalLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
