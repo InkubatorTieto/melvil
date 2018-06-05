@@ -39,7 +39,8 @@ def get_authors_data(authors):
     if (',' in authors and 'Jr.' not in authors) \
             or (' and ' in authors) \
             or ('&' in authors):
-        split_authors = authors.replace(' and ', ',').replace('&', ',').split(',')
+        split_authors = \
+            authors.replace(' and ', ',').replace('&', ',').split(',')
         first_names = []
         last_names = []
 
@@ -62,7 +63,7 @@ def get_book_data():
     book_list = []
 
     # excluding sheets with unnecessary data
-    for sheet_index in range(workbook.nsheets-2):
+    for sheet_index in range(workbook.nsheets - 2):
         current_sheet = workbook.sheet_by_index(sheet_index)
         rows = current_sheet.nrows
 
@@ -84,8 +85,9 @@ def get_book_data():
 
             else:
                 asset = current_sheet.cell_value(row_index, 3)
-                book_properties = {'authors': author, 'current_shelf': current_shelf, 'title': title,
-                                   'asset': asset, 'user': user, 'date_of_rental': date_of_rental, 'status': status}
+                book_properties = {'authors': author, 'current_shelf': current_shelf,
+                                   'title': title, 'asset': asset, 'user': user,
+                                   'date_of_rental': date_of_rental, 'status': status}
                 book_list.append(book_properties)
 
     return book_list
@@ -123,7 +125,9 @@ def get_book():
             authors_id = []
             first_name = str(authors[0])
             last_name = str(authors[1])
-            author = get_or_create_library_item(db.session, Author, last_name=last_name, first_name=first_name)
+            author = get_or_create_library_item(db.session, Author,
+                                                last_name=last_name,
+                                                first_name=first_name)
             id_of_auth = author.id
             authors_id.append(id_of_auth)
             list_of_authors.append(author)
@@ -135,18 +139,24 @@ def get_book():
             for auth_name in authors:
                 f_name = str(auth_name[0])
                 l_name = str(auth_name[1])
-                author = get_or_create_library_item(db.session, Author, last_name=l_name, first_name=f_name)
+                author = get_or_create_library_item(db.session, Author,
+                                                    last_name=l_name,
+                                                    first_name=f_name)
                 id_of_auth = author.id
                 authors_id.append(id_of_auth)
                 list_of_authors.append(author)
-                book = get_or_create_library_item(db.session, Book, title=title)
+                book = get_or_create_library_item(db.session, Book,
+                                                  title=title)
                 book.authors.append(author)
                 if asset in asset_codes:
-                    get_or_create_library_item(db.session, Copy, library_item_id=book.id,
+                    get_or_create_library_item(db.session, Copy,
+                                               library_item_id=book.id,
                                                library_item=book)
                 else:
-                    get_or_create_library_item(db.session, Copy, library_item_id=book.id,
-                                               library_item=book, asset_code=asset)
+                    get_or_create_library_item(db.session, Copy,
+                                               library_item_id=book.id,
+                                               library_item=book,
+                                               asset_code=asset)
     print(db.session.query(Book).all())
     print(db.session.query(Author).all())
 
@@ -158,5 +168,8 @@ def get_magazines():
         title = i['title']
         issue = str(i['issue'])
         year = str(i['year'])
-        get_or_create_library_item(db.session, Magazine, title=title, year=year, issue=issue)
+        get_or_create_library_item(db.session, Magazine,
+                                   title=title,
+                                   year=year,
+                                   issue=issue)
     print(db.session.query(Magazine).all())

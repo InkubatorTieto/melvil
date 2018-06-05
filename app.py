@@ -52,4 +52,3 @@ app.cli.add_command(load_xls_into_db)
 
 
 create_app(DevConfig)
-
