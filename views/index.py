@@ -135,7 +135,6 @@ def search():
 
     return render_template('search.html',
                            title='Search',
-                           form=SearchForm(),
                            books=books)
 
 
