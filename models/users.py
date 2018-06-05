@@ -44,6 +44,16 @@ class User(db.Model, UserMixin):
         return "<User: {} {} role={}>". \
             format(self.first_name, self.surname, self.roles)
 
+    def has_role(self, role):
+        if type(role) is str:
+            try:
+                role = RoleEnum[role.upper()]
+            except ValueError:
+                raise ValueError("No role with that name.")
+        if type(role) is not RoleEnum:
+            raise ValueError("No such role.")
+        return role in [r.name for r in self.roles]
+
 
 class RoleEnum(enum.Enum):
     ADMIN = 0
