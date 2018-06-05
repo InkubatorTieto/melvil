@@ -16,6 +16,7 @@ mimesis==2.0.1
 mock==2.0.0
 psycopg2
 psycopg2-binary
+python-ldap==3.1.0
 pytest==3.5.1
 pytest-flask==0.10.0
 pytz
