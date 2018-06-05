@@ -1,12 +1,4 @@
-from flask import url_for
-
 from models import LibraryItem
-
-
-def test_status_code(client, db_book):
-    resp = client.get(url_for('item_description.item_description',
-                              item_id=db_book.id))
-    assert resp.status_code == 200
 
 
 def test_user_role(db_user, db_roles):
