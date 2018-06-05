@@ -1,50 +1,28 @@
-
 {% extends 'base.html' %}
-
 {% block header %}
  <h1>{% block title %}Wishlist{% endblock %}</h1>
 {% endblock %}
 {% block content %}
    {% from "macros.html" import input with context %}
-   <div class="btn-group">
+  <div class="btn-group">
        <button type="button" class="btn btn-outline-danger">
            <a href="addWish">Add wish</a>
        </button></div>
         <h2>Wishes</h2>
-   <p>
 
+  <p>
 
-   <tr>
-        {% for item in wishes %}
-            {% for onemore in item %}
-                <form action="{{ url_for('library.add_like',wish_id=onemore.id)}}" method="post">
-                    {% for key, value in onemore.items() %}
-                    <td>{{value}}
-                    {%endfor%}
-                <button type="submit" class="btn btn-success" style="border:none;"><i class="fas fa-heart"></i></button>
-                </form>
-                     </td></br>
-            {%endfor%}
-        {%endfor%}
-   </tr>
+        <tr>
+           {% for item in wishes %}
+               {% for onemore in item %}
+               <td>{{onemore.title}}  {{onemore.authors}}
+                   <button type="button" class="btn btn-success" style="border:none;" onclick="window.location.href='{{ url_for('library.add_like',wish_id=onemore.id)}}'"><i class="fas fa-heart"></i></button>
+                   {{onemore.likes|length}}
+               </td></br>
+               {%endfor%}
+           {%endfor%}
+        </tr>
 
-<!--<script>-->
-    <!--$(function() {-->
-        <!--$.ajax({-->
-            <!--url: '/wishlist',-->
-            <!--type: 'GET',-->
-            <!--success: function(res) {-->
-                <!--console.log(res);-->
-            <!--},-->
-            <!--error: function(error) {-->
-                <!--console.log(error);-->
-            <!--}-->
-        <!--});-->
-    <!--});-->
-<!--</script>-->
-
-   </p>
-
-
-   </div>
+  </p>
+  </div>
 {% endblock %}

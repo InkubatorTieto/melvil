@@ -1,25 +1,4 @@
 from init_db import db, ma
-from . import User
-from marshmallow import Schema
-from flask_marshmallow import Marshmallow
-from flask import Flask, jsonify
-
-
-class WishListItem(db.Model):
-    __tablename__ = 'wish_list_items'
-    id = db.Column(db.Integer, primary_key=True)
-    authors = db.Column(db.String(256))
-    title = db.Column(db.String(256))
-    likes = db.Column(db.Integer)
-    pub_date = db.Column(db.Date)
-
-    def __repr__(self):
-        return '<Wish List Item {}>'.format(self.title)
-
-
-class WishListItemSchema(ma.ModelSchema):
-    class Meta:
-        model = WishListItem
 
 
 class Like(db.Model):
@@ -29,12 +8,31 @@ class Like(db.Model):
     wish_item_id = db.Column(db.Integer, db.ForeignKey('wish_list_items.id'), nullable=False)
 
     def __repr__(self):
-        return '<Wish List Item {}>'.format(self.like)
+        return '<Like {}>'.format(self.id)
 
 
 class LikeSchema(ma.ModelSchema):
     class Meta:
         model = Like
+
+
+class WishListItem(db.Model):
+    __tablename__ = 'wish_list_items'
+    id = db.Column(db.Integer, primary_key=True)
+    authors = db.Column(db.String(256))
+    title = db.Column(db.String(256))
+    likes = db.relationship('Like', backref='wish_list_item',  cascade="all, delete-orphan", lazy=True)
+    pub_year = db.Column(db.String(4))
+
+    def __repr__(self):
+        return '<Wish List Item {}>'.format(self.likes)
+
+
+class WishListItemSchema(ma.ModelSchema):
+    class Meta:
+        model = WishListItem
+
+
 
 
 

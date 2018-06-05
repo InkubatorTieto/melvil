@@ -36,12 +36,10 @@ def db(app):
     """
     Returns module-wide initialised database.
     """
-    _db.drop_all()
     _db.create_all()
 
     yield _db
 
-    _db.drop_all()
 
 
 @pytest.fixture(scope="module")
