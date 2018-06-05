@@ -5,7 +5,8 @@ from nameparser import HumanName
 from models import (Book, Author, Copy, Magazine)
 from init_db import db
 
-data = './biblioteka_probna.xlsx'     # please ensure if you have a proper file in folder
+# please ensure if you have a proper file in your folder
+data = './biblioteka_probna.xlsx'
 workbook = xlrd.open_workbook(data)
 
 
@@ -21,7 +22,8 @@ def get_last_name(author):
     return last_name
 
 
-def get_or_create_library_item(session, model, **kwargs):    # checks if element exist, creates new if not
+# checking if element exist, creates new if not
+def get_or_create_library_item(session, model, **kwargs):
     library_item = session.query(model).filter_by(**kwargs).first()
     if library_item:
         return library_item
@@ -32,8 +34,11 @@ def get_or_create_library_item(session, model, **kwargs):    # checks if element
         return instance
 
 
-def get_authors_data(authors):   # reads author's data from file
-    if (',' in authors and 'Jr.' not in authors) or (' and ' in authors) or ('&' in authors):
+# reading author's data from file
+def get_authors_data(authors):
+    if (',' in authors and 'Jr.' not in authors) \
+            or (' and ' in authors) \
+            or ('&' in authors):
         split_authors = authors.replace(' and ', ',').replace('&', ',').split(',')
         first_names = []
         last_names = []
@@ -52,14 +57,17 @@ def get_authors_data(authors):   # reads author's data from file
     return authors_names
 
 
-def get_book_data():    # reads book's data from file
+# reads book's data from file
+def get_book_data():
     book_list = []
 
-    for sheet_index in range(workbook.nsheets-2):   # -2 excludes deleted books, magazines sheets
+    # excluding sheets with unnecessary data
+    for sheet_index in range(workbook.nsheets-2):
         current_sheet = workbook.sheet_by_index(sheet_index)
         rows = current_sheet.nrows
 
-        for row_index in range(1, rows):    # there is no need to load title of the column
+        # excluding data from the title of the column
+        for row_index in range(1, rows):
             current_shelf = current_sheet.name
             title = (current_sheet.cell_value(row_index, 1)).strip()
             authors = current_sheet.cell_value(row_index, 2)
@@ -76,18 +84,21 @@ def get_book_data():    # reads book's data from file
 
             else:
                 asset = current_sheet.cell_value(row_index, 3)
-                book_properties = {'authors': author, 'current_shelf': current_shelf, 'title': title, 'asset': asset, 'user': user, 'date_of_rental': date_of_rental, 'status': status}     # delete unused parameters
+                book_properties = {'authors': author, 'current_shelf': current_shelf, 'title': title,
+                                   'asset': asset, 'user': user, 'date_of_rental': date_of_rental, 'status': status}
                 book_list.append(book_properties)
 
     return book_list
 
 
-def get_magazine_data():    # reads magazine's data from file
+# reading magazine's data from file
+def get_magazine_data():
     magazines_list = []
     current_sheet = workbook.sheet_by_index(2)
     rows = current_sheet.nrows
 
-    for row_index in range(1, rows):  # there is no need to load title of the column
+    # reading rows except the title of the column
+    for row_index in range(1, rows):
         title = (current_sheet.cell_value(row_index, 1)).strip()
         year = current_sheet.cell_value(row_index, 2)
         issue = current_sheet.cell_value(row_index, 3)
@@ -96,7 +107,8 @@ def get_magazine_data():    # reads magazine's data from file
     return magazines_list
 
 
-def get_book():     # writes authors, books and copies data in database
+# writing authors, books and copies data in database
+def get_book():
     books_properties = get_book_data()
     asset_codes = []
 
@@ -130,14 +142,17 @@ def get_book():     # writes authors, books and copies data in database
                 book = get_or_create_library_item(db.session, Book, title=title)
                 book.authors.append(author)
                 if asset in asset_codes:
-                    get_or_create_library_item(db.session, Copy, library_item_id=book.id, library_item=book)
+                    get_or_create_library_item(db.session, Copy, library_item_id=book.id,
+                                               library_item=book)
                 else:
-                    get_or_create_library_item(db.session, Copy, library_item_id=book.id, library_item=book, asset_code=asset)
+                    get_or_create_library_item(db.session, Copy, library_item_id=book.id,
+                                               library_item=book, asset_code=asset)
     print(db.session.query(Book).all())
     print(db.session.query(Author).all())
 
 
-def get_magazines():    # writes magazine's data in database
+# writing magazine's data in database
+def get_magazines():
     magazines_properties = get_magazine_data()
     for i in magazines_properties:
         title = i['title']
