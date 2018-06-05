@@ -1,3 +1,5 @@
+from random import randint
+
 import pytest
 from mimesis import Generic
 
@@ -5,7 +7,7 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from sqlalchemy import event
-from models import User, Book
+from models import User, Book, Role, Magazine
 
 g = Generic('en')
 
@@ -124,6 +126,36 @@ def db_book(session):
     if Book.query.get(b.id):
         session.delete(b)
         session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_magazine(session):
+    m = Magazine(
+        title=' '.join(g.text.title().split(' ')[:5]),
+        language=g.person.language(),
+        description=g.text.sentence(),
+        year=g.datetime.year(maximum=2018),
+        issue=randint(1, 12),
+        tags=[],
+    )
+    session.add(m)
+    session.commit()
+
+    yield m
+
+    if Magazine.query.get(m.id):
+        session.delete(m)
+        session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_roles(session):
+    role_admin = Role(name='ADMIN')
+    role_user = Role(name='USER')
+    session.add_all([role_admin, role_user])
+    session.commit()
+
+    yield (role_admin, role_user)
 
 
 @pytest.fixture
