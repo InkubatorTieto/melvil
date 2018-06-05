@@ -122,6 +122,7 @@ def get_book():     # writes authors, books and copies data in database
                     get_or_create(db.session, Copy, library_item_id=book.id, library_item=book)
                 else:
                     get_or_create(db.session, Copy, library_item_id=book.id, library_item=book, asset_code=asset)
+    print(db.session.query(Book).all())
 
 
 def get_magazines():    # writes magazine's data in database
@@ -131,3 +132,4 @@ def get_magazines():    # writes magazine's data in database
         issue = str(i['issue'])
         year = str(i['year'])
         get_or_create(db.session, Magazine, title=title, year=year, issue=issue)
+    print(db.session.query(Magazine).all())

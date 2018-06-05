@@ -30,8 +30,6 @@ def create_app(config=DevConfig):
             db.init_app(app)
             with app.app_context():
                 db.create_all()
-                get_book()
-                get_magazines()
             db_not_ready = False
         except:
             print("DB not ready!")
@@ -39,6 +37,18 @@ def create_app(config=DevConfig):
             time.sleep(1)
 
     return app
+
+
+app = create_app()
+
+
+@app.cli.command(with_appcontext=True)
+def load_xls_into_db():
+    get_magazines()
+    get_book()
+
+
+app.cli.add_command(load_xls_into_db)
 
 
 create_app(DevConfig)
