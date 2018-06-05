@@ -24,3 +24,4 @@ Werkzeug==0.14.1
 whitenoise==3.2.2
 wtforms
 WTForms-Alchemy
+sqlalchemy-utils==0.33.3

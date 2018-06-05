@@ -1,6 +1,8 @@
 import pytz
 
 from init_db import db
+from enum import Enum
+from sqlalchemy_utils import ChoiceType
 
 
 class Copy(db.Model):
@@ -39,6 +41,12 @@ class Copy(db.Model):
         )
 
 
+class BookStatus(Enum):
+    AVAILABLE = 1
+    RESERVED = 2
+    BORROWED = 3
+
+
 class RentalLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     copy_id = db.Column(db.Integer,
@@ -49,7 +57,8 @@ class RentalLog(db.Model):
                         nullable=False)
     _borrow_time = db.Column(db.DateTime)
     _return_time = db.Column(db.DateTime)
-    reserved = db.Column(db.Boolean)
+    book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
+    _reservation_timestamp = db.Column(db.DateTime)
     returned = db.Column(db.Boolean)
 
     @property
@@ -74,6 +83,18 @@ class RentalLog(db.Model):
             raise ValueError("return_time has to be timezone aware")
         self._return_time = dt.astimezone(tz=pytz.utc)
 
+    @property
+    def reservation_timestamp(self):
+        return self._reservation_timestamp.replace(tzinfo=pytz.utc).\
+            astimezone(tz=pytz.timezone('Europe/Warsaw'))
+
+    @reservation_timestamp.setter
+    def reservation_timestamp(self, dt):
+        if dt.tzinfo is None:
+            raise ValueError("reservation_timestamp has to be timezone aware")
+        self._reservation_timestamp = dt.astimezone(tz=pytz.utc)
+
+
     def __str__(self):
         return "RENTAL LOG: user: {} copy: {}".format(
             self.user.full_name,
@@ -85,7 +106,6 @@ class RentalLog(db.Model):
             self.user_id,
             self.copy_id
         )
-
 
 class Tag(db.Model):
     __tablename__ = 'tags'
