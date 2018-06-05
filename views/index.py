@@ -116,9 +116,9 @@ def registration():
 
 @library.route('/search', methods=['GET', 'POST'])
 def search():
-    #TEST FUNCS TO POPULATE PROTOTYPE FUNCTIONALITY
-    #from tests.test_db import test_books
-    #test_base = test_books(db.session)
+    # TEST FUNCS TO POPULATE PROTOTYPE FUNCTIONALITY
+    # from tests.test_db import test_books
+    # test_base = test_books(db.session)
 
     if request.method == 'GET':
         try:
@@ -140,7 +140,7 @@ def search():
                            books=books)
 
 
-#DL-55 task
+# DL-55 task
 @library.route('/book/<id_book>', methods=['GET'])
 def book_detail(id_book):
     return "{}".format(id_book), 200
