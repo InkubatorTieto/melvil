@@ -89,8 +89,8 @@ class RentalLog(db.Model):
     #     )
 
     def __str__(self):
-        return "RENTAL LOG: user: {} copy: {} book_status: {}".format(
-            self.user.full_name,
+        return "RENTAL LOG: id: {} copy: {} book_status: {}".format(
+            self.user.id,
             self.copy.asset_code,
             self.book_status
         )
