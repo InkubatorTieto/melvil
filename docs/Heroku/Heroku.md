@@ -39,7 +39,7 @@ $ git push heroku master
 $ heroku open
 ```
 
-8. In order to deploy dockerized app on heroku service set these environment variables on heroku dashboard:  
+8. In order to deploy app on heroku service set these environment variables on heroku dashboard:  
 
 ```
 APP_SETTINGS
