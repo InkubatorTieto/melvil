@@ -123,6 +123,10 @@ form.login .form_errors {
 }
 .add{
     margin-top: 40px;
+
+.add:hover {
+    transition: background-color 0.5s ease;
+}
 }
 
 .btn-sample{

@@ -261,10 +261,13 @@ def wishlist():
    form = WishlistForm()
    if form.validate_on_submit():
        try:
-           new_wish_item = WishListItem(authors=form.author.data, title=form.title.data, pub_date=form.pub_date.date)
+           new_wish_item = WishListItem(authors=form.authors.data,
+                                        title=form.title.data,
+                                        pub_date=form.pub_date.date)
            db.session.add(new_wish_item)
            db.session.commit()
            print (db.session.query(WishListItem).all())
+           return render_template('wishlist.html', form=form, data=data)
        except:
            print('cant add to database')
    return render_template('wishlist.html', form=form, data=data)
