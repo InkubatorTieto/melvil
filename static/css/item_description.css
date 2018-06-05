@@ -1,3 +1,35 @@
 .wrap {
     color: rgba(255, 255, 255, 1);
 }
+
+p.table-title {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    color: rgba(255, 255, 255, 1);
+    margin-top: 5%;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+}
+
+tr {
+    width: 100%;
+    margin: 0;
+    padding: 5px 10px;
+    background: 0;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 1);
+    outline: 0;
+    font-style: italic;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: rgba(255, 255, 255, 1);
+    outline: 0;
+}
+
+tr:last-child {
+    border-bottom: 0;
+}

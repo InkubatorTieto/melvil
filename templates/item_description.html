@@ -11,6 +11,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="wrap">
+                            <p class="table-title">DESCRIPTION</p>
                             <table>
                                 {{ table_row('Title', item.title) }}
 
@@ -30,24 +31,24 @@
                                 {{ table_row('Language', item.language) }}
                                 {{ table_row('Tags', tags_list) }}
 
-                                <tr>
-                                    <th class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"
-                                        aria-expanded="true" aria-controls="collapseOne">
-                                        Description
+                                <tr data-toggle="collapse" data-target="#collapseDescription">
+                                    <th>
+                                        Description <i class="fa fa-caret-down"></i>
                                     </th>
-                                    <td id="collapseOne" class="collapse" aria-labelledby="headingOne"
-                                        data-parent="#accordion">
-                                        {{ item.description }}
-                                    </td>
                                 </tr>
 
                             </table>
+
+                            <div id="collapseDescription" class="collapse" aria-labelledby="headingOne"
+                                 data-parent="#accordion">
+                                {{ item.description }}
+                            </div>
                             {% if admin %}
                                 <div>
                                     <a type="button" class="btn btn-primary btn-sm"
-                                       href="#">Edit {{ item.type|upper }}</a>
+                                       href="#">Edit {{ item.type|capitalize }}</a>
                                     <a type="button" class="btn btn-danger btn-sm"
-                                       href="#">Delete {{ item.type|upper }}</a>
+                                       href="#">Delete {{ item.type|capitalize }}</a>
                                 </div>
                             {% endif %}
                             {% if item.copies %}

@@ -7,6 +7,9 @@
     <link rel="stylesheet" type="text/css" href="/static/css/base.css">
     <link rel="stylesheet" type="text/css" href="/static/css/home.css">
     <link rel="stylesheet" type="text/css" href="/static/css/authentication.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+          integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+          crossorigin="anonymous">
     {% block head %}
         <title> Melvil library - {% block title %}{% endblock %}</title>
     {% endblock %}
@@ -23,10 +26,10 @@
                     {{ nav_button('search', 'library.search', 'Search' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
                     {% if session['id'] %}
-                    {{ nav_button('logout', 'library.logout', 'Logout' ) }}
+                        {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                     {% else %}
-                    {{ nav_button('login', 'library.login', 'Login' ) }}
-                    {{ nav_button('registration', 'library.registration', 'New User?' ) }}
+                        {{ nav_button('login', 'library.login', 'Login' ) }}
+                        {{ nav_button('registration', 'library.registration', 'New User?' ) }}
                     {% endif %}
                 </nav>
             </div>
