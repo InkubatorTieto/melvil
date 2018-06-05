@@ -97,17 +97,17 @@ class PasswordForm(FlaskForm):
 
 class WishlistForm(FlaskForm):
     authors = StringField('authors',
-                          validators=[DataRequired(), Length(3)],
+                          validators=[DataRequired()],
                           render_kw=({'class': 'inputs',
-                                    'placeholder': 'Authors'}))
+                                      'placeholder': 'Authors'}))
     title = StringField('title',
-                        validators=[DataRequired(), Length(3)],
+                        validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
     year = StringField('pub_year',
                        validators=[DataRequired()],
                        render_kw=({'class': 'inputs',
-                                      'placeholder': 'Publication Date'}))
+                                   'placeholder': 'Publication Date'}))
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))

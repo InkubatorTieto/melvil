@@ -1,28 +1,60 @@
-{% extends 'base.html' %}
-{% block header %}
- <h1>{% block title %}Wishlist{% endblock %}</h1>
-{% endblock %}
+
+{% extends "base.html" %}
+{% block title %}Wish list{% endblock %}
 {% block content %}
    {% from "macros.html" import input with context %}
-  <div class="btn-group">
-       <button type="button" class="btn btn-outline-danger">
-           <a href="addWish">Add wish</a>
-       </button></div>
-        <h2>Wishes</h2>
-
-  <p>
-
-        <tr>
-           {% for item in wishes %}
-               {% for onemore in item %}
-               <td>{{onemore.title}}  {{onemore.authors}}
-                   <button type="button" class="btn btn-success" style="border:none;" onclick="window.location.href='{{ url_for('library.add_like',wish_id=onemore.id)}}'"><i class="fas fa-heart"></i></button>
-                   {{onemore.likes|length}}
-               </td></br>
-               {%endfor%}
-           {%endfor%}
-        </tr>
-
-  </p>
-  </div>
+    <button type="button" class="btn btn-primary btn-sample" data-toggle="modal" data-target="#exampleModal">
+      Create new wish
+    </button>
+    <div class="modal fade right" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+       <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+           <main role="main" class="inner cover">
+               <div class="container wish"  >
+                   <div class="row">
+                       <div class="col-md-12">
+                           <div class="wrap">
+                               <p class="form-title">Create new wish</p>
+                                   <form class="wishlist" action="" method="post">
+                                       {{ form.hidden_tag() }}
+                                       {{ input( form.authors)}}
+                                       {{ input( form.title ) }}
+                                       {{ input( form.year )}}
+                                       {{ form.add }}
+                                       {{ form.close }}
+                                   </form>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </main>
+       </div>
+    </div>
+       <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+           <main role="main" class="inner cover">
+               <div class="container my_wishlist">
+                   <div class="row">
+                       <div class="col-md-12">
+                           <div class="wrap">
+                               <p class="form-title"> Wish list</p>
+                               <div class="scrollspy-example" data-target="#scrollspy" data-offset="1">
+                               <font color="silver">
+                               <p align="left" >{% for item in wishes %}
+                                                    {% for onemore in item %}
+                                   <tr>
+                                    <td>{{onemore.title}}  {{onemore.authors}}</td>
+                                       <button type="button" class="btn btn-outline-danger" style="border:none;"  onclick="window.location.href='{{ url_for('library.add_like',wish_id=onemore.id)}}';">
+                                         <i class="fas fa-heart"></i>
+                                       </button> {{onemore.likes|length}}
+                                       </br>
+                                    </tr> {% endfor %}{% endfor %} </p>
+                               </font>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </main>
+       </div>
 {% endblock %}
+
+

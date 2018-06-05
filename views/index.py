@@ -261,11 +261,25 @@ def reset_with_token(token):
 
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
+    form = WishlistForm()
+    if form.validate_on_submit():
+        try:
+            new_wish_item = WishListItem(authors=form.authors.data,
+                                         title=form.title.data,
+                                         pub_year=form.year.data)
+            db.session.add(new_wish_item)
+            db.session.commit()
+            data = db.session.query(WishListItem).all()
+            wish_list_schema = WishListItemSchema(many=True)
+            output = wish_list_schema.dump(data)
+            return render_template('wishlist.html', form=form, wishes=output)
+        except:
+            print('cant add to database')
     data = db.session.query(WishListItem).all()
     wish_list_schema = WishListItemSchema(many=True)
     output = wish_list_schema.dump(data)
-    jsonify(wish_list_schema.dump(data))
-    return render_template('wishlist.html', wishes=output)
+    return render_template('wishlist.html', form=form, wishes=output)
+
 
 
 @library.route('/addWish', methods=['GET', 'POST'])
@@ -286,16 +300,16 @@ def add_wish():
 def add_like(wish_id):
     user = User.query.filter_by(id=session['id']).first()
     # print(user.id)
-    # print(wish_id)
+    print(wish_id)
     exists = db.session.query(db.exists().where(Like.user_id == user.id and Like.wish_item_id == wish_id)).scalar()
-    if not exists:
-        new_like = Like(user_id=user.id, wish_item_id=wish_id)
-        db.session.add(new_like)
-        db.session.commit()
-    else:
-        unlike = Like.query.filter_by(user_id=user.id, wish_item_id=wish_id).first()
-        db.session.delete(unlike)
-        db.session.commit()
+    #if not exists:
+    new_like = Like(user_id=user.id, wish_item_id=wish_id)
+    db.session.add(new_like)
+    db.session.commit()
+    # else:
+    #     unlike = Like.query.filter_by(user_id=user.id, wish_item_id=wish_id).first()
+    #     db.session.delete(unlike)
+    #     db.session.commit()
     # print(Like.query.all())
     # print(WishListItem.query.all())
     return redirect(url_for('library.wishlist'))
