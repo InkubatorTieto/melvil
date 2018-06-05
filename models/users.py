@@ -1,4 +1,6 @@
 from flask_user import UserMixin
+from sqlalchemy import event
+
 from init_db import db
 import enum
 
@@ -39,6 +41,8 @@ class User(db.Model, UserMixin):
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
+        role = Role.query.filter_by(name=RoleEnum.USER).first()
+        self.roles.append(role)
 
     def __repr__(self):
         return "<User: {} {} role={}>". \
@@ -60,3 +64,10 @@ class Role(db.Model):
 
     def __repr__(self):
         return "Role: {}".format(self.name)
+
+
+@event.listens_for(Role.__table__, 'after_create')
+def insert_initial_values(*args, **kwargs):
+    for role in RoleEnum:
+        db.session.add(Role(name=role))
+        db.session.commit()
