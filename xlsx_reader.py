@@ -1,16 +1,30 @@
 import xlrd
+
 from nameparser import HumanName
-from models import (Book, Author, Copy, Magazine, User)
+
+from models import (Book, Author, Copy, Magazine)
 from init_db import db
 
 data = './biblioteka_probna.xlsx'     # please ensure if you have a proper file in folder
 workbook = xlrd.open_workbook(data)
 
 
-def get_or_create(session, model, **kwargs):    # checks if element exist, creates new if not
-    instance = session.query(model).filter_by(**kwargs).first()
-    if instance:
-        return instance
+def get_first_name(author):
+    name = HumanName(str(author))
+    first_name = (name.first + " " + name.middle).strip()
+    return first_name
+
+
+def get_last_name(author):
+    name = HumanName(str(author))
+    last_name = (name.last + " " + name.suffix).strip()
+    return last_name
+
+
+def get_or_create_library_item(session, model, **kwargs):    # checks if element exist, creates new if not
+    library_item = session.query(model).filter_by(**kwargs).first()
+    if library_item:
+        return library_item
     else:
         instance = model(**kwargs)
         session.add(instance)
@@ -18,27 +32,24 @@ def get_or_create(session, model, **kwargs):    # checks if element exist, creat
         return instance
 
 
-def get_author_name(authors):   # reads author's data from file
+def get_authors_data(authors):   # reads author's data from file
     if (',' in authors and 'Jr.' not in authors) or (' and ' in authors) or ('&' in authors):
         split_authors = authors.replace(' and ', ',').replace('&', ',').split(',')
-        ath = []
         first_names = []
         last_names = []
 
         for auth in split_authors:
-            name = HumanName(str(auth))
-            first_name = (name.first + " " + name.middle).strip()
-            last_name = (name.last + " " + name.suffix).strip()
+            first_name = get_first_name(auth)
             first_names.append(first_name)
+            last_name = get_last_name(auth)
             last_names.append(last_name)
-            ath = list(zip(first_names, last_names))
+        authors_names = list(zip(first_names, last_names))
     else:
-        name = HumanName(str(authors))
-        first_name = (name.first + " " + name.middle).strip()
-        last_name = (name.last + " " + name.suffix).strip()
-        ath = (first_name, last_name)
+        first_name = get_first_name(authors)
+        last_name = get_last_name(authors)
+        authors_names = (first_name, last_name)
 
-    return ath
+    return authors_names
 
 
 def get_book_data():    # reads book's data from file
@@ -52,13 +63,13 @@ def get_book_data():    # reads book's data from file
             current_shelf = current_sheet.name
             title = (current_sheet.cell_value(row_index, 1)).strip()
             authors = current_sheet.cell_value(row_index, 2)
-            author = get_author_name(authors)
+            author = get_authors_data(authors)
 
             if current_shelf == 'General':
                 user = current_sheet.cell_value(row_index, 4)
                 date_of_rental = current_sheet.cell(row_index, 5)
                 status = current_sheet.cell(row_index, 5)
-                author = get_author_name(authors)
+                author = get_authors_data(authors)
                 asset = current_sheet.cell_value(row_index, 3)
                 book_properties = {'authors': author, 'title': title, 'asset': asset, 'user': user}
                 book_list.append(book_properties)
@@ -89,40 +100,41 @@ def get_book():     # writes authors, books and copies data in database
     books_properties = get_book_data()
     asset_codes = []
 
-    for elem in books_properties:
-        title = elem['title']
-        asset = elem['asset']
+    for book in books_properties:
+        title = book['title']
+        asset = book['asset']
         asset_codes.append(asset)
-        authors = elem['authors']
+        authors = book['authors']
         list_of_authors = []
 
         if type(authors) is tuple:
             authors_id = []
-            f_name = str(authors[0])
-            l_name = str(authors[1])
-            author = get_or_create(db.session, Author, last_name=l_name, first_name=f_name)
+            first_name = str(authors[0])
+            last_name = str(authors[1])
+            author = get_or_create_library_item(db.session, Author, last_name=last_name, first_name=first_name)
             id_of_auth = author.id
             authors_id.append(id_of_auth)
             list_of_authors.append(author)
-            book = get_or_create(db.session, Book, title=title)
+            book = get_or_create_library_item(db.session, Book, title=title)
             book.authors.append(author)
 
         elif type(authors) is list:
             authors_id = []
-            for i in authors:
-                f_name = str(i[0])
-                l_name = str(i[1])
-                author = get_or_create(db.session, Author, last_name=l_name, first_name=f_name)
+            for auth_name in authors:
+                f_name = str(auth_name[0])
+                l_name = str(auth_name[1])
+                author = get_or_create_library_item(db.session, Author, last_name=l_name, first_name=f_name)
                 id_of_auth = author.id
                 authors_id.append(id_of_auth)
                 list_of_authors.append(author)
-                book = get_or_create(db.session, Book, title=title)
+                book = get_or_create_library_item(db.session, Book, title=title)
                 book.authors.append(author)
                 if asset in asset_codes:
-                    get_or_create(db.session, Copy, library_item_id=book.id, library_item=book)
+                    get_or_create_library_item(db.session, Copy, library_item_id=book.id, library_item=book)
                 else:
-                    get_or_create(db.session, Copy, library_item_id=book.id, library_item=book, asset_code=asset)
+                    get_or_create_library_item(db.session, Copy, library_item_id=book.id, library_item=book, asset_code=asset)
     print(db.session.query(Book).all())
+    print(db.session.query(Author).all())
 
 
 def get_magazines():    # writes magazine's data in database
@@ -131,5 +143,5 @@ def get_magazines():    # writes magazine's data in database
         title = i['title']
         issue = str(i['issue'])
         year = str(i['year'])
-        get_or_create(db.session, Magazine, title=title, year=year, issue=issue)
+        get_or_create_library_item(db.session, Magazine, title=title, year=year, issue=issue)
     print(db.session.query(Magazine).all())
