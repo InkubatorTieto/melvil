@@ -15,7 +15,7 @@ def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-@pytest.mark.skip(reason="This needs better test environment config.")
+#@pytest.mark.skip(reason="This needs better test environment config.")
 def test_send(mailbox):
 
     subject = text_generator()
