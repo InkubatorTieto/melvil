@@ -13,10 +13,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from . import library
 from models.users import User
+from models.books import Book
+from models.library import RentalLog,Copy, BookStatus
 from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
 import os
 from send_email.emails import send_email
+from sqlalchemy import desc
 
 login_manager = LoginManager()
 
@@ -250,3 +253,49 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
+
+@library.route('/borrowedBooks', methods=["GET", "POST"])
+def book_borrowing_dashboad():
+
+    if 'logged_in' in session:
+        reserved_books = db.session.query(Book, RentalLog._reservation_begin, RentalLog._reservation_end). \
+            filter(RentalLog.book_status == BookStatus.RESERVED).\
+            filter(RentalLog.user_id == session['id']).\
+            filter(RentalLog.copy_id == Copy.id).\
+            filter(Book.id == Copy.library_item_id). \
+            order_by(desc(RentalLog._reservation_begin)).\
+            all()
+
+        borrowed_books = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time).\
+            filter(RentalLog.book_status == BookStatus.BORROWED).\
+            filter(RentalLog.user_id == session['id']).\
+            filter(RentalLog.copy_id == Copy.id).\
+            filter(Book.id == Copy.library_item_id).\
+            order_by(desc(RentalLog._borrow_time)).\
+            all()
+
+        num_of_reserved = db.session.query(Book, RentalLog._reservation_begin, RentalLog._reservation_begin). \
+            filter(RentalLog.book_status == BookStatus.RESERVED).\
+            filter(RentalLog.user_id == session['id']).\
+            filter(RentalLog.copy_id == Copy.id).\
+            filter(Book.id == Copy.library_item_id). \
+            count()
+
+        num_of_borrowed = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time).\
+            filter(RentalLog.book_status == BookStatus.BORROWED).\
+            filter(RentalLog.user_id == session['id']).\
+            filter(RentalLog.copy_id == Copy.id).\
+            filter(Book.id == Copy.library_item_id).\
+            count()
+
+        return render_template('book_borrowing_dashboard.html', reserved_books=reserved_books,
+                               borrowed_books=borrowed_books, num_of_reserved=num_of_reserved,
+                               num_of_borrowed=num_of_borrowed)
+
+    else:
+        message_title = "Login Required"
+        message_body = "You must log in first!"
+        return render_template('message.html',
+                               message_title=message_title,
+                               message_body=message_body)
