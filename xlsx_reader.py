@@ -134,7 +134,7 @@ def get_books(file_location):
         authors = book['authors']
         list_of_authors = []
 
-        if type(authors) is tuple:
+        if isinstance(authors, tuple):
             authors_id = []
             first_name = str(authors[0])
             last_name = str(authors[1])
@@ -147,7 +147,7 @@ def get_books(file_location):
             book = create_library_item(db.session, Book, title=title)
             book.authors.append(author)
 
-        elif type(authors) is list:
+        elif isinstance(authors, list):
             authors_id = []
             for auth_name in authors:
                 f_name = str(auth_name[0])
