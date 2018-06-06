@@ -21,7 +21,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from . import library
 from models.users import User, Role
-from models.decorators_roles import require_logged_in
+from models.decorators_roles import (
+    require_logged_in,
+    require_not_logged_in,
+    require_role
+)
 from init_db import db
 from send_email.emails import send_email
 import app
@@ -85,6 +89,7 @@ def login():
 
 
 @library.route('/registration', methods=['GET', 'POST'])
+@require_not_logged_in()
 def registration():
     if request.method == 'GET':
         form = RegistrationForm()
@@ -100,7 +105,7 @@ def registration():
                     first_name=form.first_name.data,
                     surname=form.surname.data,
                     password_hash=generate_password_hash(form.password.data))
-                new_user.roles.append(Role(name='ADMIN'))
+                new_user.roles.append(Role(name='USER'))
                 db.session.add(new_user)
                 db.session.commit()
                 send_confirmation_email(new_user.email)
@@ -122,7 +127,7 @@ def registration():
 
 
 @library.route('/search')
-@require_logged_in
+@require_logged_in()
 def search():
     print(request.values.get('next'))
     return render_template('search.html', title='Search', form=SearchForm())
@@ -259,3 +264,9 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
+
+@library.route('/user_only')
+@require_role()
+def user_only():
+    return rediret(url_for('library.contact'))

@@ -10,9 +10,6 @@ from flask_mail import Mail
 import time
 import init_db
 from models.users import User
-from flask_user import UserManager, SQLAlchemyAdapter
-from forms.forms import RegistrationForm, LoginForm
-
 
 mail = Mail()
 sentry = Sentry()
@@ -38,9 +35,4 @@ def create_app(config=DevConfig):
             print("DB not ready!")
             print("Polling DB..")
             time.sleep(1)
-
-    db_adapter = SQLAlchemyAdapter(db, User)
-    user_manager = UserManager(db_adapter, app,
-                               register_form=RegistrationForm,
-                               login_form=LoginForm)
     return app

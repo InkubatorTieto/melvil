@@ -24,11 +24,9 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In',
                          render_kw=({'class': 'btn btn-primary submits'}))
-    next = HiddenField('/login')
-    reg_next = HiddenField('/index')
 
 
-class RegistrationForm(RegisterForm):
+class RegistrationForm(FlaskForm):
     email = StringField('Email',
                         validators=[tieto_email],
                         render_kw=({'class': 'inputs',
