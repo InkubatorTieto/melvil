@@ -6,6 +6,11 @@ class Config(object):
     TESTING = False
     DATABASE_URI = ''
 
+    LDAP_PROVIDER = getenv('LDAP_PROVIDER')
+    LDAP_USER = getenv('LDAP_USER')
+    LDAP_PASS = getenv('LDAP_PASS')
+    LDAP_BASE_DN = getenv('LDAP_BASE_DN')
+
 
 class DevConfig(Config):
     SECRET_KEY = '4f\g45t45gfjerkfefker'
