@@ -60,7 +60,6 @@ class RentalLog(db.Model):
     _return_time = db.Column(db.DateTime)
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
     _reservation_timestamp = db.Column(db.DateTime)
-    returned = db.Column(db.Boolean)
 
     @property
     def borrow_time(self):
