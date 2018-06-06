@@ -13,6 +13,3 @@ def test_contact(user, client):
 
     resp = client.post(url_for('library.contact'), data=data)
     assert resp.status_code == 200
-
-    print(user)
-    assert True
