@@ -267,7 +267,12 @@ def wishlist():
            db.session.add(new_wish_item)
            db.session.commit()
            print (db.session.query(WishListItem).all())
-           return render_template('wishlist.html', form=form, data=data)
+           return render_template('wishlist.html',
+                                  form=form,
+                                  data=data)
        except:
            print('cant add to database')
-   return render_template('wishlist.html', form=form, data=data)
+   return render_template('wishlist.html',
+                          form=form,
+                          data=data,
+                          error=form.errors)

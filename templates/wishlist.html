@@ -2,32 +2,29 @@
 {% block title %}Wish list{% endblock %}
 {% block content %}
    {% from "macros.html" import input with context %}
-    <button type="button" class="btn btn-primary btn-sample" data-toggle="modal" data-target="#exampleModal">
-      Create new wish
-    </button>
-    <div class="modal fade right" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-       <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-           <main role="main" class="inner cover">
-               <div class="container wish"  >
-                   <div class="row">
-                       <div class="col-md-12">
-                           <div class="wrap">
+        <button type="button" class="btn btn-primary btn-sample" data-toggle="modal" data-target="#exampleModal">
+          Create new wish
+        </button>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-body wish" id="exampleModalLabel">
+                <button type="button" style="white" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                    </button>
+                             <br>
                                <p class="form-title">Create new wish</p>
                                    <form class="wishlist" action="" method="post">
                                        {{ form.hidden_tag() }}
-                                       {{ input( form.authors)}}
-                                       {{ input( form.title ) }}
-                                       {{ input( form.pub_date )}}
+                                       {{ input( form.authors, error['authors'])}}
+                                       {{ input( form.title, error['title'] ) }}
+                                       {{ input( form.pub_date, error['pub_date'] )}}
                                        {{ form.add }}
-                                       {{ form.close }}
                                    </form>
-                           </div>
-                       </div>
-                   </div>
-               </div>
-           </main>
-       </div>
-    </div>
+              </div>
+            </div>
+          </div>
+        </div>
        <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
            <main role="main" class="inner cover">
                <div class="container my_wishlist">
