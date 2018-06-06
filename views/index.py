@@ -1,5 +1,13 @@
 from config import DevConfig
-from flask import Flask, render_template, request, session, redirect, flash, url_for
+from flask import (
+    Flask,
+    render_template,
+    request,
+    session,
+    redirect,
+    flash,
+    url_for
+)
 from flask_login import LoginManager
 from forms.forms import (
     LoginForm,
@@ -9,11 +17,11 @@ from forms.forms import (
     ForgotPass,
     PasswordForm
 )
-from flask_user import login_required, UserManager, SQLAlchemyAdapter
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from . import library
 from models.users import User, Role
+from models.decorators_roles import require_logged_in
 from init_db import db
 from send_email.emails import send_email
 import app
@@ -114,7 +122,7 @@ def registration():
 
 
 @library.route('/search')
-@login_required
+@require_logged_in
 def search():
     print(request.values.get('next'))
     return render_template('search.html', title='Search', form=SearchForm())

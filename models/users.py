@@ -1,5 +1,4 @@
-from flask_user import UserMixin
-from flask_user import LoginManager
+from flask_user import UserMixin, LoginManager
 from init_db import db
 import enum
 
