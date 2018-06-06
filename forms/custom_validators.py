@@ -14,5 +14,7 @@ def name(form, field):
 
 
 def surname(form, field):
-    if not re.compile('^[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*-?[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*$').match(field.data):
+    if not re.compile(
+            '^[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*-?[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*$'
+            ).match(field.data):
         raise ValidationError('Insert valid surname.')
