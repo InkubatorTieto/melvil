@@ -51,6 +51,8 @@ class RentalLog(db.Model):
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.id'),
                         nullable=False)
+    _reservation_begin = db.Column(db.DateTime)
+    _reservation_end = db.Column(db.DateTime)
     _borrow_time = db.Column(db.DateTime)
     _return_time = db.Column(db.DateTime)
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
@@ -76,6 +78,28 @@ class RentalLog(db.Model):
         if dt.tzinfo is None:
             raise ValueError("return_time has to be timezone aware")
         self._return_time = dt.astimezone(tz=pytz.utc)
+
+    @property
+    def reservation_begin(self):
+        return self._reservation_begin.replace(tzinfo=pytz.utc). \
+            astimezone(tz=pytz.timezone('Europe/Warsaw'))
+
+    @return_time.setter
+    def reservation_begin(self, dt):
+        if dt.tzinfo is None:
+            raise ValueError("reservation_begin has to be timezone aware")
+        self._reservation_begin = dt.astimezone(tz=pytz.utc)
+
+    @property
+    def reservation_end(self):
+        return self._reservation_end.replace(tzinfo=pytz.utc). \
+            astimezone(tz=pytz.timezone('Europe/Warsaw'))
+
+    @return_time.setter
+    def reservation_end(self, dt):
+        if dt.tzinfo is None:
+            raise ValueError("reservation_end has to be timezone aware")
+        self._reservation_end = dt.astimezone(tz=pytz.utc)
 
     def __str__(self):
         return "RENTAL LOG: user: {} copy: {}".format(

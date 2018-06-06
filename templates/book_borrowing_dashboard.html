@@ -36,8 +36,8 @@
                             {{author.first_name}} {{author.last_name}}
                             {% endfor %}
                         </td>
-                        <td>{{item._borrow_time.strftime('%Y-%m-%d')}}</td>
-                        <td>{{item._return_time.strftime('%Y-%m-%d')}}</td>
+                        <td>{{item._reservation_begin.strftime('%Y-%m-%d')}}</td>
+                        <td>{{item._reservation_begin.strftime('%Y-%m-%d')}}</td>
                     </tr>
                   {% endfor %}
                   {% endif %}
@@ -79,5 +79,5 @@
             </div>
       </main>
   </div>
-<script src="/static/js/book_borrowing_dashboard.js"></script>
+<script  src="{{ url_for('static', filename='js/book_borrowing_dashboard.js') }}"></script>
 {% endblock %}
