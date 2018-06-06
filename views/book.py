@@ -1,6 +1,9 @@
 from flask import render_template, request, session
 from forms.book import BookForm
 from flask import Blueprint
+from models.books import Book, Author
+from models.library import Tag
+from init_db import db
 
 library_books = Blueprint('library_books', __name__,
                           template_folder='templates')
@@ -23,9 +26,67 @@ def add_book():
     else:
         form = BookForm()
 
-        # if form.validate_on_submit():
-        print( form.pub_date.data)
-        print(form.title.data)
+        if form.validate_on_submit():
+
+            tmp_authors = [[form.first_name.data, form.surname.data],
+                           [form.first_name_1.data, form.surname_1.data],
+                           [form.first_name_2.data, form.surname_2.data],
+                           ]
+
+            new_authors = []
+            print(tmp_authors)
+            for first_name, surname in tmp_authors:
+                if first_name != None and  surname != None:
+                    author = Author.query.filter_by(first_name=first_name, last_name=surname).first()
+                    if not author :
+                        new_author = Author(
+                            first_name=first_name,
+                            last_name=surname
+                        )
+                        new_authors.append(new_author)
+                        db.session.add(new_author)
+                        db.session.commit()
+                    else:
+                        new_authors.append(author)
+
+            print(new_authors)
+
+            # tmp_tag = Tag.query.filter_by(name=form.tag.data).first()
+            # if not tmp_tag:
+            #     new_tag = Tag(
+            #         name=form.tag.data
+            #     )
+            #     db.session.add(new_tag)
+            #     db.session.commit()
+            # else:
+            #     new_tag = tmp_tag
+            #
+            # new_book = Book(
+            #     # for library_item model
+            #     title=form.title.data,
+            #     table_of_contents=form.table_of_contents.data,
+            #     language=form.leanguage.data,
+            #     category=form.category.data,
+            #     tags=[new_tag],
+            #     description=form.description.data,
+            #     # for Book model
+            #     isbn=form.isbn.data,
+            #     # authors=new_authors,
+            #     original_title=form.original_title.data,
+            #     publisher=form.publisher.data,
+            #     pub_date=form.pub_date.data)
+            # db.session.add(new_book)
+            #
+            # #print(type(tmp_author), "  ", tmp_author)
+            # print(new_authors)
+            # print(new_tag)
+            # print(new_book)
+
+            message_body = 'The book has been added.'
+            message_title = 'Success!'
+            return render_template('message.html',
+                                   message_title=message_title,
+                                   message_body=message_body)
 
         return render_template('add_book.html',
                                form=form,

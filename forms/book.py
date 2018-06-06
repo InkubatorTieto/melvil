@@ -68,27 +68,39 @@ class BookForm(FlaskForm):
                             validators=[DataRequired()],
                             render_kw=({'class': 'inputs',
                                         'placeholder': 'Publisher'}))
-    # pole do daty do daty tutaj zakomentowałem w celach testu itp ale dalej i tak nie działa
-    
+
     pub_date = DateField('Date of publication',
+                         format='%d/%m/%Y',
                          render_kw=({'class': "dtpick",
-                                         'placeholder': "DD/MM/YYYY"
-                                      }))
-                         # id="dtpick")
-    # validators=[DataRequired()], render_kw = ({'placeholder': "DD/MM/YYYY"
-                  # })
-
-
-
+                                     'placeholder': "DD/MM/YYYY"
+                                     }))
     # AUTORZY
     first_name = StringField('First name',
-                             validators=[Length(3), name],
+                             validators=[DataRequired(), Length(3), name],
                              render_kw=({'class': 'inputs',
                                          'placeholder': 'First Name'}))
     surname = StringField('Surname',
-                          validators=[Length(3), surname],
+                          validators=[DataRequired(), Length(3), surname],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Surname'}))
+
+    first_name_1 = StringField('First_name_1',
+                               validators=[],
+                               render_kw=({'class': 'inputs',
+                                           'placeholder': 'First Name 1'}))
+    surname_1 = StringField('Surname_1',
+                            validators=[],
+                            render_kw=({'class': 'inputs',
+                                        'placeholder': 'Surname 1'}))
+
+    first_name_2 = StringField('First name 2',
+                               validators=[],
+                               render_kw=({'class': 'inputs',
+                                           'placeholder': 'First Name 2'}))
+    surname_2 = StringField('Surname 2',
+                            validators=[],
+                            render_kw=({'class': 'inputs',
+                                        'placeholder': 'Surname 2'}))
 
     submit = SubmitField('Create',
                          render_kw=({'class': 'btn btn-primary submits'}))

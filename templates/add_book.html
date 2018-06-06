@@ -41,54 +41,84 @@
                 </div>
 
 
-
-                    <br>
-                         <!--### DYNAMIC FORMS ###-->
-                    <div class="form-group dynamic-element" style="display:none">
-                        <div class="row">
-                            <div class="col-md-2"></div>
-
-                            <!-- Replace these fields -->
-                            <div class="row">
-                                <div class="col">
-                                    {{ input( form.first_name) }}
-                                </div>
-                                <div class="col">
-                                    {{ input( form.surname) }}
-                                </div>
-                            </div>
-                            <!-- End of fields-->
-                            <div class="col-md-1">
-                                <p class="delete">x</p>
-                            </div>
-                        </div>
+                <p id="myText">Autors:</p>
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.first_name, error['first_name']) }}
                     </div>
-                    <!-- END OF HIDDEN ELEMENT -->
-
-                    <div class="form-container">
-                        <form class="form-horizontal">
-                            <fieldset>
-                                <!-- Form Name -->
-                                <legend class="title" id="myText">Autorzy:</legend>
-
-                                <div class="dynamic-stuff">
-                                    <!-- Dynamic element will be cloned here -->
-                                    <!-- You can call clone function once if you want it to show it a first element-->
-                                </div>
-
-                                <!-- Button -->
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <p class="add-one" id="myText">+ Dodaj autora</p>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </form>
+                    <div class="col">
+                        {{ input( form.surname, error['surname']) }}
                     </div>
-                     <!--### END OF DYNAMIC FORMS ###-->
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.first_name_1, error['first_name_1']) }}
+                    </div>
+                    <div class="col">
+                        {{ input( form.surname_1, error['surname_1']) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.first_name_2, error['first_name_2']) }}
+                    </div>
+                    <div class="col">
+                        {{ input( form.surname_2, error['surname_2']) }}
+                    </div>
+                </div>
+
+
+<!-- Dynamiczny formularz który nie działa -->
+                    <!--<br>-->
+                         <!--&lt;!&ndash;### DYNAMIC FORMS ###&ndash;&gt;-->
+                    <!--<div class="form-group dynamic-element" style="display:none">-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-2"></div>-->
+
+                            <!--&lt;!&ndash; Replace these fields &ndash;&gt;-->
+                            <!--<div class="row">-->
+                                <!--<div class="col">-->
+                                    <!--{{ input( form.first_name, error['first_name']) }}-->
+                                <!--</div>-->
+                                <!--<div class="col">-->
+                                    <!--{{ input( form.surname, error['surname']) }}-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--&lt;!&ndash; End of fields&ndash;&gt;-->
+                            <!--<div class="col-md-1">-->
+                                <!--<p class="delete">x</p>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--&lt;!&ndash; END OF HIDDEN ELEMENT &ndash;&gt;-->
+
+                    <!--<div class="form-container">-->
+                        <!--<form class="form-horizontal">-->
+                            <!--<fieldset>-->
+                                <!--&lt;!&ndash; Form Name &ndash;&gt;-->
+                                <!--<legend class="title" id="myText">Autorzy:</legend>-->
+
+                                <!--<div class="dynamic-stuff">-->
+                                    <!--&lt;!&ndash; Dynamic element will be cloned here &ndash;&gt;-->
+                                    <!--&lt;!&ndash; You can call clone function once if you want it to show it a first element&ndash;&gt;-->
+                                <!--</div>-->
+
+                                <!--&lt;!&ndash; Button &ndash;&gt;-->
+                                <!--<div class="form-group">-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-md-12">-->
+                                            <!--<p class="add-one" id="myText">+ Dodaj autora</p>-->
+                                        <!--</div>-->
+
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</fieldset>-->
+                        <!--</form>-->
+                    <!--</div>-->
+                     <!--&lt;!&ndash;### END OF DYNAMIC FORMS ###&ndash;&gt;-->
+
+
+
 
                     <div class="row">
                         <div class="col">
@@ -142,8 +172,8 @@
         $(function() {
             $(".dtpick").datepicker({
                 onSelect: function (selectedDate) {
-                    $("input[name='pub_date']").val(selectedDate);  // próba wyciągnięcia do formularza nr 1
-                    $('#pub_date').val();   // iinny sposób
+                    $("input[name='pub_date']").val(selectedDate);
+                    $('#pub_date').val();
                     console.log(selectedDate);
                 }
 
@@ -153,13 +183,17 @@
     </script>
 
 
-
+<!-- Skrypt do dynamicznych formularzy-->
     <script>
+
         //Clone the hidden element and shows it
         $('.add-one').click(function(){
-          $('.dynamic-element').first().clone().appendTo('.dynamic-stuff').show();
+            $('.dynamic-element').first().clone().appendTo('.dynamic-stuff').show();
+
           attach_delete();
         });
+
+
 
 
         //Attach functionality to delete buttons
