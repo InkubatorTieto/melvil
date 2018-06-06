@@ -1,5 +1,7 @@
 import xlrd
 
+from datetime import datetime
+
 from nameparser import HumanName
 
 from models import (Book, Author, Copy, Magazine)
@@ -10,20 +12,26 @@ data = './biblioteka_probna.xlsx'
 workbook = xlrd.open_workbook(data)
 
 
-def get_first_name(author):
+def get_full_name(author):
     name = HumanName(str(author))
-    first_name = (name.first + " " + name.middle).strip()
-    return first_name
 
+    def get_name_part(name_parts=[]):
+        if name_parts:
+            try:
+                part_of_name = (name_parts[0] + " " + name_parts[1]).strip()
+                return part_of_name
+            except IndexError as e:
+                print(e)
+                return None
 
-def get_last_name(author):
-    name = HumanName(str(author))
-    last_name = (name.last + " " + name.suffix).strip()
-    return last_name
+    first_name = get_name_part([name.first, name.middle])
+    last_name = get_name_part([name.last, name.suffix])
+
+    return first_name, last_name
 
 
 # checking if element exist, creates new if not
-def get_or_create_library_item(session, model, **kwargs):
+def create_library_item(session, model, **kwargs):
     library_item = session.query(model).filter_by(**kwargs).first()
     if library_item:
         return library_item
@@ -41,19 +49,13 @@ def get_authors_data(authors):
             or ('&' in authors):
         split_authors = \
             authors.replace(' and ', ',').replace('&', ',').split(',')
-        first_names = []
-        last_names = []
+        authors_names = []
 
         for auth in split_authors:
-            first_name = get_first_name(auth)
-            first_names.append(first_name)
-            last_name = get_last_name(auth)
-            last_names.append(last_name)
-        authors_names = list(zip(first_names, last_names))
+            first_name, last_name = get_full_name(auth)
+            authors_names.append([first_name, last_name])
     else:
-        first_name = get_first_name(authors)
-        last_name = get_last_name(authors)
-        authors_names = (first_name, last_name)
+        authors_names = get_full_name(authors)
 
     return authors_names
 
@@ -132,13 +134,13 @@ def get_book():
             authors_id = []
             first_name = str(authors[0])
             last_name = str(authors[1])
-            author = get_or_create_library_item(db.session, Author,
-                                                last_name=last_name,
-                                                first_name=first_name)
+            author = create_library_item(db.session, Author,
+                                         last_name=last_name,
+                                         first_name=first_name)
             id_of_auth = author.id
             authors_id.append(id_of_auth)
             list_of_authors.append(author)
-            book = get_or_create_library_item(db.session, Book, title=title)
+            book = create_library_item(db.session, Book, title=title)
             book.authors.append(author)
 
         elif type(authors) is list:
@@ -146,26 +148,24 @@ def get_book():
             for auth_name in authors:
                 f_name = str(auth_name[0])
                 l_name = str(auth_name[1])
-                author = get_or_create_library_item(db.session, Author,
-                                                    last_name=l_name,
-                                                    first_name=f_name)
+                author = create_library_item(db.session, Author,
+                                             last_name=l_name,
+                                             first_name=f_name)
                 id_of_auth = author.id
                 authors_id.append(id_of_auth)
                 list_of_authors.append(author)
-                book = get_or_create_library_item(db.session, Book,
-                                                  title=title)
+                book = create_library_item(db.session, Book,
+                                           title=title)
                 book.authors.append(author)
                 if asset in asset_codes:
-                    get_or_create_library_item(db.session, Copy,
-                                               library_item_id=book.id,
-                                               library_item=book)
+                    create_library_item(db.session, Copy,
+                                        library_item_id=book.id,
+                                        library_item=book)
                 else:
-                    get_or_create_library_item(db.session, Copy,
-                                               library_item_id=book.id,
-                                               library_item=book,
-                                               asset_code=asset)
-    print(db.session.query(Book).all())
-    print(db.session.query(Author).all())
+                    create_library_item(db.session, Copy,
+                                        library_item_id=book.id,
+                                        library_item=book,
+                                        asset_code=asset)
 
 
 # writing magazine's data in database
@@ -174,9 +174,8 @@ def get_magazines():
     for i in magazines_properties:
         title = i['title']
         issue = str(i['issue'])
-        year = str(i['year'])
-        get_or_create_library_item(db.session, Magazine,
-                                   title=title,
-                                   year=year,
-                                   issue=issue)
-    print(db.session.query(Magazine).all())
+        year = datetime.strptime(str(int(i['year'])), '%Y')
+        create_library_item(db.session, Magazine,
+                            title=title,
+                            year=year,
+                            issue=issue)
