@@ -7,9 +7,12 @@ from nameparser import HumanName
 from models import (Book, Author, Copy, Magazine)
 from init_db import db
 
+
 # please ensure if you have a proper file in your folder
-data = './biblioteka_probna.xlsx'
-workbook = xlrd.open_workbook(data)
+def load_file(file_location):
+    data = file_location
+    workbook = xlrd.open_workbook(data)
+    return workbook
 
 
 def get_full_name(author):
@@ -61,8 +64,9 @@ def get_authors_data(authors):
 
 
 # reads book's data from file
-def get_book_data():
+def get_book_data(file_location):
     book_list = []
+    workbook = load_file(file_location)
 
     # excluding sheets with unnecessary data
     for sheet_index in range(workbook.nsheets - 2):
@@ -103,7 +107,8 @@ def get_book_data():
 
 
 # reading magazine's data from file
-def get_magazine_data():
+def get_magazine_data(file_location):
+    workbook = load_file(file_location)
     magazines_list = []
     current_sheet = workbook.sheet_by_index(2)
     rows = current_sheet.nrows
@@ -119,8 +124,8 @@ def get_magazine_data():
 
 
 # writing authors, books and copies data in database
-def get_book():
-    books_properties = get_book_data()
+def get_books(file_location):
+    books_properties = get_book_data(file_location)
     asset_codes = []
 
     for book in books_properties:
@@ -169,8 +174,8 @@ def get_book():
 
 
 # writing magazine's data in database
-def get_magazines():
-    magazines_properties = get_magazine_data()
+def get_magazines(file_location):
+    magazines_properties = get_magazine_data(file_location)
     for i in magazines_properties:
         title = i['title']
         issue = str(i['issue'])
