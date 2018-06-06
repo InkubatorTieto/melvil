@@ -12,9 +12,9 @@
                             Contact Us</p>
                         <form class="login" action="" method="post">
                             {{ form.hidden_tag() }}
-                            {{ input(form.email ,error['email']) }}
-                            {{ input(form.title ,error['title']) }}
-                            {{ input(form.message ,error['message']) }}
+                            {{ input(form.email, error['email']) }}
+                            {{ input(form.title, error['title']) }}
+                            {{ input(form.message, error['message']) }}
                             {{ form.send_message() }}
                         </form>
                     </div>
