@@ -15,7 +15,6 @@ from tests.populate import (
     populate_magazines
 )
 from models import (
-    Role,
     User,
     Author,
     Tag,
@@ -42,8 +41,8 @@ def test_users(session):
     assert User.query.count() - before_users_count == 10,\
         "more/less than 10 users added"
     for u in users:
-        u.roles.append(role_user)
-        assert u.roles != [], "role not added to user"
+        assert u.roles is not None, \
+            "role not added to user"
 
 
 def test_books(session):
