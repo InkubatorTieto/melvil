@@ -100,10 +100,9 @@ def registration():
                         surname=form.surname.data,
                         password_hash=generate_password_hash(
                             form.password.data))
+                    send_confirmation_email(new_user.email)
                     db.session.add(new_user)
                     db.session.commit()
-                    send_confirmation_email(new_user.email)
-
             except ValueError or TypeError:
                 message_body = 'Registration failed'
                 message_title = 'Error!'
