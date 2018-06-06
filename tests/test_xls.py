@@ -17,14 +17,14 @@ def test_books(session):
 
 def test_particular_author(session):
     get_books('./testfile.xlsx')
-    assert Author.query.filter(Author.last_name
-                               == 'J.K. Rowling'), "author does not exist"
+    assert Author.query.filter(
+        Author.last_name == 'J.K. Rowling'), "author does not exist"
 
 
 def test_particular_book(session):
     get_books('./testfile.xlsx')
-    assert Book.query.filter(Book.title
-                             == 'Harry Potter and the Chamber of Secrets'), \
+    assert Book.query.filter(
+        Book.title == 'Harry Potter and the Chamber of Secrets'), \
         "book does not exist"
 
 
@@ -35,12 +35,12 @@ def test_magazines(session):
 
 def test_magazine_year(session):
     get_magazines('./testfile.xlsx')
-    assert Magazine.query.filter(Magazine.year
-                                 == '2000-01-01'), \
+    assert Magazine.query.filter(
+        Magazine.year == '2000-01-01'), \
         'db does not contain magazine from 2017'
 
 
 def test_magazine_issue(session):
     get_magazines('./testfile.xlsx')
-    assert Magazine.query.filter(Magazine.issue
-                                 == '7'), 'db does not contain issue 7'
+    assert Magazine.query.filter(
+        Magazine.issue == '7'), 'db does not contain issue 7'
