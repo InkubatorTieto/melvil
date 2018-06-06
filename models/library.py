@@ -20,12 +20,13 @@ class Copy(db.Model):
                                        cascade='all, delete-orphan'))
     shelf = db.Column(db.String(56))
     has_cd_disk = db.Column(db.Boolean)
+    available_status = db.Column(db.Boolean)
     rental_logs = db.relationship('RentalLog',
                                   lazy='dynamic',
                                   cascade='all, delete-orphan',
                                   backref=db.backref(
                                       'copy',
-                                      uselist=False))
+                                     uselist=False))
 
     def __str__(self):
         return "Copy asset_code: {}, type/title: {}/{}".format(
@@ -42,9 +43,9 @@ class Copy(db.Model):
 
 
 class BookStatus(Enum):
-    AVAILABLE = 1
-    RESERVED = 2
-    BORROWED = 3
+    RESERVED = 1
+    BORROWED = 2
+    RETURNED = 3
 
 
 class RentalLog(db.Model):
