@@ -8,7 +8,6 @@ from models import (Book, Author, Copy, Magazine)
 from init_db import db
 
 
-# please ensure if you have a proper file in your folder
 def load_file(file_location):
     data = file_location
     workbook = xlrd.open_workbook(data)
