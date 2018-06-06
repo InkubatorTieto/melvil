@@ -28,7 +28,7 @@ class BookForm(FlaskForm):
                                     'placeholder': 'Title'}))
 
     table_of_contents = TextAreaField('Table of contents',
-                                      validators=[DataRequired(), Length(3), name],
+                                      validators=[DataRequired(), Length(3)],
                                       render_kw=({'class': 'inputs',
                                                   'placeholder': 'Table of contents'}))
 
@@ -70,8 +70,8 @@ class BookForm(FlaskForm):
                                         'placeholder': 'Publisher'}))
 
     pub_date = DateField('Date of publication',
-                         render_kw=({'class': 'input-group date',
-                                     'placeholder': "MM/DD/YYY"
+                         validators=[DataRequired()],
+                         render_kw=({'placeholder': "DD/MM/YYYY"
                                      }))
 
     # AUTORZY
@@ -84,9 +84,5 @@ class BookForm(FlaskForm):
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Surname'}))
 
-
-
-
-
-    # submit = SubmitField('Sign In',
-    #                      render_kw=({'class': 'btn btn-primary submits'}))
+    submit = SubmitField('Create',
+                         render_kw=({'class': 'btn btn-primary submits'}))

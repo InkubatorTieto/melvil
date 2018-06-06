@@ -34,7 +34,7 @@
                     <div class="col">
                             <br>
                             <p id="myText">Date of publication:</p>
-                            {{ input(form.pub_date(class='dtpick'), error['pub_date'])}}
+                            {{ input(form.pub_date(class="dtpick"), error['pub_date'])}}
                     </div>
                 </div>
 
@@ -122,6 +122,9 @@
                             {{ input( form.description ,error['description']) }}
                         </div>
                     </div>
+
+                    {{form.submit}}
+
                 </div>
         </form>
     </main>
@@ -136,6 +139,7 @@
 
         $(function() {
             $( ".dtpick" ).datepicker();
+
         });
     </script>
 
