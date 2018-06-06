@@ -265,7 +265,8 @@ def wishlist():
         try:
             new_wish_item = WishListItem(authors=form.authors.data,
                                          title=form.title.data,
-                                         pub_year=form.year.data)
+                                         pub_year=form.pub_year.data)
+
             db.session.add(new_wish_item)
             db.session.commit()
         except exc.SQLAlchemyError:
@@ -273,7 +274,7 @@ def wishlist():
     data = db.session.query(WishListItem).all()
     wish_list_schema = WishListItemSchema(many=True)
     output = wish_list_schema.dump(data)
-    return render_template('wishlist.html', form=form, wishes=output)
+    return render_template('wishlist.html', form=form, wishes=output, error=form.errors)
 
 
 @library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])

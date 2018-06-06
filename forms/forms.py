@@ -1,3 +1,5 @@
+import datetime as d
+from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -5,9 +7,10 @@ from wtforms import (
     BooleanField,
     SubmitField,
     TextAreaField,
-    DateField
+    DateField,
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange
+from wtforms_components import DateRange
 from forms.custom_validators import tieto_email, name, surname
 
 
@@ -105,13 +108,13 @@ class WishlistForm(FlaskForm):
                         validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
-    year = DateField('pub_year',
-                     validators=[DataRequired()],
-                     render_kw=({'class': 'inputs',
-                                'placeholder': 'Publication Year'}), format='%Y')
+    pub_year = DateField('pub_year',
+                         # validators=[DateRange(min=datetime.strptime('1900', '%Y').date(),
+                         # max=datetime.today().date())],
+                         render_kw=({'class': 'inputs',
+                                    'placeholder': 'Publication Year'}),
+                         format='%Y')
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
 
-    close = SubmitField('Close',
-                        render_kw=({'class': 'btn btn-default close'}))

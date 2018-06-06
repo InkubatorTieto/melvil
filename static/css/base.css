@@ -27,23 +27,26 @@ body {
     height: auto;
     margin-top: 50px;
     }
-    #addWishButton{
-    margin-top:3px;
-    margin-bottom:7px;
-    }
 
-
-.wish{
+.modal-content{
     background: rgba(1, 1, 1, 1);
     border: double thick red;
     border-radius: 15px;
-    width: 400px;
+    width: auto;
+    height: auto;
     margin-top: 100px;
-    height: 300px;
+	margin-left: 50px;
+	margin-right: 50px;
 }
+
 .form_errors {
     font-style: italic;
     font-size: 12px;
     font-weight: 400;
     color: rgba(255, 26, 26, 1);
 }
+    #addWishButton{
+      margin-top:3px;
+      margin-bottom:7px;
+  }
+
