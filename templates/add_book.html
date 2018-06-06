@@ -34,7 +34,9 @@
                     <div class="col">
                             <br>
                             <p id="myText">Date of publication:</p>
-                            {{ input(form.pub_date(class="dtpick"), error['pub_date'])}}
+                            <!-- miejsce z data -->
+                            {{ input(form.pub_date, error['pub_date'])}}
+
                     </div>
                 </div>
 
@@ -125,7 +127,7 @@
 
                     {{form.submit}}
 
-                </div>
+            </div>
         </form>
     </main>
 </div>
@@ -138,10 +140,19 @@
     <script>
 
         $(function() {
-            $( ".dtpick" ).datepicker();
+            $(".dtpick").datepicker({
+                onSelect: function (selectedDate) {
+                    $("input[name='pub_date']").val(selectedDate);  // próba wyciągnięcia do formularza nr 1
+                    $('#pub_date').val();   // iinny sposób
+                    console.log(selectedDate);
+                }
+
+            });
 
         });
     </script>
+
+
 
     <script>
         //Clone the hidden element and shows it

@@ -68,19 +68,25 @@ class BookForm(FlaskForm):
                             validators=[DataRequired()],
                             render_kw=({'class': 'inputs',
                                         'placeholder': 'Publisher'}))
-
+    # pole do daty do daty tutaj zakomentowałem w celach testu itp ale dalej i tak nie działa
+    
     pub_date = DateField('Date of publication',
-                         validators=[DataRequired()],
-                         render_kw=({'placeholder': "DD/MM/YYYY"
-                                     }))
+                         render_kw=({'class': "dtpick",
+                                         'placeholder': "DD/MM/YYYY"
+                                      }))
+                         # id="dtpick")
+    # validators=[DataRequired()], render_kw = ({'placeholder': "DD/MM/YYYY"
+                  # })
+
+
 
     # AUTORZY
     first_name = StringField('First name',
-                             validators=[DataRequired(), Length(3), name],
+                             validators=[Length(3), name],
                              render_kw=({'class': 'inputs',
                                          'placeholder': 'First Name'}))
     surname = StringField('Surname',
-                          validators=[DataRequired(), Length(3), surname],
+                          validators=[Length(3), surname],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Surname'}))
 
