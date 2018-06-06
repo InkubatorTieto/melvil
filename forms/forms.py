@@ -1,5 +1,3 @@
-import datetime as d
-from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -9,8 +7,7 @@ from wtforms import (
     TextAreaField,
     DateField,
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange
-from wtforms_components import DateRange
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 from forms.custom_validators import tieto_email, name, surname
 
 
@@ -117,4 +114,3 @@ class WishlistForm(FlaskForm):
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
-

@@ -274,7 +274,10 @@ def wishlist():
     data = db.session.query(WishListItem).all()
     wish_list_schema = WishListItemSchema(many=True)
     output = wish_list_schema.dump(data)
-    return render_template('wishlist.html', form=form, wishes=output, error=form.errors)
+    return render_template('wishlist.html',
+                           form=form,
+                           wishes=output,
+                           error=form.errors)
 
 
 @library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
@@ -304,4 +307,3 @@ def add_like(wish_id):
                                    message_title=message_title,
                                    message_body=message_body)
     return redirect(url_for('library.wishlist'))
-

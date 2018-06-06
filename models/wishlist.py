@@ -16,16 +16,11 @@ class WishListItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     authors = db.Column(db.String(256))
     title = db.Column(db.String(256))
-    likes = db.relationship('Like', backref='wish_list_item',  cascade="all, delete-orphan", lazy=True)
+    likes = db.relationship('Like',
+                            backref='wish_list_item',
+                            cascade="all, delete-orphan",
+                            lazy=True)
     pub_year = db.Column(db.Date)
 
     def __repr__(self):
         return '<Wish List Item {}>'.format(self.likes)
-
-
-
-
-
-
-
-
