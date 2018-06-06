@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Wish list{% endblock %}
+{% block content %}
+   {% from "macros.html" import input with context %}
+        <button type="button" class="btn btn-primary btn-sample" data-toggle="modal" data-target="#exampleModal">
+          Create new wish
+        </button>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-body wish" id="exampleModalLabel">
+                <button type="button" style="white" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                    </button>
+                             <br>
+                               <p class="form-title">Create new wish</p>
+                                   <form class="wishlist" action="" method="post">
+                                       {{ form.hidden_tag() }}
+                                       {{ input( form.authors, error['authors'])}}
+                                       {{ input( form.title, error['title'] ) }}
+                                       {{ input( form.pub_date, error['pub_date'] )}}
+                                       {{ form.add }}
+                                   </form>
+              </div>
+            </div>
+          </div>
+        </div>
+       <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+           <main role="main" class="inner cover">
+               <div class="container my_wishlist">
+                   <div class="row">
+                       <div class="col-md-12">
+                           <div class="wrap">
+                               <p class="form-title"> Wish list</p>
+                               <div class="scrollspy-example" data-target="#scrollspy" data-offset="1">
+                               <font color="silver">
+                               <p align="left" > {% for item in data %}
+                                   <tr>
+                                    <td>{{item}}</td>
+                                       <button type="button" class="btn btn-outline-danger" style="border:none;">
+                                         <i class="fas fa-heart"></i>
+                                       </button>
+                                       </br>
+                                    </tr> {% endfor %}</p>
+                               </font>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </main>
+       </div>
+{% endblock %}

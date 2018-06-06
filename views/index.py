@@ -7,12 +7,14 @@ from forms.forms import (
     ContactForm,
     RegistrationForm,
     ForgotPass,
-    PasswordForm
+    PasswordForm,
+    WishlistForm,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from . import library
 from models.users import User
+from models.wishlist import WishListItem
 from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
 import os
@@ -250,3 +252,27 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
+
+@library.route('/wishlist', methods=['GET', 'POST'])
+#@login_required
+def wishlist():
+   data = db.session.query(WishListItem).all()
+   form = WishlistForm()
+   if form.validate_on_submit():
+       try:
+           new_wish_item = WishListItem(authors=form.authors.data,
+                                        title=form.title.data,
+                                        pub_date=form.pub_date.date)
+           db.session.add(new_wish_item)
+           db.session.commit()
+           print (db.session.query(WishListItem).all())
+           return render_template('wishlist.html',
+                                  form=form,
+                                  data=data)
+       except:
+           print('cant add to database')
+   return render_template('wishlist.html',
+                          form=form,
+                          data=data,
+                          error=form.errors)

@@ -15,3 +15,8 @@ def name(form, field):
 def surname(form, field):
     if not re.compile('^[A-Z]?[a-z]*-?[A-Z]?[a-z]*$').match(field.data):
         raise ValidationError('Insert valid surname.')
+
+
+#def pub_date(form, field):
+#    if not re.compile('[0-9]').match(field.data):
+#        raise ValidationError('Insert valid date.')
