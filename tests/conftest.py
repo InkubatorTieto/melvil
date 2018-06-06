@@ -6,13 +6,11 @@ from app import db as _db
 from app import mail as _mail
 from sqlalchemy import event
 from models import User, Book
-from faker import Faker
 import random
 import string
 
 
 g = Generic('en')
-faker = Faker()
 
 
 @pytest.fixture(scope='module')

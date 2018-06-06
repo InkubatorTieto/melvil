@@ -14,8 +14,6 @@ from itsdangerous import URLSafeTimedSerializer
 from . import library
 from models.users import User
 from init_db import db
-from send_email import send_confirmation_email, send_password_reset_email
-import os
 from send_email.emails import send_email
 
 login_manager = LoginManager()
