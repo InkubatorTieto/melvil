@@ -14,7 +14,7 @@ from itsdangerous import URLSafeTimedSerializer
 from . import library
 from models.users import User
 from models.books import Author,Book, book_author
-from models.library import RentalLog,Copy, Book_status_enum
+from models.library import RentalLog,Copy, BookStatus
 from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
 import os
@@ -257,150 +257,44 @@ def reset_with_token(token):
                            error=form.errors)
 
 
-# @library.route('/my_db', methods=["GET", "POST"])
-# def my_db():
-    # author1 = Author(
-    #     first_name="Jan",
-    #     last_name="Kowalski"
-    # )
-    # author2 = Author(
-    #     first_name="Anna",
-    #     last_name="Nowak"
-    # )
-    # author3 = Author(
-    #     first_name="Katarzyna",
-    #     last_name="Żółta Krzżzywiafuyu"
-    # )
-    # db.session.add(author1)
-    # db.session.add(author2)
-    # db.session.add(author3)
-    # db.session.commit()
-    # book1 = Book(
-    #     title='Czysta architektura,struktura i design oprogramowania'
-    # )
-    # book2 = Book(
-    #     title='Jest dostępnych wiele różnych wersji Lorem Ipsum, ale większość zmieniła się pod'
-    #           ' wpływem dodanego humoru czy przypadkowych słów, które nawet w najmniejszym'
-    # )
-    # book3 = Book(
-    #     title='Jakiś tam ciekawy tytuł'
-    # )
-    # db.session.add(book1)
-    # db.session.add(book2)
-    # db.session.add(book3)
-    # db.session.commit()
-    # book1.authors.append(author1)
-    # book1.authors.append(author2)
-    # book2.authors.append(author3)
-    # book3.authors.append(author3)
-    #
-    # copy1 = Copy(
-    #     library_item_id='1',
-    #     asset_code="111"
-    # )
-    # copy2 = Copy(
-    #     library_item_id='1',
-    #     asset_code="222"
-    # )
-    # copy3 = Copy(
-    #     library_item_id='2',
-    #     asset_code="333"
-    # )
-    # copy4 = Copy(
-    #     library_item_id='3',
-    #     asset_code="555"
-    # )
-    # db.session.add(copy1)
-    # db.session.add(copy2)
-    # db.session.add(copy3)
-    # db.session.add(copy4)
-    # db.session.commit()
-    #
-    # reservation1 = RentalLog(
-    #     user_id='1',
-    #     copy_id='1',
-    #     book_status=Book_status_enum['RESERVED'],
-    #     borrow_time=datetime.now(tz=pytz.utc),
-    #     return_time=datetime.now(tz=pytz.utc),
-    #     )
-    # reservation2 = RentalLog(
-    #     user_id='1',
-    #     copy_id='2',
-    #     book_status=Book_status_enum['RESERVED'],
-    #     borrow_time=datetime.now(tz=pytz.utc),
-    #     return_time=datetime.now(tz=pytz.utc),
-    #     )
-    # reservation3 = RentalLog(
-    #     user_id='1',
-    #     copy_id='3',
-    #     book_status=Book_status_enum['RESERVED'],
-    #     borrow_time=datetime.now(tz=pytz.utc),
-    #     return_time=datetime.now(tz=pytz.utc),
-    #     )
-    # reservation4 = RentalLog(
-    #     user_id='1',
-    #     copy_id='4',
-    #     book_status = Book_status_enum['RESERVED'],
-    #     borrow_time=datetime.now(tz=pytz.utc),
-    #     return_time=datetime.now(tz=pytz.utc),
-    #     )
-    #
-    # db.session.add(reservation1)
-    # db.session.add(reservation2)
-    # db.session.add(reservation3)
-    # db.session.add(reservation4)
-    # db.session.commit()
-
-    # authors=db.session.query(Author).all()
-    # books=db.session.query(Book).all()
-    # copies = db.session.query(Copy).all()
-    # users = db.session.query(User).all()
-    # rental_logs = db.session.query(RentalLog).all()
-    # return render_template('my_db.html', books=books, authors=authors, copies=copies, rental_logs=rental_logs,
-    #                        users=users)
-
-
 @library.route('/borrowedBooks', methods=["GET", "POST"])
 def book_borrowing_dashboad():
 
-    # session['logged_in'] = True
-    # session['id'] = 1
+    # moje zapytania są tymczasowe, nie wiem jeszcze w jaki sposób, będzie zapisywana data zarezerowania i oddania
+    # książki
 
     if 'logged_in' in session:
 
         reserved_books = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time). \
-            filter(RentalLog.book_status == 'RESERVED').\
+            filter(RentalLog.book_status == BookStatus.RESERVED).\
             filter(RentalLog.user_id == session['id']).\
             filter(RentalLog.copy_id == Copy.id).\
             filter(Book.id == Copy.library_item_id). \
             all()
 
         borrowed_books = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time).\
-            filter(RentalLog.book_status == 'BORROWED').\
+            filter(RentalLog.book_status == BookStatus.BORROWED).\
             filter(RentalLog.user_id == session['id']).\
             filter(RentalLog.copy_id == Copy.id).\
             filter(Book.id == Copy.library_item_id).\
             all()
 
-        # reserved_books = list(map(lambda column: column._asdict(), reserved_books))
-        # borrowed_books = list(map(lambda column: column._asdict(), borrowed_books))
-
         num_of_reserved = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time). \
-            filter(RentalLog.book_status == 'RESERVED').\
+            filter(RentalLog.book_status == BookStatus.RESERVED).\
             filter(RentalLog.user_id == session['id']).\
             filter(RentalLog.copy_id == Copy.id).\
             filter(Book.id == Copy.library_item_id). \
             count()
 
         num_of_borrowed = db.session.query(Book, RentalLog._borrow_time, RentalLog._return_time).\
-            filter(RentalLog.book_status == 'BORROWED').\
+            filter(RentalLog.book_status == BookStatus.BORROWED).\
             filter(RentalLog.user_id == session['id']).\
             filter(RentalLog.copy_id == Copy.id).\
             filter(Book.id == Copy.library_item_id).\
             count()
 
         return render_template('book_borrowing_dashboard.html', reserved_books=reserved_books,
-                               borrowed_books=borrowed_books,num_of_reserved=num_of_reserved,
+                               borrowed_books=borrowed_books, num_of_reserved=num_of_reserved,
                                num_of_borrowed=num_of_borrowed)
 
     else:
@@ -409,3 +303,114 @@ def book_borrowing_dashboad():
         return render_template('message.html',
                                message_title=message_title,
                                message_body=message_body)
+
+
+
+# @library.route('/my_db', methods=["GET", "POST"])
+# def my_db():
+#     new_user = User(
+#         email="ttt.ttt@tieto.com",
+#         first_name="asd",
+#         surname="qwe",
+#         password_hash=generate_password_hash("123"))
+#     db.session.add(new_user)
+#     db.session.commit()
+#     author1 = Author(
+#         first_name="Jan",
+#         last_name="Kowalski"
+#     )
+#     author2 = Author(
+#         first_name="Anna",
+#         last_name="Nowak"
+#     )
+#     author3 = Author(
+#         first_name="Katarzyna",
+#         last_name="Żółta Krzżzywiafuyu"
+#     )
+#     db.session.add(author1)
+#     db.session.add(author2)
+#     db.session.add(author3)
+#     db.session.commit()
+#     book1 = Book(
+#         title='Czysta architektura,struktura i design oprogramowania'
+#     )
+#     book2 = Book(
+#         title='Jest dostępnych wiele różnych wersji Lorem Ipsum, ale większość zmieniła się pod'
+#               ' wpływem dodanego humoru czy przypadkowych słów, które nawet w najmniejszym'
+#     )
+#     book3 = Book(
+#         title='Jakiś tam ciekawy tytuł'
+#     )
+#     db.session.add(book1)
+#     db.session.add(book2)
+#     db.session.add(book3)
+#     db.session.commit()
+#     book1.authors.append(author1)
+#     book1.authors.append(author2)
+#     book2.authors.append(author3)
+#     book3.authors.append(author3)
+#
+#     copy1 = Copy(
+#         library_item_id='1',
+#         asset_code="111"
+#     )
+#     copy2 = Copy(
+#         library_item_id='1',
+#         asset_code="222"
+#     )
+#     copy3 = Copy(
+#         library_item_id='2',
+#         asset_code="333"
+#     )
+#     copy4 = Copy(
+#         library_item_id='3',
+#         asset_code="555"
+#     )
+#     db.session.add(copy1)
+#     db.session.add(copy2)
+#     db.session.add(copy3)
+#     db.session.add(copy4)
+#     db.session.commit()
+#
+#     reservation1 = RentalLog(
+#         user_id='1',
+#         copy_id='1',
+#         book_status=BookStatus.RESERVED,
+#         borrow_time=datetime.now(tz=pytz.utc),
+#         return_time=datetime.now(tz=pytz.utc),
+#         )
+#     reservation2 = RentalLog(
+#         user_id='1',
+#         copy_id='2',
+#         book_status=BookStatus.RESERVED,
+#         borrow_time=datetime.now(tz=pytz.utc),
+#         return_time=datetime.now(tz=pytz.utc),
+#         )
+#     reservation3 = RentalLog(
+#         user_id='1',
+#         copy_id='3',
+#         book_status=BookStatus.BORROWED,
+#         borrow_time=datetime.now(tz=pytz.utc),
+#         return_time=datetime.now(tz=pytz.utc),
+#         )
+#     reservation4 = RentalLog(
+#         user_id='1',
+#         copy_id='4',
+#         book_status = BookStatus.RESERVED,
+#         borrow_time=datetime.now(tz=pytz.utc),
+#         return_time=datetime.now(tz=pytz.utc),
+#         )
+#
+#     db.session.add(reservation1)
+#     db.session.add(reservation2)
+#     db.session.add(reservation3)
+#     db.session.add(reservation4)
+#     db.session.commit()
+#
+#     authors=db.session.query(Author).all()
+#     books=db.session.query(Book).all()
+#     copies = db.session.query(Copy).all()
+#     users = db.session.query(User).all()
+#     rental_logs = db.session.query(RentalLog).all()
+#     return render_template('my_db.html', books=books, authors=authors, copies=copies, rental_logs=rental_logs,
+#                            users=users)

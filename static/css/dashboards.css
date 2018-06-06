@@ -27,3 +27,8 @@
     text-decoration = none;
 }
 
+
+.booking_dashboard td, .booking_dashboard th{
+    min-width: 100px;
+}
+
