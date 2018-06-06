@@ -7,7 +7,7 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from sqlalchemy import event
-from models import User, Book, Role, Magazine
+from models import User, Book, Magazine
 
 g = Generic('en')
 
@@ -143,16 +143,6 @@ def db_magazine(session):
     if Magazine.query.get(m.id):
         session.delete(m)
         session.commit()
-
-
-@pytest.fixture(scope="function")
-def db_roles(session):
-    role_admin = Role(name='ADMIN')
-    role_user = Role(name='USER')
-    session.add_all([role_admin, role_user])
-    session.commit()
-
-    yield (role_admin, role_user)
 
 
 @pytest.fixture

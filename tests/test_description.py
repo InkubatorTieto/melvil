@@ -1,8 +1,10 @@
 from models import LibraryItem
+from models.users import RoleEnum, Role
 
 
-def test_user_role(db_user, db_roles):
-    db_user.roles.append(db_roles[0])
+def test_user_role(db_user):
+    role_admin = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+    db_user.roles.append(role_admin)
     assert db_user.has_role('ADMIN')
 
 

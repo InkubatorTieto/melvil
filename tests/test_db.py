@@ -1,10 +1,10 @@
-import pytz
 from datetime import datetime
 from random import randint
+import pytz
 from mimesis import Generic
 from sqlalchemy import func
 
-
+from models.users import RoleEnum, Role
 from tests.populate import (
     populate_users,
     populate_copies,
@@ -26,20 +26,15 @@ from models import (
 
 
 def test_users(session):
-    before_roles_count = Role.query.count()
-    role_admin = Role(name='ADMIN')
-    role_user = Role(name='USER')
-    session.add_all([role_admin, role_user])
-    session.commit()
-    assert Role.query.count() - before_roles_count == 2,\
-        "more/less than 2 roles added"
-
-    before_users_count = User.query.count()
     users = populate_users(n=10)
     session.add_all(users)
     session.commit()
-    assert User.query.count() - before_users_count == 10,\
-        "more/less than 10 users added"
+    role_admin = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+    user_admin = User.query.order_by(func.random()).first()
+    user_admin.roles.append(role_admin)
+    session.add(user_admin)
+    session.commit()
+
     for u in users:
         assert u.roles is not None, \
             "role not added to user"
@@ -50,7 +45,7 @@ def test_books(session):
     authors = populate_authors(n=5)
     session.add_all(authors)
     session.commit()
-    assert Author.query.count() - before_authors_count == 5,\
+    assert Author.query.count() - before_authors_count == 5, \
         "more/less than 5 authors added"
 
     for a in authors:
@@ -58,15 +53,15 @@ def test_books(session):
         session.add_all(books)
         session.commit()
         for b in books:
-            assert a in b.authors,\
+            assert a in b.authors, \
                 "authors not added to book authors field"
             copies = populate_copies(b, n=randint(1, 3))
             session.add_all(copies)
             session.commit()
             for c in copies:
-                assert c in b.copies,\
+                assert c in b.copies, \
                     "copy not added to book copy field"
-                assert c.library_item is b,\
+                assert c.library_item is b, \
                     "copy reference to book is wrong"
         session.commit()
 
@@ -78,7 +73,7 @@ def test_magazine(session):
     magazines = populate_magazines()
     session.add_all(magazines)
     session.commit()
-    assert Magazine.query.count() - before_magazines_count == 10,\
+    assert Magazine.query.count() - before_magazines_count == 10, \
         "more/less than 10 magazines added"
 
     for m in magazines:
@@ -86,9 +81,9 @@ def test_magazine(session):
         session.add_all(copies)
         session.commit()
         for c in copies:
-            assert c in m.copies,\
+            assert c in m.copies, \
                 "copy not added to magazine copy field"
-            assert c.library_item is m,\
+            assert c.library_item is m, \
                 "copy reference to magazine is wrong"
         session.commit()
 
@@ -98,17 +93,15 @@ def test_library(session):
     tags = populate_tags(n=10)
     session.add_all(tags)
     session.commit()
-    assert Tag.query.count() - before_tag_count == 10,\
+    assert Tag.query.count() - before_tag_count == 10, \
         "more/less than 10 tags added"
 
     for t in tags:
         book = Book.query.order_by(func.random()).first()
         book.tags.append(t)
         session.commit()
-        assert t.library_items != [],\
-            "tags item field is empty"
-        assert t in book.tags,\
-            "tags not added to book tags field"
+        assert t.library_items != [], "tags item field is empty"
+        assert t in book.tags, "tags not added to book tags field"
 
     c = Copy.query.order_by(func.random()).first()
     u = User.query.order_by(func.random()).first()
