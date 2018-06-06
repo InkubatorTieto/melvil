@@ -9,6 +9,8 @@ from raven import Client
 from flask_mail import Mail
 import time
 
+from import_users import set_users
+
 mail = Mail()
 sentry = Sentry()
 client = Client()
@@ -23,7 +25,7 @@ def create_app(config=DevConfig):
     mail.init_app(app)
 
     db_not_ready = True
-    while (db_not_ready):
+    while db_not_ready:
         try:
             db.init_app(app)
             with app.app_context():
@@ -34,3 +36,13 @@ def create_app(config=DevConfig):
             print("Polling DB..")
             time.sleep(1)
     return app
+
+app = create_app()
+
+@app.cli.command(with_appcontext=True)
+def load_users_into_db():
+    set_users(db.session)
+
+app.cli.add_command(load_users_into_db)
+
+create_app(DevConfig)

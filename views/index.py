@@ -1,6 +1,13 @@
-from config import DevConfig
+import os
+
+from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy.sql import exists
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from flask import render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
+
+from config import Config, DevConfig
 from forms.forms import (
     LoginForm,
     SearchForm,
@@ -9,16 +16,22 @@ from forms.forms import (
     ForgotPass,
     PasswordForm
 )
-from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import URLSafeTimedSerializer
-from . import library
-from models.users import User
 from init_db import db
+from models.users import User
 from send_email import send_confirmation_email, send_password_reset_email
-import os
 from send_email.emails import send_email
+from . import library
 
 login_manager = LoginManager()
+
+
+@library.route('/test')
+def test():
+    # TEST VIEW TO CHECK IF POPULATING USERS VIA LDAP WORKS
+    usrs = db.session.query(User).all()
+    for row in usrs:
+        print(row.email)
+    return "{}".format(), 200
 
 
 @library.route('/')
