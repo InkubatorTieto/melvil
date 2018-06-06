@@ -128,7 +128,6 @@ def test_delete_user(session, db_user, db_book):
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
         book_status=BookStatus.BORROWED,
-        returned=g.development.boolean()
     )
     session.add(log)
     session.commit()
@@ -168,7 +167,6 @@ def test_delete_book(session, db_user, db_book):
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
         book_status=BookStatus.BORROWED,
-        returned=g.development.boolean()
     )
     session.add(log)
     session.commit()
@@ -259,7 +257,6 @@ def test_delete_copy(session, db_user, db_book):
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
         book_status=BookStatus.BORROWED,
-        returned=g.development.boolean()
     )
     session.add(log)
     session.commit()

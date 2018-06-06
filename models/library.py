@@ -25,8 +25,7 @@ class Copy(db.Model):
                                   lazy='dynamic',
                                   cascade='all, delete-orphan',
                                   backref=db.backref(
-                                      'copy',
-                                     uselist=False))
+                                      'copy', uselist=False))
 
     def __str__(self):
         return "Copy asset_code: {}, type/title: {}/{}".format(
@@ -59,7 +58,8 @@ class RentalLog(db.Model):
     _borrow_time = db.Column(db.DateTime)
     _return_time = db.Column(db.DateTime)
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
-    _reservation_timestamp = db.Column(db.DateTime)
+    _reservation_begin = db.Column(db.DateTime)
+    _reservation_end = db.Column(db.DateTime)
 
     @property
     def borrow_time(self):
@@ -84,16 +84,26 @@ class RentalLog(db.Model):
         self._return_time = dt.astimezone(tz=pytz.utc)
 
     @property
-    def reservation_timestamp(self):
-        return self._reservation_timestamp.replace(tzinfo=pytz.utc).\
+    def reservation_begin(self):
+        return self._reservation_begin.replace(tzinfo=pytz.utc).\
             astimezone(tz=pytz.timezone('Europe/Warsaw'))
 
-    @reservation_timestamp.setter
-    def reservation_timestamp(self, dt):
+    @reservation_begin.setter
+    def reservation_begin(self, dt):
         if dt.tzinfo is None:
             raise ValueError("reservation_timestamp has to be timezone aware")
-        self._reservation_timestamp = dt.astimezone(tz=pytz.utc)
+        self._reservation_begin = dt.astimezone(tz=pytz.utc)
 
+    @property
+    def reservation_end(self):
+        return self._reservation_end.replace(tzinfo=pytz.utc).\
+            astimezone(tz=pytz.timezone('Europe/Warsaw'))
+
+    @reservation_end.setter
+    def reservation_end(self, dt):
+        if dt.tzinfo is None:
+            raise ValueError("reservation_timestamp has to be timezone aware")
+        self._reservation_end = dt.astimezone(tz=pytz.utc)
 
     def __str__(self):
         return "RENTAL LOG: user: {} copy: {}".format(
