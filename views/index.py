@@ -67,7 +67,7 @@ def login():
                                        title='Sign In',
                                        form=form,
                                        error=form.errors)
-        except:
+        except ValueError or TypeError:
             message_body = 'Something went wrong'
             message_title = 'Error!'
             return render_template('message.html',
@@ -86,8 +86,14 @@ def registration():
         form = RegistrationForm()
         if form.validate_on_submit():
             try:
-                data = User.query.filter_by(email=form.email.data).first()
-                if data is None:
+                if User.query.filter_by(email=form.email.data).first():
+                    message_body = 'User already exist'
+                    message_title = 'Opss!'
+                    return render_template('message.html',
+                                           message_title=message_title,
+                                           message_body=message_body)
+
+                else:
                     new_user = User(
                         email=form.email.data,
                         first_name=form.first_name.data,
@@ -97,13 +103,9 @@ def registration():
                     db.session.add(new_user)
                     db.session.commit()
                     send_confirmation_email(new_user.email)
-                else:
-                    message_body = 'User already exist'
-                    message_title = 'Opss!'
-                    return render_template('message.html',
-                                           message_title=message_title,
-                                           message_body=message_body)
-            except:
+
+
+            except ValueError or TypeError:
                 message_body = 'Registration failed'
                 message_title = 'Error!'
                 return render_template('message.html',
