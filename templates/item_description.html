@@ -2,7 +2,7 @@
 {% block title %} {{ item.type }} description {% endblock %}
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="/static/css/item_description.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/item_description.css') }}">
 {% endblock %}
 {% block content %}
     {% from "macros.html" import table_row, copy_info_row with context %}
@@ -68,7 +68,7 @@
                                             {{ copy_info_row(copy, loop.index) }}
                                             <td class="table-button">
                                                 <a type="button" role="button"
-                                                   class="btn btn-success btn-sm {{ 'disabled' if not copy.can_borrow() }}"
+                                                   class="btn btn-success btn-sm {{ 'disabled' if not copy.available_status }}"
                                                    href="#">Borrow</a>
                                             </td>
 

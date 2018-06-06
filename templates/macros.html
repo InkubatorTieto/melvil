@@ -26,5 +26,5 @@
         <td>{{ index }}</td>
         <td>{{ copy.asset_code }}</td>
         <td>{{ copy.has_cd_disk }}</td>
-        <td>{{ 'Available' if copy.can_borrow() else 'Borrowed' }}</td>
+        <td>{{ 'Available' if copy.available_status else 'Occupied' }}</td>
 {% endmacro %}

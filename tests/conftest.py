@@ -7,7 +7,7 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from sqlalchemy import event
-from models import User, Book, Magazine
+from models import User, Book, Magazine, Copy
 
 g = Generic('en')
 
@@ -143,6 +143,28 @@ def db_magazine(session):
     if Magazine.query.get(m.id):
         session.delete(m)
         session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_copies(session, db_book):
+    copy_available = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        available_status=True
+    )
+    copy_not_available = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        available_status=False
+    )
+    session.add_all([copy_available, copy_not_available])
+    session.commit()
+
+    yield (copy_available, copy_not_available)
 
 
 @pytest.fixture
