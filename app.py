@@ -1,5 +1,5 @@
 from flask import Flask
-from config import DevConfig
+from config import DevConfig, ProdConfig
 from views import library
 import os
 from views.index import login_manager
@@ -13,8 +13,13 @@ mail = Mail()
 sentry = Sentry()
 client = Client()
 
+if os.getenv('APP_SETTINGS', '') == 'prod':
+    config_env = ProdConfig
+else:
+    config_env = DevConfig
 
-def create_app(config=DevConfig):
+
+def create_app(config=config_env):
     app = Flask(__name__)
     app.config.from_object(config)
     app.register_blueprint(library)
