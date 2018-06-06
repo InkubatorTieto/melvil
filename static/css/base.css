@@ -27,6 +27,11 @@ body {
     height: auto;
     margin-top: 50px;
     }
+    #addWishButton{
+    margin-top:3px;
+    margin-bottom:7px;
+    }
+
 
 .wish{
     background: rgba(1, 1, 1, 1);

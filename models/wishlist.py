@@ -8,7 +8,7 @@ class Like(db.Model):
     wish_item_id = db.Column(db.Integer, db.ForeignKey('wish_list_items.id'), nullable=False)
 
     def __repr__(self):
-        return '<Like {}>'.format(self.id)
+        return '<Like {}>'.format(self.wish_item_id, self.user_id)
 
 
 class LikeSchema(ma.ModelSchema):
@@ -22,7 +22,7 @@ class WishListItem(db.Model):
     authors = db.Column(db.String(256))
     title = db.Column(db.String(256))
     likes = db.relationship('Like', backref='wish_list_item',  cascade="all, delete-orphan", lazy=True)
-    pub_year = db.Column(db.String(4))
+    pub_year = db.Column(db.Date)
 
     def __repr__(self):
         return '<Wish List Item {}>'.format(self.likes)

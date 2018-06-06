@@ -3,3 +3,6 @@
   width: 485px;
   height: 360px;
   }
+  #wishList li {
+    list-style-type: none;
+}

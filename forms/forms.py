@@ -4,7 +4,8 @@ from wtforms import (
     PasswordField,
     BooleanField,
     SubmitField,
-    TextAreaField
+    TextAreaField,
+    DateField
 )
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from forms.custom_validators import tieto_email, name, surname
@@ -104,10 +105,10 @@ class WishlistForm(FlaskForm):
                         validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
-    year = StringField('pub_year',
-                       validators=[DataRequired()],
-                       render_kw=({'class': 'inputs',
-                                   'placeholder': 'Publication Date'}))
+    year = DateField('pub_year',
+                     validators=[DataRequired()],
+                     render_kw=({'class': 'inputs',
+                                'placeholder': 'Publication Year'}), format='%Y')
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
