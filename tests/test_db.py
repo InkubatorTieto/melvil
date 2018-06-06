@@ -3,9 +3,7 @@ from random import randint
 import pytz
 from mimesis import Generic
 from sqlalchemy import func
-from init_db import db
 from models.library import BookStatus
-from models.users import RoleEnum, Role
 
 from tests.populate import (
     populate_users,
