@@ -19,5 +19,5 @@ branches:
   except:
   - /wip*/
 script:
-  - pytest -v tests/test_index.py
+  - docker-compose run web pytest
 

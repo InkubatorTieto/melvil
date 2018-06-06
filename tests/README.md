@@ -1,5 +1,5 @@
-1. Before testing install ChromeDriver from:
-    http://chromedriver.chromium.org/
-2. Add ChromeDriver to PATH.
-3. go to directory *\melvil
-4. run command 'pytest'
+How to run tests:
+
+1. insert into .env email address and password
+2. run command 'docker-compose -f docker-compose-dev.yml build'
+3. run command 'docker-compose -f docker-compose-dev.yml run web pytest'
