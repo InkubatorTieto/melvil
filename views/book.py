@@ -35,10 +35,11 @@ def add_book():
 
             new_authors = []
             print(tmp_authors)
+
             for first_name, surname in tmp_authors:
-                if first_name != None and  surname != None:
+                if first_name is not '' and surname is not '':
                     author = Author.query.filter_by(first_name=first_name, last_name=surname).first()
-                    if not author :
+                    if not author:
                         new_author = Author(
                             first_name=first_name,
                             last_name=surname
@@ -49,38 +50,38 @@ def add_book():
                     else:
                         new_authors.append(author)
 
-            print(new_authors)
-
-            # tmp_tag = Tag.query.filter_by(name=form.tag.data).first()
-            # if not tmp_tag:
-            #     new_tag = Tag(
-            #         name=form.tag.data
-            #     )
-            #     db.session.add(new_tag)
-            #     db.session.commit()
-            # else:
-            #     new_tag = tmp_tag
-            #
-            # new_book = Book(
-            #     # for library_item model
-            #     title=form.title.data,
-            #     table_of_contents=form.table_of_contents.data,
-            #     language=form.leanguage.data,
-            #     category=form.category.data,
-            #     tags=[new_tag],
-            #     description=form.description.data,
-            #     # for Book model
-            #     isbn=form.isbn.data,
-            #     # authors=new_authors,
-            #     original_title=form.original_title.data,
-            #     publisher=form.publisher.data,
-            #     pub_date=form.pub_date.data)
-            # db.session.add(new_book)
-            #
-            # #print(type(tmp_author), "  ", tmp_author)
             # print(new_authors)
-            # print(new_tag)
-            # print(new_book)
+
+            tmp_tag = Tag.query.filter_by(name=form.tag.data).first()
+            if not tmp_tag:
+                new_tag = Tag(
+                    name=form.tag.data
+                )
+                db.session.add(new_tag)
+                db.session.commit()
+            else:
+                new_tag = tmp_tag
+
+            new_book = Book(
+                # for library_item model
+                title=form.title.data,
+                table_of_contents=form.table_of_contents.data,
+                language=form.leanguage.data,
+                category=form.category.data,
+                tags=[new_tag],
+                description=form.description.data,
+                # for Book model
+                isbn=form.isbn.data,
+                authors=new_authors,
+                original_title=form.original_title.data,
+                publisher=form.publisher.data,
+                pub_date=form.pub_date.data)
+            db.session.add(new_book)
+
+
+            print(new_authors)
+            print(new_tag)
+            print(new_book)
 
             message_body = 'The book has been added.'
             message_title = 'Success!'
