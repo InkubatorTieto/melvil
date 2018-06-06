@@ -12,11 +12,11 @@
                                 Register</p>
                             <form class="login" action="" method="post">
                                 {{ form.hidden_tag() }}
-                                {{ input( form.email ,error['email']) }}
-                                {{ input( form.first_name ,error['first_name']) }}
-                                {{ input( form.surname ,error['surname']) }}
-                                {{ input( form.password ,error['password']) }}
-                                {{ input( form.confirm_pass ,error['confirmPass']) }}
+                                {{ input(form.first_name, error['first_name']) }}
+                                {{ input(form.surname, error['surname']) }}
+                                {{ input(form.email, error['email']) }}
+                                {{ input(form.password, error['password']) }}
+                                {{ input(form.confirm_pass, error['confirmPass']) }}
                                 {{ form.submit() }}
                             </form>
                         </div>
