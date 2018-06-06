@@ -1,4 +1,4 @@
-from init_db import db, ma
+from init_db import db
 
 
 class Like(db.Model):
@@ -9,11 +9,6 @@ class Like(db.Model):
 
     def __repr__(self):
         return '<Like {}>'.format(self.wish_item_id, self.user_id)
-
-
-class LikeSchema(ma.ModelSchema):
-    class Meta:
-        model = Like
 
 
 class WishListItem(db.Model):
@@ -28,9 +23,7 @@ class WishListItem(db.Model):
         return '<Wish List Item {}>'.format(self.likes)
 
 
-class WishListItemSchema(ma.ModelSchema):
-    class Meta:
-        model = WishListItem
+
 
 
 

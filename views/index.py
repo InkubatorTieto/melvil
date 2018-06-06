@@ -1,5 +1,6 @@
 from config import DevConfig
-from flask import render_template, request, session, redirect, flash, url_for, jsonify
+from sqlalchemy import exc
+from flask import render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
 from forms.forms import (
     LoginForm,
@@ -14,7 +15,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from . import library
 from models.users import User
-from models.wishlist import WishListItem,  WishListItemSchema, Like
+from models.wishlist import WishListItem, Like
+from serializers.wishlist import WishListItemSchema
 from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
 import os
@@ -25,6 +27,8 @@ login_manager = LoginManager()
 
 @library.route('/')
 def index():
+    # db.drop_all()
+    # db.session.commit()
     return render_template('index.html')
 
 
@@ -264,11 +268,7 @@ def wishlist():
                                          pub_year=form.year.data)
             db.session.add(new_wish_item)
             db.session.commit()
-            data = db.session.query(WishListItem).all()
-            wish_list_schema = WishListItemSchema(many=True)
-            output = wish_list_schema.dump(data)
-            return render_template('wishlist.html', form=form, wishes=output)
-        except:
+        except exc.SQLAlchemyError:
             print('cant add to database')
     data = db.session.query(WishListItem).all()
     wish_list_schema = WishListItemSchema(many=True)
