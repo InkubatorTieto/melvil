@@ -27,8 +27,6 @@ login_manager = LoginManager()
 
 @library.route('/')
 def index():
-    # db.drop_all()
-    # db.session.commit()
     return render_template('index.html')
 
 
@@ -279,8 +277,12 @@ def add_wish():
             db.session.commit()
             return redirect(url_for('library.wishlist'))
         except exc.SQLAlchemyError:
-            print('cant add to database')
-            return redirect(url_for('library.wishlist'))
+            message_body = 'Cant add to database!'
+            message_title = 'Error!'
+            return render_template('message.html',
+                                   message_title=message_title,
+                                   message_body=message_body)
+
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
