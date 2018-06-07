@@ -272,11 +272,11 @@ def item_description(item_id):
     except Exception:
         abort(500)
     item = LibraryItem.query.get_or_404(item_id)
-    tags_list = item.tags_string()
+    tags_list = item.tags_string
 
     authors_list = []
     if item.type == 'book':
-        authors_list = item.authors_string()
+        authors_list = item.authors_string
 
     return render_template('item_description.html',
                            item=item,

@@ -19,7 +19,7 @@ def test_get_item_by_id(db_book):
 def test_book_authors_string(db_book):
     authors_list = []
     if db_book.type == 'book':
-        authors_list = db_book.authors_string()
+        authors_list = db_book.authors_string
     assert authors_list != [],\
         "authors_string() method does not work properly with book type"
 
@@ -27,7 +27,7 @@ def test_book_authors_string(db_book):
 def test_magazine_authors_string(db_magazine):
     authors_list = []
     if db_magazine.type == 'book':
-        authors_list = db_magazine.authors_string()
+        authors_list = db_magazine.authors_string
     assert authors_list == [],\
         "authors_string() method does not work properly with magazine type"
 
@@ -47,4 +47,4 @@ def test_copy_available(db_book, db_copies):
     assert db_book.copies[0].available_status,\
         "available_status=True on copy does not work properly with books"
     assert not db_book.copies[1].available_status, \
-        "available_status=True on copy does not work properly with books"
+        "available_status=False on copy does not work properly with books"
