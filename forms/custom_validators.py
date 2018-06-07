@@ -27,7 +27,7 @@ def check_author(form, field):
 
 
 def check_language(form, field):
-    languages = ['polish', 'english','other']
+    languages = ['polish', 'english', 'other']
     if field.data not in languages:
         raise ValidationError('Language is unavailable. Select correct!')
 
@@ -46,7 +46,7 @@ def check_isbn(form, field):
         raise ValidationError('This book is already in the database.')
 
 
-def check_pub_date(form,field):
+def check_pub_date(form, field):
     if int(field.data) > datetime.now().year:
         raise ValidationError('Date is incorrect.')
 
@@ -61,8 +61,13 @@ def title_book_exists(form, field):
     results = Book.query.filter(Book.title.startswith(field.data[:2])).all()
     for i in results:
         i = str(i.title)
-        i = i.replace(" ", "").replace("_", "").replace("-", "").replace(",", "").replace(".", "").lower()
+        i = i.replace(" ", "").replace("_", "") \
+            .replace("-", "").replace(",", ""). \
+            replace(".", "").lower()
         tmp = str(field.data)
-        tmp = tmp.replace(" ", "").replace("_", "").replace("-", "").replace(",", "").replace(".", "").lower()
+        tmp = tmp.replace(" ", "").replace("_", ""). \
+            replace("-", "").replace(",", "") \
+            .replace(".", "").lower()
         if i == tmp:
-            raise ValidationError('This book already exists. This title is in database!')
+            raise ValidationError('This book already exists.'
+                                  ' This title is in database!')

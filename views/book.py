@@ -77,6 +77,12 @@ def add_book():
             db.session.add(new_book)
             db.session.commit()
 
+            # print(new_authors)
+            # print(new_tag)
+            # print(new_book)
+            # print(new_book.pub_date)
+            # print(type(new_book.pub_date))
+
             message_body = 'The book has been added.'
             message_title = 'Success!'
             return render_template('message.html',

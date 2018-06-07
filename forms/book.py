@@ -6,46 +6,51 @@ from wtforms import (
     TextAreaField,
     SelectField
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length
-from forms.custom_validators import name,\
-    check_author, check_language,\
-    check_category, check_isbn,\
+from wtforms.validators import DataRequired, Length
+from forms.custom_validators import name, \
+    check_author, check_language, \
+    check_category, check_isbn, \
     check_pub_date, title_book_exists
 
 
 class BookForm(FlaskForm):
-    languages = [('polish', 'Polish'), ('english', 'English'), ('other', 'Other')]
+    languages = [('polish', 'Polish'),
+                 ('english', 'English'),
+                 ('other', 'Other')]
     categories = [('developers', 'Developers'),
                   ('managers', 'Managers'),
                   ('magazines', 'Magazines'),
                   ('other', 'Other')]
 
-
-
     # LibraryItem
     title = StringField('Title',
-                        validators=[DataRequired(), Length(3), title_book_exists],
+                        validators=[DataRequired(),
+                                    Length(3),
+                                    title_book_exists],
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
 
     table_of_contents = TextAreaField('Table of contents',
-                                      validators=[DataRequired(), Length(3)],
+                                      validators=[DataRequired(),
+                                                  Length(3)],
                                       render_kw=({'class': 'inputs',
                                                   'placeholder': 'Table of contents'}))
 
     language = SelectField('Language',
-                            choices=languages,
-                            validators=[check_language],
-                            render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
-                                        'id': 'mySelect',
-                                        'placeholder': 'Leanguage'}))
+                           choices=languages,
+                           validators=[check_language],
+                           render_kw=({
+                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'id': 'mySelect',
+                               'placeholder': 'Leanguage'}))
 
     category = SelectField('Category',
                            choices=categories,
                            validators=[check_category],
-                           render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
-                                       'id': 'mySelect',
-                                       'placeholder': 'Category'}))
+                           render_kw=({
+                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'id': 'mySelect',
+                               'placeholder': 'Category'}))
 
     tag = StringField('Tag',
                       validators=[DataRequired(), Length(3)],
@@ -73,11 +78,13 @@ class BookForm(FlaskForm):
                                         'placeholder': 'Publisher'}))
 
     pub_date = SelectField('Year of publication',
-                           choices=[(str(x), str(x)) for x in range(1970, datetime.now().year + 1)],
+                           choices=[(str(x), str(x)) for x in range(1970,
+                                                                    datetime.now().year + 1)],
                            validators=[check_pub_date],
-                           render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
-                                       'id': 'mySelect',
-                                       'placeholder': 'Year of publication'}))
+                           render_kw=({
+                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'id': 'mySelect',
+                               'placeholder': 'Year of publication'}))
     # AUTORZY
     first_name = StringField('First name',
                              validators=[DataRequired(), check_author],
