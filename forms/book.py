@@ -80,8 +80,9 @@ class BookForm(FlaskForm):
 
     pub_date = SelectField('Year of publication',
                            choices=[(str(x), str(x))
-                                    for x in range(1970,
-                                                   datetime.now().year + 1)],
+                                    for x in
+                                    range(1970,
+                                          datetime.now().year + 1)],
                            validators=[check_pub_date],
                            render_kw=({
                                'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
