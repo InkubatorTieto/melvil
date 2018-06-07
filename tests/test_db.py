@@ -1,18 +1,10 @@
 from datetime import datetime
 from random import randint
+
 import pytz
 from mimesis import Generic
 from sqlalchemy import func
 
-from tests.populate import (
-    populate_users,
-    populate_copies,
-    populate_tags,
-    populate_authors,
-    populate_books,
-    populate_rental_logs,
-    populate_magazines
-)
 from models import (
     Role,
     User,
@@ -23,6 +15,15 @@ from models import (
     LibraryItem,
     Magazine,
     RentalLog)
+from tests.populate import (
+    populate_users,
+    populate_copies,
+    populate_tags,
+    populate_authors,
+    populate_books,
+    populate_rental_logs,
+    populate_magazines
+)
 
 
 def test_users(session):

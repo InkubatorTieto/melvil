@@ -1,0 +1,30 @@
+a {
+    color: white;
+    opacity: 0.75;
+}
+
+a:hover {
+    color: white;
+    opacity: 1;
+    text-decoration: none;
+}
+
+a:visited {
+    color: white;
+    opacity: 1;
+    text-decoration: none;
+}
+
+.my_container {
+    margin-top: 1px;
+    width: 100%;
+    font-size: 16px;
+}
+
+.col-lg-6 {
+    float: left;
+}
+
+.list-group {
+    margin-top: 10px;
+}

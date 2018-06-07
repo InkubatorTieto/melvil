@@ -1,7 +1,9 @@
-from .emails import send_email
 from itsdangerous import URLSafeTimedSerializer
-from config import DevConfig
+
 from flask import url_for, render_template
+
+from config import DevConfig
+from .emails import send_email
 
 
 def send_confirmation_email(user_email):

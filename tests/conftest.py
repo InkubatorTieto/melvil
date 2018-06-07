@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from mimesis import Generic
 from app import create_app
@@ -160,3 +159,9 @@ def db_book(session):
     if Book.query.get(b.id):
         session.delete(b)
         session.commit()
+
+
+@pytest.fixture
+def mailbox(app):
+    mailbox = _mail.record_messages()
+    return mailbox

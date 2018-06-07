@@ -1,4 +1,3 @@
-from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
     PasswordField,
@@ -8,6 +7,9 @@ from wtforms import (
     HiddenField
 )
 from wtforms.validators import DataRequired, Email, EqualTo, Length
+
+from flask_wtf import FlaskForm
+
 from forms.custom_validators import tieto_email, name, surname
 from flask_user.forms import RegisterForm, LoginForm
 

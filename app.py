@@ -8,8 +8,6 @@ from raven.contrib.flask import Sentry
 from raven import Client
 from flask_mail import Mail
 import time
-import init_db
-from models.users import User
 
 mail = Mail()
 sentry = Sentry()

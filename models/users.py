@@ -1,7 +1,6 @@
-from flask_user import UserMixin, LoginManager
+from flask_user import UserMixin
 from init_db import db
 import enum
-
 
 user_roles = db.Table('user_roles',
                       db.Column('user_id',
@@ -14,7 +13,7 @@ user_roles = db.Table('user_roles',
                                 primary_key=True))
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(128), unique=True)
@@ -61,11 +60,3 @@ class Role(db.Model):
 
     def __repr__(self):
         return "Role: {}".format(self.name)
-
-
-login = LoginManager()
-
-
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))

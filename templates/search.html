@@ -4,8 +4,26 @@
 
 {% block content %}
     <h1>Search</h1>
-    <form action="" method="post">
-         {{ form.hidden_tag() }}
-       {{form.query.label}} {{form.query}}{{ form.submit() }}
-    </form>
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <main role="main" class="inner cover">
+        <input class="form-control" id="bookInput" type="text" placeholder="Search...">
+        <ul class="list-group" id="bookList">
+          {% for book in books %}
+              <li class="list-group-item my_container">
+                <a href="{{ url_for('library.book_detail', id_book=book[0]) }}">
+                  <div class="col-lg-6">
+                    {{ book[1] }}
+                  </div>
+                </a>
+                <a href="{{ url_for('library.book_detail', id_book=book[0]) }}">
+                  <div class="col-lg-6">
+                    {{ book[2] }}
+                  </div>
+                </a>
+              </li>
+          {% endfor %}
+        </ul>
+      </main>
+    </div>
+
 {% endblock %}
