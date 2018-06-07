@@ -34,7 +34,8 @@ class BookForm(FlaskForm):
                                       validators=[DataRequired(),
                                                   Length(3)],
                                       render_kw=({'class': 'inputs',
-                                                  'placeholder': 'Table of contents'}))
+                                                  'placeholder':
+                                                      'Table of contents'}))
 
     language = SelectField('Language',
                            choices=languages,
@@ -78,8 +79,9 @@ class BookForm(FlaskForm):
                                         'placeholder': 'Publisher'}))
 
     pub_date = SelectField('Year of publication',
-                           choices=[(str(x), str(x)) for x in range(1970,
-                                                                    datetime.now().year + 1)],
+                           choices=[(str(x), str(x))
+                                    for x in range(1970,
+                                                   datetime.now().year + 1)],
                            validators=[check_pub_date],
                            render_kw=({
                                'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
