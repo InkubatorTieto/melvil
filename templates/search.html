@@ -17,7 +17,7 @@
                 </a>
                 <a href="{{ url_for('library.book_detail', id_book=book[0]) }}">
                   <div class="col-lg-6">
-                    {{ book[2] }}
+                    {{ ' '.join(book[2]) }}
                   </div>
                 </a>
               </li>

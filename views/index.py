@@ -1,6 +1,6 @@
 import os
 
-from flask import render_template, request, session, redirect, flash, url_for
+from flask import abort, render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
 
 from itsdangerous import URLSafeTimedSerializer
@@ -17,7 +17,7 @@ from forms.forms import (
     PasswordForm
 )
 from init_db import db
-from models.books import Book
+from models.books import Book, Author
 from models.users import User
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
@@ -114,30 +114,40 @@ def registration():
                                message_body=message_body)
 
 
-@library.route('/search', methods=['GET', 'POST'])
+@library.route('/search', methods=['GET'])
 def search():
+
     # TEST FUNCS TO POPULATE PROTOTYPE FUNCTIONALITY
-    # from tests.test_db import test_books
-    # test_base = test_books(db.session)
+    #from tests.test_db import test_books
+    #test_base = test_books(db.session)
 
     if request.method == 'GET':
         try:
             retrieve_book_data = db.session.query(Book).all()
-            books = []
-            for row in retrieve_book_data:
-                book = []
-                book.append(row.id)
-                book.append(row.original_title)
-                for author in row.authors:
-                    book.append(author.last_name + ' ' + author.first_name)
-                books.append(book)
-            books.sort(key=lambda x: x[2])
         except TimeoutError:
-            return redirect('/')
+            return abort(500)
 
-    return render_template('search.html',
-                           title='Search',
-                           books=books)
+        books = []
+        for row in retrieve_book_data:
+            book = []
+            book.append(row.id)
+            book.append(row.original_title)
+            book.append([])
+            while row.authors is not None:
+                try:
+                    book[2].append(str(row.authors.pop()))
+                except IndexError:
+                    break
+
+            books.append(book)
+        print(books)
+        books.sort(key=lambda x: x[2])
+
+        return render_template('search.html',
+                               title='Search',
+                               books=books)
+    else:
+        return abort(405)
 
 
 # DL-55 task
@@ -282,3 +292,19 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
+@library.errorhandler(405)
+def method_not_allowed(error):
+    message_body = 'Method not allowed!'
+    message_title = 'Error!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 405
+
+@library.errorhandler(500)
+def server_error(error):
+    message_body = 'but something went wrong.'
+    message_title = 'Don\'t panic!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 500
