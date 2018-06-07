@@ -21,6 +21,8 @@ from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
 import os
 from send_email.emails import send_email
+from messages import ErrorMessage
+
 
 login_manager = LoginManager()
 
@@ -277,39 +279,21 @@ def add_wish():
             db.session.commit()
             return redirect(url_for('library.wishlist'))
         except exc.SQLAlchemyError:
-            message_body = 'Cant add to database!'
-            message_title = 'Error!'
-            return render_template('message.html',
-                                   message_title=message_title,
-                                   message_body=message_body)
-
+            return ErrorMessage.message(error_body='Oops something went wrong')
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
 @library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
 def add_like(wish_id):
     user = User.query.filter_by(id=session['id']).first()
-    exists = db.session.query(Like.id).filter_by(user_id=user.id, wish_item_id=wish_id).scalar() is not None
-    if not exists:
+    if not Like.like_exists(user, wish_id):
         try:
-            new_like = Like(user_id=user.id, wish_item_id=wish_id)
-            db.session.add(new_like)
-            db.session.commit()
+            Like.like(user, wish_id)
         except exc.SQLAlchemyError:
-            message_body = 'Oops, something went wrong!'
-            message_title = 'Error!'
-            return render_template('message.html',
-                                   message_title=message_title,
-                                   message_body=message_body)
+            return ErrorMessage.message(error_body='Oops something went wrong')
     else:
         try:
-            unlike = Like.query.filter_by(user_id=user.id, wish_item_id=wish_id).first()
-            db.session.delete(unlike)
-            db.session.commit()
+            Like.unlike(user, wish_id)
         except exc.SQLAlchemyError:
-            message_body = 'Oops, something went wrong!'
-            message_title = 'Error!'
-            return render_template('message.html',
-                                   message_title=message_title,
-                                   message_body=message_body)
+            return ErrorMessage.message(error_body='Oops something went wrong')
     return redirect(url_for('library.wishlist'))

@@ -8,7 +8,23 @@ class Like(db.Model):
     wish_item_id = db.Column(db.Integer, db.ForeignKey('wish_list_items.id'), nullable=False)
 
     def __repr__(self):
-        return '<Like {}>'.format(self.wish_item_id, self.user_id)
+        return '<Like {}>'.format(self.id,)
+
+    @staticmethod
+    def like_exists(user, wish_id):
+        return db.session.query(Like.id).filter_by(user_id=user.id, wish_item_id=wish_id).scalar() is not None
+
+    @staticmethod
+    def like(user, wish_id):
+        new_like = Like(user_id=user.id, wish_item_id=wish_id)
+        db.session.add(new_like)
+        db.session.commit()
+
+    @staticmethod
+    def unlike(user, wish_id):
+        unlike = Like.query.filter_by(user_id=user.id, wish_item_id=wish_id).first()
+        db.session.delete(unlike)
+        db.session.commit()
 
 
 class WishListItem(db.Model):
@@ -23,4 +39,4 @@ class WishListItem(db.Model):
     pub_year = db.Column(db.Date)
 
     def __repr__(self):
-        return '<Wish List Item {}>'.format(self.likes)
+        return '<Wish List Item {}>'.format(self.title)
