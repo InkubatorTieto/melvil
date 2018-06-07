@@ -1,6 +1,7 @@
 from flask import Flask
 from config import DevConfig, ProdConfig
 from views import library
+from views.book import library_books
 import os
 from views.index import login_manager
 from init_db import db
@@ -23,6 +24,7 @@ def create_app(config=config_env):
     app = Flask(__name__)
     app.config.from_object(config)
     app.register_blueprint(library)
+    app.register_blueprint(library_books)
     app.secret_key = os.urandom(24)
     login_manager.init_app(app)
     mail.init_app(app)
