@@ -253,15 +253,16 @@ def reset_with_token(token):
                            token=token,
                            error=form.errors)
 
+
 @library.route('/reservation')
 def reserve():
     if 'logged_in' in session:
         res = RentalLog(
-            copy_id = Copy.id,
-            user_id = session['id'],
-            book_status = BookStatus.RESERVED,
-            reservation_begin = datetime.now(tz=pytz.utc),
-            reservation_end = datetime.now(tz=pytz.utc) + timedelta(hours=48)
+            copy_id=Copy.id,
+            user_id=session['id'],
+            book_status=BookStatus.RESERVED,
+            reservation_begin=datetime.now(tz=pytz.utc),
+            reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
         )
         db.session.add(res)
         db.session.commit()
