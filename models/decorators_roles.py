@@ -2,7 +2,7 @@ from flask import session, redirect, url_for
 from functools import wraps
 from models.users import User
 
-
+# To działa
 def require_logged_in(redirect_page='library.login'):
 
     def decorator(func):
@@ -18,7 +18,7 @@ def require_logged_in(redirect_page='library.login'):
 
     return decorator
 
-
+# To też działa
 def require_not_logged_in(redirect_page='library.index'):
 
     def decorator(func):
@@ -34,7 +34,7 @@ def require_not_logged_in(redirect_page='library.index'):
 
     return decorator
 
-
+# To nie działa
 def require_role(role='USER', redirect_page='library.index'):
 
     def decorator(func):
@@ -50,8 +50,10 @@ def require_role(role='USER', redirect_page='library.index'):
                 if 'Role: '+role == role_in_db.roles[0]:
                     return func(*args, **kwargs)
                 else:
+                    print('else')
                     return redirect(url_for(redirect_page))
-            except:
+            except:      # Tego excepta później poprawię (nie będzie pusty)
+                print('except')
                 return redirect(url_for(redirect_page))
 
         return inner_func
