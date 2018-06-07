@@ -10,18 +10,18 @@ class Like(db.Model):
     def __repr__(self):
         return '<Like {}>'.format(self.id,)
 
-    @staticmethod
-    def like_exists(user, wish_id):
+    @classmethod
+    def like_exists(cls, wish_id, user):
         return db.session.query(Like.id).filter_by(user_id=user.id, wish_item_id=wish_id).scalar() is not None
 
-    @staticmethod
-    def like(user, wish_id):
+    @classmethod
+    def like(cls, wish_id, user):
         new_like = Like(user_id=user.id, wish_item_id=wish_id)
         db.session.add(new_like)
         db.session.commit()
 
-    @staticmethod
-    def unlike(user, wish_id):
+    @classmethod
+    def unlike(cls, wish_id, user):
         unlike = Like.query.filter_by(user_id=user.id, wish_item_id=wish_id).first()
         db.session.delete(unlike)
         db.session.commit()

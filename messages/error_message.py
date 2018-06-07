@@ -2,8 +2,8 @@ from flask import render_template
 
 
 class ErrorMessage:
-    @staticmethod
-    def message(error_body):
+    @classmethod
+    def message(cls, error_body):
         message_body = error_body
         message_title = 'Error!'
         return render_template('message.html',

@@ -286,14 +286,14 @@ def add_wish():
 @library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
 def add_like(wish_id):
     user = User.query.filter_by(id=session['id']).first()
-    if not Like.like_exists(user, wish_id):
+    if not Like.like_exists(wish_id, user):
         try:
-            Like.like(user, wish_id)
+            Like.like(wish_id, user)
         except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
     else:
         try:
-            Like.unlike(user, wish_id)
+            Like.unlike(wish_id, user)
         except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
     return redirect(url_for('library.wishlist'))
