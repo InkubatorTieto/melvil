@@ -46,6 +46,8 @@
 
                             {% if admin %}
                                 <div class="item-buttons">
+                                    <a type="button" role="button" class="btn btn-success btn-sm"
+                                       href="#">Add Copy</a>
                                     <a type="button" role="button" class="btn btn-primary btn-sm"
                                        href="#">Edit {{ item.type|capitalize }}</a>
                                     <a type="button" role="button" class="btn btn-danger btn-sm"
@@ -69,7 +71,7 @@
                                             <td class="table-button">
                                                 <a type="button" role="button"
                                                    class="btn btn-success btn-sm {{ 'disabled' if not copy.available_status }}"
-                                                   href="#">Borrow</a>
+                                                   href="#">Reserve</a>
                                             </td>
 
                                             {% if admin %}
