@@ -43,6 +43,7 @@ class Book(LibraryItem):
             self.copies
         )
 
+    @property
     def authors_string(self):
         if self.authors:
             return ', '.join(a.full_name for a in self.authors)

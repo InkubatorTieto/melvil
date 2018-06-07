@@ -140,6 +140,7 @@ class LibraryItem(db.Model):
         'polymorphic_on': type
     }
 
+    @property
     def tags_string(self):
         if self.tags:
             return ', '.join(t.name for t in self.tags)
