@@ -18,4 +18,3 @@ def test_add_author(db_author, client, session):
                                     last_name=db_author['surname']).first()
     print("to ja autor:", author)
     print("db-autoooor:", db_author)
-
