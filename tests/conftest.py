@@ -1,11 +1,11 @@
 import pytest
 from mimesis import Generic
-
+from flask import url_for, request
 from app import create_app
 from app import db as _db
 from app import mail as _mail
 from sqlalchemy import event
-from models import User, Book
+from models import User, Book, Author
 
 g = Generic('en')
 
@@ -124,6 +124,29 @@ def db_book(session):
     if Book.query.get(b.id):
         session.delete(b)
         session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_author(session, client):
+    a = {'first_name': g.person.name(),
+         'last_name': g.person.surname()
+
+         }
+    aa = Author(
+        first_name=g.person.name(),
+        last_name=g.person.surname()
+    )
+
+    client.post(url_for('library_books.add_book'), data=a)
+    # client.post(client.post(url_for('library.login'), data=data))
+    session.add(aa)
+    session.commit()
+
+    yield a
+
+    # if Author.query.filter_by(first_name=a['first_name'], last_name=a['last_name']).first():
+    #     session.delete(aa)
+    #     session.commit()
 
 
 @pytest.fixture
