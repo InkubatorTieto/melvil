@@ -108,7 +108,7 @@ def set_users(session):
         check_user = session.query(exists().where(
             model.email == user_data[0])).scalar()
         if check_user:
-            print(check_user)
+            print("{}: User already exists".format(check_user))
         else:
             instance = model(email=user_data[0],
                              first_name=user_data[1][1],
