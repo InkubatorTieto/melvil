@@ -172,8 +172,6 @@ def get_books(file_location):
                                         library_item_id=book.id,
                                         library_item=book,
                                         asset_code=asset)
-        print(db.session.query(Book).all())
-        print(db.session.query(Copy).all())
 
 
 # writing magazine's data in database
@@ -182,8 +180,15 @@ def get_magazines(file_location):
     for i in magazines_properties:
         title = i['title']
         issue = str(i['issue'])
-        year = datetime.strptime(str(int(i['year'])), '%Y')
-        create_library_item(db.session, Magazine,
-                            title=title,
-                            year=year,
-                            issue=issue)
+        year = str(i['year'])
+        if not year:
+            create_library_item(db.session, Magazine,
+                                title=title,
+                                issue=issue)
+            print('Magazine ', title, issue, ' has no year information.')
+        else:
+            year = datetime.strptime(str(int(i['year'])), '%Y')
+            create_library_item(db.session, Magazine,
+                                title=title,
+                                year=year,
+                                issue=issue)

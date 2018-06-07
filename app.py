@@ -48,8 +48,8 @@ app = create_app()
 
 @app.cli.command(with_appcontext=True)
 def load_xls_into_db():
-    get_magazines('./biblioteka_oczyszczona.xlsx')
-    get_books('./biblioteka_oczyszczona.xlsx')
+    get_magazines('./iblioteka_probna.xlsx')
+    get_books('./biblioteka_probna.xlsx')
 
 
 app.cli.add_command(load_xls_into_db)
