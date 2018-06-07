@@ -260,6 +260,14 @@ def reset_with_token(token):
 
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
+    data = db.session.query(WishListItem).all()
+    wish_list_schema = WishListItemSchema(many=True)
+    output = wish_list_schema.dump(data)
+    return render_template('wishlist.html', wishes=output)
+
+
+@library.route('/addWish', methods=['GET', 'POST'])
+def add_wish():
     form = WishlistForm()
     if form.validate_on_submit():
         try:
@@ -269,15 +277,11 @@ def wishlist():
 
             db.session.add(new_wish_item)
             db.session.commit()
+            return redirect(url_for('library.wishlist'))
         except exc.SQLAlchemyError:
             print('cant add to database')
-    data = db.session.query(WishListItem).all()
-    wish_list_schema = WishListItemSchema(many=True)
-    output = wish_list_schema.dump(data)
-    return render_template('wishlist.html',
-                           form=form,
-                           wishes=output,
-                           error=form.errors)
+            return redirect(url_for('library.wishlist'))
+    return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
 @library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
@@ -289,7 +293,7 @@ def add_like(wish_id):
             new_like = Like(user_id=user.id, wish_item_id=wish_id)
             db.session.add(new_like)
             db.session.commit()
-        except ConnectionError:
+        except exc.SQLAlchemyError:
             message_body = 'Oops, something went wrong!'
             message_title = 'Error!'
             return render_template('message.html',
@@ -300,7 +304,7 @@ def add_like(wish_id):
             unlike = Like.query.filter_by(user_id=user.id, wish_item_id=wish_id).first()
             db.session.delete(unlike)
             db.session.commit()
-        except ConnectionError:
+        except exc.SQLAlchemyError:
             message_body = 'Oops, something went wrong!'
             message_title = 'Error!'
             return render_template('message.html',

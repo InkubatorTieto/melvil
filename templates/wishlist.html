@@ -29,7 +29,7 @@
                            </div>
                        </div>
                    </div>
-                   <button type="button" id="addWishButton" class="btn btn-primary btn-sample" data-toggle="modal" data-target="#exampleModal">
+                   <button type="button" id="addWishButton" class="btn btn-primary btn-sample" data-toggle="modal" onclick="window.location.href='{{ url_for('library.add_wish')}}';">
                       Create new wish
                    </button>
                </div>
@@ -37,27 +37,6 @@
        </div>
       </main>
     </div>
-
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-body wish" id="exampleModalLabel">
-                <button type="button" style="white" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                    </button>
-                             <br>
-                               <p class="form-title">Create new wish</p>
-                                   <form class="wishlist" action="" method="post">
-                                       {{ form.hidden_tag() }}
-                                       {{ input( form.authors, error['authors'])}}
-                                       {{ input( form.title, error['title'] ) }}
-                                       {{ input( form.pub_year)}}
-                                       {{ form.add }}
-                                   </form>
-              </div>
-            </div>
-          </div>
-        </div>
 
 {% endblock %}
 
