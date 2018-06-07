@@ -129,8 +129,8 @@ def db_book(session):
 @pytest.fixture(scope="function")
 def db_author(session, client):
     a = {'first_name': g.person.name(),
-         'last_name': g.person.surname()
-
+         'surname': g.person.surname(),
+         'submit': 'Create'
          }
     aa = Author(
         first_name=g.person.name(),

@@ -10,10 +10,13 @@ def test_add_author(db_author, client):
         'Accept': mimetype
     }
 
-    response = client.post(url_for('library_books.add_book'), data=json.dumps(db_author), headers=headers)
+    response = client.post(url_for('library_books.add_book'),
+                           data=json.dumps(db_author),
+                           headers=headers,
+                           follow_redirects=True)
 
     author = Author.query.filter_by(first_name=db_author['first_name'],
-                                    last_name=db_author['last_name']).first()
+                                    last_name=db_author['surname']).first()
     print("to ja autor:", author)
     print("db-autoooor:", db_author)
     # assert author.first_name == db_author['first_name']

@@ -1,25 +1,26 @@
 from flask_wtf import FlaskForm
+from datetime import datetime
 from wtforms import (
     StringField,
-    PasswordField,
-    BooleanField,
     SubmitField,
     TextAreaField,
-    SelectField,
-    DateField,
-    FieldList,
-    FormField
+    SelectField
 )
 from wtforms.validators import DataRequired, Email, EqualTo, Length
-from forms.custom_validators import tieto_email, name, surname
+from forms.custom_validators import name,\
+    check_author, check_language,\
+    check_category, check_isbn,\
+    check_pub_date
 
 
 class BookForm(FlaskForm):
-    leanguages = [('polish', 'Polish'), ('english', 'English'), ('other', 'Other')]
+    languages = [('polish', 'Polish'), ('english', 'English'), ('other', 'Other')]
     categories = [('developers', 'Developers'),
                   ('managers', 'Managers'),
-                  ('magazines', 'magazines'),
+                  ('magazines', 'Magazines'),
                   ('other', 'Other')]
+
+
 
     # LibraryItem
     title = StringField('Title',
@@ -32,31 +33,33 @@ class BookForm(FlaskForm):
                                       render_kw=({'class': 'inputs',
                                                   'placeholder': 'Table of contents'}))
 
-    leanguage = SelectField('Leanguage',
-                            choices=leanguages,
+    language = SelectField('Language',
+                            choices=languages,
+                            validators=[check_language],
                             render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
                                         'id': 'mySelect',
                                         'placeholder': 'Leanguage'}))
 
     category = SelectField('Category',
                            choices=categories,
+                           validators=[check_category],
                            render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
                                        'id': 'mySelect',
                                        'placeholder': 'Category'}))
 
     tag = StringField('Tag',
-                      validators=[DataRequired(), Length(3), name],
+                      validators=[DataRequired(), Length(3)],
                       render_kw=({'class': 'inputs',
                                   'placeholder': 'Tag'}))
     description = TextAreaField('Description',
-                                validators=[DataRequired(), Length(3), name],
+                                validators=[DataRequired(), Length(3)],
                                 render_kw=({'class': 'inputs',
                                             'placeholder': 'Description'}))
 
     # Book
 
     isbn = StringField('ISBN number',
-                       validators=[DataRequired()],
+                       validators=[DataRequired(), check_isbn],
                        render_kw=({'class': 'inputs',
                                    'placeholder': 'ISBN number'}))
 
@@ -69,36 +72,37 @@ class BookForm(FlaskForm):
                             render_kw=({'class': 'inputs',
                                         'placeholder': 'Publisher'}))
 
-    pub_date = DateField('Date of publication',
-                         format='%d/%m/%Y',
-                         render_kw=({'class': "dtpick",
-                                     'placeholder': "DD/MM/YYYY"
-                                     }))
+    pub_date = SelectField('Year of publication',
+                           choices=[(str(x), str(x)) for x in range(1970, datetime.now().year + 1)],
+                           validators=[check_pub_date],
+                           render_kw=({'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                                       'id': 'mySelect',
+                                       'placeholder': 'Year of publication'}))
     # AUTORZY
     first_name = StringField('First name',
-                             validators=[DataRequired(), Length(3), name],
+                             validators=[DataRequired(), check_author],
                              render_kw=({'class': 'inputs',
                                          'placeholder': 'First Name'}))
     surname = StringField('Surname',
-                          validators=[DataRequired(), Length(3), surname],
+                          validators=[DataRequired(), check_author],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Surname'}))
 
     first_name_1 = StringField('First_name_1',
-                               validators=[],
+                               validators=[check_author],
                                render_kw=({'class': 'inputs',
                                            'placeholder': 'First Name 1'}))
     surname_1 = StringField('Surname_1',
-                            validators=[],
+                            validators=[check_author],
                             render_kw=({'class': 'inputs',
                                         'placeholder': 'Surname 1'}))
 
     first_name_2 = StringField('First name 2',
-                               validators=[],
+                               validators=[check_author],
                                render_kw=({'class': 'inputs',
                                            'placeholder': 'First Name 2'}))
     surname_2 = StringField('Surname 2',
-                            validators=[],
+                            validators=[check_author],
                             render_kw=({'class': 'inputs',
                                         'placeholder': 'Surname 2'}))
 

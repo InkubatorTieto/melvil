@@ -1,6 +1,7 @@
 from flask import render_template, request, session
 from forms.book import BookForm
 from flask import Blueprint
+from datetime import datetime
 from models.books import Book, Author
 from models.library import Tag
 from init_db import db
@@ -25,7 +26,9 @@ def add_book():
                                error=form.errors)
     else:
         form = BookForm()
-
+        print(form)
+        for i in form:
+            print(i)
         if form.validate_on_submit():
 
             tmp_authors = [[form.first_name.data, form.surname.data],
@@ -66,7 +69,7 @@ def add_book():
                 # for library_item model
                 title=form.title.data,
                 table_of_contents=form.table_of_contents.data,
-                language=form.leanguage.data,
+                language=form.language.data,
                 category=form.category.data,
                 tags=[new_tag],
                 description=form.description.data,
@@ -75,13 +78,15 @@ def add_book():
                 authors=new_authors,
                 original_title=form.original_title.data,
                 publisher=form.publisher.data,
-                pub_date=form.pub_date.data)
+                pub_date=datetime(year=int(form.pub_date.data), month=1, day=1))
             db.session.add(new_book)
-
+            db.session.commit()
 
             print(new_authors)
             print(new_tag)
             print(new_book)
+            print(new_book.pub_date)
+            print(type(new_book.pub_date))
 
             message_body = 'The book has been added.'
             message_title = 'Success!'

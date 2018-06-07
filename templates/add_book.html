@@ -126,8 +126,8 @@
                             {{ input( form.isbn ,error['isbn']) }}
                         </div>
                         <div class="col">
-                            <p id="myText">Leanguage:</p>
-                            {{ input( form.leanguage ,error['leanguage']) }}
+                            <p id="myText">Language:</p>
+                            {{ input( form.language ,error['language']) }}
                         </div>
                     </div>
 
@@ -167,20 +167,20 @@
 
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <script>
+    <!--<script>-->
 
-        $(function() {
-            $(".dtpick").datepicker({
-                onSelect: function (selectedDate) {
-                    $("input[name='pub_date']").val(selectedDate);
-                    $('#pub_date').val();
-                    console.log(selectedDate);
-                }
+        <!--$(function() {-->
+            <!--$(".dtpick").datepicker({-->
+                <!--onSelect: function (selectedDate) {-->
+                    <!--$("input[name='pub_date']").val(selectedDate);-->
+                    <!--$('#pub_date').val();-->
+                    <!--console.log(selectedDate);-->
+                <!--}-->
 
-            });
+            <!--});-->
 
-        });
-    </script>
+        <!--});-->
+    <!--</script>-->
 
 
 <!-- Skrypt do dynamicznych formularzy-->
