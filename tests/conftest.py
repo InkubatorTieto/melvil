@@ -144,7 +144,8 @@ def db_author(session, client):
 
     yield a
 
-    # if Author.query.filter_by(first_name=a['first_name'], last_name=a['last_name']).first():
+    # if Author.query.filter_by(first_name=a['first_name']
+    # , last_name=a['last_name']).first():
     #     session.delete(aa)
     #     session.commit()
 
