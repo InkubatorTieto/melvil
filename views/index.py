@@ -1,6 +1,5 @@
 from config import DevConfig
 from flask import (
-    Flask,
     render_template,
     request,
     session,
@@ -27,11 +26,9 @@ from models.decorators_roles import (
     require_role
 )
 from init_db import db
-from models.books import Book
 from models.users import User
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
-from sqlalchemy.exc import TimeoutError
 
 
 login_manager = LoginManager()
@@ -90,7 +87,6 @@ def login():
 
 
 @library.route('/registration', methods=['GET', 'POST'])
-@require_not_logged_in()
 def registration():
     if request.method == 'GET':
         form = RegistrationForm()
@@ -106,6 +102,7 @@ def registration():
                     first_name=form.first_name.data,
                     surname=form.surname.data,
                     password_hash=generate_password_hash(form.password.data))
+                new_user.roles.append(Role(name='USER'))
                 db.session.add(new_user)
                 db.session.commit()
                 send_confirmation_email(new_user.email)
@@ -127,7 +124,6 @@ def registration():
 
 
 @library.route('/search')
-@require_logged_in()
 def search():
     return render_template('search.html', title='Search', form=SearchForm())
 
@@ -268,4 +264,16 @@ def reset_with_token(token):
 @library.route('/user_only')
 @require_role()
 def user_only():
-    return rediret(url_for('library.contact'))
+    return 'for users only'
+
+
+@library.route('/logged_in')
+@require_logged_in()
+def logged_in():
+    return 'for logged in only'
+
+
+@library.route('/not_logged_in')
+@require_not_logged_in()
+def not_logged_in():
+    return 'for not logged in only'
