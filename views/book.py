@@ -26,9 +26,6 @@ def add_book():
                                error=form.errors)
     else:
         form = BookForm()
-        print(form)
-        for i in form:
-            print(i)
         if form.validate_on_submit():
 
             tmp_authors = [[form.first_name.data, form.surname.data],
@@ -37,7 +34,6 @@ def add_book():
                            ]
 
             new_authors = []
-            print(tmp_authors)
 
             for first_name, surname in tmp_authors:
                 if first_name is not '' and surname is not '':
@@ -52,8 +48,6 @@ def add_book():
                         db.session.commit()
                     else:
                         new_authors.append(author)
-
-            # print(new_authors)
 
             tmp_tag = Tag.query.filter_by(name=form.tag.data).first()
             if not tmp_tag:
@@ -79,14 +73,9 @@ def add_book():
                 original_title=form.original_title.data,
                 publisher=form.publisher.data,
                 pub_date=datetime(year=int(form.pub_date.data), month=1, day=1))
+
             db.session.add(new_book)
             db.session.commit()
-
-            print(new_authors)
-            print(new_tag)
-            print(new_book)
-            print(new_book.pub_date)
-            print(type(new_book.pub_date))
 
             message_body = 'The book has been added.'
             message_title = 'Success!'
@@ -97,3 +86,6 @@ def add_book():
         return render_template('add_book.html',
                                form=form,
                                error=form.errors)
+
+
+#
