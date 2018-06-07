@@ -161,7 +161,9 @@ def get_books(file_location):
                 book = create_library_item(db.session, Book,
                                            title=title)
                 book.authors.append(author)
-                if asset in asset_codes:
+                # checking if asset value is an empty string
+                # which violates uniqueness of the asset code
+                if not asset:
                     create_library_item(db.session, Copy,
                                         library_item_id=book.id,
                                         library_item=book)
@@ -170,6 +172,8 @@ def get_books(file_location):
                                         library_item_id=book.id,
                                         library_item=book,
                                         asset_code=asset)
+        print(db.session.query(Book).all())
+        print(db.session.query(Copy).all())
 
 
 # writing magazine's data in database
