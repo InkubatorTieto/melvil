@@ -1,4 +1,4 @@
-from flask import render_template, request, session
+from flask import render_template, request
 from forms.book import BookForm
 from flask import Blueprint
 from datetime import datetime
@@ -37,7 +37,8 @@ def add_book():
 
             for first_name, surname in tmp_authors:
                 if first_name is not '' and surname is not '':
-                    author = Author.query.filter_by(first_name=first_name, last_name=surname).first()
+                    author = Author.query.filter_by(first_name=first_name,
+                                                    last_name=surname).first()
                     if not author:
                         new_author = Author(
                             first_name=first_name,
@@ -72,7 +73,9 @@ def add_book():
                 authors=new_authors,
                 original_title=form.original_title.data,
                 publisher=form.publisher.data,
-                pub_date=datetime(year=int(form.pub_date.data), month=1, day=1))
+                pub_date=datetime(year=int(form.pub_date.data),
+                                  month=1,
+                                  day=1))
 
             db.session.add(new_book)
             db.session.commit()

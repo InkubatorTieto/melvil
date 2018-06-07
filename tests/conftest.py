@@ -1,6 +1,6 @@
 import pytest
 from mimesis import Generic
-from flask import url_for, request
+from flask import url_for
 from app import create_app
 from app import db as _db
 from app import mail as _mail

@@ -252,4 +252,3 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
-
