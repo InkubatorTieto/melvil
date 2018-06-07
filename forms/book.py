@@ -43,7 +43,7 @@ class BookForm(FlaskForm):
                            render_kw=({
                                'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
                                'id': 'mySelect',
-                               'placeholder': 'Leanguage'}))
+                               'placeholder': 'Language'}))
 
     category = SelectField('Category',
                            choices=categories,
