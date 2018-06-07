@@ -1,6 +1,14 @@
 import os
 
-from flask import abort, render_template, request, session, redirect, flash, url_for
+from flask import (
+    abort,
+    render_template,
+    request,
+    session,
+    redirect,
+    flash,
+    url_for
+)
 from flask_login import LoginManager
 
 from itsdangerous import URLSafeTimedSerializer
@@ -17,7 +25,7 @@ from forms.forms import (
     PasswordForm
 )
 from init_db import db
-from models.books import Book, Author
+from models.books import Book
 from models.users import User
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
@@ -116,11 +124,6 @@ def registration():
 
 @library.route('/search', methods=['GET'])
 def search():
-
-    # TEST FUNCS TO POPULATE PROTOTYPE FUNCTIONALITY
-    #from tests.test_db import test_books
-    #test_base = test_books(db.session)
-
     if request.method == 'GET':
         try:
             retrieve_book_data = db.session.query(Book).all()
@@ -293,6 +296,7 @@ def reset_with_token(token):
                            token=token,
                            error=form.errors)
 
+
 @library.errorhandler(405)
 def method_not_allowed(error):
     message_body = 'Method not allowed!'
@@ -300,6 +304,7 @@ def method_not_allowed(error):
     return render_template('message.html',
                            message_title=message_title,
                            message_body=message_body), 405
+
 
 @library.errorhandler(500)
 def server_error(error):
