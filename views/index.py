@@ -62,11 +62,11 @@ def login():
                 if (data is not None and
                         check_password_hash(data.password_hash,
                                             form.password.data)):
-                        # and data.active:
-                        session['logged_in'] = True
-                        session['id'] = data.id
-                        session['email'] = data.email
-                        return render_template('index.html', session=session)
+                    # and data.active:
+                    session['logged_in'] = True
+                    session['id'] = data.id
+                    session['email'] = data.email
+                    return render_template('index.html', session=session)
                 else:
                     message_body = 'Login failed.'
                     message_title = 'Error!'
