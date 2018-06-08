@@ -143,7 +143,6 @@ def search():
                     break
 
             books.append(book)
-        print(books)
         books.sort(key=lambda x: x[2])
 
         return render_template('search.html',
