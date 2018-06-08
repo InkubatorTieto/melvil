@@ -7,7 +7,7 @@ from wtforms import (
     SelectField
 )
 from wtforms.validators import DataRequired, Length
-from forms.custom_validators import name, \
+from forms.custom_validators import \
     check_author, check_language, \
     check_category, check_isbn, \
     check_pub_date, title_book_exists
