@@ -201,12 +201,6 @@ def db_copies(session, db_book):
 
 
 @pytest.fixture
-def mailbox(app):
-    mailbox = _mail.record_messages()
-    return mailbox
-
-
-@pytest.fixture
 def app_session(client, db_user):
     with client.session_transaction() as app_session:
         app_session['id'] = db_user.id
