@@ -25,23 +25,6 @@ from . import library
 login_manager = LoginManager()
 
 
-@library.route('/test')
-def test():
-    # TEST VIEW TO CHECK IF POPULATING USERS VIA LDAP WORKS
-    usrs = db.session.query(User).all()
-    for row in usrs:
-        print("Active: {0} Email: {1} First name: {2} Surname: {3}\
-            Full name: {4} Role: {5}".format(
-                                             row.active,
-                                             row.email,
-                                             row.first_name,
-                                             row.surname,
-                                             row.full_name,
-                                             row.roles)
-        )
-    return "{}".format(len(usrs)), 200
-
-
 @library.route('/')
 def index():
     return render_template('index.html')
