@@ -1,6 +1,12 @@
-from config import DevConfig
+import os
+
+from itsdangerous import URLSafeTimedSerializer
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from flask import render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
+
+from config import DevConfig
 from forms.forms import (
     LoginForm,
     SearchForm,
@@ -9,14 +15,11 @@ from forms.forms import (
     ForgotPass,
     PasswordForm
 )
-from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import URLSafeTimedSerializer
-from . import library
-from models.users import User
 from init_db import db
+from models.users import User
 from send_email import send_confirmation_email, send_password_reset_email
-import os
 from send_email.emails import send_email
+from . import library
 
 login_manager = LoginManager()
 
