@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
+import random
+import string
+
 import pytest
 from mimesis import Generic
+from sqlalchemy import event
+
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from sqlalchemy import event
-from models import User, Book
-import random
-import string
+from models import User, Book, Magazine, Copy
 
 
 g = Generic('en')
@@ -73,8 +74,7 @@ def session(db):
 
 @pytest.fixture
 def mailbox(app):
-    mailbox = _mail.record_messages()
-    return mailbox
+    return _mail.record_messages()
 
 
 @pytest.fixture(scope='module')
@@ -155,3 +155,52 @@ def db_book(session):
     if Book.query.get(b.id):
         session.delete(b)
         session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_magazine(session):
+    m = Magazine(
+        title=' '.join(g.text.title().split(' ')[:5]),
+        language=g.person.language(),
+        description=g.text.sentence(),
+        year=g.datetime.year(maximum=2018),
+        issue=random.randint(1, 12),
+        tags=[],
+    )
+    session.add(m)
+    session.commit()
+
+    yield m
+
+    if Magazine.query.get(m.id):
+        session.delete(m)
+        session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_copies(session, db_book):
+    copy_available = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        available_status=True
+    )
+    copy_not_available = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        available_status=False
+    )
+    session.add_all([copy_available, copy_not_available])
+    session.commit()
+
+    yield (copy_available, copy_not_available)
+
+
+@pytest.fixture
+def app_session(client, db_user):
+    with client.session_transaction() as app_session:
+        app_session['id'] = db_user.id
+        return app_session
