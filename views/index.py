@@ -24,8 +24,6 @@ from models import LibraryItem
 from . import library
 from models.users import User
 from init_db import db
-from send_email import send_confirmation_email, send_password_reset_email
-import os
 from send_email.emails import send_email
 
 login_manager = LoginManager()
@@ -58,14 +56,16 @@ def login():
                 data = User.query.filter_by(email=form.email.data).first()
                 if (data is not None and
                         check_password_hash(data.password_hash,
-                                            form.password.data)):
-                        # and data.active:
+                                            form.password.data) and
+                        data.active):
+
                         session['logged_in'] = True
                         session['id'] = data.id
                         session['email'] = data.email
                         return render_template('index.html', session=session)
                 else:
-                    message_body = 'Login failed.'
+                    message_body = 'Login failed or ' \
+                                   'your account is not activated'
                     message_title = 'Error!'
                     return render_template('message.html',
                                            message_title=message_title,
@@ -75,7 +75,7 @@ def login():
                                        title='Sign In',
                                        form=form,
                                        error=form.errors)
-        except:
+        except ValueError or TypeError:
             message_body = 'Something went wrong'
             message_title = 'Error!'
             return render_template('message.html',
@@ -94,15 +94,24 @@ def registration():
         form = RegistrationForm()
         if form.validate_on_submit():
             try:
-                new_user = User(
-                    email=form.email.data,
-                    first_name=form.first_name.data,
-                    surname=form.surname.data,
-                    password_hash=generate_password_hash(form.password.data))
-                db.session.add(new_user)
-                db.session.commit()
-                send_confirmation_email(new_user.email)
-            except:
+                if User.query.filter_by(email=form.email.data).first():
+                    message_body = 'User already exist'
+                    message_title = 'Opss!'
+                    return render_template('message.html',
+                                           message_title=message_title,
+                                           message_body=message_body)
+
+                else:
+                    new_user = User(
+                        email=form.email.data,
+                        first_name=form.first_name.data,
+                        surname=form.surname.data,
+                        password_hash=generate_password_hash(
+                            form.password.data))
+                    send_confirmation_email(new_user.email)
+                    db.session.add(new_user)
+                    db.session.commit()
+            except ValueError or TypeError:
                 message_body = 'Registration failed'
                 message_title = 'Error!'
                 return render_template('message.html',
@@ -128,13 +137,8 @@ def search():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        try:
-            email_template = open(
-                './templates/contact_confirmation.html', 'r').read()
-        except:
-            email_template = open(os.path.abspath(os.curdir) +
-                                  './templates/contact_confirmation.html',
-                                  'r').read()
+        email_template = open(
+            './templates/contact_confirmation.html', 'r').read()
         send_email(
             'Contact confirmation, title: ' + form.title.data,
             DevConfig.MAIL_USERNAME,

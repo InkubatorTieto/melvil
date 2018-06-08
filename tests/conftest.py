@@ -1,13 +1,15 @@
-from random import randint
+import random
+import string
 
 import pytest
 from mimesis import Generic
+from sqlalchemy import event
 
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from sqlalchemy import event
 from models import User, Book, Magazine, Copy
+
 
 g = Generic('en')
 
@@ -70,13 +72,44 @@ def session(db):
     conn.close()
 
 
+@pytest.fixture
+def mailbox(app):
+    mailbox = _mail.record_messages()
+    return mailbox
+
+
+@pytest.fixture(scope='module')
+def email_generator(chars=string.ascii_letters + string.digits + '.' + '-'):
+    size = random.randint(10, 25)
+    return ''.join(random.choice(chars) for _ in range(size)) + '@tieto.com'
+
+
+@pytest.fixture(scope='module')
+def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
+    size = random.randint(25, 40)
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+@pytest.fixture(scope='module')
+def text_generator_no_whitespaces(chars=string.ascii_letters + 'ąćęłóżź'):
+    size = random.randint(25, 40)
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+@pytest.fixture(scope='module')
+def password_generator(chars=string.ascii_letters):
+    size = random.randint(10, 25)
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
 @pytest.fixture(scope='module')
 def user(app):
+
     data = {
-        'email': 'test1@test.com',
-        'first_name': 'Testowy',
-        'surname': 'test',
-        'password': '5354'}
+        'email': email_generator(),
+        'first_name': text_generator(),
+        'surname': text_generator(),
+        'password': password_generator()}
     yield data
 
 
@@ -132,7 +165,7 @@ def db_magazine(session):
         language=g.person.language(),
         description=g.text.sentence(),
         year=g.datetime.year(maximum=2018),
-        issue=randint(1, 12),
+        issue=random.randint(1, 12),
         tags=[],
     )
     session.add(m)
