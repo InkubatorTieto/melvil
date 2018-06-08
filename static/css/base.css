@@ -26,6 +26,7 @@ body {
     border-radius: 15px;
     height: auto;
     margin-top: 50px;
+    color:silver;
     }
 
 .modal-content{
@@ -48,5 +49,6 @@ body {
     #addWishButton{
       margin-top:3px;
       margin-bottom:7px;
-  }
-
+h1 {
+    color: silver;
+}
