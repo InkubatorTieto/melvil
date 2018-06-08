@@ -74,8 +74,7 @@ def session(db):
 
 @pytest.fixture
 def mailbox(app):
-    mailbox = _mail.record_messages()
-    return mailbox
+    return _mail.record_messages()
 
 
 @pytest.fixture(scope='module')
