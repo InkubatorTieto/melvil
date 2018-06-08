@@ -6,7 +6,6 @@ from mimesis import Generic
 from sqlalchemy.sql import exists
 
 from config import Config
-from init_db import db
 from models import User
 
 g = Generic('en')
