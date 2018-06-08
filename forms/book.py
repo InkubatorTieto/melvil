@@ -70,7 +70,7 @@ class BookForm(FlaskForm):
                                    'placeholder': 'ISBN number'}))
 
     original_title = StringField('Original title',
-                                 validators=[DataRequired(), Length(3), name],
+                                 validators=[DataRequired(), Length(3)],
                                  render_kw=({'class': 'inputs',
                                              'placeholder': 'Original title'}))
     publisher = StringField('Publisher',
@@ -88,7 +88,8 @@ class BookForm(FlaskForm):
                                'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
                                'id': 'mySelect',
                                'placeholder': 'Year of publication'}))
-    # AUTORZY
+
+    # Authors
     first_name = StringField('First name',
                              validators=[DataRequired(), check_author],
                              render_kw=({'class': 'inputs',
