@@ -7,8 +7,9 @@ from raven.contrib.flask import Sentry
 from flask import Flask
 from flask_mail import Mail
 
-from config import DevConfig
+from config import DevConfig, ProdConfig
 from init_db import db
+
 from views import library
 from views.index import login_manager
 from xlsx_reader import get_books, get_magazines
@@ -18,9 +19,13 @@ mail = Mail()
 sentry = Sentry()
 client = Client()
 
+if os.getenv('APP_SETTINGS', '') == 'prod':
+    config_env = ProdConfig
+else:
+    config_env = DevConfig
 
-def create_app(config=DevConfig):
 
+def create_app(config=config_env):
     app = Flask(__name__)
     app.config.from_object(config)
     app.register_blueprint(library)
