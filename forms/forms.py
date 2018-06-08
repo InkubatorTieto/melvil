@@ -108,9 +108,9 @@ class WishlistForm(FlaskForm):
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
     pub_year = DateField('pub_year',
-                         validators=
-                         [DateRange(min=datetime.strptime('1900', '%Y').date(),
-                                    max=datetime.today().date())],
+                         validators=[DateRange
+                                     (min=datetime.strptime('1900', '%Y').date(),
+                                      max=datetime.today().date())],
                          render_kw=({'class': 'inputs',
                                     'placeholder': 'Publication Year'}),
                          format='%Y')

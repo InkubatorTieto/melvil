@@ -14,10 +14,9 @@ class Like(db.Model):
 
     @classmethod
     def like_exists(cls, wish_id, user):
-        return db.session\
-                   .query(Like.id)\
-                   .filter_by(user_id=user.id, wish_item_id=wish_id)\
-                   .scalar() is not None
+        return db.session.query(Like.id)\
+                 .filter_by(user_id=user.id, wish_item_id=wish_id)\
+                 .scalar() is not None
 
     @classmethod
     def like(cls, wish_id, user):
