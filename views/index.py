@@ -1,13 +1,12 @@
 import os
 
 from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy.sql import exists
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask import render_template, request, session, redirect, flash, url_for
 from flask_login import LoginManager
 
-from config import Config, DevConfig
+from config import DevConfig
 from forms.forms import (
     LoginForm,
     SearchForm,

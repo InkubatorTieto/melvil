@@ -54,7 +54,7 @@ def parse_catalogue(connection,
             isinstance(fltr_string, str)
             fltr += fltr_string
             return fltr
-        except TypeError as e:
+        except TypeError:
             print(traceback.print_exc(file=sys.stdout))
             return None
 

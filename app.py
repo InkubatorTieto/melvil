@@ -37,11 +37,14 @@ def create_app(config=DevConfig):
             time.sleep(1)
     return app
 
+
 app = create_app()
+
 
 @app.cli.command(with_appcontext=True)
 def load_users_into_db():
     set_users(db.session)
+
 
 app.cli.add_command(load_users_into_db)
 
