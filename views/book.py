@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, session
 from forms.book import BookForm
 from flask import Blueprint
 from datetime import datetime
@@ -12,22 +12,23 @@ library_books = Blueprint('library_books', __name__,
 
 @library_books.route('/add_book', methods=['GET', 'POST'])
 def add_book():
+
     if request.method == 'GET':
-        # if 'logged_in' not in session:
-        #     message_body = 'You are not logged in.'
-        #     message_title = 'Error!'
-        #     return render_template('message.html',
-        #                            message_title=message_title,
-        #                            message_body=message_body)
-        # else:
-        form = BookForm()
+        if 'logged_in' not in session:
+            message_body = 'You are not logged in.'
+            message_title = 'Error!'
+            return render_template('message.html',
+                                   message_title=message_title,
+                                   message_body=message_body)
+        else:
+            form = BookForm()
+
         return render_template('add_book.html',
                                form=form,
                                error=form.errors)
     else:
         form = BookForm()
         if form.validate_on_submit():
-
             tmp_authors = [[form.first_name.data, form.surname.data],
                            [form.first_name_1.data, form.surname_1.data],
                            [form.first_name_2.data, form.surname_2.data],
@@ -76,25 +77,40 @@ def add_book():
                 pub_date=datetime(year=int(form.pub_date.data),
                                   month=1,
                                   day=1))
-
+            if book_exists(new_book):
+                message_body = 'This book already exists.'
+                message_title = 'Oops!'
+                return render_template('message.html',
+                                       message_title=message_title,
+                                       message_body=message_body)
             db.session.add(new_book)
             db.session.commit()
-
-            # print(new_authors)
-            # print(new_tag)
-            # print(new_book)
-            # print(new_book.pub_date)
-            # print(type(new_book.pub_date))
 
             message_body = 'The book has been added.'
             message_title = 'Success!'
             return render_template('message.html',
                                    message_title=message_title,
                                    message_body=message_body)
-
+        # print(form.errors)
         return render_template('add_book.html',
                                form=form,
                                error=form.errors)
 
 
-#
+def book_exists(newbook):
+    results = Book.query.filter(Book.title.startswith(newbook.title[:2])).all()
+    for i in results:
+        if i.isbn == newbook.isbn:
+            return False
+        i = str(i.title)
+        i = i.replace(" ", "").replace("_", "") \
+            .replace("-", "").replace(",", ""). \
+            replace(".", "").lower()
+        tmp = str(newbook.title)
+        tmp = tmp.replace(" ", "").replace("_", "") \
+            .replace("-", "").replace(",", ""). \
+            replace(".", "").lower()
+        if i == tmp:
+            return False
+        else:
+            return True

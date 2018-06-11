@@ -22,7 +22,9 @@ def surname(form, field):
 
 def check_author(form, field):
     if field.data != '':
-        if not re.compile('^[A-Z]?.*[a-z]*[A-Za-z]$').match(field.data):
+        if not re.compile('^([A-ZĄĆĘŁÓŻŹ]?.*[A-ZĄĆĘŁÓŻŹa-ząćęłóżź]*[a-ząćęłóżź])$').match(field.data) and \
+                not re.compile('^[A-ZĄĆĘŁÓŻŹ]?.[A-ZĄĆĘŁÓŻŹ]$').match(field.data) or \
+                re.compile('^[a-ząćęłóżź]*$').match(field.data):
             raise ValidationError('Insert valid author name or surname.')
 
 
@@ -39,6 +41,7 @@ def check_category(form, field):
 
 
 def check_isbn(form, field):
+    field.data = field.data.replace("-", "").replace(" ", "")
     if not is_isbn10(field.data) and not is_isbn13(field.data):
         raise ValidationError('ISBN number is incorrect!')
 
@@ -53,7 +56,7 @@ def check_pub_date(form, field):
     if int(field.data) < 1970:
         raise ValidationError('Date is incorrect.')
 
-    if type(field.data) != int and type(field.data) != str:
+    if type(field.data) != str:
         raise ValidationError('Type of data is incorrect')
 
 

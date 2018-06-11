@@ -91,11 +91,11 @@ class BookForm(FlaskForm):
 
     # Authors
     first_name = StringField('First name',
-                             validators=[DataRequired(), check_author],
+                             validators=[check_author],
                              render_kw=({'class': 'inputs',
                                          'placeholder': 'First Name'}))
     surname = StringField('Surname',
-                          validators=[DataRequired(), check_author],
+                          validators=[check_author],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Surname'}))
 
