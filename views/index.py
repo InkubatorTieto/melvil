@@ -19,7 +19,6 @@ from forms.forms import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
-
 from models import LibraryItem
 from . import library
 from models.users import User

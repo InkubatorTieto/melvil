@@ -4,7 +4,8 @@ from email.mime.text import MIMEText
 
 
 msg = MIMEText('The body of your message.')
-msg['To'] = email.utils.formataddr(('Recipient Name', 'jahenstein@gmail.com'))
+msg['To'] = email.utils.formataddr(('Recipient Name',
+                                    'jahenstein@gmail.com'))
 msg['From'] = email.utils.formataddr(('Your Name', 'test@test.com'))
 msg['Subject'] = 'Your Subject'
 
