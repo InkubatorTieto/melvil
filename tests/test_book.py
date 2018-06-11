@@ -1,8 +1,6 @@
 from flask import url_for
 from models import Author, Book, Tag
 from datetime import date
-from forms import custom_validators
-from forms.book import BookForm
 import pytest
 
 
@@ -18,7 +16,8 @@ def test_add_book(view_book, client):
         assert False, "Data validation failed"
     assert view_book.first_name.data == author.first_name \
            and view_book.surname.data == author.last_name, \
-        "First and last name of the first author is not the same as given at the entrance"
+        "First and last name of the first author is not" \
+        " the same as given at the entrance"
 
     book = Book.query.filter_by(title=view_book.title.data,
                                 isbn=view_book.isbn.data).first()
@@ -41,7 +40,9 @@ def test_add_book(view_book, client):
         "The original title of book is not the same as given at the entrance "
     assert view_book.publisher.data == book.publisher, \
         "The publisher is not the same as given at the entrance "
-    assert date(year=int(view_book.pub_date.data), month=1, day=1) == book.pub_date, \
+    assert date(year=int(view_book.pub_date.data),
+                month=1,
+                day=1) == book.pub_date, \
         "The year of publication is not the same as given at the entrance "
 
     tag = Tag.query.filter_by(name=view_book.tag.data[0]).first()
@@ -112,7 +113,6 @@ def test_check_language(view_book, values, result):
 def test_check_category(view_book, values, result):
     view_book.category.data = values
     view_book.category.validate(view_book)
-    # print(view_book.first_name_1, "\n", view_book.errors, bool(view_book.errors))
     assert bool(view_book.errors) != result, \
         "The validator 'check_category' returns not" \
         " a valid value\n Errors:{0}".format(view_book.errors)

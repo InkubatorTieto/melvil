@@ -2,7 +2,6 @@ from flask import url_for
 
 
 def test_login(db_user, client):
-
     resp = client.get(url_for('library.login'))
     assert resp.status_code == 200
 
