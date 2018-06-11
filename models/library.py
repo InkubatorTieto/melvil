@@ -1,4 +1,7 @@
+from enum import Enum
+
 import pytz
+from sqlalchemy_utils import ChoiceType
 
 from init_db import db
 
@@ -18,6 +21,7 @@ class Copy(db.Model):
                                        cascade='all, delete-orphan'))
     shelf = db.Column(db.String(56))
     has_cd_disk = db.Column(db.Boolean)
+    available_status = db.Column(db.Boolean)
     rental_logs = db.relationship('RentalLog',
                                   lazy='dynamic',
                                   cascade='all, delete-orphan',
@@ -39,6 +43,13 @@ class Copy(db.Model):
         )
 
 
+# from branch: wip_database_insert_choiceType:
+class BookStatus(Enum):
+    RESERVED = 1
+    BORROWED = 2
+    RETURNED = 3
+
+
 class RentalLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     copy_id = db.Column(db.Integer,
@@ -49,7 +60,9 @@ class RentalLog(db.Model):
                         nullable=False)
     _borrow_time = db.Column(db.DateTime)
     _return_time = db.Column(db.DateTime)
-    reserved = db.Column(db.Boolean)
+    # from branch: wip_database_insert_choiceType:
+    book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
+
     returned = db.Column(db.Boolean)
 
     @property
@@ -95,6 +108,9 @@ class Tag(db.Model):
     def __repr__(self):
         return "<Tag: {}>".format(self.name)
 
+    def __str__(self):
+        return "Tag: {}".format(self.name)
+
 
 item_tags = db.Table('item_tags',
                      db.Column('item_id',
@@ -123,3 +139,10 @@ class LibraryItem(db.Model):
         'polymorphic_identity': 'library_item',
         'polymorphic_on': type
     }
+
+    @property
+    def tags_string(self):
+        if self.tags:
+            return ', '.join(t.name for t in self.tags)
+        else:
+            return '-'

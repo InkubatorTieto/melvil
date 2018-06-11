@@ -1,5 +1,13 @@
 from config import DevConfig
-from flask import render_template, request, session, redirect, flash, url_for
+from flask import (
+    render_template,
+    request,
+    session,
+    redirect,
+    flash,
+    url_for,
+    abort
+)
 from flask_login import LoginManager
 from forms.forms import (
     LoginForm,
@@ -11,10 +19,13 @@ from forms.forms import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
+
+from models import LibraryItem
 from . import library
 from models.users import User
 from init_db import db
 from send_email.emails import send_email
+from send_email import send_confirmation_email, send_password_reset_email 
 
 login_manager = LoginManager()
 
@@ -46,14 +57,16 @@ def login():
                 data = User.query.filter_by(email=form.email.data).first()
                 if (data is not None and
                         check_password_hash(data.password_hash,
-                                            form.password.data)):
-                        # and data.active:
+                                            form.password.data) and
+                        data.active):
+
                         session['logged_in'] = True
                         session['id'] = data.id
                         session['email'] = data.email
                         return render_template('index.html', session=session)
                 else:
-                    message_body = 'Login failed.'
+                    message_body = 'Login failed or ' \
+                                   'your account is not activated'
                     message_title = 'Error!'
                     return render_template('message.html',
                                            message_title=message_title,
@@ -63,7 +76,7 @@ def login():
                                        title='Sign In',
                                        form=form,
                                        error=form.errors)
-        except:
+        except ValueError or TypeError:
             message_body = 'Something went wrong'
             message_title = 'Error!'
             return render_template('message.html',
@@ -82,15 +95,24 @@ def registration():
         form = RegistrationForm()
         if form.validate_on_submit():
             try:
-                new_user = User(
-                    email=form.email.data,
-                    first_name=form.first_name.data,
-                    surname=form.surname.data,
-                    password_hash=generate_password_hash(form.password.data))
-                db.session.add(new_user)
-                db.session.commit()
-                send_confirmation_email(new_user.email)
-            except:
+                if User.query.filter_by(email=form.email.data).first():
+                    message_body = 'User already exist'
+                    message_title = 'Opss!'
+                    return render_template('message.html',
+                                           message_title=message_title,
+                                           message_body=message_body)
+
+                else:
+                    new_user = User(
+                        email=form.email.data,
+                        first_name=form.first_name.data,
+                        surname=form.surname.data,
+                        password_hash=generate_password_hash(
+                            form.password.data))
+                    send_confirmation_email(new_user.email)
+                    db.session.add(new_user)
+                    db.session.commit()
+            except ValueError or TypeError:
                 message_body = 'Registration failed'
                 message_title = 'Error!'
                 return render_template('message.html',
@@ -243,3 +265,53 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
+
+@library.route('/item_description/<int:item_id>')
+def item_description(item_id):
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    item = LibraryItem.query.get_or_404(item_id)
+    tags_list = item.tags_string
+
+    authors_list = []
+    if item.type == 'book':
+        authors_list = item.authors_string
+
+    return render_template('item_description.html',
+                           item=item,
+                           tags_list=tags_list,
+                           authors_list=authors_list,
+                           admin=admin)
+
+
+@library.errorhandler(404)
+def not_found(error):
+    message_body = 'Page does not exist!'
+    message_title = 'Error!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 404
+
+
+@library.errorhandler(401)
+def not_authorized(error):
+    message_body = 'You are not authorized to visit this site!'
+    message_title = 'Error!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 401
+
+
+@library.errorhandler(500)
+def server_error(error):
+    message_body = 'but something went wrong.'
+    message_title = 'Don\'t panic!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 500
