@@ -6,6 +6,14 @@ class Config(object):
     TESTING = False
     DATABASE_URI = ''
 
+    # email server
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 25
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = getenv('MAIL_PASSWORD')
+    ADMINS = [getenv('MAIL_USERNAME')]
 
 class DevConfig(Config):
     SECRET_KEY = '4f\g45t45gfjerkfefker'
@@ -28,18 +36,6 @@ class DevConfig(Config):
         DB_PORT,
         DB_NAME,
     )
-
-    # email server
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 25
-    MAIL_USE_TLS = True
-    MAIL_USE_SSL = False
-    MAIL_USERNAME = getenv('MAIL_USERNAME')
-    MAIL_PASSWORD = getenv('MAIL_PASSWORD')
-    ADMINS = [getenv('MAIL_USERNAME')]
-
-    # flask_user config
-    USER_ENABLE_EMAIL = False
 
 
 class ProdConfig(Config):
