@@ -27,13 +27,14 @@ from models.users import User
 from models.wishlist import WishListItem, Like
 from serializers.wishlist import WishListItemSchema
 from init_db import db
-from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
+from datetime import datetime, timedelta
+from models.library import RentalLog, Copy, BookStatus
+import pytz
+from send_email import send_confirmation_email, send_password_reset_email
 from messages import ErrorMessage
 
-
 login_manager = LoginManager()
-
 
 @library.route('/')
 def index():
@@ -270,6 +271,22 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
+
+@library.route('/reservation')
+def reserve():
+    if 'logged_in' in session:
+        res = RentalLog(
+            copy_id=Copy.id,
+            user_id=session['id'],
+            book_status=BookStatus.RESERVED,
+            reservation_begin=datetime.now(tz=pytz.utc),
+            reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
+        )
+        db.session.add(res)
+        db.session.commit()
+        flash('pick up the book within two days!', 'Resevation done!')
+    return redirect(url_for('library.borrowedBooks'))
 
 
 @library.route('/wishlist', methods=['GET', 'POST'])
