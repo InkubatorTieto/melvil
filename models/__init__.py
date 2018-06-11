@@ -7,4 +7,4 @@ from models.wishlist import WishListItem, Like
 __all__ = ['Book', 'Author',
            'Role', 'User',
            'RentalLog', 'Copy', 'Tag', 'LibraryItem',
-           'Magazine']
+           'Magazine', 'WishListItem', 'Like']
