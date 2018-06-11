@@ -39,7 +39,7 @@ class RegistrationForm(FlaskForm):
     surname = StringField('Surname',
                           validators=[DataRequired(), Length(3), surname],
                           render_kw=({'class': 'inputs',
-                                      'placeholder': 'Surname'}))
+                                      'placeholder': 'Last Name'}))
     password = PasswordField(
         'Password',
         validators=[DataRequired(),
