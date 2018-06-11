@@ -46,7 +46,7 @@ def populate_magazines(n=10, tags=None):
         title=' '.join(g.text.title().split(' ')[:5]),
         language=g.person.language(),
         description=g.text.sentence(),
-        year=g.datetime.year(maximum=2018),
+        year=g.datetime.datetime().date(),
         issue=randint(1, 12),
         tags=tags if tags else [],
     ) for _ in range(n)]

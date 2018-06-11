@@ -1,8 +1,9 @@
-import pytz
-
-from init_db import db
 from enum import Enum
+import pytz
 from sqlalchemy_utils import ChoiceType
+from init_db import db
+
+
 
 
 class Copy(db.Model):
@@ -60,6 +61,9 @@ class RentalLog(db.Model):
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
     _reservation_begin = db.Column(db.DateTime)
     _reservation_end = db.Column(db.DateTime)
+    book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
+
+
 
     @property
     def borrow_time(self):
@@ -125,6 +129,9 @@ class Tag(db.Model):
     def __repr__(self):
         return "<Tag: {}>".format(self.name)
 
+    def __str__(self):
+        return "Tag: {}".format(self.name)
+
 
 item_tags = db.Table('item_tags',
                      db.Column('item_id',
@@ -153,3 +160,10 @@ class LibraryItem(db.Model):
         'polymorphic_identity': 'library_item',
         'polymorphic_on': type
     }
+
+    @property
+    def tags_string(self):
+        if self.tags:
+            return ', '.join(t.name for t in self.tags)
+        else:
+            return '-'
