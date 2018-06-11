@@ -25,6 +25,7 @@
                     {{ nav_button('index', 'library.index', 'Home' ) }}
                     {{ nav_button('search', 'library.search', 'Search' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
+                    {{ nav_button('add_book', 'library_books.add_book', 'Add new book' ) }}
                     {% if session['id'] %}
                         {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                     {% else %}
@@ -37,6 +38,7 @@
     </div>
 {% endblock %}
 {% block content %}{% endblock %}
+{% block scripts%}
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -46,5 +48,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
+{% endblock %}
 </body>
 </html>
