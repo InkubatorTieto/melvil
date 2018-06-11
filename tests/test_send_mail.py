@@ -1,22 +1,14 @@
-# import pytest
-# from send_email import send_email
-# from config import DevConfig
-# from mimesis import Person
+# import smtplib
+# import email.utils
+# from email.mime.text import MIMEText
 #
 #
-# person = Person('en')
+# msg = MIMEText('The body of your message.')
+# msg['To'] = email.utils.formataddr(('Recipient Name',
+#                                     'jahenstein@gmail.com'))
+# msg['From'] = email.utils.formataddr(('Your Name', 'test@test.com'))
+# msg['Subject'] = 'Your Subject'
 #
-#
-# @pytest.mark.skip("This test needs better mail configuration")
-# def test_send(text_generator, text_generator_no_whitespaces, mailbox):
-#
-#     subject = text_generator_no_whitespaces
-#     with mailbox as outbox:
-#         send_email(subject,
-#                    DevConfig.ADMINS[0],
-#                    [person.email()],
-#                    text_generator,
-#                    None)
-#         assert len(outbox) == 1
-#         msg = outbox[0]
-#         assert msg.subject == subject
+# server = smtplib.SMTP()
+# server.connect()
+# server.sendmail('test@test.com', ['jahenstein@gmail.com'], msg.as_string())
