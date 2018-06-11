@@ -5,10 +5,13 @@ import pytest
 from mimesis import Generic
 from sqlalchemy import event
 
+
+from random import choice, randint
 from app import create_app
 from app import db as _db
 from app import mail as _mail
 from models import User, Book, Magazine, Copy
+from forms.book import BookForm
 
 
 g = Generic('en')
@@ -20,6 +23,7 @@ def app():
     Returns flask app with context for testing.
     """
     app = create_app()
+    app.config['WTF_CSRF_ENABLED'] = False
     _mail.init_app(app)
     ctx = app.app_context()
     ctx.push()
@@ -157,6 +161,30 @@ def db_book(session):
     if Book.query.get(b.id):
         session.delete(b)
         session.commit()
+
+
+@pytest.fixture(scope="function")
+def view_book(session, client):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+
+    form = BookForm(
+        first_name=g.person.name(),
+        surname=g.person.surname(),
+        title=' '.join(g.text.title().split(' ')[:5]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=g.text.words(1),
+        description=g.text.sentence(),
+        isbn=str(1861972717),
+        original_title=' '.join(g.text.title().split(' ')[:5]),
+        publisher=g.business.company(),
+        pub_date=str(randint(1970, 2018))
+    )
+
+    yield form
 
 
 @pytest.fixture(scope="function")

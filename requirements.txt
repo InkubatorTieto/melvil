@@ -26,6 +26,7 @@ wtforms
 WTForms-Alchemy
 sqlalchemy-utils==0.33.3
 psycopg2-binary
+isbnlib==3.5.6
 xlrd
 nameparser
 

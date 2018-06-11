@@ -1,3 +1,4 @@
+from views.book import library_books
 import os
 import time
 
@@ -29,6 +30,7 @@ def create_app(config=config_env):
     app = Flask(__name__)
     app.config.from_object(config)
     app.register_blueprint(library)
+    app.register_blueprint(library_books)
     app.secret_key = os.urandom(24)
     login_manager.init_app(app)
     mail.init_app(app)
