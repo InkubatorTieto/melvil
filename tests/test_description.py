@@ -1,5 +1,3 @@
-import pytest
-
 from flask import url_for
 
 from models import LibraryItem
@@ -34,7 +32,6 @@ def test_book_authors_string(db_book):
         "authors_string() method does not work properly with book type"
 
 
-@pytest.mark.skip("Needs fix.")
 def test_magazine_authors_string(db_magazine):
     authors_list = []
     if db_magazine.type == 'book':
@@ -43,7 +40,6 @@ def test_magazine_authors_string(db_magazine):
         "authors_string() method does not work properly with magazine type"
 
 
-@pytest.mark.skip("Needs fix.")
 def test_types(db_magazine, db_book):
     assert db_magazine.type == 'magazine', \
         "getting type does not work properly with magazines"
@@ -55,7 +51,6 @@ def test_types(db_magazine, db_book):
         "getting type does not work properly with books"
 
 
-@pytest.mark.skip("Needs fix.")
 def test_copy_available(db_book, db_copies):
     assert db_book.copies[0].available_status, \
         "available_status=True on copy does not work properly with books"
