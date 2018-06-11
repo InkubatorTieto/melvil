@@ -14,8 +14,9 @@ def test_add_book(view_book, client):
 
     if not author:
         assert False, "Data validation failed"
+
     assert view_book.first_name.data == author.first_name \
-           and view_book.surname.data == author.last_name, \
+        and view_book.surname.data == author.last_name, \
         "First and last name of the first author is not" \
         " the same as given at the entrance"
 
