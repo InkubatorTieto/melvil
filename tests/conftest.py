@@ -9,9 +9,7 @@ from sqlalchemy import event
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from models import User, Book, Magazine, Copy
-from sqlalchemy import event
-from models import User, Book, Author
+from models import User, Book, Magazine, Copy, Author
 
 
 g = Generic('en')

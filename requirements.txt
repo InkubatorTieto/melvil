@@ -26,6 +26,5 @@ wtforms
 WTForms-Alchemy
 isbnlib==3.5.6
 
-psycopg2-binary
 xlrd
 nameparser
