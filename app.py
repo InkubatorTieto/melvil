@@ -9,7 +9,7 @@ from flask import Flask
 from flask_mail import Mail
 
 from config import DevConfig, ProdConfig
-from init_db import db
+from init_db import db, ma
 
 from views import library
 from views.index import login_manager
@@ -46,7 +46,7 @@ def create_app(config=config_env):
             print("DB not ready!")
             print("Polling DB..")
             time.sleep(1)
-
+    ma.init_app(app)
     return app
 
 

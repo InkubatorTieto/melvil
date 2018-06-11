@@ -8,6 +8,7 @@ from flask import (
     url_for,
     abort
 )
+from sqlalchemy import exc
 from flask_login import LoginManager
 from forms.forms import (
     LoginForm,
@@ -15,19 +16,25 @@ from forms.forms import (
     ContactForm,
     RegistrationForm,
     ForgotPass,
-    PasswordForm
+    PasswordForm,
+    WishlistForm
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from models import LibraryItem
 from . import library
 from models.users import User
+from models.wishlist import WishListItem, Like
+from serializers.wishlist import WishListItemSchema
 from init_db import db
+from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 from datetime import datetime, timedelta
 from models.library import RentalLog, Copy, BookStatus
 import pytz
 from send_email import send_confirmation_email, send_password_reset_email 
+from messages import ErrorMessage
+
 login_manager = LoginManager()
 
 @library.route('/')
@@ -281,6 +288,47 @@ def reserve():
         db.session.commit()
         flash('pick up the book within two days!', 'Resevation done!')
     return redirect(url_for('library.borrowedBooks'))
+
+@library.route('/wishlist', methods=['GET', 'POST'])
+def wishlist():
+    data = db.session.query(WishListItem).all()
+    wish_list_schema = WishListItemSchema(many=True)
+    output = wish_list_schema.dump(data)
+    return render_template('wishlist.html', wishes=output)
+
+
+@library.route('/addWish', methods=['GET', 'POST'])
+def add_wish():
+    form = WishlistForm()
+    if form.validate_on_submit():
+        try:
+            new_wish_item = WishListItem(authors=form.authors.data,
+                                         title=form.title.data,
+                                         pub_year=form.pub_year.data)
+
+            db.session.add(new_wish_item)
+            db.session.commit()
+            return redirect(url_for('library.wishlist'))
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return render_template('wishlist_add.html', form=form, error=form.errors)
+
+
+@library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
+def add_like(wish_id):
+    user = User.query.filter_by(id=session['id']).first()
+    if not Like.like_exists(wish_id, user):
+        try:
+            Like.like(wish_id, user)
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    else:
+        try:
+            Like.unlike(wish_id, user)
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return redirect(url_for('library.wishlist'))
+
 
 @library.route('/item_description/<int:item_id>')
 def item_description(item_id):
