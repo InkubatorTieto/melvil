@@ -330,4 +330,3 @@ def server_error(error):
     return render_template('message.html',
                            message_title=message_title,
                            message_body=message_body), 500
-  
