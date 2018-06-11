@@ -185,11 +185,6 @@ def view_book(session, client):
 
     yield form
 
-    # if Author.query.filter_by(first_name=a['first_name']
-    # , last_name=a['last_name']).first():
-    #     session.delete(aa)
-    #     session.commit()
-
 
 @pytest.fixture(scope="function")
 def db_magazine(session):
