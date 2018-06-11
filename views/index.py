@@ -27,12 +27,11 @@ from models.users import User
 from models.wishlist import WishListItem, Like
 from serializers.wishlist import WishListItemSchema
 from init_db import db
-from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 from datetime import datetime, timedelta
 from models.library import RentalLog, Copy, BookStatus
 import pytz
-from send_email import send_confirmation_email, send_password_reset_email 
+from send_email import send_confirmation_email, send_password_reset_email
 from messages import ErrorMessage
 
 login_manager = LoginManager()
@@ -288,6 +287,7 @@ def reserve():
         db.session.commit()
         flash('pick up the book within two days!', 'Resevation done!')
     return redirect(url_for('library.borrowedBooks'))
+
 
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
