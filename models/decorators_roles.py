@@ -10,10 +10,16 @@ def require_logged_in(redirect_page='library.login'):
         @wraps(func)
         def inner_func(*args, **kwargs):
 
-            if session and 'logged_in' in session:
-                return func(*args, **kwargs)
+            if 'logged_in' in session:
+
+                if session['logged_in']:
+                    return func(*args, **kwargs)
+                else:
+                    return redirect(url_for(redirect_page))
+
             else:
                 return redirect(url_for(redirect_page))
+
         return inner_func
 
     return decorator

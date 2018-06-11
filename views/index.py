@@ -266,7 +266,6 @@ def reset_with_token(token):
 def user_only():
     return 'for users only'
 
-
 @library.route('/logged_in')
 @require_logged_in()
 def logged_in():
