@@ -21,17 +21,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from models import LibraryItem
 from . import library
-from models.users import User, Role
+from models.users import User
 from models.decorators_roles import (
     require_logged_in,
     require_not_logged_in,
     require_role
 )
 from init_db import db
-from models.users import User
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
-from send_email import send_confirmation_email, send_password_reset_email
 
 login_manager = LoginManager()
 
