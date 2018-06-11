@@ -267,7 +267,6 @@ def reset_with_token(token):
                            error=form.errors)
 
 
-
 @library.route('/reservation')
 def reserve():
     if 'logged_in' in session:
