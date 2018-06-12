@@ -44,6 +44,25 @@ def create_library_item(session, model, **kwargs):
         return instance
 
 
+def create_copy(book, asset):
+    if not asset:
+        create_library_item(db.session, Copy,
+                            library_item_id=book.id,
+                            library_item=book)
+
+    elif "płyta" in asset:
+        create_library_item(db.session, Copy,
+                            library_item_id=book.id,
+                            library_item=book,
+                            has_cd_disk=True)
+
+    else:
+        create_library_item(db.session, Copy,
+                            library_item_id=book.id,
+                            library_item=book,
+                            asset_code=asset)
+
+
 # reading author's data from file
 def get_authors_data(authors):
     if (',' in authors and 'Jr.' not in authors) \
@@ -146,6 +165,7 @@ def get_books(file_location):
             list_of_authors.append(author)
             book = create_library_item(db.session, Book, title=title)
             book.authors.append(author)
+            create_copy(book, asset)
 
         elif isinstance(authors, list):
             authors_id = []
@@ -161,17 +181,7 @@ def get_books(file_location):
                 book = create_library_item(db.session, Book,
                                            title=title)
                 book.authors.append(author)
-                # checking if asset value is an empty string
-                # which violates uniqueness of the asset code
-                if not asset:
-                    create_library_item(db.session, Copy,
-                                        library_item_id=book.id,
-                                        library_item=book)
-                else:
-                    create_library_item(db.session, Copy,
-                                        library_item_id=book.id,
-                                        library_item=book,
-                                        asset_code=asset)
+                create_copy(book, asset)
 
 
 # writing magazine's data in database
