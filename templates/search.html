@@ -10,12 +10,12 @@
         <ul class="list-group" id="bookList">
           {% for book in books %}
               <li class="list-group-item my_container">
-                <a href="{{ url_for('library.book_detail', id_book=book[0]) }}">
+                <a href="{{ url_for('library.item_description', item_id=book[0]) }}">
                   <div class="col-lg-6">
                     {{ book[1] }}
                   </div>
                 </a>
-                <a href="{{ url_for('library.book_detail', id_book=book[0]) }}">
+                <a href="{{ url_for('library.item_description', item_id=book[0]) }}">
                   <div class="col-lg-6">
                     {{ ' '.join(book[2]) }}
                   </div>

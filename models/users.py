@@ -1,8 +1,11 @@
 import enum
 
+from sqlalchemy import event
+
 from flask_user import UserMixin
 
 from init_db import db
+
 
 user_roles = db.Table('user_roles',
                       db.Column('user_id',
@@ -41,10 +44,22 @@ class User(db.Model, UserMixin):
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
+        role = Role.query.filter_by(name=RoleEnum.USER).first()
+        self.roles.append(role)
 
     def __repr__(self):
         return "<User: {} {} role={}>". \
             format(self.first_name, self.surname, self.roles)
+
+    def has_role(self, role):
+        if type(role) is str:
+            try:
+                role = RoleEnum[role.upper()]
+            except ValueError:
+                raise ValueError("No role with that name.")
+        if type(role) is not RoleEnum:
+            raise ValueError("No such role.")
+        return role in [r.name for r in self.roles]
 
 
 class RoleEnum(enum.Enum):
@@ -62,3 +77,10 @@ class Role(db.Model):
 
     def __repr__(self):
         return "Role: {}".format(self.name)
+
+
+@event.listens_for(Role.__table__, 'after_create')
+def insert_initial_values(*args, **kwargs):
+    for role in RoleEnum:
+        db.session.add(Role(name=role))
+        db.session.commit()

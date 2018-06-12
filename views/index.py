@@ -1,37 +1,46 @@
 import os
+from datetime import datetime, timedelta
 
+from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy import exc
+from sqlalchemy.exc import IntegrityError, TimeoutError
+from werkzeug.security import generate_password_hash, check_password_hash
+
+import pytz
 from flask import (
     abort,
+    Blueprint,
+    flash,
+    redirect,
     render_template,
     request,
     session,
-    redirect,
-    flash,
     url_for
 )
-from flask_login import LoginManager
 
-from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy.exc import TimeoutError
-from werkzeug.security import generate_password_hash, check_password_hash
-
-from . import library
 from config import DevConfig
 from forms.forms import (
-    LoginForm,
     ContactForm,
-    RegistrationForm,
     ForgotPass,
-    PasswordForm
+    LoginForm,
+    PasswordForm,
+    RegistrationForm,
+    WishlistForm
 )
 from init_db import db
+from messages import ErrorMessage
+from models import LibraryItem
+from models.library import RentalLog, Copy, BookStatus
 from models.books import Book
 from models.users import User
+from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
+from serializers.wishlist import WishListItemSchema
 
 
-login_manager = LoginManager()
+library = Blueprint('library', __name__,
+                    template_folder='templates')
 
 
 @library.route('/')
@@ -61,14 +70,16 @@ def login():
                 data = User.query.filter_by(email=form.email.data).first()
                 if (data is not None and
                         check_password_hash(data.password_hash,
-                                            form.password.data)):
-                    # and data.active:
+                                            form.password.data) and
+                        data.active):
+
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
                     return render_template('index.html', session=session)
                 else:
-                    message_body = 'Login failed.'
+                    message_body = 'Login failed or ' \
+                                   'your account is not activated'
                     message_title = 'Error!'
                     return render_template('message.html',
                                            message_title=message_title,
@@ -78,7 +89,7 @@ def login():
                                        title='Sign In',
                                        form=form,
                                        error=form.errors)
-        except:
+        except (ValueError, TypeError):
             message_body = 'Something went wrong'
             message_title = 'Error!'
             return render_template('message.html',
@@ -97,15 +108,24 @@ def registration():
         form = RegistrationForm()
         if form.validate_on_submit():
             try:
-                new_user = User(
-                    email=form.email.data,
-                    first_name=form.first_name.data,
-                    surname=form.surname.data,
-                    password_hash=generate_password_hash(form.password.data))
-                db.session.add(new_user)
-                db.session.commit()
-                send_confirmation_email(new_user.email)
-            except:
+                if User.query.filter_by(email=form.email.data).first():
+                    message_body = 'User already exist'
+                    message_title = 'Opss!'
+                    return render_template('message.html',
+                                           message_title=message_title,
+                                           message_body=message_body)
+
+                else:
+                    new_user = User(
+                        email=form.email.data,
+                        first_name=form.first_name.data,
+                        surname=form.surname.data,
+                        password_hash=generate_password_hash(
+                            form.password.data))
+                    send_confirmation_email(new_user.email)
+                    db.session.add(new_user)
+                    db.session.commit()
+            except (ValueError, TypeError):
                 message_body = 'Registration failed'
                 message_title = 'Error!'
                 return render_template('message.html',
@@ -152,23 +172,12 @@ def search():
         return abort(405)
 
 
-# DL-55 task
-@library.route('/book/<id_book>', methods=['GET'])
-def book_detail(id_book):
-    return "{}".format(id_book), 200
-
-
 @library.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        try:
-            email_template = open(
-                './templates/contact_confirmation.html', 'r').read()
-        except:
-            email_template = open(os.path.abspath(os.curdir) +
-                                  './templates/contact_confirmation.html',
-                                  'r').read()
+        email_template = open(
+            './templates/contact_confirmation.html', 'r').read()
         send_email(
             'Contact confirmation, title: ' + form.title.data,
             DevConfig.MAIL_USERNAME,
@@ -294,6 +303,109 @@ def reset_with_token(token):
                            form=form,
                            token=token,
                            error=form.errors)
+
+
+@library.route('/reservation/<copy_id>')
+def reserve(copy_id):
+    if 'logged_in' in session:
+        try:
+            copy = Copy.query.get(copy_id)
+            copy.available_status = False
+            res = RentalLog(
+                copy_id=copy_id,
+                user_id=session['id'],
+                book_status=BookStatus.RESERVED,
+                reservation_begin=datetime.now(tz=pytz.utc),
+                reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
+            )
+            db.session.add(res)
+            db.session.commit()
+            flash('pick up the book within two days!', 'Resevation done!')
+        except IntegrityError:
+            abort(500)
+    return redirect(url_for('library.index'))
+
+
+@library.route('/wishlist', methods=['GET', 'POST'])
+def wishlist():
+    data = db.session.query(WishListItem).all()
+    wish_list_schema = WishListItemSchema(many=True)
+    output = wish_list_schema.dump(data)
+    return render_template('wishlist.html', wishes=output)
+
+
+@library.route('/addWish', methods=['GET', 'POST'])
+def add_wish():
+    form = WishlistForm()
+    if form.validate_on_submit():
+        try:
+            new_wish_item = WishListItem(authors=form.authors.data,
+                                         title=form.title.data,
+                                         pub_year=form.pub_year.data)
+
+            db.session.add(new_wish_item)
+            db.session.commit()
+            return redirect(url_for('library.wishlist'))
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return render_template('wishlist_add.html', form=form, error=form.errors)
+
+
+@library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
+def add_like(wish_id):
+    user = User.query.filter_by(id=session['id']).first()
+    if not Like.like_exists(wish_id, user):
+        try:
+            Like.like(wish_id, user)
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    else:
+        try:
+            Like.unlike(wish_id, user)
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return redirect(url_for('library.wishlist'))
+
+
+@library.route('/item_description/<int:item_id>')
+def item_description(item_id):
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    item = LibraryItem.query.get_or_404(item_id)
+    tags_list = item.tags_string
+
+    authors_list = []
+    if item.type == 'book':
+        authors_list = item.authors_string
+
+    return render_template('item_description.html',
+                           item=item,
+                           tags_list=tags_list,
+                           authors_list=authors_list,
+                           admin=admin)
+
+
+@library.errorhandler(401)
+def not_authorized(error):
+    message_body = 'You are not authorized to visit this site!'
+    message_title = 'Error!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 401
+
+
+@library.errorhandler(404)
+def not_found(error):
+    message_body = 'Page does not exist!'
+    message_title = 'Error!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 404
 
 
 @library.errorhandler(405)
