@@ -32,10 +32,13 @@ def require_not_logged_in(redirect_page='library.index'):
         @wraps(func)
         def inner_func(*args, **kwargs):
 
-            if not(session and 'logged_in' in session):
+            if not('logged_in' in session):
+                return func(*args, **kwargs)
+            elif not(session['logged_in']):
                 return func(*args, **kwargs)
             else:
                 return redirect(url_for(redirect_page))
+
         return inner_func
 
     return decorator
