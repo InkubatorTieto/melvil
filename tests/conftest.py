@@ -1,11 +1,17 @@
+import random
+from random import choice, randint
+import string
+
 import pytest
 from mimesis import Generic
+from sqlalchemy import event
 
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from sqlalchemy import event
-from models import User, Book
+from forms.book import BookForm
+from models import User, Book, Magazine, Copy
+
 
 g = Generic('en')
 
@@ -16,6 +22,7 @@ def app():
     Returns flask app with context for testing.
     """
     app = create_app()
+    app.config['WTF_CSRF_ENABLED'] = False
     _mail.init_app(app)
     ctx = app.app_context()
     ctx.push()
@@ -36,12 +43,9 @@ def db(app):
     """
     Returns module-wide initialised database.
     """
-    _db.drop_all()
     _db.create_all()
 
     yield _db
-
-    _db.drop_all()
 
 
 @pytest.fixture(scope="module")
@@ -71,13 +75,45 @@ def session(db):
     conn.close()
 
 
+@pytest.fixture
+def mailbox(app):
+    return _mail.record_messages()
+
+
+@pytest.fixture(scope='module')
+def email_generator(chars=string.ascii_letters + string.digits + '.' + '-'):
+    size = random.randint(10, 25)
+    return ''.join(random.choice(chars) for _ in range(size)) + '@tieto.com'
+
+
+@pytest.fixture(scope='module')
+def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
+    size = random.randint(25, 40)
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+@pytest.fixture(scope='module')
+def text_generator_no_whitespaces(chars=string.ascii_letters + 'ąćęłóżź'):
+    size = random.randint(25, 40)
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+@pytest.fixture(scope='module')
+def password_generator(chars=string.ascii_letters):
+    size = random.randint(10, 25)
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
 @pytest.fixture(scope='module')
 def user(app):
+
     data = {
-        'email': 'test1@test.com',
-        'first_name': 'Testowy',
-        'surname': 'test',
-        'password': '5354'}
+        'email': g.person.email(),
+        'first_name': g.person.name(),
+        'surname': g.person.surname(),
+        'password': password_generator(),
+        'title': text_generator(),
+        'message': text_generator()}
     yield data
 
 
@@ -126,7 +162,75 @@ def db_book(session):
         session.commit()
 
 
+@pytest.fixture(scope="function")
+def view_book(session, client):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+
+    form = BookForm(
+        first_name=g.person.name(),
+        surname=g.person.surname(),
+        title=' '.join(g.text.title().split(' ')[:5]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=g.text.words(1),
+        description=g.text.sentence(),
+        isbn=str(1861972717),
+        original_title=' '.join(g.text.title().split(' ')[:5]),
+        publisher=g.business.company(),
+        pub_date=str(randint(1970, 2018))
+    )
+
+    yield form
+
+
+@pytest.fixture(scope="function")
+def db_magazine(session):
+    m = Magazine(
+        title=' '.join(g.text.title().split(' ')[:5]),
+        language=g.person.language(),
+        description=g.text.sentence(),
+        year=g.datetime.datetime(),
+        issue=random.randint(1, 12),
+        tags=[],
+    )
+    session.add(m)
+    session.commit()
+
+    yield m
+
+    if Magazine.query.get(m.id):
+        session.delete(m)
+        session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_copies(session, db_book):
+    copy_available = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        available_status=True
+    )
+    copy_not_available = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        available_status=False
+    )
+    session.add_all([copy_available, copy_not_available])
+    session.commit()
+
+    yield (copy_available, copy_not_available)
+
+
 @pytest.fixture
-def mailbox(app):
-    mailbox = _mail.record_messages()
-    return mailbox
+def app_session(client, db_user):
+    with client.session_transaction() as app_session:
+        app_session['logged_in'] = True
+        app_session['id'] = db_user.id
+        return app_session

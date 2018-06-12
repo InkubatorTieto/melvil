@@ -1,7 +1,8 @@
 from datetime import datetime
+from random import randint
+
 import pytz
 from mimesis import Generic
-from random import randint
 
 from models import (
     RentalLog,
@@ -12,6 +13,7 @@ from models import (
     User,
     Magazine
 )
+
 
 g = Generic('en')
 
@@ -46,7 +48,7 @@ def populate_magazines(n=10, tags=None):
         title=' '.join(g.text.title().split(' ')[:5]),
         language=g.person.language(),
         description=g.text.sentence(),
-        year=g.datetime.year(maximum=2018),
+        year=g.datetime.datetime().date(),
         issue=randint(1, 12),
         tags=tags if tags else [],
     ) for _ in range(n)]
@@ -82,5 +84,4 @@ def populate_rental_logs(copy_id, user_id, n=30):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
-        returned=g.development.boolean()
     ) for _ in range(n)]

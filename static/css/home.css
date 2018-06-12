@@ -67,7 +67,15 @@
     font-weight: 700;
     font-size: 24px;
 }
+.btn-sample{
+    margin-top: 50px;
+    font-size: 20px;
+}
 
+.tieto_logo{
+    float: left;
+    padding: 10px;
+}
 
 
 

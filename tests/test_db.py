@@ -1,9 +1,21 @@
 from datetime import datetime
 from random import randint
-import pytz
+
 from mimesis import Generic
+import pytz
 from sqlalchemy import func
 
+from models import (
+    User,
+    Author,
+    Tag,
+    Book,
+    Copy,
+    LibraryItem,
+    Magazine,
+    RentalLog)
+from models.library import BookStatus
+from models.users import RoleEnum, Role
 from tests.populate import (
     populate_users,
     populate_copies,
@@ -13,83 +25,80 @@ from tests.populate import (
     populate_rental_logs,
     populate_magazines
 )
-from models import (
-    Role,
-    User,
-    Author,
-    Tag,
-    Book,
-    Copy,
-    LibraryItem,
-    Magazine,
-    RentalLog)
 
 
 def test_users(session):
-    role_admin = Role(name='ADMIN')
-    role_user = Role(name='USER')
-    session.add_all([role_admin, role_user])
-    session.commit()
-    assert Role.query.count() == 2, "db does not contain 2 roles"
-
     users = populate_users(n=10)
     session.add_all(users)
     session.commit()
+    role_admin = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+    user_admin = User.query.order_by(func.random()).first()
+    user_admin.roles.append(role_admin)
+    session.add(user_admin)
+    session.commit()
 
-    assert User.query.count() == 10, "db does not contain 10 Users"
-    users = User.query.all()
     for u in users:
-        u.roles.append(role_user)
-        assert u.roles != [], "role not added to user"
+        assert u.roles is not None, \
+            "role not added to user"
 
 
 def test_books(session):
+    before_authors_count = Author.query.count()
     authors = populate_authors(n=5)
     session.add_all(authors)
     session.commit()
-    assert Author.query.count() == 5, "db does not contain 5 authors"
+    assert Author.query.count() - before_authors_count == 5, \
+        "more/less than 5 authors added"
 
-    for a in Author.query.all():
+    for a in authors:
         books = populate_books(n=a.id, authors=[a])
         session.add_all(books)
         session.commit()
         for b in books:
-            assert a in b.authors, "authors not added to book authors field"
-
+            assert a in b.authors, \
+                "authors not added to book authors field"
             copies = populate_copies(b, n=randint(1, 3))
             session.add_all(copies)
             session.commit()
             for c in copies:
-                assert c in b.copies, "copy not added to book copy field"
-                assert c.library_item is b, "copy reference to book is wrong"
+                assert c in b.copies, \
+                    "copy not added to book copy field"
+                assert c.library_item is b, \
+                    "copy reference to book is wrong"
         session.commit()
 
         assert Book.query.filter(Book.authors.contains(a)).count() == a.id
 
 
 def test_magazine(session):
+    before_magazines_count = Magazine.query.count()
     magazines = populate_magazines()
     session.add_all(magazines)
     session.commit()
-    assert Magazine.query.count() == 10, "db does not contain 10 magazines"
+    assert Magazine.query.count() - before_magazines_count == 10, \
+        "more/less than 10 magazines added"
 
     for m in magazines:
         copies = populate_copies(m, n=randint(1, 2))
         session.add_all(copies)
         session.commit()
         for c in copies:
-            assert c in m.copies, "copy not added to magazine copy field"
-            assert c.library_item is m, "copy reference to magazine is wrong"
+            assert c in m.copies, \
+                "copy not added to magazine copy field"
+            assert c.library_item is m, \
+                "copy reference to magazine is wrong"
         session.commit()
 
 
 def test_library(session):
+    before_tag_count = Tag.query.count()
     tags = populate_tags(n=10)
     session.add_all(tags)
     session.commit()
-    assert Tag.query.count() == 10, "db does not contain 10 tags"
+    assert Tag.query.count() - before_tag_count == 10, \
+        "more/less than 10 tags added"
 
-    for t in Tag.query.all():
+    for t in tags:
         book = Book.query.order_by(func.random()).first()
         book.tags.append(t)
         session.commit()
@@ -126,7 +135,7 @@ def test_delete_user(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
-        returned=g.development.boolean()
+        book_status=BookStatus.BORROWED,
     )
     session.add(log)
     session.commit()
@@ -165,7 +174,7 @@ def test_delete_book(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
-        returned=g.development.boolean()
+        book_status=BookStatus.BORROWED,
     )
     session.add(log)
     session.commit()
@@ -188,7 +197,7 @@ def test_delete_book(session, db_user, db_book):
         Author.id == authors[1].id).all()
     assert book_two[0].id == book_one[0].id, \
         "Authors should write the same book"
-    assert book_one[0].id == db_book.id,\
+    assert book_one[0].id == db_book.id, \
         "Author does not point the right book"
     assert Book.query.get(db_book.id) is not None, \
         "Book does not exist"
@@ -204,7 +213,7 @@ def test_delete_book(session, db_user, db_book):
         "Copy was not deleted with the Book"
 
     assert Book.query.join(Author.books).filter(
-        Author.id == authors[0].id).all() == [],\
+        Author.id == authors[0].id).all() == [], \
         "Author 0 should not contain the Book"
     assert Book.query.join(Author.books).filter(
         Author.id == authors[1].id).all() == [], \
@@ -255,7 +264,7 @@ def test_delete_copy(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
-        returned=g.development.boolean()
+        book_status=BookStatus.BORROWED,
     )
     session.add(log)
     session.commit()
