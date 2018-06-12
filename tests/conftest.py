@@ -232,5 +232,6 @@ def db_copies(session, db_book):
 @pytest.fixture
 def app_session(client, db_user):
     with client.session_transaction() as app_session:
+        app_session['logged_in'] = True
         app_session['id'] = db_user.id
         return app_session
