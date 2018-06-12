@@ -1,9 +1,9 @@
 from enum import Enum
-
 import pytz
 from sqlalchemy_utils import ChoiceType
-
 from init_db import db
+
+
 
 
 class Copy(db.Model):
@@ -26,8 +26,7 @@ class Copy(db.Model):
                                   lazy='dynamic',
                                   cascade='all, delete-orphan',
                                   backref=db.backref(
-                                      'copy',
-                                      uselist=False))
+                                      'copy', uselist=False))
 
     def __str__(self):
         return "Copy asset_code: {}, type/title: {}/{}".format(
@@ -43,7 +42,6 @@ class Copy(db.Model):
         )
 
 
-# from branch: wip_database_insert_choiceType:
 class BookStatus(Enum):
     RESERVED = 1
     BORROWED = 2
@@ -60,10 +58,12 @@ class RentalLog(db.Model):
                         nullable=False)
     _borrow_time = db.Column(db.DateTime)
     _return_time = db.Column(db.DateTime)
-    # from branch: wip_database_insert_choiceType:
+    book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
+    _reservation_begin = db.Column(db.DateTime)
+    _reservation_end = db.Column(db.DateTime)
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
 
-    returned = db.Column(db.Boolean)
+
 
     @property
     def borrow_time(self):
@@ -87,6 +87,28 @@ class RentalLog(db.Model):
             raise ValueError("return_time has to be timezone aware")
         self._return_time = dt.astimezone(tz=pytz.utc)
 
+    @property
+    def reservation_begin(self):
+        return self._reservation_begin.replace(tzinfo=pytz.utc).\
+            astimezone(tz=pytz.timezone('Europe/Warsaw'))
+
+    @reservation_begin.setter
+    def reservation_begin(self, dt):
+        if dt.tzinfo is None:
+            raise ValueError("reservation_timestamp has to be timezone aware")
+        self._reservation_begin = dt.astimezone(tz=pytz.utc)
+
+    @property
+    def reservation_end(self):
+        return self._reservation_end.replace(tzinfo=pytz.utc).\
+            astimezone(tz=pytz.timezone('Europe/Warsaw'))
+
+    @reservation_end.setter
+    def reservation_end(self, dt):
+        if dt.tzinfo is None:
+            raise ValueError("reservation_timestamp has to be timezone aware")
+        self._reservation_end = dt.astimezone(tz=pytz.utc)
+
     def __str__(self):
         return "RENTAL LOG: user: {} copy: {}".format(
             self.user.full_name,
@@ -98,7 +120,6 @@ class RentalLog(db.Model):
             self.user_id,
             self.copy_id
         )
-
 
 class Tag(db.Model):
     __tablename__ = 'tags'

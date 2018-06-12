@@ -3,6 +3,7 @@ from random import randint
 import pytz
 from mimesis import Generic
 from sqlalchemy import func
+from models.library import BookStatus
 
 from models.users import RoleEnum, Role
 from tests.populate import (
@@ -133,7 +134,7 @@ def test_delete_user(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
-        returned=g.development.boolean()
+        book_status=BookStatus.BORROWED,
     )
     session.add(log)
     session.commit()
@@ -172,7 +173,7 @@ def test_delete_book(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
-        returned=g.development.boolean()
+        book_status=BookStatus.BORROWED,
     )
     session.add(log)
     session.commit()
@@ -262,7 +263,7 @@ def test_delete_copy(session, db_user, db_book):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
-        returned=g.development.boolean()
+        book_status=BookStatus.BORROWED,
     )
     session.add(log)
     session.commit()

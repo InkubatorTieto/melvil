@@ -1,3 +1,4 @@
+from views.book import library_books
 import os
 import time
 
@@ -8,7 +9,7 @@ from flask import Flask
 from flask_mail import Mail
 
 from config import DevConfig, ProdConfig
-from init_db import db
+from init_db import db, ma
 
 from views import library
 from views.index import login_manager
@@ -29,6 +30,7 @@ def create_app(config=config_env):
     app = Flask(__name__)
     app.config.from_object(config)
     app.register_blueprint(library)
+    app.register_blueprint(library_books)
     app.secret_key = os.urandom(24)
     login_manager.init_app(app)
     mail.init_app(app)
@@ -44,7 +46,7 @@ def create_app(config=config_env):
             print("DB not ready!")
             print("Polling DB..")
             time.sleep(1)
-
+    ma.init_app(app)
     return app
 
 

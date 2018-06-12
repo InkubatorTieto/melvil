@@ -1,4 +1,5 @@
-from config import DevConfig
+from datetime import datetime, timedelta
+import pytz
 from flask import (
     render_template,
     request,
@@ -9,27 +10,32 @@ from flask import (
     abort
 )
 from flask_login import LoginManager
+from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy import exc
+from sqlalchemy.exc import IntegrityError
+from werkzeug.security import generate_password_hash, check_password_hash
+from config import DevConfig
 from forms.forms import (
     LoginForm,
     SearchForm,
     ContactForm,
     RegistrationForm,
     ForgotPass,
-    PasswordForm
+    PasswordForm,
+    WishlistForm
 )
-from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import URLSafeTimedSerializer
+from messages import ErrorMessage
 from models import LibraryItem
-from . import library
+from models.library import RentalLog, Copy, BookStatus
 from models.users import User
-from models.decorators_roles import (
-    require_logged_in,
-    require_not_logged_in,
-    require_role
-)
 from init_db import db
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
+from models.wishlist import WishListItem, Like
+from send_email import send_confirmation_email, send_password_reset_email
+from send_email.emails import send_email
+from serializers.wishlist import WishListItemSchema
+from . import library
 
 login_manager = LoginManager()
 
@@ -64,10 +70,10 @@ def login():
                                             form.password.data) and
                         data.active):
 
-                        session['logged_in'] = True
-                        session['id'] = data.id
-                        session['email'] = data.email
-                        return render_template('index.html', session=session)
+                    session['logged_in'] = True
+                    session['id'] = data.id
+                    session['email'] = data.email
+                    return render_template('index.html', session=session)
                 else:
                     message_body = 'Login failed or ' \
                                    'your account is not activated'
@@ -271,6 +277,68 @@ def reset_with_token(token):
                            error=form.errors)
 
 
+@library.route('/reservation/<copy_id>')
+def reserve(copy_id):
+    if 'logged_in' in session:
+        try:
+            copy = Copy.query.get(copy_id)
+            copy.available_status = False
+            res = RentalLog(
+                copy_id=copy_id,
+                user_id=session['id'],
+                book_status=BookStatus.RESERVED,
+                reservation_begin=datetime.now(tz=pytz.utc),
+                reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
+            )
+            db.session.add(res)
+            db.session.commit()
+            flash('pick up the book within two days!', 'Resevation done!')
+        except IntegrityError:
+            abort(500)
+    return redirect(url_for('library.index'))
+
+
+@library.route('/wishlist', methods=['GET', 'POST'])
+def wishlist():
+    data = db.session.query(WishListItem).all()
+    wish_list_schema = WishListItemSchema(many=True)
+    output = wish_list_schema.dump(data)
+    return render_template('wishlist.html', wishes=output)
+
+
+@library.route('/addWish', methods=['GET', 'POST'])
+def add_wish():
+    form = WishlistForm()
+    if form.validate_on_submit():
+        try:
+            new_wish_item = WishListItem(authors=form.authors.data,
+                                         title=form.title.data,
+                                         pub_year=form.pub_year.data)
+
+            db.session.add(new_wish_item)
+            db.session.commit()
+            return redirect(url_for('library.wishlist'))
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return render_template('wishlist_add.html', form=form, error=form.errors)
+
+
+@library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
+def add_like(wish_id):
+    user = User.query.filter_by(id=session['id']).first()
+    if not Like.like_exists(wish_id, user):
+        try:
+            Like.like(wish_id, user)
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    else:
+        try:
+            Like.unlike(wish_id, user)
+        except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return redirect(url_for('library.wishlist'))
+
+
 @library.route('/item_description/<int:item_id>')
 def item_description(item_id):
     try:
@@ -319,21 +387,3 @@ def server_error(error):
     return render_template('message.html',
                            message_title=message_title,
                            message_body=message_body), 500
-
-
-@library.route('/user_only')
-@require_role()
-def user_only():
-    return 'for users only'
-
-
-@library.route('/logged_in')
-@require_logged_in()
-def logged_in():
-    return 'for logged in only'
-
-
-@library.route('/not_logged_in')
-@require_not_logged_in()
-def not_logged_in():
-    return 'for not logged in only'

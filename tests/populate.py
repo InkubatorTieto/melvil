@@ -84,5 +84,4 @@ def populate_rental_logs(copy_id, user_id, n=30):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
-        returned=g.development.boolean()
     ) for _ in range(n)]
