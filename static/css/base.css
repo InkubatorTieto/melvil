@@ -6,6 +6,10 @@ body {
     background-size: cover;
 }
 
+h1 {
+    color: silver;
+}
+
 .cover-container {
     max-width: 42em;
 }
@@ -36,8 +40,8 @@ body {
     width: auto;
     height: auto;
     margin-top: 100px;
-	margin-left: 50px;
-	margin-right: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .form_errors {
@@ -46,9 +50,8 @@ body {
     font-weight: 400;
     color: rgba(255, 26, 26, 1);
 }
-    #addWishButton{
-      margin-top:3px;
-      margin-bottom:7px;
-h1 {
-    color: silver;
+
+#addWishButton{
+    margin-top:3px;
+    margin-bottom:7px;
 }

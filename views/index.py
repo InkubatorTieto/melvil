@@ -1,43 +1,45 @@
 from datetime import datetime, timedelta
 
+from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy import exc
+from sqlalchemy.exc import IntegrityError, TimeoutError
+from werkzeug.security import generate_password_hash, check_password_hash
+
 import pytz
 from flask import (
+    abort,
+    Blueprint,
+    flash,
+    redirect,
     render_template,
     request,
     session,
-    redirect,
-    flash,
-    url_for,
-    abort
+    url_for
 )
-from flask_login import LoginManager
-from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy import exc
-from sqlalchemy.exc import IntegrityError
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from config import DevConfig
 from forms.forms import (
-    LoginForm,
-    SearchForm,
     ContactForm,
-    RegistrationForm,
     ForgotPass,
+    LoginForm,
     PasswordForm,
+    RegistrationForm,
     WishlistForm
 )
 from init_db import db
 from messages import ErrorMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
+from models.books import Book
 from models.users import User
 from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 from serializers.wishlist import WishListItemSchema
-from . import library
 
-login_manager = LoginManager()
+
+library = Blueprint('library', __name__,
+                    template_folder='templates')
 
 
 @library.route('/')
@@ -86,7 +88,7 @@ def login():
                                        title='Sign In',
                                        form=form,
                                        error=form.errors)
-        except ValueError or TypeError:
+        except (ValueError, TypeError):
             message_body = 'Something went wrong'
             message_title = 'Error!'
             return render_template('message.html',
@@ -122,7 +124,7 @@ def registration():
                     send_confirmation_email(new_user.email)
                     db.session.add(new_user)
                     db.session.commit()
-            except ValueError or TypeError:
+            except (ValueError, TypeError):
                 message_body = 'Registration failed'
                 message_title = 'Error!'
                 return render_template('message.html',
@@ -139,9 +141,34 @@ def registration():
                                message_body=message_body)
 
 
-@library.route('/search')
+@library.route('/search', methods=['GET'])
 def search():
-    return render_template('search.html', title='Search', form=SearchForm())
+    if request.method == 'GET':
+        try:
+            retrieve_book_data = db.session.query(Book).all()
+        except TimeoutError:
+            return abort(500)
+
+        books = []
+        for row in retrieve_book_data:
+            book = []
+            book.append(row.id)
+            book.append(row.original_title)
+            book.append([])
+            while row.authors is not None:
+                try:
+                    book[2].append(str(row.authors.pop()))
+                except IndexError:
+                    break
+
+            books.append(book)
+        books.sort(key=lambda x: x[2])
+
+        return render_template('search.html',
+                               title='Search',
+                               books=books)
+    else:
+        return abort(405)
 
 
 @library.route('/contact', methods=['GET', 'POST'])
@@ -362,6 +389,15 @@ def item_description(item_id):
                            admin=admin)
 
 
+@library.errorhandler(401)
+def not_authorized(error):
+    message_body = 'You are not authorized to visit this site!'
+    message_title = 'Error!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 401
+
+
 @library.errorhandler(404)
 def not_found(error):
     message_body = 'Page does not exist!'
@@ -371,13 +407,13 @@ def not_found(error):
                            message_body=message_body), 404
 
 
-@library.errorhandler(401)
-def not_authorized(error):
-    message_body = 'You are not authorized to visit this site!'
+@library.errorhandler(405)
+def method_not_allowed(error):
+    message_body = 'Method not allowed!'
     message_title = 'Error!'
     return render_template('message.html',
                            message_title=message_title,
-                           message_body=message_body), 401
+                           message_body=message_body), 405
 
 
 @library.errorhandler(500)

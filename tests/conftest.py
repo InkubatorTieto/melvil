@@ -1,17 +1,16 @@
 import random
+from random import choice, randint
 import string
 
 import pytest
 from mimesis import Generic
 from sqlalchemy import event
 
-
-from random import choice, randint
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from models import User, Book, Magazine, Copy
 from forms.book import BookForm
+from models import User, Book, Magazine, Copy
 
 
 g = Generic('en')
