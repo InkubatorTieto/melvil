@@ -1,5 +1,4 @@
-FROM ubuntu:latest
-MAINTAINER docker@ekito.fr
+FROM python:3
 
 RUN apt-get update && apt-get -y install cron
 
@@ -13,11 +12,13 @@ RUN chmod 0644 /etc/cron.daily/hello-cron
 RUN touch /var/log/cron.log
 
 # Run the command on container startup
-CMD cron && tail -f /var/log/cron.log
-FROM python:3
+CMD ["cron", "tail", "-f", "/var/log/cron.log"]
+
+
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /code
 WORKDIR /code
 ADD requirements.txt /code
 RUN pip install -r requirements.txt
 ADD . /code/
+CMD ["cron", "-f"]
