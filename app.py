@@ -18,7 +18,7 @@ mail = Mail()
 sentry = Sentry()
 client = Client()
 
-if os.getenv('APP_SETTINGS', '') == 'prod':
+if os.getenv("APP_SETTINGS", "") == "prod":
     config_env = ProdConfig
 else:
     config_env = DevConfig
@@ -52,8 +52,8 @@ app = create_app()
 
 @app.cli.command(with_appcontext=True)
 def load_xls_into_db():
-    get_magazines('./biblioteka_probna.xlsx')
-    get_books('./biblioteka_probna.xlsx')
+    get_magazines("./biblioteka_probna.xlsx")
+    get_books("./biblioteka_probna.xlsx")
 
 
 app.cli.add_command(load_xls_into_db)
