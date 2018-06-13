@@ -1,0 +1,19 @@
+p.text_item {
+    margin: 0 10%;
+    padding: 2%
+    font-family: 'Arial', sans-serif;
+    font-size: 13px;
+    font-style: italic
+}
+
+
+table {
+    text-align: left;
+    margin: 0 auto;
+    width: 90%;
+    border-spacing: 30px;
+
+.button-box {
+   text-align:center;
+   margin-top:20px;
+}

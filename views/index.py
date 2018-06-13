@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError, TimeoutError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
+
 from flask import (
     abort,
     Blueprint,
@@ -24,7 +25,8 @@ from forms.forms import (
     LoginForm,
     PasswordForm,
     RegistrationForm,
-    WishlistForm
+    WishlistForm,
+    RemoveForm
 )
 from init_db import db
 from messages import ErrorMessage
@@ -325,6 +327,32 @@ def reserve(copy_id):
     return redirect(url_for('library.index'))
 
 
+@library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
+def remove_item(item_id):
+    # try:
+    #     user = User.query.get(session['id'])
+    #     admin = user.has_role('ADMIN')
+    # except KeyError:
+    #     abort(401)
+    # except Exception:
+    #     abort(500)
+    form = RemoveForm()
+    item = LibraryItem.query.get_or_404(item_id)
+    if form.validate_on_submit():
+        db.session.delete(item)
+        db.session.commit()
+        flash('Item has been removed', 'success')
+
+    authors_list = []
+    if item.type == 'book':
+          authors_list = item.authors_string
+    return render_template('remove_item.html',
+                               form=form,
+                                item=item,
+                                authors_list=authors_list)
+                                #admin=admin)
+
+
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
     data = db.session.query(WishListItem).all()
@@ -368,13 +396,13 @@ def add_like(wish_id):
 
 @library.route('/item_description/<int:item_id>')
 def item_description(item_id):
-    try:
-        user = User.query.get(session['id'])
-        admin = user.has_role('ADMIN')
-    except KeyError:
-        abort(401)
-    except Exception:
-        abort(500)
+    # try:
+    #     user = User.query.get(session['id'])
+    #     admin = user.has_role('ADMIN')
+    # except KeyError:
+    #     abort(401)
+    # except Exception:
+    #     abort(500)
     item = LibraryItem.query.get_or_404(item_id)
     tags_list = item.tags_string
 
@@ -385,8 +413,8 @@ def item_description(item_id):
     return render_template('item_description.html',
                            item=item,
                            tags_list=tags_list,
-                           authors_list=authors_list,
-                           admin=admin)
+                           authors_list=authors_list)
+                           #admin=admin)
 
 
 @library.errorhandler(401)
