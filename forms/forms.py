@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask_wtf import FlaskForm
+
 from wtforms import (
     StringField,
     PasswordField,
@@ -8,8 +8,11 @@ from wtforms import (
     TextAreaField,
     DateField,
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length
 from wtforms_components import DateRange
+from wtforms.validators import DataRequired, Email, EqualTo, Length
+
+from flask_wtf import FlaskForm
+
 from forms.custom_validators import tieto_email, name, surname
 
 

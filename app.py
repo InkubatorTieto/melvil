@@ -1,4 +1,3 @@
-from views.book import library_books
 import os
 import time
 
@@ -10,9 +9,8 @@ from flask_mail import Mail
 
 from config import DevConfig, ProdConfig
 from init_db import db, ma
-
-from views import library
-from views.index import login_manager
+from views.index import library
+from views.book import library_books
 from xlsx_reader import get_books, get_magazines
 
 
@@ -32,7 +30,6 @@ def create_app(config=config_env):
     app.register_blueprint(library)
     app.register_blueprint(library_books)
     app.secret_key = os.urandom(24)
-    login_manager.init_app(app)
     mail.init_app(app)
 
     db_not_ready = True
