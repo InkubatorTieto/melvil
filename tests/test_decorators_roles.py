@@ -70,8 +70,7 @@ def test_role_decorator(role, required_role):
         email=email,
         first_name=g.person.name(),
         surname=g.person.surname(),
-        password_hash=g.cryptographic.hash(),
-        active=g.development.boolean()
+        password_hash=g.cryptographic.hash()
     )
     db.session.add(new_user)
     db.session.commit()
