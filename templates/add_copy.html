@@ -14,10 +14,11 @@
                        <div class="wrap">
                            <p class="form-title">Add new copy</p>
                            <form class="login" action="" method="post">
+                               {{ form.hidden_tag() }}
 
                                {{ field_input(form.asset_code, error['asset_code'], placeholder="Asset Code") }}
                                {{ field_input(form.shelf, error['shelf'], placeholder="Shelf") }}
-                               {{ field_input(form.has_cd_disk, error['has_cd'], label="Has CD disk?") }}
+                               {{ field_input(form.has_cd_disk, error['has_cd_disk'], label="Has CD disk?") }}
 
                                <input type="submit" class="btn btn-primary submits"
                                       name="submit" value="Save">
