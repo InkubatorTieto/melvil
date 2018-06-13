@@ -38,7 +38,6 @@ from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 from serializers.wishlist import WishListItemSchema
 
-
 library = Blueprint('library', __name__,
                     template_folder='templates')
 
@@ -392,8 +391,12 @@ def item_description(item_id):
 
 @library.route('/add_copy/<int:item_id>', methods=['GET', 'POST'])
 def add_copy(item_id):
-    form = CopyForm()
-    return render_template('add_copy.html', form=form, error=form.errors)
+    form = CopyForm(request.form)
+    if request.method == 'POST' and form.validate():
+        return "SUCCESS"
+    return render_template('add_copy.html',
+                           form=form,
+                           error=form.errors)
 
 
 @library.errorhandler(401)
