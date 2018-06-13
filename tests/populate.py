@@ -11,7 +11,8 @@ from models import (
     Author,
     Tag,
     User,
-    Magazine
+    Magazine,
+    WishListItem
 )
 
 
@@ -84,4 +85,14 @@ def populate_rental_logs(copy_id, user_id, n=30):
         user_id=user_id,
         borrow_time=datetime.now(tz=pytz.utc),
         return_time=datetime.now(tz=pytz.utc),
+    ) for _ in range(n)]
+
+
+def populate_wish_list_items(n=30, likes=None):
+    return [WishListItem(
+        authors=g.person.last_name() + g.person.name(),
+        title=' '.join(g.text.title().split(' ')[:5]),
+        pub_year=datetime.now(tz=pytz.utc),
+        likes=likes if likes else [],
+
     ) for _ in range(n)]

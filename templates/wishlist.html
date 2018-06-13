@@ -2,12 +2,16 @@
 {% block title %}Wish list{% endblock %}
 {% block content %}
    {% from "macros.html" import input with context %}
-<h1>Search</h1>
+<h1>Search<button type="button" class="btn btn-link" data-container="body" data-toggle="popover"
+                        data-placement="right" data-content="You can search the book you wish to borrow among
+                        already existing wish list items, if it isn't on the list you can add a new wish">
+  <i class="fas fa-info-circle"></i>
+</button></h1>
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
-        <input class="form-control" id="bookInput" type="text" placeholder="Search...">
        <div class="cover-container d-flex h-80 p-3 mx-auto flex-column" >
            <main role="main" class="inner cover">
+               <input class="form-control" id="bookInput" type="text" placeholder="Search...">
                <div class="container my_wishlist">
                    <div class="row">
                        <div class="col-md-12">
