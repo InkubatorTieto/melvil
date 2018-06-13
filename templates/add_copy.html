@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block head %}
+   {{ super() }}
+{% endblock %}
+{% block title %}Add new copy{% endblock %}
+
+{% block content %}
+   {% from "macros.html" import field_input with context %}
+   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+       <main role="main" class="inner cover">
+           <div class="container my_container register_container">
+               <div class="row">
+                   <div class="col-md-12">
+                       <div class="wrap">
+                           <p class="form-title">Add new copy</p>
+                           <form class="login" action="" method="post">
+
+                               {{ field_input(form.asset_code, error['e'], placeholder="Asset Code") }}
+                               {{ field_input(form.shelf, error['e'], placeholder="Shelf") }}
+                               {{ field_input(form.has_cd_disk, error['e'], label="Has CD disk?") }}
+
+                               <input type="submit" class="btn btn-primary submits"
+                                      name="submit" value="Save">
+
+                           </form>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </main>
+   </div>
+{% endblock %}

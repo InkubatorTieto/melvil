@@ -18,6 +18,7 @@ from flask import (
 )
 
 from config import DevConfig
+from forms.copy import CopyForm
 from forms.forms import (
     ContactForm,
     ForgotPass,
@@ -387,6 +388,12 @@ def item_description(item_id):
                            tags_list=tags_list,
                            authors_list=authors_list,
                            admin=admin)
+
+
+@library.route('/add_copy/<int:item_id>', methods=['GET', 'POST'])
+def add_copy(item_id):
+    form = CopyForm()
+    return render_template('add_copy.html', form=form, error=form.errors)
 
 
 @library.errorhandler(401)

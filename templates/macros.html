@@ -28,3 +28,19 @@
         <td>{{ copy.has_cd_disk }}</td>
         <td>{{ 'Available' if copy.available_status else 'Occupied' }}</td>
 {% endmacro %}
+
+
+{% macro field_input(field, errors) %}
+    {% if kwargs['label'] %}
+        <label>
+            <span>{{ kwargs['label'] }}</span>
+            {{ field(class_="inputs") }}
+        </label>
+    {% else %}
+        {{ field(class_="inputs", placeholder=kwargs['placeholder']) }}
+    {% endif %}
+
+    {% for error in errors %}
+        <p class="form_errors">{{ error }}</p>
+    {% endfor %}
+{% endmacro %}
