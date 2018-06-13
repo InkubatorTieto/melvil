@@ -1,20 +1,20 @@
 language: python
 python:
   - "3.6"
-"""command to install dependencies"""
+# command to install dependencies
 services:
   - docker
 install:
   - pip install -r requirements.txt
+# command to run tests
 before_script:
-"""Let's stop postgresql"""
+# Let's stop postgresql
   - sudo service postgresql stop
-"""wait for postgresql to shutdown."""
+# wait for postgresql to shutdown.
   - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
-"""blocklist"""
+# blocklist
 branches:
   except:
   - /wip*/
-"""command to run tests"""
 script:
   - docker-compose run web pytest
