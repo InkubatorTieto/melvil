@@ -15,6 +15,7 @@ class Config(object):
     MAIL_PASSWORD = getenv('MAIL_PASSWORD')
     ADMINS = [getenv('MAIL_USERNAME')]
 
+
 class DevConfig(Config):
     SECRET_KEY = '4f\g45t45gfjerkfefker'
     SECURITY_PASSWORD_SALT = 'my_precious_two'
