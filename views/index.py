@@ -392,8 +392,21 @@ def item_description(item_id):
 @library.route('/add_copy/<int:item_id>', methods=['GET', 'POST'])
 def add_copy(item_id):
     form = CopyForm(request.form)
-    if request.method == 'POST' and form.validate():
-        return "SUCCESS"
+    if form.validate_on_submit():
+        try:
+            new_copy = Copy(
+                asset_code=form.asset_code.data,
+                library_item_id=item_id,
+                shelf=form.shelf.data,
+                has_cd_disk=form.has_cd_disk.data,
+                available_status=True,
+            )
+            db.session.add(new_copy)
+            db.session.commit()
+            flash('Copy successfully added')
+            return redirect(url_for('library.item_description', item_id=item_id))
+        except IntegrityError:
+            abort(500)
     return render_template('add_copy.html',
                            form=form,
                            error=form.errors)
