@@ -21,7 +21,8 @@ def test_add_book(view_book, client):
     assert (
         view_book.first_name.data == author.first_name
         and view_book.surname.data == author.last_name
-    ), "First and last name of the first author is not" " the same as given at the entrance"
+    ), "First and last name of the first author \
+    is not the same as given at the entrance"
 
     book = Book.query.filter_by(
         title=view_book.title.data, isbn=view_book.isbn.data

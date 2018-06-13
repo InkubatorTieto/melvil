@@ -79,7 +79,8 @@ def login():
                     session["email"] = data.email
                     return render_template("index.html", session=session)
                 else:
-                    message_body = "Login failed or " "your account is not activated"
+                    message_body = "Login failed or \
+                    your account is not activated"
                     message_title = "Error!"
                     return render_template(
                         "message.html",
