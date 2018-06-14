@@ -83,7 +83,7 @@
                                             {% if admin %}
                                                 <td class="table-button">
                                                     <a type="button" role="button" class="btn btn-primary btn-sm"
-                                                       href="#">Edit</a>
+                                                       href="{{ url_for( 'library.edit_copy', copy_id=copy.id ) }}">Edit</a>
                                                 </td>
                                                 <td class="table-button">
                                                     <a type="button" role="button" class="btn btn-danger btn-sm"

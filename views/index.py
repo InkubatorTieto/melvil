@@ -408,9 +408,36 @@ def add_copy(item_id):
                                     item_id=item_id))
         except IntegrityError:
             abort(500)
-    return render_template('add_copy.html',
+    return render_template('copy_form.html',
                            form=form,
-                           error=form.errors)
+                           error=form.errors,
+                           action='Add')
+
+
+@library.route('/edit_copy/<int:copy_id>', methods=['GET', 'POST'])
+def edit_copy(copy_id):
+    copy = Copy.query.get_or_404(copy_id)
+    item_id = copy.library_item_id
+    form = CopyForm()
+    if form.validate_on_submit():
+        try:
+            copy.asset_code = form.asset_code.data
+            copy.shelf = form.shelf.data
+            copy.has_cd_disk = form.has_cd_disk.data
+            db.session.add(copy)
+            db.session.commit()
+            flash('Copy successfully edited!')
+            return redirect(url_for('library.item_description',
+                                    item_id=item_id))
+        except IntegrityError:
+            abort(500)
+    form.asset_code.data = copy.asset_code
+    form.shelf.data = copy.shelf
+    form.has_cd_disk.data = copy.has_cd_disk
+    return render_template('copy_form.html',
+                           form=form,
+                           error=form.errors,
+                           action='Edit')
 
 
 @library.errorhandler(401)
