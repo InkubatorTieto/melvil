@@ -19,5 +19,5 @@ branches:
   except:
   - /wip*/
 script:
-  - docker-compose run web pytest
+  - docker-compose -f docker/docker-compose.yml run web pytest
 
