@@ -4,7 +4,13 @@
  height: 360px;
  color:silver;
   }
-  #wishList li {
+
+#addWishButton{
+    margin-top:3px;
+    margin-bottom:7px;
+}
+
+#wishList li {
   list-style-type: none;
 }
 .close-button{
@@ -23,7 +29,6 @@
 .add:hover {
    transition: background-color 0.5s ease;
 }
-
 
 .btn-sample{
    margin-top: 100px;
