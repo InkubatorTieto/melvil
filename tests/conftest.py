@@ -200,7 +200,7 @@ def view_registration(session):
     """
     Creates and return function-scoped User database entry
     """
-    a = g.cryptographic.hash()
+    a = "65$asdMNB"
     u = RegistrationForm(email="asd.qwe@tieto.com",
                          first_name=g.person.name(),
                          surname=g.person.surname(),
@@ -263,4 +263,5 @@ def app_session(client, db_user):
 @pytest.fixture
 def empty_app_session(client):
     with client.session_transaction() as app_session:
+        app_session['logged_in'] = False
         return app_session
