@@ -28,10 +28,12 @@
                                             {% endif %}
                                             {{ table_row('Asset code', copy.asset_code) }}
                                       </table>
+                                    {% if admin %}
                                     <form action="" method="post">
                                         {{ form.hidden_tag() }}
                                         {{ form.submit() }}
                                     </form>
+                                    {% endif %}
                         </div>
                     </div>
                 </div>

@@ -27,11 +27,15 @@
                                                 <p class="error-info"> There occurred some problems with loading library item. </p>
                                             {% endif %}
 
+
                                       </table>
+                                    {% if admin %}
                                     <form action="" method="post">
                                         {{ form.hidden_tag() }}
                                         {{ form.submit() }}
                                     </form>
+                                    {% endif %}
+
                         </div>
                     </div>
                 </div>
