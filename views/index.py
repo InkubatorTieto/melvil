@@ -393,6 +393,12 @@ def item_description(item_id):
 def add_copy(item_id):
     form = CopyForm()
     if form.validate_on_submit():
+        print('In form: ' + str(form.asset_code.data))
+        print('In form: ' + str(form.available_status.data))
+        print('In form: ' + str(form.shelf.data))
+        print('In form: ' + str(form.has_cd_disk.data))
+        print('errors: ' + str(form.errors))
+        print(form.validate_on_submit())
         try:
             new_copy = Copy(
                 asset_code=form.asset_code.data,
@@ -403,6 +409,11 @@ def add_copy(item_id):
             )
             db.session.add(new_copy)
             db.session.commit()
+            print('In db: ' + str(new_copy.asset_code))
+            print('In db: ' + str(new_copy.available_status))
+            print('In db: ' + str(new_copy.shelf))
+            print('In db: ' + str(new_copy.has_cd_disk))
+
             flash('Copy successfully added!')
             return redirect(url_for('library.item_description',
                                     item_id=item_id))
