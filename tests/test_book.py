@@ -1,13 +1,16 @@
 from flask import url_for
 from models import Author, Book, Tag
 from datetime import date
+import time
 import pytest
 
 
 def test_add_book(view_book, client):
-    client.post(url_for('library_books.add_book'),
-                data=view_book.data,
-                follow_redirects=True)
+    result = client.post(url_for('library_books.add_book'),
+                         data=view_book.data,
+                         follow_redirects=True)
+
+    assert result.status_code == 200
 
     author = Author.query.filter_by(first_name=view_book.first_name.data,
                                     last_name=view_book.surname.data).first()
@@ -16,7 +19,7 @@ def test_add_book(view_book, client):
         assert False, "Data validation failed"
 
     assert view_book.first_name.data == author.first_name \
-        and view_book.surname.data == author.last_name, \
+           and view_book.surname.data == author.last_name, \
         "First and last name of the first author is not" \
         " the same as given at the entrance"
 

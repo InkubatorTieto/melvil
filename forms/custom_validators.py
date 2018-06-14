@@ -12,24 +12,42 @@ def tieto_email(form, field):
 
 
 def name(form, field):
-    if not re.compile('^[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*$').match(field.data):
+    if not re.compile('^[A-ZĄĆŚĘŁŃÓŻŹ]{1}[a-ząćęłńśóżź]*$').match(field.data):
         raise ValidationError('Insert valid name.')
 
 
 def surname(form, field):
     if not re.compile(
-            '^[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*-?[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*$'
-            ).match(field.data):
+            '^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*$'
+    ).match(field.data) and not \
+            re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*'
+                       '-?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$').match(field.data) \
+            and not re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*'
+                               '\s?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$').match(field.data):
         raise ValidationError('Insert valid surname.')
+
+
+def password(form, field):
+    if len(field.data) < 7:
+        raise ValidationError('Your password is too short, '
+                              'your password should contain'
+                              ' at least 8 characters')
+    if not re.compile('^[!@#$%^&*()_]{1}$').match(field.data):
+        raise ValidationError('Your password does not contain special'
+                              ' characters, for example: "! @ #"')
+
+    if not re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]{1}[a-ząćęśłńóżź]*$').match(field.data):
+        raise ValidationError('Your password must have one capital letter'
+                              ' and one lowercase')
 
 
 def check_author(form, field):
     if field.data != '':
-        if not re.compile('^([A-ZĄĆĘŁÓŻŹ]?.*[A-ZĄĆĘŁÓŻŹa-ząćęłóżź]*'
-                          '[a-ząćęłóżź])$').match(field.data) and \
-                not re.compile('^[A-ZĄĆĘŁÓŻŹ]?.'
-                               '[A-ZĄĆĘŁÓŻŹ]$').match(field.data) or \
-                re.compile('^[a-ząćęłóżź]*$').match(field.data):
+        if not re.compile('^([A-ZĄŚĆĘŁŃÓŻŹ]{1}.*[A-ZĄĆŚŃĘŁÓŻŹa-ząćęłśóńżź]*'
+                          '[a-ząćęłśóżńź])$').match(field.data) and \
+                not re.compile('^[A-ZŚĄĆŃĘŁÓŻŹ]{1}.'
+                               '[A-ZĄĆŚĘŃŁÓŻŹ]$').match(field.data) or \
+                re.compile('^[a-ząćęńśłóżź]*$').match(field.data):
             raise ValidationError('Insert valid author name or surname.')
 
 

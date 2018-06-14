@@ -10,8 +10,8 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
+from forms.forms import LoginForm, RegistrationForm
 from models import User, Book, Magazine, Copy
-
 
 g = Generic('en')
 
@@ -106,7 +106,6 @@ def password_generator(chars=string.ascii_letters):
 
 @pytest.fixture(scope='module')
 def user(app):
-
     data = {
         'email': g.person.email(),
         'first_name': g.person.name(),
@@ -187,6 +186,31 @@ def view_book(session, client):
 
 
 @pytest.fixture(scope="function")
+def view_login(session, client, db_user):
+    form = LoginForm(
+        email=db_user.email,
+        password=db_user.password_hash
+    )
+
+    yield form
+
+
+@pytest.fixture(scope="function")
+def view_registration(session):
+    """
+    Creates and return function-scoped User database entry
+    """
+    a = g.cryptographic.hash()
+    u = RegistrationForm(email="asd.qwe@tieto.com",
+                         first_name=g.person.name(),
+                         surname=g.person.surname(),
+                         password=a,
+                         confirm_pass=a)
+
+    yield u
+
+
+@pytest.fixture(scope="function")
 def db_magazine(session):
     m = Magazine(
         title=' '.join(g.text.title().split(' ')[:5]),
@@ -233,4 +257,10 @@ def app_session(client, db_user):
     with client.session_transaction() as app_session:
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
+        return app_session
+
+
+@pytest.fixture
+def empty_app_session(client):
+    with client.session_transaction() as app_session:
         return app_session
