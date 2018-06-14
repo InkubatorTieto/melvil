@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block head %}
-   {{ super() }}
-{% endblock %}
 {% block title %}Add new copy{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/macro.css') }}">
+{% endblock %}
 
 {% block content %}
    {% from "macros.html" import field_input with context %}
