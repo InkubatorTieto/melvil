@@ -327,10 +327,18 @@ def reserve(copy_id):
 
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
     data = db.session.query(WishListItem).all()
     wish_list_schema = WishListItemSchema(many=True)
     output = wish_list_schema.dump(data)
-    return render_template('wishlist.html', wishes=output)
+    return render_template('wishlist.html', wishes=output, admin=admin)
 
 
 @library.route('/addWish', methods=['GET', 'POST'])
@@ -362,6 +370,15 @@ def add_like(wish_id):
         try:
             Like.unlike(wish_id, user)
         except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return redirect(url_for('library.wishlist'))
+
+
+@library.route('/deleteLike/<int:wish_id>', methods=['GET', 'POST'])
+def delete_like(wish_id):
+    try:
+        WishListItem.deleteWish(wish_id)
+    except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
     return redirect(url_for('library.wishlist'))
 
@@ -423,3 +440,4 @@ def server_error(error):
     return render_template('message.html',
                            message_title=message_title,
                            message_body=message_body), 500
+

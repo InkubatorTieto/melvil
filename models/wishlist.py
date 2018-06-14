@@ -45,3 +45,10 @@ class WishListItem(db.Model):
 
     def __repr__(self):
         return '<Wish List Item {}>'.format(self.title)
+
+    @classmethod
+    def deleteWish(cls, wish_id):
+        row = WishListItem.query\
+            .filter_by(id=wish_id).first()
+        db.session.delete(row)
+        db.session.commit()
