@@ -13,7 +13,7 @@ before_script:
 # wait for postgresql to shutdown.
   - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
   - docker-compose -f docker/docker-compose.yml up --build --no-start
-  - docker-compose start
+  - docker-compose -f docker/docker-compose.yml start
 # blocklist
 branches:
   except:
