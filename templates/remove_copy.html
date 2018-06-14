@@ -14,8 +14,8 @@
                             <button type="button" style="white" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href='{{ url_for('library.index')}}';">
                               <span aria-hidden="true">&times;</span>
                                 </button>
-                                  <p class="form-title">CONFIRM REMOVAL OF AN ITEM</p>
-                                    <p class="text_item"> Are you sure you want to delete all existing copies of the following item? </p>
+                                  <p class="form-title">CONFIRM REMOVAL OF A COPY</p>
+                                    <p class="text_item"> Are you sure you want to delete following copy? </p>
                                       <table class="item-removal">
                                             {{ table_row('Title', item.title) }}
                                             {% if item.type == 'magazine' %}
@@ -26,7 +26,7 @@
                                             {% else %}
                                                 <p class="error-info"> There occurred some problems with loading library item. </p>
                                             {% endif %}
-
+                                            {{ table_row('Asset code', copy.asset_code) }}
                                       </table>
                                     <form action="" method="post">
                                         {{ form.hidden_tag() }}
