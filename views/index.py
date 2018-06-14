@@ -353,11 +353,12 @@ def remove_item(item_id):
                            admin=admin)
 
 
-@library.route('/remove_copy/<int:item_id>/<string:asset_code>', methods=['GET', 'POST'])
+@library.route('/remove_copy/<int:item_id>/<string:asset_code>',
+               methods=['GET', 'POST'])
 def remove_copy(item_id, asset_code):
     try:
         user = User.query.get(session['id'])
-        admin = User.has_role('ADMIN')
+        admin = user.has_role('ADMIN')
     except KeyError:
         abort(401)
     except Exception:
@@ -379,7 +380,8 @@ def remove_copy(item_id, asset_code):
                            form=form,
                            item=item,
                            copy=copy,
-                           authors_list=authors_list)
+                           authors_list=authors_list,
+                           admin=admin)
 
 
 @library.route('/wishlist', methods=['GET', 'POST'])
