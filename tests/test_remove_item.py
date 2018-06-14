@@ -12,8 +12,9 @@ def test_remove_item(session, db_user, client):
     session.add_all(books)
     session.commit()
     copies_before = session.query(Copy).count()
-    for b in books:
-        copies = populate_copies(b, n=2)
+
+    for book in books:
+        copies = populate_copies(book, n=2)
         session.add_all(copies)
         session.commit()
         copies_added = session.query(Copy).count()

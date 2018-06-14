@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Item removal{% endblock %}
-
 {% block content %}
     {% from "macros.html" import input, table_row with context %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/item_description.css') }}">
-
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
         <main role="main" class="inner cover">
             <div class="container my_container">
@@ -26,8 +24,6 @@
                                             {% else %}
                                                 <p class="error-info"> There occurred some problems with loading library item. </p>
                                             {% endif %}
-
-
                                       </table>
                                     {% if admin %}
                                     <form action="" method="post">
@@ -35,7 +31,6 @@
                                         {{ form.submit() }}
                                     </form>
                                     {% endif %}
-
                         </div>
                     </div>
                 </div>
