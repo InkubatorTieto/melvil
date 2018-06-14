@@ -189,6 +189,7 @@ def view_book(session, client):
 def copy_form(session, client):
     form = CopyForm(
         asset_code='wr109100',
+        has_cd_disk=True,
         shelf='bla'
     )
 
