@@ -18,7 +18,7 @@ from flask import (
 )
 
 from config import DevConfig
-from forms.copy import CopyForm
+from forms.copy import CopyAddForm, CopyEditForm
 from forms.forms import (
     ContactForm,
     ForgotPass,
@@ -391,7 +391,7 @@ def item_description(item_id):
 
 @library.route('/add_copy/<int:item_id>', methods=['GET', 'POST'])
 def add_copy(item_id):
-    form = CopyForm()
+    form = CopyAddForm()
     if form.validate_on_submit():
         try:
             new_copy = Copy(
@@ -418,13 +418,12 @@ def add_copy(item_id):
 def edit_copy(copy_id):
     copy = Copy.query.get_or_404(copy_id)
     item_id = copy.library_item_id
-    form = CopyForm()
+    form = CopyEditForm()
     if form.validate_on_submit():
         try:
             copy.asset_code = form.asset_code.data
             copy.shelf = form.shelf.data
             copy.has_cd_disk = form.has_cd_disk.data
-            db.session.add(copy)
             db.session.commit()
             flash('Copy successfully edited!')
             return redirect(url_for('library.item_description',

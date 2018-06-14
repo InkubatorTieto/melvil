@@ -10,7 +10,7 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
-from forms.copy import CopyForm
+from forms.copy import CopyAddForm, CopyEditForm
 from models import User, Book, Magazine, Copy
 
 g = Generic('en')
@@ -187,13 +187,20 @@ def view_book(session, client):
 
 @pytest.fixture(scope="function")
 def copy_form(session, client):
-    form = CopyForm(
+    form_add = CopyAddForm(
         asset_code='wr109100',
         has_cd_disk=True,
-        shelf='bla'
+        shelf='shelf_one'
     )
 
-    yield form
+    form_edit = CopyEditForm(
+        asset_code='ab109100',
+        has_cd_disk=True,
+        available_status=True,
+        shelf='shelf_two'
+    )
+
+    yield (form_add, form_edit)
 
 
 @pytest.fixture(scope="function")
