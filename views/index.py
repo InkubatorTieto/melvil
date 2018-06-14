@@ -403,7 +403,7 @@ def add_copy(item_id):
             )
             db.session.add(new_copy)
             db.session.commit()
-            flash('Copy successfully added')
+            flash('Copy successfully added!')
             return redirect(url_for('library.item_description',
                                     item_id=item_id))
         except IntegrityError:
