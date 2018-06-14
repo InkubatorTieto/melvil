@@ -1,1 +1,1 @@
-web: docker-compose up
+web: docker-compose -f docker/docker-compose-dev.yml up
