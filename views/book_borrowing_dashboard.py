@@ -5,22 +5,26 @@ from sqlalchemy import desc
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
 
-library_book_borrowing_dashboard = Blueprint('library_book_borrowing_dashboard', __name__,
-                                             template_folder='templates')
+library_book_borrowing_dashboard = \
+    Blueprint('library_book_borrowing_dashboard', __name__,
+              template_folder='templates')
 
 
-@library_book_borrowing_dashboard.route('/borrowedBooks', methods=["GET", "POST"])
+@library_book_borrowing_dashboard.route(
+    '/borrowedBooks', methods=["GET", "POST"])
 def book_borrowing_dashboad():
 
     if 'logged_in' in session:
         current_user_id = session['id']
         reserved_items = get_reserved_items(db.session, current_user_id)
-        borrowed_items=get_borrowed_items()
-        num_of_reserved=get_number_of_reserved()
-        num_of_borrowed=get_number_of_borrowed()
+        borrowed_items = get_borrowed_items(db.session, current_user_id)
+        num_of_reserved = get_number_of_reserved(db.session, current_user_id)
+        num_of_borrowed = get_number_of_borrowed(db.session, current_user_id)
 
-        return render_template('book_borrowing_dashboard.html', reserved_books=reserved_items,
-                               borrowed_books=borrowed_items, num_of_reserved=num_of_reserved,
+        return render_template('book_borrowing_dashboard.html',
+                               reserved_books=reserved_items,
+                               borrowed_books=borrowed_items,
+                               num_of_reserved=num_of_reserved,
                                num_of_borrowed=num_of_borrowed)
 
     else:
@@ -33,7 +37,7 @@ def book_borrowing_dashboad():
 
 def get_reserved_items(s_db, current_user_id):
     reserved_items = s_db.query(LibraryItem, RentalLog._reservation_begin,
-                                      RentalLog._reservation_end). \
+                                RentalLog._reservation_end). \
         filter(RentalLog.book_status == BookStatus.RESERVED). \
         filter(RentalLog.user_id == current_user_id). \
         filter(RentalLog.copy_id == Copy.id). \
@@ -43,11 +47,11 @@ def get_reserved_items(s_db, current_user_id):
     return reserved_items
 
 
-def get_borrowed_items():
-    borrowed_items = db.session.query(LibraryItem, RentalLog._borrow_time,
-                                      RentalLog._return_time). \
+def get_borrowed_items(s_db, current_user_id):
+    borrowed_items = s_db.query(LibraryItem, RentalLog._borrow_time,
+                                RentalLog._return_time). \
         filter(RentalLog.book_status == BookStatus.BORROWED). \
-        filter(RentalLog.user_id == session['id']). \
+        filter(RentalLog.user_id == current_user_id). \
         filter(RentalLog.copy_id == Copy.id). \
         filter(LibraryItem.id == Copy.library_item_id). \
         order_by(desc(RentalLog._borrow_time)). \
@@ -55,24 +59,23 @@ def get_borrowed_items():
     return borrowed_items
 
 
-def get_number_of_reserved():
-    num_of_reserved = db.session.query(LibraryItem, RentalLog._reservation_begin,
-                                       RentalLog._reservation_begin). \
+def get_number_of_reserved(s_db, current_user_id):
+    num_of_reserved = s_db.query(LibraryItem, RentalLog._reservation_begin,
+                                 RentalLog._reservation_begin). \
         filter(RentalLog.book_status == BookStatus.RESERVED). \
-        filter(RentalLog.user_id == session['id']). \
+        filter(RentalLog.user_id == current_user_id). \
         filter(RentalLog.copy_id == Copy.id). \
         filter(LibraryItem.id == Copy.library_item_id). \
         count()
     return num_of_reserved
 
 
-def get_number_of_borrowed():
-    num_of_borrowed = db.session.query(LibraryItem, RentalLog._borrow_time,
-                                       RentalLog._return_time). \
+def get_number_of_borrowed(s_db, current_user_id):
+    num_of_borrowed = s_db.query(LibraryItem, RentalLog._borrow_time,
+                                 RentalLog._return_time). \
         filter(RentalLog.book_status == BookStatus.BORROWED). \
-        filter(RentalLog.user_id == session['id']). \
+        filter(RentalLog.user_id == current_user_id). \
         filter(RentalLog.copy_id == Copy.id). \
         filter(LibraryItem.id == Copy.library_item_id). \
         count()
     return num_of_borrowed
-

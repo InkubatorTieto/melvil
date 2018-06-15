@@ -11,6 +11,15 @@ from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
 from models import User, Book, Magazine, Copy
+from tests.populate import (
+    populate_users,
+    populate_copies,
+    populate_authors,
+    populate_books,
+    populate_rental_logs,
+    populate_magazines
+)
+from models.library import BookStatus
 
 
 g = Generic('en')
@@ -236,48 +245,51 @@ def app_session(client, db_user):
         return app_session
 
 
-
-
 @pytest.fixture
 def user_reservations(session):
+    """
+    Creates reservations for one user
+    """
     user = populate_users(n=1)
     session.add_all(user)
     session.commit()
     authors = populate_authors(n=2)
     session.add_all(authors)
     session.commit()
-    book1 = populate_books(n=1, authors=authors)
-    book2 = populate_books(n=1, authors=authors)
-    session.add_all(book1)
-    session.add_all(book2)
+    books = populate_books(n=2, authors=authors)
+    session.add_all(books)
     session.commit()
-    magazine1 = populate_magazines(n=1)
-    magazine2 = populate_magazines(n=1)
-    session.add_all(magazine1)
-    session.add_all(magazine2)
+    magazines = populate_magazines(n=2)
+    session.add_all(magazines)
     session.commit()
-    copy1 = populate_copies(book1[0], n=1)
-    copy2 = populate_copies(book2[0], n=1)
-    copy3 = populate_copies(magazine1[0], n=1)
-    copy4 = populate_copies(magazine2[0], n=1)
-    session.add_all(copy1)
-    session.add_all(copy2)
-    session.add_all(copy3)
-    session.add_all(copy4)
+    copies = list()
+    copies.append(populate_copies(books[0], n=1)[0])
+    copies.append(populate_copies(books[1], n=1)[0])
+    copies.append(populate_copies(magazines[0], n=1)[0])
+    copies.append(populate_copies(magazines[1], n=1)[0])
+    session.add_all(copies)
     session.commit()
-    reservation1 = populate_rental_logs(copy1[0].id, user[0].id, n=1)
-    reservation2 = populate_rental_logs(copy2[0].id, user[0].id, n=1)
-    reservation3 = populate_rental_logs(copy3[0].id, user[0].id, n=1)
-    reservation4 = populate_rental_logs(copy4[0].id, user[0].id, n=1)
-    session.add_all(reservation1)
-    session.add_all(reservation2)
-    session.add_all(reservation3)
-    session.add_all(reservation4)
+    reservations = list()
+    reservations.append(populate_rental_logs(copies[0].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[1].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[2].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[3].id, user[0].id, n=1)[0])
+    session.add_all(reservations)
     session.commit()
-    reservation1[0].book_status = BookStatus.RESERVED
-    reservation2[0].book_status = BookStatus.BORROWED
-    reservation3[0].book_status = BookStatus.RESERVED
-    reservation4[0].book_status = BookStatus.BORROWED
-    return user
+    reservations[0].book_status = BookStatus.RESERVED
+    reservations[1].book_status = BookStatus.BORROWED
+    reservations[2].book_status = BookStatus.RESERVED
+    reservations[3].book_status = BookStatus.BORROWED
 
-
+    yield user[0], (books[0], reservations[0]), (books[1], reservations[1]), \
+        (magazines[0], reservations[2]), (magazines[1], reservations[3])
+    for r in reservations:
+        session.delete(r)
+    for c in copies:
+        session.delete(c)
+    for b in books:
+        session.delete(b)
+    for m in magazines:
+        session.delete(m)
+    session.delete(user[0])
+    session.commit()

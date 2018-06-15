@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import exc
 from sqlalchemy.exc import IntegrityError, TimeoutError
-from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
@@ -31,8 +30,7 @@ from init_db import db
 from messages import ErrorMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
-from models.books import Book, Author
-from models.magazines import Magazine
+from models.books import Book
 from models.users import User
 from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
@@ -425,167 +423,3 @@ def server_error(error):
     return render_template('message.html',
                            message_title=message_title,
                            message_body=message_body), 500
-
-
-#to do, to be delated
-# @library.route('/my_db', methods=["GET", "POST"])
-# def my_db():
-#     new_user = User(
-#         email="marta.ochowicz@tieto.com",
-#         first_name="asd",
-#         surname="qwe",
-#         password_hash=generate_password_hash("123"),
-#         active = True)
-#     db.session.add(new_user)
-#     db.session.commit()
-#     author1 = Author(
-#         first_name="Jan",
-#         last_name="Kowalski"
-#     )
-#     author2 = Author(
-#         first_name="Anna",
-#         last_name="Nowak"
-#     )
-#     author3 = Author(
-#         first_name="Katarzyna",
-#         last_name="Żółta Krzżótłowy"
-#     )
-#     db.session.add(author1)
-#     db.session.add(author2)
-#     db.session.add(author3)
-#     db.session.commit()
-#     book1 = Book(
-#         title='Czysta architektura,struktura i design oprogramowania'
-#     )
-#     book2 = Book(
-#         title='Programowanie w języku C++'
-#     )
-#     book3 = Book(
-#         title='Python- dla zaawansowanych'
-#     )
-#     db.session.add(book1)
-#     db.session.add(book2)
-#     db.session.add(book3)
-#     magazine1 = Magazine(
-#         title='Magazyn o zarządzaniu czymś tam'
-#     )
-#     magazine2 = Magazine(
-#         title='Magazyn dla programistów'
-#     )
-#     magazine3 = Magazine(
-#         title='Magazyn dla programistów python'
-#     )
-#     db.session.add(magazine1)
-#     db.session.add(magazine2)
-#     db.session.add(magazine3)
-#     db.session.commit()
-#     book1.authors.append(author1)
-#     book1.authors.append(author2)
-#     book2.authors.append(author3)
-#     book3.authors.append(author3)
-#     copy1 = Copy(
-#         library_item_id='1',
-#         asset_code="111"
-#     )
-#     copy2 = Copy(
-#         library_item_id='1',
-#         asset_code="222"
-#     )
-#     copy3 = Copy(
-#         library_item_id='2',
-#         asset_code="333"
-#     )
-#     copy4 = Copy(
-#         library_item_id='3',
-#         asset_code="444"
-#     )
-#     copy5 = Copy(
-#         library_item_id='4',
-#         asset_code="555"
-#     )
-#     copy5 = Copy(
-#         library_item_id='5',
-#         asset_code="666"
-#     )
-#     copy6 = Copy(
-#         library_item_id='6',
-#         asset_code="777"
-#     )
-#     db.session.add(copy1)
-#     db.session.add(copy2)
-#     db.session.add(copy3)
-#     db.session.add(copy4)
-#     db.session.add(copy5)
-#     db.session.add(copy6)
-#     db.session.commit()
-#
-#     reservation1 = RentalLog(
-#         user_id='1',
-#         copy_id='1',
-#         book_status=BookStatus.RESERVED,
-#         reservation_begin=datetime.now(tz=pytz.utc),
-#         reservation_end=datetime.now(tz=pytz.utc)+ timedelta(days=2),
-#         borrow_time=datetime.now(tz=pytz.utc)+ timedelta(days=1),
-#         return_time=datetime.now(tz=pytz.utc)+ timedelta(days=3),
-#         )
-#     reservation2 = RentalLog(
-#         user_id='1',
-#         copy_id='2',
-#         book_status=BookStatus.RESERVED,
-#         reservation_begin=datetime.now(tz=pytz.utc),
-#         reservation_end=datetime.now(tz=pytz.utc) + timedelta(days=4),
-#         borrow_time=datetime.now(tz=pytz.utc) + timedelta(days=5),
-#         return_time=datetime.now(tz=pytz.utc) + timedelta(days=7),
-#         )
-#     reservation3 = RentalLog(
-#         user_id='1',
-#         copy_id='3',
-#         book_status=BookStatus.BORROWED,
-#         reservation_begin=datetime.now(tz=pytz.utc),
-#         reservation_end=datetime.now(tz=pytz.utc) + timedelta(days=10),
-#         borrow_time=datetime.now(tz=pytz.utc) + timedelta(days=11),
-#         return_time=datetime.now(tz=pytz.utc) + timedelta(days=13),
-#         )
-#     reservation4 = RentalLog(
-#         user_id='1',
-#         copy_id='4',
-#         book_status = BookStatus.RESERVED,
-#         reservation_begin=datetime.now(tz=pytz.utc),
-#         reservation_end=datetime.now(tz=pytz.utc) + timedelta(days=22),
-#         borrow_time=datetime.now(tz=pytz.utc) + timedelta(days=21),
-#         return_time=datetime.now(tz=pytz.utc) + timedelta(days=23),
-#         )
-#     reservation5 = RentalLog(
-#         user_id='1',
-#         copy_id='5',
-#         book_status = BookStatus.RESERVED,
-#         reservation_begin=datetime.now(tz=pytz.utc),
-#         reservation_end=datetime.now(tz=pytz.utc) + timedelta(days=32),
-#         borrow_time=datetime.now(tz=pytz.utc) + timedelta(days=31),
-#         return_time=datetime.now(tz=pytz.utc) + timedelta(days=33),
-#         )
-#     reservation6 = RentalLog(
-#         user_id='1',
-#         copy_id='6',
-#         book_status = BookStatus.BORROWED,
-#         reservation_begin=datetime.now(tz=pytz.utc),
-#         reservation_end=datetime.now(tz=pytz.utc) + timedelta(days=24),
-#         borrow_time=datetime.now(tz=pytz.utc) + timedelta(days=25),
-#         return_time=datetime.now(tz=pytz.utc) + timedelta(days=27),
-#         )
-#
-#
-#     db.session.add(reservation1)
-#     db.session.add(reservation2)
-#     db.session.add(reservation3)
-#     db.session.add(reservation4)
-#     db.session.add(reservation5)
-#     db.session.add(reservation6)
-#     db.session.commit()
-#
-#     authors=db.session.query(Author).all()
-#     books=db.session.query(Book).all()
-#     copies = db.session.query(Copy).all()
-#     users = db.session.query(User).all()
-#     rental_logs = db.session.query(RentalLog).all()
-#     return "added"
