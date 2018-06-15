@@ -103,7 +103,7 @@ def get_book_data(file_location):
                 date_of_rental = current_sheet.cell(row_index, 5)
                 status = current_sheet.cell(row_index, 5)
                 author = get_authors_data(authors)
-                asset = current_sheet.cell_value(row_index, 3)
+                asset = str(current_sheet.cell_value(row_index, 3))
                 book_properties = {'authors': author,
                                    'title': title,
                                    'asset': asset,
@@ -111,7 +111,7 @@ def get_book_data(file_location):
                 book_list.append(book_properties)
 
             else:
-                asset = current_sheet.cell_value(row_index, 3)
+                asset = str(current_sheet.cell_value(row_index, 3))
                 book_properties = {'authors': author,
                                    'current_shelf': current_shelf,
                                    'title': title,
