@@ -6,7 +6,7 @@ from tests.populate import (
     populate_books)
 
 
-def test_remove_item(session, db_user, client):
+def test_remove_item(session, db_user, client, app_session):
     user = db_user
     books = populate_books(n=5)
     session.add_all(books)
@@ -26,8 +26,4 @@ def test_remove_item(session, db_user, client):
             resp = client.post(url_for('library.remove_item',
                                        item_id=copy.id,
                                        db_user=user))
-        if user.has_role('ADMIN'):
-            assert resp.status_code == 404, 'book has not been deleted'
-        else:
-            assert resp.status_code == 401, \
-                'user has no admission to remove an item'
+        assert resp.status_code == 404, 'book has not been deleted'

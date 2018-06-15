@@ -342,7 +342,6 @@ def remove_item(item_id):
         db.session.delete(item)
         db.session.commit()
         flash('Item has been removed', 'success')
-
     authors_list = []
     if item.type == 'book':
         authors_list = item.authors_string
@@ -366,12 +365,9 @@ def remove_copy(item_id, asset_code):
     form = RemoveForm()
     item = LibraryItem.query.get_or_404(item_id)
     copy = Copy.query.filter_by(asset_code=asset_code).first_or_404()
-    print(item)
     authors_list = []
     if item.type == "book":
         authors_list = item.authors_string
-        print(authors_list, item.type)
-
     if form.validate_on_submit():
         db.session.delete(copy)
         db.session.commit()
