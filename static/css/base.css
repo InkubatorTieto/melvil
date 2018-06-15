@@ -6,10 +6,6 @@ body {
     background-size: cover;
 }
 
-h1 {
-    color: silver;
-}
-
 .cover-container {
     max-width: 42em;
 }

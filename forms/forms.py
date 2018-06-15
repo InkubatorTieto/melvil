@@ -6,15 +6,18 @@ from wtforms import (
     BooleanField,
     SubmitField,
     TextAreaField,
-    DateField,
+    SelectField,
 )
-from wtforms_components import DateRange
+
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 from flask_wtf import FlaskForm
 
-from forms.custom_validators import tieto_email, name, surname
+from forms.custom_validators import tieto_email, name, surname, check_pub_date
 
+from wtforms_alchemy import ModelForm
+
+from models import WishListItem
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
@@ -102,6 +105,13 @@ class PasswordForm(FlaskForm):
 
 
 class WishlistForm(FlaskForm):
+    type = SelectField('Item Type',
+                       choices=[('book', 'book'), ('magazine', 'magazine')],
+                       render_kw=({
+                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'id': 'mySelect',
+                                }))
+
     authors = StringField('authors',
                           validators=[DataRequired()],
                           render_kw=({'class': 'inputs',
@@ -110,14 +120,23 @@ class WishlistForm(FlaskForm):
                         validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
-    pub_year = DateField('pub_year',
-                         validators=[DateRange
-                                     (min=datetime.strptime('1900',
-                                                            '%Y').date(),
-                                      max=datetime.today().date())],
-                         render_kw=({'class': 'inputs',
-                                    'placeholder': 'Publication Year'}),
-                         format='%Y')
+
+    pub_date = SelectField('Year of publication',
+                           choices=[(str(x), str(x))
+                                    for x in
+                                    range(1970,
+                                          datetime.now().year + 1)],
+                           validators=[check_pub_date],
+                           render_kw=({
+                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'id': 'mySelect',
+                               'placeholder': 'Year of publication'}))
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
+#
+# class WishlistForm(ModelForm, FlaskForm):
+#     class Meta:
+#         model = WishListItem
+#         unique_validator=None
+#         validators={}

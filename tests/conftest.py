@@ -241,7 +241,7 @@ def view_wish_list(app):
     form = WishlistForm()
     form.authors.data = g.person.surname() + " " + g.person.name()
     form.title.data = ' '.join(g.text.title().split(' ')[:5])
-    form.pub_year.data = str(randint(1970, 2018))
+    form.pub_date.data = str(randint(1970, 2018))
     return form
 
 

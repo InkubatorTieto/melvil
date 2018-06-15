@@ -2,10 +2,8 @@ from flask import url_for
 import pytest
 import datetime as d
 from datetime import datetime
-from tests.populate import (
-    populate_wish_list_items,
 
-)
+
 from models import (WishListItem, Like)
 
 
@@ -18,14 +16,14 @@ def test_add_wishlist_item_from_view(client, view_wish_list):
 
 
 @pytest.mark.parametrize("values, result", [
-    (datetime.strptime("1899", "%Y").date(), False),
-    (datetime.strptime("1999", "%Y").date(), True),
-    (datetime.strptime("2000", "%Y").date(), True),
-    (datetime.today().date() + d.timedelta(days=1), False)
+    ("1899", False),
+    ("1999", True),
+    ("2000", True),
+    ((datetime.today().date() + d.timedelta(days=1)).year, False)
 ])
 def test_check_pub_date(view_wish_list, values, result):
-    view_wish_list.pub_year.data = values
-    view_wish_list.pub_year.validate(view_wish_list)
+    view_wish_list.pub_date.data = values
+    view_wish_list.pub_date.validate(view_wish_list)
     assert bool(view_wish_list.errors) != result, \
         "The validator 'check_pub_date' returns not" \
         " a valid value\n Errors:{0}".format(view_wish_list.errors)

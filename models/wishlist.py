@@ -1,4 +1,7 @@
 from init_db import db
+import enum
+from enum import Enum
+from sqlalchemy_utils import ChoiceType
 
 
 class Like(db.Model):
@@ -36,12 +39,13 @@ class WishListItem(db.Model):
     __tablename__ = 'wish_list_items'
     id = db.Column(db.Integer, primary_key=True)
     authors = db.Column(db.String(256))
-    title = db.Column(db.String(256))
+    title = db.Column(db.String(256), nullable=False)
     likes = db.relationship('Like',
                             backref='wish_list_item',
                             cascade="all, delete-orphan",
                             lazy=True)
     pub_year = db.Column(db.Date)
+    item_type = db.Column(db.String(256), nullable=False)
 
     def __repr__(self):
-        return '<Wish List Item {}>'.format(self.title)
+        return '<Wish List Item {}>'.format(self.item_type)

@@ -14,7 +14,8 @@ from flask import (
     render_template,
     request,
     session,
-    url_for
+    url_for,
+    json
 )
 
 from config import DevConfig
@@ -44,6 +45,8 @@ library = Blueprint('library', __name__,
 
 @library.route('/')
 def index():
+    # db.drop_all()
+    # db.session.commit()
     return render_template('index.html')
 
 
@@ -339,8 +342,11 @@ def add_wish():
     if form.validate_on_submit():
         try:
             new_wish_item = WishListItem(authors=form.authors.data,
+                                         item_type=form.type.data,
                                          title=form.title.data,
-                                         pub_year=form.pub_year.data)
+                                         pub_year=datetime.strptime(
+                                             form.pub_date.data,
+                                             "%Y").date())
 
             db.session.add(new_wish_item)
             db.session.commit()
@@ -350,8 +356,9 @@ def add_wish():
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
-@library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
-def add_like(wish_id):
+@library.route('/addLike', methods=['GET', 'POST'])
+def add_like():
+    wish_id = request.form['wish_id']
     user = User.query.filter_by(id=session['id']).first()
     if not Like.like_exists(wish_id, user):
         try:
@@ -363,7 +370,9 @@ def add_like(wish_id):
             Like.unlike(wish_id, user)
         except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
-    return redirect(url_for('library.wishlist'))
+    return json.dumps({'num_of_likes': len(WishListItem.query
+                                                       .filter_by(id=wish_id)
+                                                       .first().likes)})
 
 
 @library.route('/item_description/<int:item_id>')
