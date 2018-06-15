@@ -192,7 +192,13 @@ def get_magazines(file_location):
         issue = str(i['issue'])
         year = str(i['year'])
         if not year:
-            print('Magazine ', title, issue, ' has no year information.')
+            magazine = create_library_item(db.session, Magazine,
+                                           title=title,
+                                           issue=issue)
+
+            create_library_item(db.session, Copy,
+                                library_item_id=magazine.id,
+                                library_item=magazine)
         else:
             year = datetime.strptime(str(int(i['year'])), '%Y')
             magazine = create_library_item(db.session, Magazine,
