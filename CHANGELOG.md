@@ -12,4 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Adding book view without test
 - Addd custom validators for evry field in add book view
 - Fix bug - Eliminate bug with already registered user registration handling
+- Creating form for add books in wishlist
+- Creating like button in wishlist for users
 
+## [0.0.1] - 2018-06-11
+###Added
+- Creating delete button in wishlist only for admin

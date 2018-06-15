@@ -23,7 +23,7 @@
                                          <i class="fas fa-heart"></i>
                                        </button> {{wish_item.likes|length}}
                                       {% if admin %}
-                                        <button type="button" class="btn btn-outline-light" style="border:none;" data-toggle="tooltip" data-placement="top" title="Delete"  onclick="window.location.href='{{ url_for('library.delete_like',wish_id=wish_item.id)}}';">
+                                        <button type="button" class="btn btn-outline-light" style="border:none;" href="#" id="tooltip-ex" data-toggle="tooltip" data-placement="right" title="Delete"  onclick="window.location.href='{{ url_for('library.delete_wish',wish_id=wish_item.id)}}';">
                                          <i class="fa fa-trash"></i></button>
                                         {% endif %}</td></li>
                                     </tr> {% endfor %}{% endfor %} </ul>

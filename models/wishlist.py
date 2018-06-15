@@ -48,7 +48,6 @@ class WishListItem(db.Model):
 
     @classmethod
     def deleteWish(cls, wish_id):
-        row = WishListItem.query\
-            .filter_by(id=wish_id).first()
-        db.session.delete(row)
+        deleteWishAdmin = WishListItem.query.get(wish_id)
+        db.session.delete(deleteWishAdmin)
         db.session.commit()

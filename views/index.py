@@ -374,8 +374,8 @@ def add_like(wish_id):
     return redirect(url_for('library.wishlist'))
 
 
-@library.route('/deleteLike/<int:wish_id>', methods=['GET', 'POST'])
-def delete_like(wish_id):
+@library.route('/deleteWish/<int:wish_id>', methods=['GET', 'POST'])
+def delete_wish(wish_id):
     try:
         WishListItem.deleteWish(wish_id)
     except exc.SQLAlchemyError:
