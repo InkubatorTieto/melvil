@@ -6,7 +6,7 @@ from models import (
     Copy)
 
 
-def test_author_name(session):
+def test_loading_from_xlsx(session):
     get_books('./library_testfile.xlsx')
     get_magazines('./library_testfile.xlsx')
     assert Author.query.filter(Author.last_name == "Rowling"),\
