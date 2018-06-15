@@ -5,7 +5,7 @@ RUN apt-get update && apt-get -y install cron
 # Add crontab file in the cron directory
 #ADD crontab /etc/crontab
 #RUN echo "* * * * * root  echo "halo" >> /var/log/cron.log" >> /etc/crontab
-RUN echo "* * * * * root echo "Hello world" >> /var/log/cron.log" >> /etc/crontab
+#RUN echo "* * * * * root echo "Hello world" >> /var/log/cron.log" >> /etc/crontab
 # Give execution rights on the cron job
 #RUN chmod 777 /etc/crontab
 

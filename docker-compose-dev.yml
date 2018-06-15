@@ -7,6 +7,7 @@ services:
     image: morbz/docker-cron
     environment:
       - CRON_MINUTE=* * * * * root echo "Hello minute"
+      - CRON_HOUR=0 * * * * root echo "Hello hour"
   web:
     build: .
     command: sh run.sh
