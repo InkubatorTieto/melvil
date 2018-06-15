@@ -1,6 +1,12 @@
 version: '3'
 
 services:
+version: '3'
+services:
+  cron:
+    image: morbz/docker-cron
+    environment:
+      - CRON_MINUTE=* * * * * root echo "Hello minute"
   web:
     build: .
     command: sh run.sh
