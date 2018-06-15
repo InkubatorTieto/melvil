@@ -8,6 +8,7 @@ from models import (
 
 def test_author_name(session):
     get_books('./library_testfile.xlsx')
+    get_magazines('./library_testfile.xlsx')
     assert Author.query.filter(Author.last_name == "Rowling"),\
         "db does not contain such author"
     assert Author.query.filter(Author.first_name == "J. K."), \
@@ -29,27 +30,3 @@ def test_author_name(session):
         'db does not contain magazine from 2000'
     assert Magazine.query.filter(
         Magazine.issue == '7'), 'db does not contain issue 7'
-
-# def test_book_title(session):
-#     get_books('./library_testfile.xlsx')
-#
-#
-#
-# def test_book_copy(session):
-#     get_books('./library_testfile.xlsx')
-#
-#
-#
-# def test_magazine_title(session):
-#     get_magazines('./library_testfile.xlsx')
-#
-#
-#
-# def test_magazine_year(session):
-#     get_magazines('./library_testfile.xlsx')
-#
-#
-#
-# def test_magazine_issue(session):
-#     get_magazines('./library_testfile.xlsx')
-
