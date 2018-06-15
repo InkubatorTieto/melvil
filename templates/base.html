@@ -31,7 +31,7 @@
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
                     {{ nav_button('add_book', 'library_books.add_book', 'Add new book' ) }}
                     {% if session['id'] %}
-                        {{ nav_button('borrowedBooks', 'library.book_borrowing_dashboad', 'My Books' ) }}
+                        {{ nav_button('borrowedBooks', 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' ) }}
                         {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                         {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
                     {% else %}
