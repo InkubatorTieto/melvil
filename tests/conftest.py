@@ -242,6 +242,7 @@ def view_wish_list(app):
     form.authors.data = g.person.surname() + " " + g.person.name()
     form.title.data = ' '.join(g.text.title().split(' ')[:5])
     form.pub_date.data = str(randint(1970, 2018))
+    form.type.data='book'
     return form
 
 
@@ -252,7 +253,8 @@ def db_wishlist_item(session):
     """
     w = WishListItem(authors=g.person.surname() + " " + g.person.name(),
                      title=' '.join(g.text.title().split(' ')[:5]),
-                     pub_year=g.datetime.datetime()
+                     pub_year=g.datetime.datetime(),
+                     item_type='book'
                      )
     session.add(w)
     session.commit()
