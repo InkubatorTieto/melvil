@@ -53,6 +53,10 @@ On Windows
 run-server.bat /p 
 ```
 
+## Running tests  
+
+[Run tests: HOW TO](tests/README.md)
+
 ## Heroku configuration  
 
 [Heroku About](docs/Heroku/Heroku.md)
