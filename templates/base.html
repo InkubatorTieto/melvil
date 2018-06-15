@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authentication.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}/">
     {% block head %}
         <title> Melvil library - {% block title %}{% endblock %}</title>
     {% endblock %}
@@ -30,6 +31,7 @@
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
                     {{ nav_button('add_book', 'library_books.add_book', 'Add new book' ) }}
                     {% if session['id'] %}
+                        {{ nav_button('borrowedBooks', 'library.book_borrowing_dashboad', 'My Books' ) }}
                         {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                         {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
                     {% else %}
