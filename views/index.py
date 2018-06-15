@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy import exc
+from sqlalchemy import and_, exc
 from sqlalchemy.exc import IntegrityError, TimeoutError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -30,7 +30,7 @@ from init_db import db
 from messages import ErrorMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
-from models.books import Book
+from models.books import Author, Book
 from models.users import User
 from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
@@ -143,32 +143,66 @@ def registration():
 
 @library.route('/search', methods=['GET'])
 def search():
+
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
     if request.method == 'GET':
         try:
-            retrieve_book_data = db.session.query(Book).all()
+            page = request.args.get('page', 1, type=int)
+            paginate_books = Book.query.order_by(
+                                    Book.original_title.asc()).paginate(
+                                    page, 10, False)
+            next_url = (url_for('library.search', page=paginate_books.next_num)
+                        if paginate_books.has_next else None)
+            prev_url = (url_for('library.search', page=paginate_books.prev_num)
+                        if paginate_books.has_prev else None)
+
         except TimeoutError:
             return abort(500)
 
         books = []
-        for row in retrieve_book_data:
-            book = []
-            book.append(row.id)
-            book.append(row.original_title)
-            book.append([])
-            while row.authors is not None:
-                try:
-                    book[2].append(str(row.authors.pop()))
-                except IndexError:
-                    break
-
-            books.append(book)
-        books.sort(key=lambda x: x[2])
+        for book in paginate_books.items:
+            book_data = []
+            book_data.append(book.id)
+            book_data.append(book.original_title)
+            book_data.append(book.authors_string.split(', '))
+            book_data[2].sort()
+            books.append(book_data)
 
         return render_template('search.html',
                                title='Search',
-                               books=books)
+                               books=books,
+                               next_url=next_url,
+                               prev_url=prev_url,
+                               admin=admin)
     else:
         return abort(405)
+
+
+@library.route('/author/<author_name>', methods=['GET', 'POST'])
+def author_description(author_name):
+
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
+    first_name = author_name.split().pop(0)
+    last_name = author_name.split().pop()
+    author = Author.query.filter(and_(
+                                    Author.first_name.like(first_name),
+                                    Author.last_name.like(last_name))).first()
+
+    return render_template('index.html', author=author, admin=admin)
 
 
 @library.route('/contact', methods=['GET', 'POST'])
