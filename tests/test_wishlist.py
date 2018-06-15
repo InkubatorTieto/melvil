@@ -12,7 +12,9 @@ def test_add_wishlist_item_from_view(client, view_wish_list):
                        data=view_wish_list.data,
                        follow_redirects=True)
     assert resp.status_code == 200
-    assert WishListItem.query.filter_by(authors=view_wish_list.authors.data).scalar is not None
+    assert WishListItem.query\
+        .filter_by(authors=view_wish_list.authors.data)\
+        .scalar is not None
 
 
 @pytest.mark.parametrize("values, result", [

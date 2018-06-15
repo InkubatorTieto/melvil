@@ -15,9 +15,6 @@ from flask_wtf import FlaskForm
 
 from forms.custom_validators import tieto_email, name, surname, check_pub_date
 
-from wtforms_alchemy import ModelForm
-
-from models import WishListItem
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
@@ -108,9 +105,8 @@ class WishlistForm(FlaskForm):
     type = SelectField('Item Type',
                        choices=[('book', 'book'), ('magazine', 'magazine')],
                        render_kw=({
-                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
-                               'id': 'mySelect',
-                                }))
+                           'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                           'id': 'mySelect'}))
 
     authors = StringField('authors',
                           render_kw=({'class': 'inputs',
@@ -133,9 +129,3 @@ class WishlistForm(FlaskForm):
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
-#
-# class WishlistForm(ModelForm, FlaskForm):
-#     class Meta:
-#         model = WishListItem
-#         unique_validator=None
-#         validators={}

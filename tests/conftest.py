@@ -236,13 +236,14 @@ def app_session(client, db_user):
         app_session['id'] = db_user.id
         return app_session
 
+
 @pytest.fixture
 def view_wish_list(app):
     form = WishlistForm()
     form.authors.data = g.person.surname() + " " + g.person.name()
     form.title.data = ' '.join(g.text.title().split(' ')[:5])
     form.pub_date.data = str(randint(1970, 2018))
-    form.type.data='book'
+    form.type.data = 'book'
     return form
 
 

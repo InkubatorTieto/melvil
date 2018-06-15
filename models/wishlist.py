@@ -1,7 +1,4 @@
 from init_db import db
-import enum
-from enum import Enum
-from sqlalchemy_utils import ChoiceType
 
 
 class Like(db.Model):
