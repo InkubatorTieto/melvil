@@ -47,9 +47,9 @@ def create_library_item(session, model, **kwargs):
 # reading author's data from file
 def get_authors_data(authors):
     if (
-        ("," in authors and "Jr." not in authors)
-        or (" and " in authors)
-        or ("&" in authors)
+        ("," in authors and "Jr." not in authors) or
+        (" and " in authors) or
+        ("&" in authors)
     ):
         split_authors = (
             authors.replace(" and ", ",").replace("&", ",").split(",")

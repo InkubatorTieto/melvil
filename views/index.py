@@ -67,11 +67,11 @@ def login():
             if form.validate_on_submit():
                 data = User.query.filter_by(email=form.email.data).first()
                 if (
-                    data is not None
-                    and check_password_hash(
+                    data is not None and
+                        check_password_hash(
                         data.password_hash, form.password.data
-                    )
-                    and data.active
+                        ) and
+                        data.active
                 ):
 
                     session["logged_in"] = True
@@ -347,8 +347,7 @@ def reserve(copy_id):
                 user_id=session["id"],
                 book_status=BookStatus.RESERVED,
                 reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(tz=pytz.utc)
-                + timedelta(hours=48),
+                reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
             )
             db.session.add(res)
             db.session.commit()

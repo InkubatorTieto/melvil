@@ -19,8 +19,8 @@ def test_add_book(view_book, client):
         assert False, "Data validation failed"
 
     assert (
-        view_book.first_name.data == author.first_name
-        and view_book.surname.data == author.last_name
+        view_book.first_name.data == author.first_name and
+        view_book.surname.data == author.last_name
     ), "First and last name of the first author \
     is not the same as given at the entrance"
 
@@ -55,8 +55,11 @@ def test_add_book(view_book, client):
         view_book.publisher.data == book.publisher
     ), "The publisher is not the same as given at the entrance "
     assert (
-        date(year=int(view_book.pub_date.data), month=1, day=1)
-        == book.pub_date
+        date(
+            year=int(view_book.pub_date.data),
+            month=1,
+            day=1
+        ) == book.pub_date
     ), "The year of publication is not the same as given at the entrance "
 
     tag = Tag.query.filter_by(name=view_book.tag.data[0]).first()

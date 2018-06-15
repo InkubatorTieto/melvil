@@ -1,14 +1,17 @@
-# import smtplib
-# import email.utils
-# from email.mime.text import MIMEText
-#
-#
-# msg = MIMEText('The body of your message.')
-# msg['To'] = email.utils.formataddr(('Recipient Name',
-#                                     'jahenstein@gmail.com'))
-# msg['From'] = email.utils.formataddr(('Your Name', 'test@test.com'))
-# msg['Subject'] = 'Your Subject'
-#
-# server = smtplib.SMTP()
-# server.connect()
-# server.sendmail('test@test.com', ['jahenstein@gmail.com'], msg.as_string())
+import pytest
+from send_email import send_email
+from config import DevConfig
+
+
+@pytest.mark.skip(reason="This needs better test enviroment config.")
+def test_send(mailbox):
+
+    with mailbox as outbox:
+        send_email('testing',
+                   DevConfig.ADMINS[0],
+                   ['ktos.ktos@cos.com'],
+                   'test',
+                   None)
+        assert len(outbox) == 1
+        msg = outbox[0]
+        assert msg.subject == "testing"

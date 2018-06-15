@@ -28,11 +28,11 @@ def check_author(form, field):
         if (
             not re.compile(
                 "^([A-ZĄĆĘŁÓŻŹ]?.*[A-ZĄĆĘŁÓŻŹa-ząćęłóżź]*" "[a-ząćęłóżź])$"
-            ).match(field.data)
-            and not re.compile("^[A-ZĄĆĘŁÓŻŹ]?." "[A-ZĄĆĘŁÓŻŹ]$").match(
+            ).match(field.data) and
+            not re.compile("^[A-ZĄĆĘŁÓŻŹ]?." "[A-ZĄĆĘŁÓŻŹ]$").match(
                 field.data
-            )
-            or re.compile("^[a-ząćęłóżź]*$").match(field.data)
+            ) or
+            re.compile("^[a-ząćęłóżź]*$").match(field.data)
         ):
             raise ValidationError("Insert valid author name or surname.")
 

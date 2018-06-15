@@ -218,12 +218,18 @@ def test_delete_book(session, db_user, db_book):
     ), "Copy was not deleted with the Book"
 
     assert (
-        Book.query.join(Author.books).filter(Author.id == authors[0].id).all()
-        == []
+        Book.query.join(
+            Author.books
+        ).filter(
+            Author.id == authors[0].id
+        ).all() == []
     ), "Author 0 should not contain the Book"
     assert (
-        Book.query.join(Author.books).filter(Author.id == authors[1].id).all()
-        == []
+        Book.query.join(
+            Author.books
+        ).filter(
+            Author.id == authors[1].id
+        ).all() == []
     ), "Author 1 should not contain the Book"
     assert (
         RentalLog.query.get(log.id) is None
@@ -238,22 +244,31 @@ def test_delete_authors(session, db_book):
     session.commit()
 
     assert (
-        Book.query.join(Author.books).filter(Book.id == db_book.id).count()
-        == 2
+        Book.query.join(
+            Author.books
+        ).filter(
+            Book.id == db_book.id
+        ).count() == 2
     ), "The book should have two authors"
 
     session.delete(authors[0])
     session.commit()
     assert (
-        Book.query.join(Author.books).filter(Book.id == db_book.id).count()
-        == 1
+        Book.query.join(
+            Author.books
+        ).filter(
+            Book.id == db_book.id
+        ).count() == 1
     ), "The book should have one author"
 
     session.delete(authors[1])
     session.commit()
     assert (
-        Book.query.join(Author.books).filter(Book.id == db_book.id).count()
-        == 0
+        Book.query.join(
+            Author.books
+        ).filter(
+            Book.id == db_book.id
+        ).count() == 0
     ), "The book should have zero authors"
 
 
