@@ -4,7 +4,7 @@ from datetime import datetime
 
 from nameparser import HumanName
 
-from models import (Book, Author, Copy, Magazine)
+from models import Book, Author, Copy, Magazine
 from init_db import db
 
 
@@ -46,11 +46,14 @@ def create_library_item(session, model, **kwargs):
 
 # reading author's data from file
 def get_authors_data(authors):
-    if (',' in authors and 'Jr.' not in authors) \
-            or (' and ' in authors) \
-            or ('&' in authors):
-        split_authors = \
-            authors.replace(' and ', ',').replace('&', ',').split(',')
+    if (
+        ("," in authors and "Jr." not in authors) or
+        (" and " in authors) or
+        ("&" in authors)
+    ):
+        split_authors = (
+            authors.replace(" and ", ",").replace("&", ",").split(",")
+        )
         authors_names = []
 
         for auth in split_authors:
@@ -79,27 +82,31 @@ def get_book_data(file_location):
             authors = current_sheet.cell_value(row_index, 2)
             author = get_authors_data(authors)
 
-            if current_shelf == 'General':
+            if current_shelf == "General":
                 user = current_sheet.cell_value(row_index, 4)
                 date_of_rental = current_sheet.cell(row_index, 5)
                 status = current_sheet.cell(row_index, 5)
                 author = get_authors_data(authors)
                 asset = current_sheet.cell_value(row_index, 3)
-                book_properties = {'authors': author,
-                                   'title': title,
-                                   'asset': asset,
-                                   'user': user}
+                book_properties = {
+                    "authors": author,
+                    "title": title,
+                    "asset": asset,
+                    "user": user,
+                }
                 book_list.append(book_properties)
 
             else:
                 asset = current_sheet.cell_value(row_index, 3)
-                book_properties = {'authors': author,
-                                   'current_shelf': current_shelf,
-                                   'title': title,
-                                   'asset': asset,
-                                   'user': user,
-                                   'date_of_rental': date_of_rental,
-                                   'status': status}
+                book_properties = {
+                    "authors": author,
+                    "current_shelf": current_shelf,
+                    "title": title,
+                    "asset": asset,
+                    "user": user,
+                    "date_of_rental": date_of_rental,
+                    "status": status,
+                }
                 book_list.append(book_properties)
 
     return book_list
@@ -117,7 +124,7 @@ def get_magazine_data(file_location):
         title = (current_sheet.cell_value(row_index, 1)).strip()
         year = current_sheet.cell_value(row_index, 2)
         issue = current_sheet.cell_value(row_index, 3)
-        magazine_properties = {'title': title, 'year': year, 'issue': issue}
+        magazine_properties = {"title": title, "year": year, "issue": issue}
         magazines_list.append(magazine_properties)
     return magazines_list
 
@@ -128,19 +135,19 @@ def get_books(file_location):
     asset_codes = []
 
     for book in books_properties:
-        title = book['title']
-        asset = book['asset']
+        title = book["title"]
+        asset = book["asset"]
         asset_codes.append(asset)
-        authors = book['authors']
+        authors = book["authors"]
         list_of_authors = []
 
         if isinstance(authors, tuple):
             authors_id = []
             first_name = str(authors[0])
             last_name = str(authors[1])
-            author = create_library_item(db.session, Author,
-                                         last_name=last_name,
-                                         first_name=first_name)
+            author = create_library_item(
+                db.session, Author, last_name=last_name, first_name=first_name
+            )
             id_of_auth = author.id
             authors_id.append(id_of_auth)
             list_of_authors.append(author)
@@ -152,40 +159,44 @@ def get_books(file_location):
             for auth_name in authors:
                 f_name = str(auth_name[0])
                 l_name = str(auth_name[1])
-                author = create_library_item(db.session, Author,
-                                             last_name=l_name,
-                                             first_name=f_name)
+                author = create_library_item(
+                    db.session, Author, last_name=l_name, first_name=f_name
+                )
                 id_of_auth = author.id
                 authors_id.append(id_of_auth)
                 list_of_authors.append(author)
-                book = create_library_item(db.session, Book,
-                                           title=title)
+                book = create_library_item(db.session, Book, title=title)
                 book.authors.append(author)
                 # checking if asset value is an empty string
                 # which violates uniqueness of the asset code
                 if not asset:
-                    create_library_item(db.session, Copy,
-                                        library_item_id=book.id,
-                                        library_item=book)
+                    create_library_item(
+                        db.session,
+                        Copy,
+                        library_item_id=book.id,
+                        library_item=book,
+                    )
                 else:
-                    create_library_item(db.session, Copy,
-                                        library_item_id=book.id,
-                                        library_item=book,
-                                        asset_code=asset)
+                    create_library_item(
+                        db.session,
+                        Copy,
+                        library_item_id=book.id,
+                        library_item=book,
+                        asset_code=asset,
+                    )
 
 
 # writing magazine's data in database
 def get_magazines(file_location):
     magazines_properties = get_magazine_data(file_location)
     for i in magazines_properties:
-        title = i['title']
-        issue = str(i['issue'])
-        year = str(i['year'])
+        title = i["title"]
+        issue = str(i["issue"])
+        year = str(i["year"])
         if not year:
-            print('Magazine ', title, issue, ' has no year information.')
+            print("Magazine ", title, issue, " has no year information.")
         else:
-            year = datetime.strptime(str(int(i['year'])), '%Y')
-            create_library_item(db.session, Magazine,
-                                title=title,
-                                year=year,
-                                issue=issue)
+            year = datetime.strptime(str(int(i["year"])), "%Y")
+            create_library_item(
+                db.session, Magazine, title=title, year=year, issue=issue
+            )

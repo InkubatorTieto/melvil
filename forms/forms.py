@@ -55,7 +55,7 @@ class RegistrationForm(FlaskForm):
         validators=[DataRequired()],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Sign Up',
+    submit = SubmitField('Sign In',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
@@ -74,7 +74,8 @@ class ContactForm(FlaskForm):
                                         'placeholder': 'Message'}))
     send_message = SubmitField(
         'Send message',
-        render_kw=({'class': 'btn btn-primary submits'}))
+        render_kw=({'class': 'btn btn-primary submits'})
+    )
 
 
 class SearchForm(FlaskForm):
@@ -102,22 +103,28 @@ class PasswordForm(FlaskForm):
 
 
 class WishlistForm(FlaskForm):
-    authors = StringField('authors',
-                          validators=[DataRequired()],
-                          render_kw=({'class': 'inputs',
-                                      'placeholder': 'Authors'}))
-    title = StringField('title',
-                        validators=[DataRequired()],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Title'}))
-    pub_year = DateField('pub_year',
-                         validators=[DateRange
-                                     (min=datetime.strptime('1900',
-                                                            '%Y').date(),
-                                      max=datetime.today().date())],
-                         render_kw=({'class': 'inputs',
-                                    'placeholder': 'Publication Year'}),
-                         format='%Y')
+    authors = StringField(
+        "authors",
+        validators=[DataRequired()],
+        render_kw=({"class": "inputs", "placeholder": "Authors"}),
+    )
+    title = StringField(
+        "title",
+        validators=[DataRequired()],
+        render_kw=({"class": "inputs", "placeholder": "Title"}),
+    )
+    pub_year = DateField(
+        "pub_year",
+        validators=[
+            DateRange(
+                min=datetime.strptime("1900", "%Y").date(),
+                max=datetime.today().date(),
+            )
+        ],
+        render_kw=({"class": "inputs", "placeholder": "Publication Year"}),
+        format="%Y",
+    )
 
     add = SubmitField('Add new wish',
-                      render_kw=({'class': 'btn btn-primary add'}))
+                      render_kw=({'class': 'btn btn-primary add'})
+                      )
