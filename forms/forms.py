@@ -113,7 +113,6 @@ class WishlistForm(FlaskForm):
                                 }))
 
     authors = StringField('authors',
-                          validators=[DataRequired()],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Authors'}))
     title = StringField('title',
