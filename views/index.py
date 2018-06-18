@@ -144,6 +144,15 @@ def registration():
 @library.route('/search', methods=['GET'])
 def search():
 
+    from tests.populate import populate_magazines, populate_books, populate_authors
+
+    # authors = populate_authors(5)
+    # books = populate_books(authors=authors)
+    # magazine = populate_magazines()
+    # for i in [authors, books, magazine]:
+    #     db.session.add_all(i)
+    # db.session.commit()
+
     try:
         user = User.query.get(session['id'])
         admin = user.has_role('ADMIN')
@@ -155,36 +164,46 @@ def search():
     if request.method == 'GET':
         try:
             page = request.args.get('page', 1, type=int)
-            paginate_books = Book.query.order_by(
-                                    Book.original_title.asc()).paginate(
+            paginate_query = LibraryItem.query.order_by(
+                                    LibraryItem.title.asc()).paginate(
                                     page, 10, False)
-            next_url = (url_for('library.search', page=paginate_books.next_num)
-                        if paginate_books.has_next else None)
-            prev_url = (url_for('library.search', page=paginate_books.prev_num)
-                        if paginate_books.has_prev else None)
+            next_url = (url_for('library.search', page=paginate_query.next_num)
+                        if paginate_query.has_next else None)
+            prev_url = (url_for('library.search', page=paginate_query.prev_num)
+                        if paginate_query.has_prev else None)
 
         except TimeoutError:
             return abort(500)
 
-        books = []
-        for book in paginate_books.items:
-            book_data = []
-            book_data.append(book.id)
-            book_data.append(book.original_title)
-            book_data.append(book.authors_string.split(', '))
-            book_data[2].sort()
-            books.append(book_data)
+        library_query = []
+        for library_item in paginate_query.items:
+            if library_item.type == 'magazine':
+                magazine_data = []
+                magazine_data.append(library_item.id)
+                magazine_data.append(library_item.type)
+                magazine_data.append(library_item.title)
+                magazine_data.append(library_item.issue)
+                library_query.append(magazine_data)
+
+            elif library_item.type == 'book':
+                book_data = []
+                book_data.append(library_item.id)
+                book_data.append(library_item.type)
+                book_data.append(library_item.original_title)
+                book_data.append(library_item.authors_string.split(', '))
+                book_data[3].sort()
+                library_query.append(book_data)
 
         return render_template('search.html',
                                title='Search',
-                               books=books,
+                               all_query=library_query,
                                next_url=next_url,
                                prev_url=prev_url,
                                admin=admin)
     else:
         return abort(405)
 
-
+# basic skeleton of view for author detail
 @library.route('/author/<author_name>', methods=['GET', 'POST'])
 def author_description(author_name):
 

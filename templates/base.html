@@ -54,8 +54,8 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
-<script type="text/javascript" src="/static/js/search.min.js"></script>
-<script type="text/javascript" src="/static/js/search_wish.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/search.min.js') }} "></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/search_wish.min.js') }} "></script>
 {% endblock %}
 </body>
 </html>
