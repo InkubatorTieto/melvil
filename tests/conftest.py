@@ -12,7 +12,6 @@ from app import mail as _mail
 from forms.book import BookForm
 from models import User, Book, Magazine, Copy
 
-
 g = Generic('en')
 
 
@@ -106,7 +105,6 @@ def password_generator(chars=string.ascii_letters):
 
 @pytest.fixture(scope='module')
 def user(app):
-
     data = {
         'email': g.person.email(),
         'first_name': g.person.name(),
@@ -167,11 +165,14 @@ def view_book(session, client):
     languages = ['polish', 'english', 'other']
     categories = ['developers', 'managers',
                   'magazines', 'other']
+    typee = ['book', 'magazine']
 
     form = BookForm(
+        radio=choice(typee),
         first_name=g.person.name(),
         surname=g.person.surname(),
         title=' '.join(g.text.title().split(' ')[:5]),
+        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
         table_of_contents=g.text.sentence(),
         language=choice(languages),
         category=choice(categories),
@@ -180,7 +181,8 @@ def view_book(session, client):
         isbn=str(1861972717),
         original_title=' '.join(g.text.title().split(' ')[:5]),
         publisher=g.business.company(),
-        pub_date=str(randint(1970, 2018))
+        pub_date=str(randint(1970, 2018)),
+        issue=g.text.words(1)
     )
 
     yield form
