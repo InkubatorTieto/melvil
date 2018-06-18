@@ -16,18 +16,15 @@ def test_add_book(view_book, client):
 
     author = Author.query.filter_by(first_name=view_book.first_name.data,
                                     last_name=view_book.surname.data).first()
-
     if not author:
         assert False, "Data validation failed"
-
-    assert view_book.first_name.data == author.first_name \
-           and view_book.surname.data == author.last_name, \
+    assert view_book.first_name.data == author.first_name and view_book. \
+        surname.data == author.last_name, \
         "First and last name of the first author is not" \
         " the same as given at the entrance"
 
     book = Book.query.filter_by(title=view_book.title.data,
                                 isbn=view_book.isbn.data).first()
-
     if not book:
         assert False, "Data validation failed"
     assert view_book.title.data == book.title, \
@@ -73,7 +70,6 @@ def test_add_magazine(view_book, client):
 
     magazine = Magazine.query.filter_by(title=view_book.title_of_magazine.data,
                                         issue=view_book.issue.data[0]).first()
-
     if not magazine:
         assert False, "Data validation failed"
     assert view_book.title_of_magazine.data == magazine.title, \
@@ -96,7 +92,6 @@ def test_add_magazine(view_book, client):
     tag = Tag.query.filter_by(name=view_book.tag.data[0]).first()
     if not tag:
         assert False, "Data validation failed"
-
     assert tag.name in view_book.tag.data, \
         "Tags ane not the same"
 

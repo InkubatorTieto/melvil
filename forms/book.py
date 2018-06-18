@@ -43,7 +43,8 @@ class BookForm(FlaskForm):
                                                 Length(3)],
                                     render_kw=({'class': 'inputs',
                                                 'id': 'title_of_magazine',
-                                                'placeholder': 'Title of magazine',
+                                                'placeholder':
+                                                    'Title of magazine',
                                                 'disabled': True}))
 
     table_of_contents = TextAreaField('Table of contents',

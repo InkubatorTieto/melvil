@@ -42,7 +42,8 @@ def add_book():
                 for first_name, surname in tmp_authors:
                     if first_name is not '' and surname is not '':
                         author = Author.query.filter_by(first_name=first_name,
-                                                        last_name=surname).first()
+                                                        last_name=surname
+                                                        ).first()
                         if not author:
                             new_author = Author(
                                 first_name=first_name,
