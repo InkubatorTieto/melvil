@@ -6,7 +6,7 @@ from init_db import db
 
 class Copy(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    asset_code = db.Column(db.String(8), unique=True, nullable=False)
+    asset_code = db.Column(db.String(8), unique=True)
     library_item_id = db.Column(db.Integer,
                                 db.ForeignKey('library_item.id'),
                                 nullable=False)
