@@ -16,7 +16,7 @@ def test_add_get_status_code(client, db_book):
 def test_add_post_nothing_status_code(client, db_book):
     resp = client.post(url_for('library.add_copy',
                                item_id=db_book.id))
-    assert resp.status_code == 200, \
+    assert resp.status_code == 302, \
         "Add_copy POST view wrong response"
 
 
@@ -88,7 +88,7 @@ def test_edit_get_status_code(client, db_copies):
 def test_edit_post_nothing_status_code(client, db_copies):
     resp = client.post(url_for('library.edit_copy',
                                copy_id=db_copies[0].id))
-    assert resp.status_code == 200, \
+    assert resp.status_code == 302, \
         "Edit_copy POST view wrong response"
 
 
