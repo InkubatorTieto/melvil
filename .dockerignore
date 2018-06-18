@@ -1,0 +1,7 @@
+.git
+__pycache__
+Procfile.windows
+.gitignore
+.pytest_cache/
+*.md
+*.pyc
