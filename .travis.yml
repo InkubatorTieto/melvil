@@ -8,7 +8,6 @@ services:
   - docker
 install:
   - pip install -r requirements.txt
-# command to run tests
 before_script:
 # Let's stop postgresql
   - sudo service postgresql stop
