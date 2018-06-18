@@ -12,4 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Adding book view without test
 - Addd custom validators for evry field in add book view
 - Fix bug - Eliminate bug with already registered user registration handling
-
+- add radio field to chose book or magazine
+- add specific fields for magazines
+- add script in JS to disable/enable and hide/show fields
+- add test for adding magazine
