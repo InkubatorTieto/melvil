@@ -125,39 +125,33 @@ class BookForm(FlaskForm):
     first_name = StringField('First name',
                              validators=[check_author],
                              render_kw=({'class': 'inputs',
-                                         # 'id': 'author',
                                          'placeholder': 'First Name',
                                          'disabled': True}))
     surname = StringField('Surname',
                           validators=[check_author],
                           render_kw=({'class': 'inputs',
-                                      # 'id': 'author',
                                       'placeholder': 'Surname',
                                       'disabled': True}))
 
     first_name_1 = StringField('First_name_1',
                                validators=[check_author],
                                render_kw=({'class': 'inputs',
-                                           # 'id': 'author',
                                            'placeholder': 'First Name 1',
                                            'disabled': True}))
     surname_1 = StringField('Surname_1',
                             validators=[check_author],
                             render_kw=({'class': 'inputs',
-                                        # 'id': 'author',
                                         'placeholder': 'Surname 1',
                                         'disabled': True}))
 
     first_name_2 = StringField('First name 2',
                                validators=[check_author],
                                render_kw=({'class': 'inputs',
-                                           # 'id': 'author',
                                            'placeholder': 'First Name 2',
                                            'disabled': True}))
     surname_2 = StringField('Surname 2',
                             validators=[check_author],
                             render_kw=({'class': 'inputs',
-                                        # 'id': 'author',
                                         'placeholder': 'Surname 2',
                                         'disabled': True}))
 
