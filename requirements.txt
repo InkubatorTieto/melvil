@@ -6,8 +6,8 @@ flask-login
 flask_mail==0.9.1
 Flask-Session
 Flask-SQLAlchemy==2.3.1
+Flask-User
 flask-wtf
-flask-user<0.7
 gunicorn==19.8.1
 itsdangerous==0.24
 Jinja2==2.10
