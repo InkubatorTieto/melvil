@@ -20,15 +20,11 @@
     display: none;
 }
 
-#reserv_reserv{
-    text-decoration = underline;
+#reserv_button{
+    text-decoration : underline;
 }
-#booked_button{
-    text-decoration = none;
-}
-
 
 .booking_dashboard td, .booking_dashboard th{
-    min-width: 100px;
+    min-width: 150px;
 }
 

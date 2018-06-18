@@ -1,24 +1,24 @@
     function reserved_books() {
-        document.getElementById("booked_table").style.display = "none";
-        document.getElementById("reserved_table").style.display = "block";
-        document.getElementById("reserv_button").style.textDecoration = "underline";
-        document.getElementById("booked_button").style.textDecoration = "none";
+        $("#booked_table").css('display', 'none');
+        $("#reserved_table").css('display', 'block');
+        $("#reserv_button").css('text-decoration', 'underline');
+        $("#booked_button").css('text-decoration', 'none');
     }
     function booked_books() {
-        document.getElementById("reserved_table").style.display = "none";
-        document.getElementById("booked_table").style.display = "block";
-        document.getElementById("reserv_button").style.textDecoration = "none";
-        document.getElementById("booked_button").style.textDecoration = "underline";
+        $("#reserved_table").css('display', 'none');
+        $("#booked_table").css('display', 'block');
+        $("#booked_button").css('text-decoration', 'underline');
+        $("#reserv_button").css('text-decoration', 'none');
     }
 
-    window.onload = function() {
-        var reservationButton = document.getElementById("reserv_button");
-        var bookingButton = document.getElementById("booked_button");
+    $( document ).ready(function(){
+        var reservationButton = $("#reserv_button");
+        var bookingButton = $("#booked_button");
 
         if (reservationButton){
-            reservationButton.addEventListener("click", reserved_books);
+            reservationButton.on("click", reserved_books);
         }
         if (bookingButton){
-            bookingButton.addEventListener("click", booked_books);
+            bookingButton.on("click", booked_books);
         }
-     }
+     });
