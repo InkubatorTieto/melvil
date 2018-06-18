@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authentication.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
+
     {% block head %}
         <title> Melvil library - {% block title %}{% endblock %}</title>
     {% endblock %}
@@ -30,8 +31,25 @@
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
                     {{ nav_button('add_book', 'library_books.add_book', 'Add new book' ) }}
                     {% if session['id'] %}
-                        {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                         {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
+                        <div class="dropdown">
+                           <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" style="float:right;" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                           </button>
+                           <m-2 class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                               <li class="dropdown-header"><i class="fas fa-user-circle"></i><td><strong>  Your Status:</strong> signed in</td>
+                                    <div class="col-sm-2">
+                                        <td><strong>Email:</strong> {{session.email}}</td>
+                                        <td> </td>
+                                    </div>
+                               </li>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item disabled" href="#"><i class="fas fa-user-edit"></i>Edit your profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item disabled" href="http://localhost:5000/logout"><i class="fas fa-power-off"></i>Logout</a>
+                           </div>
+                        </div>
                     {% else %}
                         {{ nav_button('login', 'library.login', 'Login' ) }}
                         {{ nav_button('registration', 'library.registration', 'New User?' ) }}
@@ -56,6 +74,8 @@
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
 <script type="text/javascript" src="/static/js/search.min.js"></script>
 <script type="text/javascript" src="/static/js/search_wish.min.js"></script>
+<script type="text/javascript" src="/static/js/tooltip_wish.js"></script>
+<script type="text/javascript" src="/static/js/logout.js"></script>
 {% endblock %}
 </body>
 </html>

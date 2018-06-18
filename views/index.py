@@ -14,7 +14,7 @@ from flask import (
     render_template,
     request,
     session,
-    url_for
+    url_for,
 )
 
 from config import DevConfig
@@ -75,7 +75,10 @@ def login():
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
-                    return render_template('index.html', session=session)
+                    info = 'Email:'
+                    return render_template('index.html',
+                                           session=session,
+                                           info=info)
                 else:
                     message_body = 'Login failed or ' \
                                    'your account is not activated'
