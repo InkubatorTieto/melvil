@@ -315,13 +315,28 @@ def reserve(copy_id):
                 user_id=session['id'],
                 book_status=BookStatus.RESERVED,
                 reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
+                reservation_end=datetime.now(tz=pytz.utc) + timedelta(minutes=2)
             )
             db.session.add(res)
             db.session.commit()
             flash('pick up the book within two days!', 'Resevation done!')
         except IntegrityError:
             abort(500)
+    return redirect(url_for('library.index'))
+
+
+@library.route('/check_reservation_status_db')
+def check_reservation_status_db():
+    current_time = datetime.now(tz=pytz.utc)
+    db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .filter(RentalLog.reservation_end < current_time)\
+        .update({RentalLog.book_status: BookStatus.RETURNED})
+    db.session.query(Copy)\
+        .filter(Copy.available_status == False)\
+        .update({Copy.available_status: True})
+    db.session.commit()
+
     return redirect(url_for('library.index'))
 
 

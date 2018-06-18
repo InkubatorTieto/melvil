@@ -63,18 +63,4 @@ def load_xls_into_db():
 app.cli.add_command(load_xls_into_db)
 
 
-@app.cli.command(with_appcontext=True)
-def clear_reservation_status_db():
-    with app.app_context():
-        db.session.query()\
-            .filter(RentalLog.book_status == BookStatus.RESERVED)\
-            .filter(RentalLog.reservation_end > datetime.now(tz=pytz.utc))\
-            .update({RentalLog.book_status: BookStatus.RETURNED})\
-            .update({Copy.available_status: True})
-        db.session.commit()
-
-
-app.cli.add_command(clear_reservation_status_db)
-
-
 create_app(DevConfig)
