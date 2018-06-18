@@ -40,8 +40,7 @@ def test_login_decorators(login):
 @pytest.mark.parametrize('redirect_page', ['library.index'])
 def test_login_decorators_custom_redirect(
         login,
-        redirect_page
-        ):
+        redirect_page):
 
     session['logged_in'] = login
 
@@ -69,8 +68,7 @@ def test_login_decorators_custom_redirect(
 def test_role_decorator(
         role,
         required_role,
-        db_user
-        ):
+        db_user):
 
     if role == 'ADMIN':
 
@@ -102,8 +100,7 @@ def test_role_decorator_custom_redirect(
         role,
         required_role,
         redirect_page,
-        db_user
-        ):
+        db_user):
 
     if role == 'ADMIN':
 

@@ -22,6 +22,7 @@ class DevConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_POOL_TIMEOUT = 30
     DEBUG = True
+    TESTING = True
     DB_ENGINE = getenv('DB_ENGINE')
     DB_USER = getenv('DB_USER')
     DB_PASSWORD = getenv('DB_PASSWORD')
