@@ -5,9 +5,14 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/item_description.css') }}">
 {% endblock %}
 {% block content %}
-    {% from "macros.html" import table_row, copy_info_row with context %}
+    {% from "macros.html" import table_row, copy_info_row, flashed_message with context %}
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
         <main role="main" class="inner cover">
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {{ flashed_message(messages) }}
+                {% endwith %}
+            </div>
             <div class="container my_container">
                 <div class="row">
                     <div class="col-md-12">
@@ -27,7 +32,8 @@
                                     {{ table_row('Publication date', item.pub_date) }}
                                     {{ table_row('Publisher', item.publisher) }}
                                 {% else %}
-                                    <p class="error-info"> There occurred some problems with loading library item. </p>
+                                    <p class="error-info"> There occurred some problems with loading library
+                                        item. </p>
                                 {% endif %}
 
                                 {{ table_row('Language', item.language) }}
@@ -47,7 +53,7 @@
                             {% if admin %}
                                 <div class="item-buttons">
                                     <a type="button" role="button" class="btn btn-success btn-sm"
-                                       href="#">Add Copy</a>
+                                       href="{{ url_for( 'library.add_copy', item_id=item.id ) }}">Add Copy</a>
                                     <a type="button" role="button" class="btn btn-primary btn-sm"
                                        href="#">Edit {{ item.type|capitalize }}</a>
                                     <a type="button" role="button" class="btn btn-danger btn-sm"
@@ -76,7 +82,7 @@
                                             {% if admin %}
                                                 <td class="table-button">
                                                     <a type="button" role="button" class="btn btn-primary btn-sm"
-                                                       href="#">Edit</a>
+                                                       href="{{ url_for( 'library.edit_copy', copy_id=copy.id ) }}">Edit</a>
                                                 </td>
                                                 {% if copy.asset_code %}
                                                 <td class="table-button">
