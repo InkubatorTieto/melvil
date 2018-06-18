@@ -6,6 +6,10 @@ from flask_wtf import FlaskForm
 
 from models import Copy
 
+""" Regex return True for assets like "wr123456".
+General template:
+two letters (letter case does not matter) + six digits
+"""
 asset_code_regex = Regexp('^[A-Z]{2}[0-9]{6}$',
                           flags=re.IGNORECASE,
                           message='Insert valid asset code.')
