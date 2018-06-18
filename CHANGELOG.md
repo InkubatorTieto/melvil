@@ -13,3 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Addd custom validators for evry field in add book view
 - Fix bug - Eliminate bug with already registered user registration handling
 
+[0.0.1] - 2018-06-11
+###Added
+- Added button that user is logged or not
+- Added different options for logged out or logged in user, redirecting to the right page
