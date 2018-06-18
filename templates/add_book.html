@@ -68,58 +68,6 @@
                 </div>
 
 
-<!-- Dynamiczny formularz który nie działa -->
-                    <!--<br>-->
-                         <!--&lt;!&ndash;### DYNAMIC FORMS ###&ndash;&gt;-->
-                    <!--<div class="form-group dynamic-element" style="display:none">-->
-                        <!--<div class="row">-->
-                            <!--<div class="col-md-2"></div>-->
-
-                            <!--&lt;!&ndash; Replace these fields &ndash;&gt;-->
-                            <!--<div class="row">-->
-                                <!--<div class="col">-->
-                                    <!--{{ input( form.first_name, error['first_name']) }}-->
-                                <!--</div>-->
-                                <!--<div class="col">-->
-                                    <!--{{ input( form.surname, error['surname']) }}-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--&lt;!&ndash; End of fields&ndash;&gt;-->
-                            <!--<div class="col-md-1">-->
-                                <!--<p class="delete">x</p>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--&lt;!&ndash; END OF HIDDEN ELEMENT &ndash;&gt;-->
-
-                    <!--<div class="form-container">-->
-                        <!--<form class="form-horizontal">-->
-                            <!--<fieldset>-->
-                                <!--&lt;!&ndash; Form Name &ndash;&gt;-->
-                                <!--<legend class="title" id="myText">Autorzy:</legend>-->
-
-                                <!--<div class="dynamic-stuff">-->
-                                    <!--&lt;!&ndash; Dynamic element will be cloned here &ndash;&gt;-->
-                                    <!--&lt;!&ndash; You can call clone function once if you want it to show it a first element&ndash;&gt;-->
-                                <!--</div>-->
-
-                                <!--&lt;!&ndash; Button &ndash;&gt;-->
-                                <!--<div class="form-group">-->
-                                    <!--<div class="row">-->
-                                        <!--<div class="col-md-12">-->
-                                            <!--<p class="add-one" id="myText">+ Dodaj autora</p>-->
-                                        <!--</div>-->
-
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</fieldset>-->
-                        <!--</form>-->
-                    <!--</div>-->
-                     <!--&lt;!&ndash;### END OF DYNAMIC FORMS ###&ndash;&gt;-->
-
-
-
-
                     <div class="row">
                         <div class="col">
                             <br>
@@ -161,50 +109,4 @@
         </form>
     </main>
 </div>
-{% endblock %}
-
-{% block scripts %}
-
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <!--<script>-->
-
-        <!--$(function() {-->
-            <!--$(".dtpick").datepicker({-->
-                <!--onSelect: function (selectedDate) {-->
-                    <!--$("input[name='pub_date']").val(selectedDate);-->
-                    <!--$('#pub_date').val();-->
-                    <!--console.log(selectedDate);-->
-                <!--}-->
-
-            <!--});-->
-
-        <!--});-->
-    <!--</script>-->
-
-
-<!-- Skrypt do dynamicznych formularzy-->
-    <script>
-
-        //Clone the hidden element and shows it
-        $('.add-one').click(function(){
-            $('.dynamic-element').first().clone().appendTo('.dynamic-stuff').show();
-
-          attach_delete();
-        });
-
-
-
-
-        //Attach functionality to delete buttons
-        function attach_delete(){
-          $('.delete').off();
-          $('.delete').click(function(){
-            console.log("click");
-            $(this).closest('.form-group').remove();
-          });
-        }
-    </script>
-
-
 {% endblock %}
