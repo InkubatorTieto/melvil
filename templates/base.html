@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authentication.css') }}/">
@@ -30,6 +31,19 @@
                     {{ nav_button('search', 'library.search', 'Search' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
                     {{ nav_button('add_book', 'library_books.add_book', 'Add new book' ) }}
+                        <div class="dropdown">
+                           <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" style="float:right;" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                           </button>
+                           <m-2 class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                               <li class="dropdown-header"><i class="fas fa-user-circle"></i><td><strong>  Your Status:</strong> signed out</td>
+                               </li>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item disabled" href="http://localhost:5000/login"><i class="fa fa-sign-in"></i> Login</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item disabled" href="http://localhost:5000/registration"><i class="fa fa-id-card"></i> New User?</a>
+                           </div>
+                        </div>
                     {% if session['id'] %}
                         {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
                         <div class="dropdown">
@@ -50,9 +64,6 @@
                                 <a class="dropdown-item disabled" href="http://localhost:5000/logout"><i class="fas fa-power-off"></i>Logout</a>
                            </div>
                         </div>
-                    {% else %}
-                        {{ nav_button('login', 'library.login', 'Login' ) }}
-                        {{ nav_button('registration', 'library.registration', 'New User?' ) }}
                     {% endif %}
                 </nav>
             </div>
