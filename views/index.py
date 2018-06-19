@@ -315,7 +315,7 @@ def reserve(copy_id):
                 user_id=session['id'],
                 book_status=BookStatus.RESERVED,
                 reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(tz=pytz.utc)+timedelta(minutes=2)
+                reservation_end=datetime.now(tz=pytz.utc) + timedelta(minutes=2)
             )
             db.session.add(res)
             db.session.commit()
@@ -329,11 +329,11 @@ def reserve(copy_id):
 def check_reservation_status_db():
     db.session.query(RentalLog)\
         .filter(RentalLog.book_status == BookStatus.RESERVED)\
-        .filter(RentalLog._reservation_end > datetime.now(tz=pytz.utc))\
+        .filter(RentalLog._reservation_end < datetime.now(tz=pytz.utc))\
         .update({RentalLog.book_status: BookStatus.RETURNED})
-    db.session.query(Copy)\
-        .filter(Copy.available_status == False)\
-        .update({Copy.available_status: True})
+    # db.session.query(Copy)\
+    #     .filter(BookStatus.RETURNED Copy.available_status == False)\
+    #     .update({Copy.available_status: True})
     db.session.commit()
     return "OK"
 
