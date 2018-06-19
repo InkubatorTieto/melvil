@@ -9,8 +9,10 @@ from sqlalchemy import event
 from app import create_app
 from app import db as _db
 from app import mail as _mail
+from forms.forms import SearchForm
 from forms.book import BookForm
-from models import User, Book, Magazine, Copy
+from models import User, Book, Magazine, Copy, LibraryItem
+from tests.populate import populate_authors, populate_books, populate_magazines
 
 
 g = Generic('en')
@@ -234,3 +236,38 @@ def app_session(client, db_user):
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
         return app_session
+
+
+@pytest.fixture(scope="function")
+def search_form(session, client):
+    """
+    Form for searching for an item in library.search view
+    """
+    form = SearchForm(query=g.text.word())
+    yield form
+
+
+@pytest.fixture(scope="function")
+def search_query(session, client):
+    """
+    Create db entries for books and magazines
+    """
+    authors = populate_authors(n=5)
+    books = populate_books(authors=authors)
+    magazines = populate_magazines()
+
+    for i in [authors, books, magazines]:
+        session.add_all(i)
+
+    session.commit()
+
+    yield (books, magazines)
+
+
+@pytest.fixture(scope="function")
+def get_title(session, client, search_query):
+    """
+    Get title of item in Library
+    """
+    item = LibraryItem.query.first()
+    yield item
