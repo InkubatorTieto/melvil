@@ -11,7 +11,8 @@ from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
 from models import User, Book, Magazine, Copy, WishListItem
-
+from forms.copy import CopyAddForm, CopyEditForm
+from models import User, Book, Magazine, Copy
 
 g = Generic('en')
 
@@ -106,7 +107,6 @@ def password_generator(chars=string.ascii_letters):
 
 @pytest.fixture(scope='module')
 def user(app):
-
     data = {
         'email': g.person.email(),
         'first_name': g.person.name(),
@@ -184,6 +184,24 @@ def view_book(session, client):
     )
 
     yield form
+
+
+@pytest.fixture(scope="function")
+def copy_form(session, client):
+    form_add = CopyAddForm(
+        asset_code='wr109100',
+        has_cd_disk=True,
+        shelf='shelf_one'
+    )
+
+    form_edit = CopyEditForm(
+        asset_code='ab109100',
+        has_cd_disk=True,
+        available_status=True,
+        shelf='shelf_two'
+    )
+
+    yield (form_add, form_edit)
 
 
 @pytest.fixture(scope="function")
