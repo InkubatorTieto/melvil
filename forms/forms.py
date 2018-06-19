@@ -103,7 +103,7 @@ class PasswordForm(FlaskForm):
 
 class WishlistForm(FlaskForm):
     type = SelectField('Item Type',
-                       choices=[('book', 'book'), ('magazine', 'magazine')],
+                       choices=[('book', 'Book'), ('magazine', 'Magazine')],
                        render_kw=({
                            'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
                            'id': 'mySelect'}))

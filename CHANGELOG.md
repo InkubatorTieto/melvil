@@ -13,3 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Addd custom validators for evry field in add book view
 - Fix bug - Eliminate bug with already registered user registration handling
 
+##[0.0.1] - 2018.06.11
+### Added
+- Magazine option in add wish view
+- Icons of book and magazine in wish list view
+- Like button click without reloading page
+- Tests for wish list
+- Popover with info about wish list
+

@@ -58,7 +58,6 @@ form {
     margin-bottom: 5px;
     color: rgba(255, 255, 255, 1);
     outline: 0;
-
 }
 
 .message {
@@ -112,9 +111,3 @@ form.login .form_errors {
     font-weight: 400;
     color: rgba(255, 26, 26, 1);
 }
-
-
-
-
-
-

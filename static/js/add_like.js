@@ -7,12 +7,11 @@ $(document).on('click', '[id^="addLike_"]', function() {
             wish_id: wish_id,
         },
         success: function(response, data) {
-            console.log(response);
             var obj = JSON.parse(response);
             $("#likes_"+wish_id).html(obj.num_of_likes);
         },
         error: function(error) {
-            console.log(error);
+            alert("Oops, your like can't be added");
         }
     });
 });

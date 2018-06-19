@@ -11,13 +11,13 @@
                     </button>
                              <br>
                                <p class="form-title">Create new wish</p>
-                                   <form class="wishlist" action="" method="post">
+                                   <form class="wishlist_add" action="" method="post">
                                        {{ form.hidden_tag() }}
-                                       <label style="color:white;font-style:italic;font-size:12px;">{{form.type.label}}</label>
+                                       <label>{{form.type.label}}</label>
                                        {{ input( form.type, error['type'])}}
                                        {{ input( form.authors, error['authors'])}}
                                        {{ input( form.title, error['title'] ) }}
-                                       <label style="color:white;font-style:italic;font-size:12px;">Publication year</label>
+                                       <label>Publication year</label>
                                        {{ input(form.pub_date, error['pub_date'])}}
                                        {{ form.add }}
                                    </form>

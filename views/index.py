@@ -45,8 +45,6 @@ library = Blueprint('library', __name__,
 
 @library.route('/')
 def index():
-    # db.drop_all()
-    # db.session.commit()
     return render_template('index.html')
 
 
