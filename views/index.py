@@ -315,7 +315,7 @@ def reserve(copy_id):
                 user_id=session['id'],
                 book_status=BookStatus.RESERVED,
                 reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(tz=pytz.utc) + timedelta(minutes=2)
+                reservation_end=datetime.now(tz=pytz.utc)+timedelta(minutes=2)
             )
             db.session.add(res)
             db.session.commit()
@@ -327,7 +327,6 @@ def reserve(copy_id):
 
 @library.route('/check_reservation_status_db')
 def check_reservation_status_db():
-    current_time = datetime.now(tz=pytz.utc)
     db.session.query(RentalLog)\
         .filter(RentalLog.book_status == BookStatus.RESERVED)\
         .filter(RentalLog._reservation_end > datetime.now(tz=pytz.utc))\

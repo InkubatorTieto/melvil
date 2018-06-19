@@ -12,10 +12,6 @@ from init_db import db, ma
 from views.index import library
 from views.book import library_books
 from xlsx_reader import get_books, get_magazines
-from models.library import RentalLog, Copy, BookStatus
-from datetime import datetime
-import pytz
-
 
 
 mail = Mail()
