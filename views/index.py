@@ -352,9 +352,9 @@ def remove_item(item_id):
                            admin=admin)
 
 
-@library.route('/remove_copy/<int:item_id>/<string:asset_code>',
+@library.route('/remove_copy/<int:item_id>/<int:copy_id>',
                methods=['GET', 'POST'])
-def remove_copy(item_id, asset_code):
+def remove_copy(item_id, copy_id):
     try:
         user = User.query.get(session['id'])
         admin = user.has_role('ADMIN')
@@ -364,7 +364,7 @@ def remove_copy(item_id, asset_code):
         abort(500)
     form = RemoveForm()
     item = LibraryItem.query.get_or_404(item_id)
-    copy = Copy.query.filter_by(asset_code=asset_code).first_or_404()
+    copy = Copy.query.filter_by(id=copy_id).first_or_404()
     authors_list = []
     if item.type == "book":
         authors_list = item.authors_string
@@ -423,13 +423,13 @@ def add_like(wish_id):
 
 @library.route('/item_description/<int:item_id>')
 def item_description(item_id):
-    try:
-        user = User.query.get(session['id'])
-        admin = user.has_role('ADMIN')
-    except KeyError:
-        abort(401)
-    except Exception:
-        abort(500)
+    # try:
+    #     user = User.query.get(session['id'])
+    #     admin = user.has_role('ADMIN')
+    # except KeyError:
+    #     abort(401)
+    # except Exception:
+    #     abort(500)
     item = LibraryItem.query.get_or_404(item_id)
     tags_list = item.tags_string
 
@@ -440,8 +440,8 @@ def item_description(item_id):
     return render_template('item_description.html',
                            item=item,
                            tags_list=tags_list,
-                           authors_list=authors_list,
-                           admin=admin)
+                           authors_list=authors_list)
+                           # admin=admin)
 
 
 @library.route('/add_copy/<int:item_id>', methods=['GET', 'POST'])

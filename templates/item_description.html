@@ -84,16 +84,10 @@
                                                     <a type="button" role="button" class="btn btn-primary btn-sm"
                                                        href="{{ url_for( 'library.edit_copy', copy_id=copy.id ) }}">Edit</a>
                                                 </td>
-                                                {% if copy.asset_code %}
                                                 <td class="table-button">
                                                     <a type="button" role="button" class="btn btn-danger btn-sm"
-                                                       href="{{ url_for('library.remove_copy',item_id=item.id, asset_code=copy.asset_code)}}">Delete</a>
+                                                       href="{{ url_for('library.remove_copy', item_id=item.id, copy_id=copy.id)}}">Delete</a>
                                                 </td>
-                                                {% else %}
-                                             <td class="table-button">
-                                                    <a type="button" role="button" class="btn btn-danger btn-sm"
-                                                       href="{{ url_for('library.remove_item',item_id=item.id)}}">Delete</a>
-                                                 {% endif %}
                                             {% endif %}
                                         </tr>
                                     {% endfor %}
