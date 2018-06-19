@@ -19,6 +19,7 @@ from flask import (
 
 from config import DevConfig
 from forms.copy import CopyAddForm, CopyEditForm
+from forms.edit_profile import EditProfileForm
 from forms.forms import (
     ContactForm,
     ForgotPass,
@@ -437,6 +438,30 @@ def edit_copy(copy_id):
                            form=form,
                            error=form.errors,
                            action='Edit')
+
+
+@library.route('/edit_profile/', methods=['GET', 'POST'])
+def edit_profile():     #TODO: id of the user
+    # user = User.query.get(session['id'])
+    form = EditProfileForm()
+    # if form.validate_on_submit():
+    #
+    #     user.first_name = form.first_name.data
+    #     user.surname = form.surname.data
+    #     user.email = form.email.data
+    #     db.session.commit()
+
+    # try:
+    #     user = User.query.get(session['id'])
+    #     admin = user.has_role('ADMIN')
+    # except KeyError:
+    #     abort(401)
+    # except Exception:
+    #     abort(500)
+    # user = User.query.get_or_404(user_id)
+
+    return render_template('edit_profile.html',
+                           form=form)
 
 
 @library.errorhandler(401)
