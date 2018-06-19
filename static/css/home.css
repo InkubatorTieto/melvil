@@ -94,10 +94,9 @@ btn-outline-dark {
 }
 
 .dropdown-item.active, .dropdown-item:active {
-    color: #fff;
+    color: #000000;
     text-decoration: none;
-    background-color: #002458;
-    border-radius: 15px;
+    background-color: transparent;
 }
 
 .dropdown-menu.show {

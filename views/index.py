@@ -75,10 +75,8 @@ def login():
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
-                    info = 'Email:'
                     return render_template('index.html',
-                                           session=session,
-                                           info=info)
+                                           session=session)
                 else:
                     message_body = 'Login failed or ' \
                                    'your account is not activated'
