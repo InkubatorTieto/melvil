@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy import and_, exc
+from sqlalchemy import exc, func
 from sqlalchemy.exc import IntegrityError, TimeoutError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -24,13 +24,13 @@ from forms.forms import (
     LoginForm,
     PasswordForm,
     RegistrationForm,
+    SearchForm,
     WishlistForm
 )
 from init_db import db
 from messages import ErrorMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
-from models.books import Author, Book
 from models.users import User
 from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
@@ -141,17 +141,8 @@ def registration():
                                message_body=message_body)
 
 
-@library.route('/search', methods=['GET'])
+@library.route('/search', methods=['GET', 'POST'])
 def search():
-
-    from tests.populate import populate_magazines, populate_books, populate_authors
-
-    # authors = populate_authors(5)
-    # books = populate_books(authors=authors)
-    # magazine = populate_magazines()
-    # for i in [authors, books, magazine]:
-    #     db.session.add_all(i)
-    # db.session.commit()
 
     try:
         user = User.query.get(session['id'])
@@ -162,66 +153,62 @@ def search():
         abort(500)
 
     if request.method == 'GET':
+        form = SearchForm()
         try:
-            page = request.args.get('page', 1, type=int)
-            paginate_query = LibraryItem.query.order_by(
-                                    LibraryItem.title.asc()).paginate(
-                                    page, 10, False)
-            next_url = (url_for('library.search', page=paginate_query.next_num)
-                        if paginate_query.has_next else None)
-            prev_url = (url_for('library.search', page=paginate_query.prev_num)
-                        if paginate_query.has_prev else None)
+            if request.args.get('query') is None:
+
+                page = request.args.get('page', 1, type=int)
+                paginate_query = LibraryItem.query.order_by(
+                                    LibraryItem.title.asc()
+                                        ).paginate(page, 10, False)
+
+                next_url = (url_for(
+                                    'library.search',
+                                    page=paginate_query.next_num)
+                            if paginate_query.has_next else None)
+                prev_url = (url_for(
+                                    'library.search',
+                                    page=paginate_query.prev_num)
+                            if paginate_query.has_prev else None)
+
+            else:
+
+                q_param = request.args.get('query',)
+                page = request.args.get('page', 1, type=int)
+                paginate_query = (
+                    LibraryItem.query.filter(
+                        func.lower(LibraryItem.title).like(
+                            '%{}%'.format(q_param))).paginate(page, 10, False)
+                    )
+
+                next_url = (url_for(
+                                    'library.search',
+                                    page=paginate_query.next_num)
+                            if paginate_query.has_next else None)
+                prev_url = (url_for(
+                                    'library.search',
+                                    page=paginate_query.prev_num)
+                            if paginate_query.has_prev else None)
 
         except TimeoutError:
             return abort(500)
 
-        library_query = []
-        for library_item in paginate_query.items:
-            if library_item.type == 'magazine':
-                magazine_data = []
-                magazine_data.append(library_item.id)
-                magazine_data.append(library_item.type)
-                magazine_data.append(library_item.title)
-                magazine_data.append(library_item.issue)
-                library_query.append(magazine_data)
-
-            elif library_item.type == 'book':
-                book_data = []
-                book_data.append(library_item.id)
-                book_data.append(library_item.type)
-                book_data.append(library_item.original_title)
-                book_data.append(library_item.authors_string.split(', '))
-                book_data[3].sort()
-                library_query.append(book_data)
-
         return render_template('search.html',
                                title='Search',
-                               all_query=library_query,
+                               all_query=paginate_query.items,
                                next_url=next_url,
                                prev_url=prev_url,
-                               admin=admin)
+                               admin=admin,
+                               form=form)
+
+    elif request.method == 'POST':
+        form = SearchForm()
+        if form.validate_on_submit():
+            return redirect(url_for('library.search',
+                                    query=form.query.data))
+
     else:
         return abort(405)
-
-# basic skeleton of view for author detail
-@library.route('/author/<author_name>', methods=['GET', 'POST'])
-def author_description(author_name):
-
-    try:
-        user = User.query.get(session['id'])
-        admin = user.has_role('ADMIN')
-    except KeyError:
-        abort(401)
-    except Exception:
-        abort(500)
-
-    first_name = author_name.split().pop(0)
-    last_name = author_name.split().pop()
-    author = Author.query.filter(and_(
-                                    Author.first_name.like(first_name),
-                                    Author.last_name.like(last_name))).first()
-
-    return render_template('index.html', author=author, admin=admin)
 
 
 @library.route('/contact', methods=['GET', 'POST'])
