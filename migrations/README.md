@@ -9,6 +9,7 @@ How to run database migrations:
 $ . run-server.sh migrate
 ```
 Remember to manually review and correct the candidate migration that above autogenererate produced.
+Migrations are stored in `./migrations/versions` folder.
 
 2. Apply migration to the database:
 ```CMD
