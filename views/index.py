@@ -330,15 +330,13 @@ def check_reservation_status_db():
     current_time = datetime.now(tz=pytz.utc)
     db.session.query(RentalLog)\
         .filter(RentalLog.book_status == BookStatus.RESERVED)\
-        .filter(RentalLog.reservation_end < current_time)\
+        .filter(RentalLog._reservation_end > datetime.now(tz=pytz.utc))\
         .update({RentalLog.book_status: BookStatus.RETURNED})
     db.session.query(Copy)\
         .filter(Copy.available_status == False)\
         .update({Copy.available_status: True})
     db.session.commit()
-
-    return redirect(url_for('library.index'))
-
+    return "OK"
 
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
