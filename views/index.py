@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError, TimeoutError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
+
 from flask import (
     abort,
     Blueprint,
@@ -25,7 +26,8 @@ from forms.forms import (
     LoginForm,
     PasswordForm,
     RegistrationForm,
-    WishlistForm
+    WishlistForm,
+    RemoveForm
 )
 from init_db import db
 from messages import ErrorMessage
@@ -325,12 +327,73 @@ def reserve(copy_id):
     return redirect(url_for('library.index'))
 
 
+@library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
+def remove_item(item_id):
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = RemoveForm()
+    item = LibraryItem.query.get_or_404(item_id)
+    if form.validate_on_submit():
+        db.session.delete(item)
+        db.session.commit()
+        flash('Item has been removed', 'success')
+    authors_list = []
+    if item.type == 'book':
+        authors_list = item.authors_string
+    return render_template('remove_item.html',
+                           form=form,
+                           item=item,
+                           authors_list=authors_list,
+                           admin=admin)
+
+
+@library.route('/remove_copy/<int:item_id>/<int:copy_id>',
+               methods=['GET', 'POST'])
+def remove_copy(item_id, copy_id):
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = RemoveForm()
+    item = LibraryItem.query.get_or_404(item_id)
+    copy = Copy.query.filter_by(id=copy_id).first_or_404()
+    authors_list = []
+    if item.type == "book":
+        authors_list = item.authors_string
+    if form.validate_on_submit():
+        db.session.delete(copy)
+        db.session.commit()
+        flash('Copy has been removed', 'success')
+    return render_template('remove_copy.html',
+                           form=form,
+                           item=item,
+                           copy=copy,
+                           authors_list=authors_list,
+                           admin=admin)
+
+
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
     data = db.session.query(WishListItem).all()
     wish_list_schema = WishListItemSchema(many=True)
     output = wish_list_schema.dump(data)
-    return render_template('wishlist.html', wishes=output)
+    return render_template('wishlist.html', wishes=output, admin=admin)
 
 
 @library.route('/addWish', methods=['GET', 'POST'])
@@ -362,6 +425,15 @@ def add_like(wish_id):
         try:
             Like.unlike(wish_id, user)
         except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return redirect(url_for('library.wishlist'))
+
+
+@library.route('/deleteWish/<int:wish_id>', methods=['GET', 'POST'])
+def delete_wish(wish_id):
+    try:
+        WishListItem.deleteWish(wish_id)
+    except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
     return redirect(url_for('library.wishlist'))
 

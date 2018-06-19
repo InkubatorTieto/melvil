@@ -10,6 +10,7 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
+from models import User, Book, Magazine, Copy, WishListItem
 from forms.copy import CopyAddForm, CopyEditForm
 from models import User, Book, Magazine, Copy
 
@@ -251,3 +252,21 @@ def app_session(client, db_user):
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
         return app_session
+
+
+@pytest.fixture(scope="function")
+def db_wishlist_item(session):
+    """
+    Creates and return function-scoped User database entry
+    """
+    w = WishListItem(authors=g.person.surname() + " " + g.person.name(),
+                     title=' '.join(g.text.title().split(' ')[:5]),
+                     pub_year=g.datetime.datetime()
+                     )
+    session.add(w)
+    session.commit()
+
+    yield w
+    if WishListItem.query.get(w.id):
+        session.delete(w)
+        session.commit()

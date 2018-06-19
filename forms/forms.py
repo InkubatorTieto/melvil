@@ -121,3 +121,8 @@ class WishlistForm(FlaskForm):
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
+
+
+class RemoveForm(FlaskForm):
+    submit = SubmitField('Delete',
+                         render_kw=({'class': 'btn btn-danger btn-sm'}))
