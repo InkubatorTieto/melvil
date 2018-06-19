@@ -190,7 +190,7 @@ def get_magazines(file_location):
     for i in magazines_properties:
         title = i['title']
         issue = str(i['issue'])
-        year = str(i['year'])
+        year = i['year']
         if not year:
             magazine = create_library_item(db.session, Magazine,
                                            title=title,
