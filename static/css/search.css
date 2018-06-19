@@ -9,6 +9,10 @@ a:hover {
     text-decoration: none;
 }
 
+#query {
+    padding-bottom: 5px;
+}
+
 .my_search_main {
     background: rgba(0,0,0,0.7);
     margin-top: 10px;
@@ -29,10 +33,13 @@ a:hover {
     border: 0px;
  }
 
+.col-lg-12 {
+    float: left;
+    color: white;
+}
+
 .col-lg-6 {
     float: left;
-    text-align: center;
-    vertical-align: middle;
     color: white;
 }
 
@@ -42,15 +49,11 @@ a:hover {
 
 .col-lg-5 {
     float: left;
-    text-align: center;
-    vertical-align: middle;
     color: white;
 }
 
 .col-lg-1 {
     float: left;
-    text-align: center;
-    vertical-align: middle;
     color: white;
     font-size: 20px;
     opacity: 0.7;
