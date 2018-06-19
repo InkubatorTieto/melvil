@@ -45,3 +45,9 @@ class WishListItem(db.Model):
 
     def __repr__(self):
         return '<Wish List Item {}>'.format(self.title)
+
+    @classmethod
+    def deleteWish(cls, wish_id):
+        deleteWishAdmin = WishListItem.query.get(wish_id)
+        db.session.delete(deleteWishAdmin)
+        db.session.commit()
