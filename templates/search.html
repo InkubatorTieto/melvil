@@ -6,37 +6,49 @@
     <h1>Search</h1>
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
-
-        <input class="form-control" id="bookInput" type="text" placeholder="Search...">
+        {% from "macros.html" import input with context %}
+        <form action="" method="post">
+          {{ form.hidden_tag() }}
+          {{ input(form.query) }}
+          {{ form.submit() }}
+        </form>
+        <input class="form-control" id="bookInput" type="text" placeholder="Filter results...">
           <div class="container my_search_main">
             <ul class="list-group" id="bookList">
-              {% for item in all_query %}
+              {% if all_query|length == 0 %}
                 <li class="list-group-item my_search">
-                  <div class="col-lg-5">
-                    <a href="{{ url_for('library.item_description', item_id=item[0]) }}">
-                      {{ item[2] }}
-                    </a>
+                  <div class="col-lg-12">
+                    <b>No result found!</b>
                   </div>
-                    <div class="col-lg-6">
-                      {% if item[1] == 'book' %}
-                        {% for author in item[3] %}
-                          <a href="{{ url_for('library.author_description', author_name=author) }}">
-                            {% if loop.last %}
-                              {{ author }}...
-                            {% else %}
-                              {{ author }},
-                            {% endif %}
-                          </a>
-                        {% endfor %}
-                      {% elif item[1] == 'magazine' %}
-                        <p>Issue no.: {{ item[3] }}</p>
-                      {% endif %}
+              {% else %}
+                {% for item in all_query %}
+                  <li class="list-group-item my_search">
+                    <div class="col-lg-5">
+                      <a href="{{ url_for('library.item_description', item_id=item.id) }}">
+                        {{ item.title }}
+                      </a>
                     </div>
-                    <div class="col-lg-1" data-toggle="tooltip" data-placement="right" title="{{ item[1].capitalize() }}">
-                      <p>?</p>
-                    </div>
-                </li>
-              {% endfor %}
+                      <div class="col-lg-6">
+                        {% if item.type == 'book' %}
+                          {% for author in item.authors %}
+                            <a href="{{ url_for('library.index', author_name=author) }}">
+                              {% if loop.last %}
+                                {{ author }}...
+                              {% else %}
+                                {{ author }},
+                              {% endif %}
+                            </a>
+                          {% endfor %}
+                        {% elif item.type == 'magazine' %}
+                          <p>Issue no.: {{ item.issue }}</p>
+                        {% endif %}
+                      </div>
+                      <div class="col-lg-1" data-toggle="tooltip" data-placement="right" title="{{ item.type.capitalize() }}">
+                        <p>?</p>
+                      </div>
+                  </li>
+                {% endfor %}
+              {% endif %}
             </ul>
           </div>
 
