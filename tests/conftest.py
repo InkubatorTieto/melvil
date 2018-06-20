@@ -165,10 +165,10 @@ def view_book(session, client):
     languages = ['polish', 'english', 'other']
     categories = ['developers', 'managers',
                   'magazines', 'other']
-    typee = ['book', 'magazine']
+    type_book = ['book', 'magazine']
 
     form = BookForm(
-        radio=choice(typee),
+        radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
         title=' '.join(g.text.title().split(' ')[:5]),
