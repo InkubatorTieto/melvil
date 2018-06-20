@@ -258,7 +258,7 @@ def reset():
                                        message_body=message_body)
         else:
             message_body = "This email doesn't exist"
-            message_title = 'Error!'
+            message_title = '!'
             return render_template('message.html',
                                    message_title=message_title,
                                    message_body=message_body)

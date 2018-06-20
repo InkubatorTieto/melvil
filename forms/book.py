@@ -15,7 +15,7 @@ from forms.custom_validators import \
     check_pub_date, title_book_exists
 
 
-class BookForm(FlaskForm):
+class Base(FlaskForm):
     languages = [('polish', 'Polish'),
                  ('english', 'English'),
                  ('other', 'Other')]
@@ -24,28 +24,11 @@ class BookForm(FlaskForm):
                   ('magazines', 'Magazines'),
                   ('other', 'Other')]
 
+    # LibraryItem
     radio = RadioField("radio",
                        choices=[('book', 'Book'),
                                 ('magazine', 'Magazine')],
                        render_kw=({'class': 'radio_but'}))
-
-    # LibraryItem
-    title = StringField('Title',
-                        validators=[DataRequired(),
-                                    Length(3),
-                                    title_book_exists],
-                        render_kw=({'class': 'inputs',
-                                    'id': 'title',
-                                    'placeholder': 'Title',
-                                    'disabled': True}))
-    title_of_magazine = StringField('Title',
-                                    validators=[DataRequired(),
-                                                Length(3)],
-                                    render_kw=({'class': 'inputs',
-                                                'id': 'title_of_magazine',
-                                                'placeholder':
-                                                    'Title of magazine',
-                                                'disabled': True}))
 
     table_of_contents = TextAreaField('Table of contents',
                                       validators=[DataRequired(),
@@ -87,7 +70,33 @@ class BookForm(FlaskForm):
                                             'placeholder': 'Description',
                                             'disabled': True}))
 
-    # Book
+    pub_date = SelectField('Year of publication',
+                           choices=[(str(x), str(x))
+                                    for x in
+                                    range(1970,
+                                          datetime.now().year + 1)],
+                           validators=[check_pub_date],
+                           render_kw=({
+                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'id': 'mySelect',
+                               'placeholder': 'Year of publication',
+                               'disabled': True}))
+
+    submit = SubmitField('Update',
+                         render_kw=({'class': 'btn btn-primary submits',
+                                     'id': 'button',
+                                     'disabled': True}))
+
+
+class BookForm(Base):
+    title = StringField('Title',
+                        validators=[DataRequired(),
+                                    Length(3),
+                                    title_book_exists],
+                        render_kw=({'class': 'inputs',
+                                    'id': 'title',
+                                    'placeholder': 'Title',
+                                    'disabled': True}))
 
     isbn = StringField('ISBN number',
                        validators=[DataRequired(), check_isbn],
@@ -108,18 +117,6 @@ class BookForm(FlaskForm):
                                         'id': 'publisher',
                                         'placeholder': 'Publisher',
                                         'disabled': True}))
-
-    pub_date = SelectField('Year of publication',
-                           choices=[(str(x), str(x))
-                                    for x in
-                                    range(1970,
-                                          datetime.now().year + 1)],
-                           validators=[check_pub_date],
-                           render_kw=({
-                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
-                               'id': 'mySelect',
-                               'placeholder': 'Year of publication',
-                               'disabled': True}))
 
     # Authors
     first_name = StringField('First name',
@@ -155,13 +152,27 @@ class BookForm(FlaskForm):
                                         'placeholder': 'Surname 2',
                                         'disabled': True}))
 
+
+class MagazineForm(Base):
+    title_of_magazine = StringField('Title',
+                                    validators=[DataRequired(),
+                                                Length(3)],
+                                    render_kw=({'class': 'inputs',
+                                                'id': 'title_of_magazine',
+                                                'placeholder':
+                                                    'Title of magazine',
+                                                'disabled': True}))
+
     issue = StringField('Issue',
                         render_kw=({'class': 'inputs',
                                     'id': 'issue',
                                     'placeholder': 'Issue',
                                     'disabled': True}))
 
+
+class MixedForm(MagazineForm, BookForm):
     submit = SubmitField('Create',
                          render_kw=({'class': 'btn btn-primary submits',
                                      'id': 'button',
                                      'disabled': True}))
+

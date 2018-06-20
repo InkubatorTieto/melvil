@@ -5,28 +5,22 @@
 
 
 {% endblock %}
-{% block title %}Add new book{% endblock %}
+{% block title %}EDIT BOOK/MAGAZINE{% endblock %}
 
 {% block content %}
 {% from "macros.html" import input with context %}
 <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
     <main role="main" class="inner cover">
-        <p class="form-title">ADD NEW BOOK</p>
+        <p class="form-title">EDIT BOOK/MAGAZINE</p>
         <form class="login" method="post">
             {{ form.hidden_tag() }}
+            {% if item_type == 'book' %}
             <div class="container">
-                <div class="form-check form-check-inline">
-                    <div class="row justify-content-center">
-
-                        {{ form.radio}}
-                    </div>
-                </div>
 
 
                 <div class="row">
                     <div class="col">
                         {{ input( form.title ,error['title']) }}
-                        {{ input( form.title_of_magazine ,error['title_of_magazine']) }}
                     </div>
                     <div class="col">
                         {{ input( form.original_title ,error['original_title']) }}
@@ -37,7 +31,6 @@
                 <div class="row">
                     <div class="col">
                         {{ input( form.publisher ,error['publisher']) }}
-                        {{ input( form.issue ,error['issue']) }}
                     </div>
 
                     <div class="col">
@@ -115,6 +108,61 @@
                 {{form.submit}}
 
             </div>
+            {% elif item_type == 'magazine' %}
+            <div class="container">
+
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.title_of_magazine ,error['title_of_magazine']) }}
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.issue ,error['issue']) }}
+                    </div>
+
+                    <div class="col">
+                        <br>
+                        <p id="myText">Year of publication:</p>
+                        {{ input(form.pub_date, error['pub_date'])}}
+
+                        <p id="myText">Language:</p>
+                        {{ input( form.language ,error['language']) }}
+                    </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <br>
+                        {{ input( form.tag ,error['tag']) }}
+                    </div>
+                    <div class="col">
+                        <p id="myText">Category:</p>
+                        {{ input( form.category ,error['category']) }}
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.table_of_contents ,error['table_of_contents']) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.description ,error['description']) }}
+                    </div>
+                </div>
+
+                {{form.submit}}
+
+            </div>
+            {% endif %}
         </form>
     </main>
 </div>
@@ -123,61 +171,38 @@
 {% block scripts %}
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("input[type='radio']").click(function () {
-            var radioValue = $("input[name='radio']:checked").val();
-            if (radioValue == 'book') {
-                $("#title").prop("disabled", false).show();
-                $("#title_of_magazine").prop("disabled", true).hide();
-                $("#table_of_contest").prop("disabled", false).show();
-                $("[name='pub_date']").prop("disabled", false).show();
-                $("[name='language']").prop("disabled", false).show();
-                $("[name='category']").prop("disabled", false).show();
-                $("#tag").prop("disabled", false).show();
-                $("#description").prop("disabled", false).show();
-                $("#isbn").prop("disabled", false).show();
-                $("#original_title").prop("disabled", false).show();
-                $("#publisher").prop("disabled", false).show();
 
-                $("#myText1").show();
-                $("[name='first_name']").prop("disabled", false).show();
-                $("[name='surname']").prop("disabled", false).show();
-                $("[name='first_name_1']").prop("disabled", false).show();
-                $("[name='surname_1']").prop("disabled", false).show();
-                $("[name='first_name_2']").prop("disabled", false).show();
-                $("[name='surname_2']").prop("disabled", false).show();
-                $("#button").prop("disabled", false).show();
-                $("#issue").prop("disabled", true).hide();
-            }
-
-            if (radioValue == 'magazine') {
-                $("#title").prop("disabled", true).hide();
-                $("#title_of_magazine").prop("disabled", false).show();
-                $("#table_of_contest").prop("disabled", false).show();
-                $("[name='pub_date']").prop("disabled", false).show();
-                $("[name='language']").prop("disabled", false).show();
-                $("[name='category']").prop("disabled", false).show();
-                $("#tag").prop("disabled", false).show();
-                $("#description").prop("disabled", false).show();
-                $("#isbn").prop("disabled", true).hide();
-                $("#original_title").prop("disabled", true).hide();
-                $("#publisher").prop("disabled", true).hide();
-
-                $("#myText1").hide();
-                $("[name='first_name']").prop("disabled", true).hide();
-                $("[name='surname']").prop("disabled", true).hide();
-                $("[name='first_name_1']").prop("disabled", true).hide();
-                $("[name='surname_1']").prop("disabled", true).hide();
-                $("[name='first_name_2']").prop("disabled", true).hide();
-                $("[name='surname_2']").prop("disabled", true).hide();
-                $("#button").prop("disabled", false).show();
-                $("#issue").prop("disabled", false).show();
-            }
-        });
-
-    });
+<script>
+    $(document).ready(function show_magazine() {
+        $("#title_of_magazine").prop("disabled", false).show();
+        $("#table_of_contest").prop("disabled", false).show();
+        $("[name='pub_date']").prop("disabled", false).show();
+        $("[name='language']").prop("disabled", false).show();
+        $("[name='category']").prop("disabled", false).show();
+        $("#tag").prop("disabled", false).show();
+        $("#description").prop("disabled", false).show();
+        $("#button").prop("disabled", false).show();
+        $("#issue").prop("disabled", false).show();
+    })
+    $(document).ready(function show_books() {
+        $("#title").prop("disabled", false).show();
+        $("#original_title").prop("disabled", false).show();
+        $("#publisher").prop("disabled", false).show();
+        $("#table_of_contest").prop("disabled", false).show();
+        $("[name='pub_date']").prop("disabled", false).show();
+        $("[name='language']").prop("disabled", false).show();
+        $("[name='category']").prop("disabled", false).show();
+        $("#tag").prop("disabled", false).show();
+        $("#description").prop("disabled", false).show();
+        $("#button").prop("disabled", false).show();
+        $("[name='first_name']").prop("disabled", false).show();
+        $("[name='surname']").prop("disabled", false).show();
+        $("[name='first_name_1']").prop("disabled", false).show();
+        $("[name='surname_1']").prop("disabled", false).show();
+        $("[name='first_name_2']").prop("disabled", false).show();
+        $("[name='surname_2']").prop("disabled", false).show();
+        $("#isbn").prop("disabled", false).show();
+    })
 </script>
-
 
 {% endblock %}

@@ -9,7 +9,7 @@ from sqlalchemy import event
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from forms.book import BookForm
+from forms.book import BookForm, MixedForm
 from models import User, Book, Magazine, Copy
 
 g = Generic('en')
@@ -166,8 +166,7 @@ def view_book(session, client):
     categories = ['developers', 'managers',
                   'magazines', 'other']
     typee = ['book', 'magazine']
-
-    form = BookForm(
+    form = MixedForm(
         radio=choice(typee),
         first_name=g.person.name(),
         surname=g.person.surname(),
