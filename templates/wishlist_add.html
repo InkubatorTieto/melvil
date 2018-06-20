@@ -6,16 +6,19 @@
        <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-body wish" id="exampleModalLabel">
-                <button type="button" style="white" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href='{{ url_for('library.wishlist')}}';">
+                <button type="button" style="white" class="close close-button" data-dismiss="modal" aria-label="Close" onclick="window.location.href='{{ url_for('library.wishlist')}}';">
                   <span aria-hidden="true">&times;</span>
                     </button>
                              <br>
                                <p class="form-title">Create new wish</p>
-                                   <form class="wishlist" action="" method="post">
+                                   <form class="wishlist_add" action="" method="post">
                                        {{ form.hidden_tag() }}
+                                       <label>{{form.type.label}}</label>
+                                       {{ input( form.type, error['type'])}}
                                        {{ input( form.authors, error['authors'])}}
                                        {{ input( form.title, error['title'] ) }}
-                                       {{ input( form.pub_year, error['pub_year'])}}
+                                       <label>Publication year</label>
+                                       {{ input(form.pub_date, error['pub_date'])}}
                                        {{ form.add }}
                                    </form>
               </div>

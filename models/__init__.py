@@ -5,7 +5,16 @@ from models.users import Role, User
 from models.wishlist import WishListItem, Like
 
 
-__all__ = ['Book', 'Author',
-           'Role', 'User',
-           'RentalLog', 'Copy', 'Tag', 'LibraryItem',
-           'Magazine', 'WishListItem', 'Like']
+__all__ = [
+    "Book",
+    "Author",
+    "Role",
+    "User",
+    "RentalLog",
+    "Copy",
+    "Tag",
+    "LibraryItem",
+    "Magazine",
+    "WishListItem",
+    "Like",
+]

@@ -6,14 +6,14 @@ from wtforms import (
     BooleanField,
     SubmitField,
     TextAreaField,
-    DateField,
+    SelectField,
 )
-from wtforms_components import DateRange
+
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 from flask_wtf import FlaskForm
 
-from forms.custom_validators import tieto_email, name, surname
+from forms.custom_validators import tieto_email, name, surname, check_pub_date
 
 
 class LoginForm(FlaskForm):
@@ -55,7 +55,7 @@ class RegistrationForm(FlaskForm):
         validators=[DataRequired()],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Sign In',
+    submit = SubmitField('Sign Up',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
@@ -102,22 +102,35 @@ class PasswordForm(FlaskForm):
 
 
 class WishlistForm(FlaskForm):
+    type = SelectField('Item Type',
+                       choices=[('book', 'Book'), ('magazine', 'Magazine')],
+                       render_kw=({
+                           'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                           'id': 'mySelect'}))
+
     authors = StringField('authors',
-                          validators=[DataRequired()],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Authors'}))
     title = StringField('title',
                         validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
-    pub_year = DateField('pub_year',
-                         validators=[DateRange
-                                     (min=datetime.strptime('1900',
-                                                            '%Y').date(),
-                                      max=datetime.today().date())],
-                         render_kw=({'class': 'inputs',
-                                    'placeholder': 'Publication Year'}),
-                         format='%Y')
+
+    pub_date = SelectField('Year of publication',
+                           choices=[(str(x), str(x))
+                                    for x in
+                                    range(1970,
+                                          datetime.now().year + 1)],
+                           validators=[check_pub_date],
+                           render_kw=({
+                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'id': 'mySelect',
+                               'placeholder': 'Year of publication'}))
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
+
+
+class RemoveForm(FlaskForm):
+    submit = SubmitField('Delete',
+                         render_kw=({'class': 'btn btn-danger btn-sm'}))
