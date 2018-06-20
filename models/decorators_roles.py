@@ -3,6 +3,22 @@ from functools import wraps
 from models.users import User
 
 
+# README
+# Use parenthesis when you use these decorators
+#
+# GOOD
+# @library.route("/")
+# @require_role()
+# def index():
+#     ...
+#
+# BAD
+# @library.route("/")
+# @require_role
+# def index():
+#     ...
+
+
 def require_logged_in(redirect_page="library.login"):
     def decorator(func):
         @wraps(func)

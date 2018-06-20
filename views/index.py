@@ -52,7 +52,6 @@ def index():
 
 
 @library.route("/login", methods=["GET", "POST"])
-@require_not_logged_in
 def login():
     if request.method == "GET":
         if "logged_in" in session:
@@ -108,7 +107,6 @@ def login():
 
 
 @library.route("/registration", methods=["GET", "POST"])
-@require_not_logged_in
 def registration():
     if request.method == "GET":
         form = RegistrationForm()
