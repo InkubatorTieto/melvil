@@ -15,7 +15,6 @@ from forms.copy import CopyAddForm, CopyEditForm
 from models import User, Book, Magazine, Copy
 from forms.forms import WishlistForm
 
-
 g = Generic('en')
 
 
@@ -169,11 +168,14 @@ def view_book(session, client):
     languages = ['polish', 'english', 'other']
     categories = ['developers', 'managers',
                   'magazines', 'other']
+    type_book = ['book', 'magazine']
 
     form = BookForm(
+        radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
         title=' '.join(g.text.title().split(' ')[:5]),
+        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
         table_of_contents=g.text.sentence(),
         language=choice(languages),
         category=choice(categories),
@@ -182,7 +184,8 @@ def view_book(session, client):
         isbn=str(1861972717),
         original_title=' '.join(g.text.title().split(' ')[:5]),
         publisher=g.business.company(),
-        pub_date=str(randint(1970, 2018))
+        pub_date=str(randint(1970, 2018)),
+        issue=g.text.words(1)
     )
 
     yield form
