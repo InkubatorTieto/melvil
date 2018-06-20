@@ -68,14 +68,12 @@ def add_book():
                     new_tag = tmp_tag
 
                 new_book = Book(
-                    # for library_item model
                     title=form.title.data,
                     table_of_contents=form.table_of_contents.data,
                     language=form.language.data,
                     category=form.category.data,
                     tags=[new_tag],
                     description=form.description.data,
-                    # for Book model
                     isbn=form.isbn.data,
                     authors=new_authors,
                     original_title=form.original_title.data,
@@ -120,14 +118,12 @@ def add_book():
                     new_tag = tmp_tag
 
                 new_magazine = Magazine(
-                    # for library_item model
                     title=form.title_of_magazine.data,
                     table_of_contents=form.table_of_contents.data,
                     language=form.language.data,
                     category=form.category.data,
                     tags=[new_tag],
                     description=form.description.data,
-                    # for magazine model
                     year=datetime(year=int(form.pub_date.data),
                                   month=1,
                                   day=1),

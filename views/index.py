@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError, TimeoutError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
+
 from flask import (
     abort,
     Blueprint,
@@ -14,20 +15,23 @@ from flask import (
     render_template,
     request,
     session,
-    url_for
+    url_for,
+    json
 )
 
 from config import DevConfig
+from forms.copy import CopyAddForm, CopyEditForm
 from forms.forms import (
     ContactForm,
     ForgotPass,
     LoginForm,
     PasswordForm,
     RegistrationForm,
-    WishlistForm
+    WishlistForm,
+    RemoveForm
 )
 from init_db import db
-from messages import ErrorMessage
+from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
 from models.books import Book
@@ -36,7 +40,6 @@ from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 from serializers.wishlist import WishListItemSchema
-
 
 library = Blueprint('library', __name__,
                     template_folder='templates')
@@ -177,19 +180,27 @@ def contact():
     if form.validate_on_submit():
         email_template = open(
             './templates/contact_confirmation.html', 'r').read()
-        send_email(
-            'Contact confirmation, title: ' + form.title.data,
-            DevConfig.MAIL_USERNAME,
-            [form.email.data],
-            None,
-            email_template)
-        send_email(
-            'Contact form: ' + form.title.data,
-            DevConfig.MAIL_USERNAME,
-            [DevConfig.MAIL_USERNAME],
-            'Send by: ' + form.email.data + '\n\n' + form.message.data,
-            None)
-        return redirect('/contact')
+        try:
+            send_email(
+                'Contact confirmation, title: ' + form.title.data,
+                DevConfig.MAIL_USERNAME,
+                [form.email.data],
+                None,
+                email_template)
+
+            send_email(
+                'Contact form: ' + form.title.data,
+                DevConfig.MAIL_USERNAME,
+                [DevConfig.MAIL_USERNAME],
+                'Send by: ' + form.email.data + '\n\n' + form.message.data,
+                None)
+            return SuccessMessage\
+                .message('Your email has been sent to administrator!')
+        except TimeoutError:
+            return ErrorMessage\
+                .message('Oops, '
+                         'some problem occurred'
+                         ' and your email has not been sent ')
     return render_template('contact.html',
                            title='Contact',
                            form=form,
@@ -325,12 +336,73 @@ def reserve(copy_id):
     return redirect(url_for('library.index'))
 
 
+@library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
+def remove_item(item_id):
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = RemoveForm()
+    item = LibraryItem.query.get_or_404(item_id)
+    if form.validate_on_submit():
+        db.session.delete(item)
+        db.session.commit()
+        flash('Item has been removed', 'success')
+    authors_list = []
+    if item.type == 'book':
+        authors_list = item.authors_string
+    return render_template('remove_item.html',
+                           form=form,
+                           item=item,
+                           authors_list=authors_list,
+                           admin=admin)
+
+
+@library.route('/remove_copy/<int:item_id>/<int:copy_id>',
+               methods=['GET', 'POST'])
+def remove_copy(item_id, copy_id):
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = RemoveForm()
+    item = LibraryItem.query.get_or_404(item_id)
+    copy = Copy.query.filter_by(id=copy_id).first_or_404()
+    authors_list = []
+    if item.type == "book":
+        authors_list = item.authors_string
+    if form.validate_on_submit():
+        db.session.delete(copy)
+        db.session.commit()
+        flash('Copy has been removed', 'success')
+    return render_template('remove_copy.html',
+                           form=form,
+                           item=item,
+                           copy=copy,
+                           authors_list=authors_list,
+                           admin=admin)
+
+
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
     data = db.session.query(WishListItem).all()
     wish_list_schema = WishListItemSchema(many=True)
     output = wish_list_schema.dump(data)
-    return render_template('wishlist.html', wishes=output)
+    return render_template('wishlist.html', wishes=output, admin=admin)
 
 
 @library.route('/addWish', methods=['GET', 'POST'])
@@ -339,8 +411,11 @@ def add_wish():
     if form.validate_on_submit():
         try:
             new_wish_item = WishListItem(authors=form.authors.data,
+                                         item_type=form.type.data,
                                          title=form.title.data,
-                                         pub_year=form.pub_year.data)
+                                         pub_year=datetime.strptime(
+                                             form.pub_date.data,
+                                             "%Y").date())
 
             db.session.add(new_wish_item)
             db.session.commit()
@@ -350,8 +425,9 @@ def add_wish():
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
-@library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
-def add_like(wish_id):
+@library.route('/addLike', methods=['GET', 'POST'])
+def add_like():
+    wish_id = request.form['wish_id']
     user = User.query.filter_by(id=session['id']).first()
     if not Like.like_exists(wish_id, user):
         try:
@@ -362,6 +438,17 @@ def add_like(wish_id):
         try:
             Like.unlike(wish_id, user)
         except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return json.dumps({'num_of_likes': len(WishListItem.query
+                                                       .filter_by(id=wish_id)
+                                                       .first().likes)})
+
+
+@library.route('/deleteWish/<int:wish_id>', methods=['GET', 'POST'])
+def delete_wish(wish_id):
+    try:
+        WishListItem.deleteWish(wish_id)
+    except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
     return redirect(url_for('library.wishlist'))
 
@@ -387,6 +474,56 @@ def item_description(item_id):
                            tags_list=tags_list,
                            authors_list=authors_list,
                            admin=admin)
+
+
+@library.route('/add_copy/<int:item_id>', methods=['GET', 'POST'])
+def add_copy(item_id):
+    form = CopyAddForm()
+    if form.validate_on_submit():
+        try:
+            new_copy = Copy(
+                asset_code=form.asset_code.data,
+                library_item_id=item_id,
+                shelf=form.shelf.data,
+                has_cd_disk=form.has_cd_disk.data,
+                available_status=True,
+            )
+            db.session.add(new_copy)
+            db.session.commit()
+            flash('Copy successfully added!')
+            return redirect(url_for('library.item_description',
+                                    item_id=item_id))
+        except IntegrityError:
+            abort(500)
+    return render_template('copy_form.html',
+                           form=form,
+                           error=form.errors,
+                           action='Add')
+
+
+@library.route('/edit_copy/<int:copy_id>', methods=['GET', 'POST'])
+def edit_copy(copy_id):
+    copy = Copy.query.get_or_404(copy_id)
+    item_id = copy.library_item_id
+    form = CopyEditForm()
+    if form.validate_on_submit():
+        try:
+            copy.asset_code = form.asset_code.data
+            copy.shelf = form.shelf.data
+            copy.has_cd_disk = form.has_cd_disk.data
+            db.session.commit()
+            flash('Copy successfully edited!')
+            return redirect(url_for('library.item_description',
+                                    item_id=item_id))
+        except IntegrityError:
+            abort(500)
+    form.asset_code.data = copy.asset_code
+    form.shelf.data = copy.shelf
+    form.has_cd_disk.data = copy.has_cd_disk
+    return render_template('copy_form.html',
+                           form=form,
+                           error=form.errors,
+                           action='Edit')
 
 
 @library.errorhandler(401)

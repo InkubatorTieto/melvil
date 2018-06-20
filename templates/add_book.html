@@ -124,60 +124,76 @@
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
+
+    function showMagazine() {
+        $("#title_of_magazine").prop("disabled", false).show();
+        $("#table_of_contest").prop("disabled", false).show();
+        $("[name='pub_date']").prop("disabled", false).show();
+        $("[name='language']").prop("disabled", false).show();
+        $("[name='category']").prop("disabled", false).show();
+        $("#tag").prop("disabled", false).show();
+        $("#description").prop("disabled", false).show();
+        $("#button").prop("disabled", false).show();
+        $("#issue").prop("disabled", false).show();
+    }
+
+    function hideBooks() {
+        $("#title").prop("disabled", true).hide();
+
+        $("#isbn").prop("disabled", true).hide();
+        $("#original_title").prop("disabled", true).hide();
+        $("#publisher").prop("disabled", true).hide();
+
+        $("#myText1").hide();
+        $("[name='first_name']").prop("disabled", true).hide();
+        $("[name='surname']").prop("disabled", true).hide();
+        $("[name='first_name_1']").prop("disabled", true).hide();
+        $("[name='surname_1']").prop("disabled", true).hide();
+        $("[name='first_name_2']").prop("disabled", true).hide();
+        $("[name='surname_2']").prop("disabled", true).hide();
+    }
+
+    function hideMagazine() {
+        $("#title_of_magazine").prop("disabled", true).hide();
+        $("#issue").prop("disabled", true).hide();
+    }
+
+    function showBooks() {
+        $("#title").prop("disabled", false).show();
+        $("#table_of_contest").prop("disabled", false).show();
+        $("[name='pub_date']").prop("disabled", false).show();
+        $("[name='language']").prop("disabled", false).show();
+        $("[name='category']").prop("disabled", false).show();
+        $("#tag").prop("disabled", false).show();
+        $("#description").prop("disabled", false).show();
+        $("#isbn").prop("disabled", false).show();
+        $("#original_title").prop("disabled", false).show();
+        $("#publisher").prop("disabled", false).show();
+
+        $("#myText1").show();
+        $("[name='first_name']").prop("disabled", false).show();
+        $("[name='surname']").prop("disabled", false).show();
+        $("[name='first_name_1']").prop("disabled", false).show();
+        $("[name='surname_1']").prop("disabled", false).show();
+        $("[name='first_name_2']").prop("disabled", false).show();
+        $("[name='surname_2']").prop("disabled", false).show();
+        $("#button").prop("disabled", false).show();
+    }
+
     $(document).ready(function () {
         $("input[type='radio']").click(function () {
             var radioValue = $("input[name='radio']:checked").val();
-            if (radioValue == 'book') {
-                $("#title").prop("disabled", false).show();
-                $("#title_of_magazine").prop("disabled", true).hide();
-                $("#table_of_contest").prop("disabled", false).show();
-                $("[name='pub_date']").prop("disabled", false).show();
-                $("[name='language']").prop("disabled", false).show();
-                $("[name='category']").prop("disabled", false).show();
-                $("#tag").prop("disabled", false).show();
-                $("#description").prop("disabled", false).show();
-                $("#isbn").prop("disabled", false).show();
-                $("#original_title").prop("disabled", false).show();
-                $("#publisher").prop("disabled", false).show();
-
-                $("#myText1").show();
-                $("[name='first_name']").prop("disabled", false).show();
-                $("[name='surname']").prop("disabled", false).show();
-                $("[name='first_name_1']").prop("disabled", false).show();
-                $("[name='surname_1']").prop("disabled", false).show();
-                $("[name='first_name_2']").prop("disabled", false).show();
-                $("[name='surname_2']").prop("disabled", false).show();
-                $("#button").prop("disabled", false).show();
-                $("#issue").prop("disabled", true).hide();
-            }
-
             if (radioValue == 'magazine') {
-                $("#title").prop("disabled", true).hide();
-                $("#title_of_magazine").prop("disabled", false).show();
-                $("#table_of_contest").prop("disabled", false).show();
-                $("[name='pub_date']").prop("disabled", false).show();
-                $("[name='language']").prop("disabled", false).show();
-                $("[name='category']").prop("disabled", false).show();
-                $("#tag").prop("disabled", false).show();
-                $("#description").prop("disabled", false).show();
-                $("#isbn").prop("disabled", true).hide();
-                $("#original_title").prop("disabled", true).hide();
-                $("#publisher").prop("disabled", true).hide();
-
-                $("#myText1").hide();
-                $("[name='first_name']").prop("disabled", true).hide();
-                $("[name='surname']").prop("disabled", true).hide();
-                $("[name='first_name_1']").prop("disabled", true).hide();
-                $("[name='surname_1']").prop("disabled", true).hide();
-                $("[name='first_name_2']").prop("disabled", true).hide();
-                $("[name='surname_2']").prop("disabled", true).hide();
-                $("#button").prop("disabled", false).show();
-                $("#issue").prop("disabled", false).show();
+                hideBooks();
+                showMagazine();
             }
-        });
-
+            if (radioValue == 'book') {
+                hideMagazine();
+                showBooks();
+            }
+        })
     });
-</script>
 
+</script>
 
 {% endblock %}
