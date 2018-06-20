@@ -63,7 +63,6 @@ class RentalLog(db.Model):
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
 
 
-
     @property
     def borrow_time(self):
         return self._borrow_time.replace(tzinfo=pytz.utc).\
