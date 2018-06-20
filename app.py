@@ -9,11 +9,9 @@ from raven.contrib.flask import Sentry
 
 from config import DevConfig, ProdConfig
 from init_db import db, ma
+from utils.xlsx_reader import get_books, get_magazines
 from views.book import library_books
 from views.index import library
-from views.book import library_books
-from utils.xlsx_reader import get_books, get_magazines
-from xlsx_reader import get_books, get_magazines
 
 mail = Mail()
 sentry = Sentry()
