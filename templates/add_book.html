@@ -125,21 +125,6 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
 
-    $(document).ready(function () {
-        $("input[type='radio']").click(function () {
-            var radioValue = $("input[name='radio']:checked").val();
-            if (radioValue == 'magazine') {
-                hideBooks();
-                showMagazine();
-            }
-            if (radioValue == 'book') {
-                hideMagazine();
-                showBooks();
-            }
-        })
-    });
-
-
     function showMagazine() {
         $("#title_of_magazine").prop("disabled", false).show();
         $("#table_of_contest").prop("disabled", false).show();
@@ -152,9 +137,8 @@
         $("#issue").prop("disabled", false).show();
     }
 
-    function hideMagazine() {
+    function hideBooks() {
         $("#title").prop("disabled", true).hide();
-
 
         $("#isbn").prop("disabled", true).hide();
         $("#original_title").prop("disabled", true).hide();
@@ -169,7 +153,7 @@
         $("[name='surname_2']").prop("disabled", true).hide();
     }
 
-    function hideBooks() {
+    function hideMagazine() {
         $("#title_of_magazine").prop("disabled", true).hide();
         $("#issue").prop("disabled", true).hide();
     }
@@ -196,6 +180,19 @@
         $("#button").prop("disabled", false).show();
     }
 
+    $(document).ready(function () {
+        $("input[type='radio']").click(function () {
+            var radioValue = $("input[name='radio']:checked").val();
+            if (radioValue == 'magazine') {
+                hideBooks();
+                showMagazine();
+            }
+            if (radioValue == 'book') {
+                hideMagazine();
+                showBooks();
+            }
+        })
+    });
 
 </script>
 
