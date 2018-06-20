@@ -11,7 +11,6 @@ from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
 from forms.copy import CopyAddForm, CopyEditForm
-from forms.registration_forms import RegistrationForm
 from forms.forms import LoginForm, RegistrationForm, ForgotPass
 from models import User, Book, Magazine, Copy
 from werkzeug.security import generate_password_hash
@@ -264,7 +263,7 @@ def db_tieto_user(session):
     """
     password = g.person.password(length=8)
     u = User(
-             email= g.person.name() + g.person.surname() + '.' + '@tieto.com',
+             email=g.person.name() + g.person.surname() + '.' + '@tieto.com',
              first_name=g.person.name(),
              surname=g.person.surname(),
              password_hash=generate_password_hash(password),
@@ -293,12 +292,12 @@ def login_form(db_tieto_user):
 
 
 @pytest.fixture(scope="function")
-def login_form_invalid( db_tieto_user):
+def login_form_invalid(db_tieto_user):
     """
     Returns login form containing invalid data.
     """
     invalid_password = g.person.password(length=8)
-    while( invalid_password == db_tieto_user[1]):
+    while(invalid_password == db_tieto_user[1]):
         invalid_password = g.person.password(length=8)
 
     form = LoginForm(
@@ -323,6 +322,7 @@ def registration_form():
     )
     yield form
 
+
 @pytest.fixture(scope="function")
 def registration_form_registered_user(db_tieto_user):
     """
@@ -330,7 +330,8 @@ def registration_form_registered_user(db_tieto_user):
     """
     form = RegistrationForm(
         email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
-        first_name=User.query.filter_by(id=db_tieto_user[0].id).first().first_name,
+        first_name=User.query.filter_by
+        (id=db_tieto_user[0].id).first().first_name,
         surname=User.query.filter_by(id=db_tieto_user[0].id).first().surname,
         password=db_tieto_user[1],
         confirm_pass=db_tieto_user[1],
@@ -363,6 +364,3 @@ def forgot_pass():
         submit=True
     )
     yield form
-
-
-
