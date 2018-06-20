@@ -1,4 +1,4 @@
-from xlsx_reader import (get_books, get_magazines)
+from utils.xlsx_reader import (get_books, get_magazines)
 from models import (
     Author,
     Book,
