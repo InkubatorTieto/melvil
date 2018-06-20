@@ -26,7 +26,6 @@ body {
     border-radius: 15px;
     height: auto;
     margin-top: 50px;
-    color:silver;
     }
 
 .modal-content{
@@ -45,9 +44,4 @@ body {
     font-size: 12px;
     font-weight: 400;
     color: rgba(255, 26, 26, 1);
-}
-
-#addWishButton{
-    margin-top:3px;
-    margin-bottom:7px;
 }

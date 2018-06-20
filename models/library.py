@@ -84,7 +84,7 @@ class RentalLog(db.Model):
 
     @property
     def reservation_begin(self):
-        return self._reservation_begin.replace(tzinfo=pytz.utc).\
+        return self._reservation_begin.replace(tzinfo=pytz.utc). \
             astimezone(tz=pytz.timezone('Europe/Warsaw'))
 
     @reservation_begin.setter
@@ -95,7 +95,7 @@ class RentalLog(db.Model):
 
     @property
     def reservation_end(self):
-        return self._reservation_end.replace(tzinfo=pytz.utc).\
+        return self._reservation_end.replace(tzinfo=pytz.utc). \
             astimezone(tz=pytz.timezone('Europe/Warsaw'))
 
     @reservation_end.setter

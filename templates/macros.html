@@ -23,8 +23,43 @@
 {% endmacro %}
 
 {% macro copy_info_row(copy, index) %}
-        <td>{{ index }}</td>
-        <td>{{ copy.asset_code }}</td>
-        <td>{{ copy.has_cd_disk }}</td>
-        <td>{{ 'Available' if copy.available_status else 'Occupied' }}</td>
+    <td>{{ index }}</td>
+    <td>{{ copy.asset_code }}</td>
+    <td>{{ copy.has_cd_disk }}</td>
+    <td>{{ 'Available' if copy.available_status else 'Occupied' }}</td>
+{% endmacro %}
+
+
+{% macro field_input(field, errors) %}
+    {% if kwargs['label'] %}
+        <label>
+            <p class="label">{{ kwargs['label'] }}</p>
+            {{ field(class_="inputs-with-label") }}
+        </label>
+    {% else %}
+        {{ field(class_="inputs", placeholder=kwargs['placeholder']) }}
+    {% endif %}
+
+    {% for error in errors %}
+        <p class="form_errors">{{ error }}</p>
+    {% endfor %}
+{% endmacro %}
+
+
+{% macro flashed_message(messages) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            {% if category == 'message' %}
+                <div class="alert alert-success" role="alert">
+            {% else %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                </div>
+            {% endif %}
+        <button type="button" class="close" data-dismiss="alert"
+                aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
 {% endmacro %}

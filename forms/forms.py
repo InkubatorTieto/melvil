@@ -55,7 +55,7 @@ class RegistrationForm(FlaskForm):
         validators=[DataRequired()],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Sign In',
+    submit = SubmitField('Sign Up',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
@@ -129,3 +129,8 @@ class WishlistForm(FlaskForm):
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
+
+
+class RemoveForm(FlaskForm):
+    submit = SubmitField('Delete',
+                         render_kw=({'class': 'btn btn-danger btn-sm'}))

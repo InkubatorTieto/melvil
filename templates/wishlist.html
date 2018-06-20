@@ -17,7 +17,7 @@
                            <div class="wrap">
                                <p class="form-title"> Wish list</p>
                                <div class="scrollspy-example" data-target="#scrollspy" data-offset="1">
-                               <ul lass="list-group" align="left" id="wishList" >
+                               <ul class="list-group" align="left" id="wishList" >
                                    {% for item in wishes %}
                                    {% for wish_item in item %}
                                   <tr> <li>
@@ -26,7 +26,12 @@
                                         "{{wish_item.title}}" {{wish_item.authors}} {{wish_item.pub_year[:4]}}
                                        <button type="button" id="addLike_{{wish_item.id}}" class="btn btn-outline-danger" style="border:none;" >
                                          <i class="fas fa-heart"></i>
-                                       </button><span id="likes_{{wish_item.id}}">{{wish_item.likes|length}}</span></td></li>
+                                       </button><span id="likes_{{wish_item.id}}">{{wish_item.likes|length}}</span>
+                                       </button>
+                                      {% if admin %}
+                                        <button type="button" class="btn btn-outline-light" style="border:none;" href="#" id="tooltip-ex" data-toggle="tooltip" data-placement="right" title="Delete"  onclick="window.location.href='{{ url_for('library.delete_wish',wish_id=wish_item.id)}}';">
+                                         <i class="fa fa-trash"></i></button>
+                                        {% endif %}</td></li>
                                     </tr> {% endfor %}{% endfor %} </ul>
                                </div>
                            </div>

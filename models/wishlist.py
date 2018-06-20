@@ -45,4 +45,10 @@ class WishListItem(db.Model):
     item_type = db.Column(db.String(256), nullable=False)
 
     def __repr__(self):
-        return '<Wish List Item {}>'.format(self.item_type)
+        return '<Wish List Item {}>'.format(self.title)
+
+    @classmethod
+    def deleteWish(cls, wish_id):
+        deleteWishAdmin = WishListItem.query.get(wish_id)
+        db.session.delete(deleteWishAdmin)
+        db.session.commit()
