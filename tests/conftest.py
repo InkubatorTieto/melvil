@@ -279,14 +279,14 @@ def user_reservations(session):
     magazines = populate_magazines(n=2)
     session.add_all(magazines)
     session.commit()
-    copies = list()
+    copies = []
     copies.append(populate_copies(books[0], n=1)[0])
     copies.append(populate_copies(books[1], n=1)[0])
     copies.append(populate_copies(magazines[0], n=1)[0])
     copies.append(populate_copies(magazines[1], n=1)[0])
     session.add_all(copies)
     session.commit()
-    reservations = list()
+    reservations = []
     reservations.append(populate_rental_logs(copies[0].id, user[0].id, n=1)[0])
     reservations.append(populate_rental_logs(copies[1].id, user[0].id, n=1)[0])
     reservations.append(populate_rental_logs(copies[2].id, user[0].id, n=1)[0])

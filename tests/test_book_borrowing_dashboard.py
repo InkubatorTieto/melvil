@@ -2,8 +2,6 @@ from flask import url_for
 from views.book_borrowing_dashboard import (
     get_reserved_items,
     get_borrowed_items,
-    get_number_of_reserved,
-    get_number_of_borrowed,
 )
 
 
@@ -40,15 +38,3 @@ def test_get_borrowed_items(session, user_reservations):
         user_reservations[2][1]._borrow_time
     assert borrowed_items[1]._return_time == \
         user_reservations[2][1]._return_time
-
-
-def test_get_num_reserved_items(session, user_reservations):
-    num_reserved_items = \
-        get_number_of_reserved(session, user_reservations[0].id)
-    assert num_reserved_items == 2
-
-
-def test_get_num_borrowed_items(session, user_reservations):
-    num_borrowed_items = \
-        get_number_of_borrowed(session, user_reservations[0].id)
-    assert num_borrowed_items == 2
