@@ -18,12 +18,13 @@ def send_confirmation_email(user_email):
     html = render_template(
         'registration_email.html',
         confirm_url=confirm_url)
+    body = html
 
     send_email('Confirm Your Email Address - Tieto library',
                DevConfig.ADMINS[0],
                [user_email],
-               None,
-               html)
+               body,
+               None)
 
 
 def send_password_reset_email(user_email):
