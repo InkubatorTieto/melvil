@@ -1,7 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Register{% endblock %}
+{% block title %}Edit profile data{% endblock %}
 {% block content %}
-    {% from "macros.html" import input with context %}
+    <!--{% from "macros.html" import input with context %}-->
+    {% from "macros.html" import field_input with context %}
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
         <main role="main" class="inner cover">
             <div class="container my_container">
@@ -13,11 +14,13 @@
                                 </button>
                             <p class="form-title">
                                 Edit profile data</p>
-                            <form class="edit-profile" action="" method="post">
+                            <form class="edit-profile" method="post">
                                 {{ form.hidden_tag() }}
-                                {{ input(form.first_name) }}
-                                {{ input(form.surname) }}
-                                {{ input(form.email) }}
+                                {{ field_input(form.first_name, error['first_name'], placeholder="First name") }}
+                                {{ field_input(form.surname, error['surname'], placeholder="Surname") }}
+                                <!-- FIXME: check if email was changed
+                                FIXME: add proper mail, first name, surname validators -->
+                                {{ field_input(form.email, error['email'], placeholder="E-mail") }}
                                <input type="submit" class="btn btn-primary submits"
                                       name="submit" value="Save">
                             </form>
