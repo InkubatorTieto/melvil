@@ -10,8 +10,11 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
+from models import User, Book, Magazine, Copy, WishListItem
 from forms.copy import CopyAddForm, CopyEditForm
 from models import User, Book, Magazine, Copy
+from forms.forms import WishlistForm
+
 
 g = Generic('en')
 
@@ -251,3 +254,33 @@ def app_session(client, db_user):
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
         return app_session
+
+
+@pytest.fixture
+def view_wish_list(app):
+    form = WishlistForm()
+    form.authors.data = g.person.surname() + " " + g.person.name()
+    form.title.data = ' '.join(g.text.title().split(' ')[:5])
+    form.pub_date.data = str(randint(1970, 2018))
+    form.type.data = 'book'
+    return form
+
+
+@pytest.fixture(scope="function")
+def db_wishlist_item(session):
+    """
+    Creates and return function-scoped User database entry
+    """
+    w = WishListItem(authors=g.person.surname() + " " + g.person.name(),
+                     title=' '.join(g.text.title().split(' ')[:5]),
+                     pub_year=g.datetime.datetime(),
+                     item_type='book'
+                     )
+    session.add(w)
+    session.commit()
+
+    yield w
+
+    if WishListItem.query.get(w.id):
+        session.delete(w)
+        session.commit()
