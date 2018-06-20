@@ -7,11 +7,8 @@ def require_logged_in(redirect_page='library.login'):
     def decorator(func):
         @wraps(func)
         def inner_func(*args, **kwargs):
-            if 'logged_in' in session:
-                if session['logged_in']:
-                    return func(*args, **kwargs)
-                else:
-                    return redirect(url_for(redirect_page))
+            if 'logged_in' in session and session['logged_in']:
+                return func(*args, **kwargs)
             else:
                 return redirect(url_for(redirect_page))
         return inner_func
