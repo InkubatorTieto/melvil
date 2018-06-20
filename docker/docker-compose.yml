@@ -2,10 +2,12 @@ version: '3'
 
 services:
   web:
-    build: .
+    build:
+      context: ..
+      dockerfile: './docker/Dockerfile'
     command: gunicorn --bind=0.0.0.0:8000 app:create_app()
     volumes:
-      - .:/code
+      - ..:/code
     env_file:
       - .env
 

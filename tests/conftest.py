@@ -10,10 +10,12 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
+from models import User, Book, Magazine, Copy, WishListItem
+from forms.copy import CopyAddForm, CopyEditForm
 from models import User, Book, Magazine, Copy
+from forms.forms import WishlistForm
 
-
-g = Generic("en")
+g = Generic('en')
 
 
 @pytest.fixture(scope="module")
@@ -61,7 +63,7 @@ def session(db):
 
     sess.begin_nested()
 
-    @event.listens_for(sess(), "after_transaction_end")
+    @event.listens_for(sess(), 'after_transaction_end')
     def restart_savepoint(sess2, trans):
         if trans.nested and not trans._parent.nested:
             sess2.expire_all()
@@ -80,41 +82,39 @@ def mailbox(app):
     return _mail.record_messages()
 
 
-@pytest.fixture(scope="module")
-def email_generator(chars=string.ascii_letters + string.digits + "." + "-"):
+@pytest.fixture(scope='module')
+def email_generator(chars=string.ascii_letters + string.digits + '.' + '-'):
     size = random.randint(10, 25)
-    return "".join(random.choice(chars) for _ in range(size)) + "@tieto.com"
+    return ''.join(random.choice(chars) for _ in range(size)) + '@tieto.com'
 
 
-@pytest.fixture(scope="module")
-def text_generator(chars=string.ascii_letters + "ąćęłóżź \n\t"):
+@pytest.fixture(scope='module')
+def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
     size = random.randint(25, 40)
-    return "".join(random.choice(chars) for _ in range(size))
+    return ''.join(random.choice(chars) for _ in range(size))
 
 
-@pytest.fixture(scope="module")
-def text_generator_no_whitespaces(chars=string.ascii_letters + "ąćęłóżź"):
+@pytest.fixture(scope='module')
+def text_generator_no_whitespaces(chars=string.ascii_letters + 'ąćęłóżź'):
     size = random.randint(25, 40)
-    return "".join(random.choice(chars) for _ in range(size))
+    return ''.join(random.choice(chars) for _ in range(size))
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def password_generator(chars=string.ascii_letters):
     size = random.randint(10, 25)
-    return "".join(random.choice(chars) for _ in range(size))
+    return ''.join(random.choice(chars) for _ in range(size))
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def user(app):
-
     data = {
-        "email": g.person.email(),
-        "first_name": g.person.name(),
-        "surname": g.person.surname(),
-        "password": password_generator(),
-        "title": text_generator(),
-        "message": text_generator(),
-    }
+        'email': g.person.email(),
+        'first_name': g.person.name(),
+        'surname': g.person.surname(),
+        'password': password_generator(),
+        'title': text_generator(),
+        'message': text_generator()}
     yield data
 
 
@@ -123,14 +123,12 @@ def db_user(session):
     """
     Creates and return function-scoped User database entry
     """
-    u = User(
-        email=g.person.email(),
-        first_name=g.person.name(),
-        surname=g.person.surname(),
-        password_hash=g.cryptographic.hash(),
-        active=g.development.boolean(),
-        roles=[],
-    )
+    u = User(email=g.person.email(),
+             first_name=g.person.name(),
+             surname=g.person.surname(),
+             password_hash=g.cryptographic.hash(),
+             active=g.development.boolean(),
+             roles=[])
     session.add(u)
     session.commit()
 
@@ -146,17 +144,15 @@ def db_book(session):
     """
     Creates and return function-scoped Book database entry
     """
-    b = Book(
-        isbn=g.code.isbn(),
-        authors=[],
-        title=" ".join(g.text.title().split(" ")[:5]),
-        original_title=" ".join(g.text.title().split(" ")[:5]),
-        publisher=g.business.company(),
-        pub_date=g.datetime.datetime().date(),
-        language=g.person.language(),
-        tags=[],
-        description=g.text.sentence(),
-    )
+    b = Book(isbn=g.code.isbn(),
+             authors=[],
+             title=' '.join(g.text.title().split(' ')[:5]),
+             original_title=' '.join(g.text.title().split(' ')[:5]),
+             publisher=g.business.company(),
+             pub_date=g.datetime.datetime().date(),
+             language=g.person.language(),
+             tags=[],
+             description=g.text.sentence())
     session.add(b)
     session.commit()
 
@@ -169,31 +165,54 @@ def db_book(session):
 
 @pytest.fixture(scope="function")
 def view_book(session, client):
-    languages = ["polish", "english", "other"]
-    categories = ["developers", "managers", "magazines", "other"]
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+    type_book = ['book', 'magazine']
 
     form = BookForm(
+        radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
-        title=" ".join(g.text.title().split(" ")[:5]),
+        title=' '.join(g.text.title().split(' ')[:5]),
+        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
         table_of_contents=g.text.sentence(),
         language=choice(languages),
         category=choice(categories),
         tag=g.text.words(1),
         description=g.text.sentence(),
         isbn=str(1861972717),
-        original_title=" ".join(g.text.title().split(" ")[:5]),
+        original_title=' '.join(g.text.title().split(' ')[:5]),
         publisher=g.business.company(),
         pub_date=str(randint(1970, 2018)),
+        issue=g.text.words(1)
     )
 
     yield form
 
 
 @pytest.fixture(scope="function")
+def copy_form(session, client):
+    form_add = CopyAddForm(
+        asset_code='wr109100',
+        has_cd_disk=True,
+        shelf='shelf_one'
+    )
+
+    form_edit = CopyEditForm(
+        asset_code='ab109100',
+        has_cd_disk=True,
+        available_status=True,
+        shelf='shelf_two'
+    )
+
+    yield (form_add, form_edit)
+
+
+@pytest.fixture(scope="function")
 def db_magazine(session):
     m = Magazine(
-        title=" ".join(g.text.title().split(" ")[:5]),
+        title=' '.join(g.text.title().split(' ')[:5]),
         language=g.person.language(),
         description=g.text.sentence(),
         year=g.datetime.datetime(),
@@ -213,18 +232,18 @@ def db_magazine(session):
 @pytest.fixture(scope="function")
 def db_copies(session, db_book):
     copy_available = Copy(
-        asset_code="{}{}".format(
-            g.code.locale_code()[:2], g.code.pin(mask="######")
-        ),
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
         library_item=db_book,
-        available_status=True,
+        available_status=True
     )
     copy_not_available = Copy(
-        asset_code="{}{}".format(
-            g.code.locale_code()[:2], g.code.pin(mask="######")
-        ),
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
         library_item=db_book,
-        available_status=False,
+        available_status=False
     )
     session.add_all([copy_available, copy_not_available])
     session.commit()
@@ -235,6 +254,36 @@ def db_copies(session, db_book):
 @pytest.fixture
 def app_session(client, db_user):
     with client.session_transaction() as app_session:
-        app_session["logged_in"] = True
-        app_session["id"] = db_user.id
+        app_session['logged_in'] = True
+        app_session['id'] = db_user.id
         return app_session
+
+
+@pytest.fixture
+def view_wish_list(app):
+    form = WishlistForm()
+    form.authors.data = g.person.surname() + " " + g.person.name()
+    form.title.data = ' '.join(g.text.title().split(' ')[:5])
+    form.pub_date.data = str(randint(1970, 2018))
+    form.type.data = 'book'
+    return form
+
+
+@pytest.fixture(scope="function")
+def db_wishlist_item(session):
+    """
+    Creates and return function-scoped User database entry
+    """
+    w = WishListItem(authors=g.person.surname() + " " + g.person.name(),
+                     title=' '.join(g.text.title().split(' ')[:5]),
+                     pub_year=g.datetime.datetime(),
+                     item_type='book'
+                     )
+    session.add(w)
+    session.commit()
+
+    yield w
+
+    if WishListItem.query.get(w.id):
+        session.delete(w)
+        session.commit()

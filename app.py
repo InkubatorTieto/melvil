@@ -11,14 +11,14 @@ from config import DevConfig, ProdConfig
 from init_db import db, ma
 from views.index import library
 from views.book import library_books
-from xlsx_reader import get_books, get_magazines
+from utils.xlsx_reader import get_books, get_magazines
 
 
 mail = Mail()
 sentry = Sentry()
 client = Client()
 
-if os.getenv("APP_SETTINGS", "") == "prod":
+if os.getenv('APP_SETTINGS', '') == 'prod':
     config_env = ProdConfig
 else:
     config_env = DevConfig
@@ -52,8 +52,8 @@ app = create_app()
 
 @app.cli.command(with_appcontext=True)
 def load_xls_into_db():
-    get_magazines("./biblioteka_probna.xlsx")
-    get_books("./biblioteka_probna.xlsx")
+    get_magazines('./library_example.xlsx')
+    get_books('./library_example.xlsx')
 
 
 app.cli.add_command(load_xls_into_db)
