@@ -15,7 +15,8 @@ from flask import (
     render_template,
     request,
     session,
-    url_for
+    url_for,
+    json
 )
 
 from config import DevConfig
@@ -30,7 +31,7 @@ from forms.forms import (
     RemoveForm
 )
 from init_db import db
-from messages import ErrorMessage
+from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
 from models.books import Book
@@ -179,19 +180,27 @@ def contact():
     if form.validate_on_submit():
         email_template = open(
             './templates/contact_confirmation.html', 'r').read()
-        send_email(
-            'Contact confirmation, title: ' + form.title.data,
-            DevConfig.MAIL_USERNAME,
-            [form.email.data],
-            None,
-            email_template)
-        send_email(
-            'Contact form: ' + form.title.data,
-            DevConfig.MAIL_USERNAME,
-            [DevConfig.MAIL_USERNAME],
-            'Send by: ' + form.email.data + '\n\n' + form.message.data,
-            None)
-        return redirect('/contact')
+        try:
+            send_email(
+                'Contact confirmation, title: ' + form.title.data,
+                DevConfig.MAIL_USERNAME,
+                [form.email.data],
+                None,
+                email_template)
+
+            send_email(
+                'Contact form: ' + form.title.data,
+                DevConfig.MAIL_USERNAME,
+                [DevConfig.MAIL_USERNAME],
+                'Send by: ' + form.email.data + '\n\n' + form.message.data,
+                None)
+            return SuccessMessage\
+                .message('Your email has been sent to administrator!')
+        except TimeoutError:
+            return ErrorMessage\
+                .message('Oops, '
+                         'some problem occurred'
+                         ' and your email has not been sent ')
     return render_template('contact.html',
                            title='Contact',
                            form=form,
@@ -402,8 +411,11 @@ def add_wish():
     if form.validate_on_submit():
         try:
             new_wish_item = WishListItem(authors=form.authors.data,
+                                         item_type=form.type.data,
                                          title=form.title.data,
-                                         pub_year=form.pub_year.data)
+                                         pub_year=datetime.strptime(
+                                             form.pub_date.data,
+                                             "%Y").date())
 
             db.session.add(new_wish_item)
             db.session.commit()
@@ -413,8 +425,9 @@ def add_wish():
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
-@library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
-def add_like(wish_id):
+@library.route('/addLike', methods=['GET', 'POST'])
+def add_like():
+    wish_id = request.form['wish_id']
     user = User.query.filter_by(id=session['id']).first()
     if not Like.like_exists(wish_id, user):
         try:
@@ -426,7 +439,9 @@ def add_like(wish_id):
             Like.unlike(wish_id, user)
         except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
-    return redirect(url_for('library.wishlist'))
+    return json.dumps({'num_of_likes': len(WishListItem.query
+                                                       .filter_by(id=wish_id)
+                                                       .first().likes)})
 
 
 @library.route('/deleteWish/<int:wish_id>', methods=['GET', 'POST'])

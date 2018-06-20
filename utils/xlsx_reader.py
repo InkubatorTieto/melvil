@@ -28,7 +28,6 @@ def get_full_name(author):
 
     first_name = get_name_part([name.first, name.middle])
     last_name = get_name_part([name.last, name.suffix])
-
     return first_name, last_name
 
 

@@ -13,6 +13,11 @@
 #wishList li {
     list-style-type: none;
 }
+form.wishlist_add label {
+color: white;
+font-style: italic;
+font-size: 12px;
+}
 
 .close-button {
     color: white;
