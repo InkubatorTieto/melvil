@@ -175,4 +175,3 @@ class MixedForm(MagazineForm, BookForm):
                          render_kw=({'class': 'btn btn-primary submits',
                                      'id': 'button',
                                      'disabled': True}))
-

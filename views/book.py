@@ -2,7 +2,6 @@ from datetime import datetime
 
 from flask import Blueprint
 from flask import render_template, request, session, abort
-from copy import copy
 
 from forms.book import BookForm, MixedForm, MagazineForm
 from init_db import db
@@ -148,7 +147,7 @@ def edit_book(item_id):
     if request.method == 'GET':
         try:
             user = User.query.get(session['id'])
-            admin = user.has_role('ADMIN')
+            user.has_role('ADMIN')
         except KeyError:
             abort(401)
         except Exception:
@@ -183,7 +182,6 @@ def edit_book(item_id):
     else:
 
         item = LibraryItem.query.get_or_404(item_id)
-        print(item)
         if item.type == 'book':
             form = BookForm(radio='book')
             to_validate = check_diff_book(form, item)
@@ -364,18 +362,20 @@ def update_book(form, item):
         pass
 
     try:
-        author_1 = Author.query.filter_by(first_name=item.authors[1].first_name_1,
-                                          last_name=item.authors[1].last_name_2
-                                          ).first()
+        author_1 = Author.query.filter_by(
+            first_name=item.authors[1].first_name_1,
+            last_name=item.authors[1].last_name_2
+        ).first()
         author_1.first_name_1 = form.first_name_1.data
         author_1.last_name_1 = form.surname_1.data
     except IndexError:
         pass
 
     try:
-        author_2 = Author.query.filter_by(first_name=item.authors[2].first_name_2,
-                                          last_name=item.authors[2].last_name_2
-                                          ).first()
+        author_2 = Author.query.filter_by(
+            first_name=item.authors[2].first_name_2,
+            last_name=item.authors[2].last_name_2
+        ).first()
 
         author_2.first_name_2 = form.first_name_2.data
         author_2.last_name_2 = form.surname_2.data

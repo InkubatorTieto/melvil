@@ -5,14 +5,14 @@ import string
 import pytest
 from mimesis import Generic
 from sqlalchemy import event
+from datetime import datetime
 
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from forms.book import BookForm, MixedForm
-from models import User, Book, Magazine, Copy, WishListItem
+from forms.book import BookForm, MixedForm, MagazineForm
+from models import User, Book, Magazine, Copy, WishListItem, Author, Tag
 from forms.copy import CopyAddForm, CopyEditForm
-from models import User, Book, Magazine, Copy
 from forms.forms import WishlistForm
 
 g = Generic('en')
@@ -168,10 +168,10 @@ def view_book(session, client):
     languages = ['polish', 'english', 'other']
     categories = ['developers', 'managers',
                   'magazines', 'other']
-    typee = ['book', 'magazine']
+    type_book = ['book', 'magazine']
 
-    form = BookForm(
-        radio=choice(typee),
+    form = MixedForm(
+        radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
         title=' '.join(g.text.title().split(' ')[:5]),
@@ -188,7 +188,94 @@ def view_book(session, client):
         issue=g.text.words(1)
     )
 
-    yield form
+    return form
+
+
+@pytest.fixture(scope="function")
+def view_edit_book(session):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+
+    author = Author(first_name=g.person.name(),
+                    last_name=g.person.surname())
+    session.add(author)
+
+    tag = Tag(name=g.text.words(1))
+    session.add(tag)
+    session.commit()
+    form = BookForm(
+        radio='book',
+        first_name=author.first_name,
+        surname=author.last_name,
+        title=' '.join(g.text.title().split(' ')[:3]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=tag.name,
+        description=g.text.sentence(),
+        isbn=str(9789295055025),
+        original_title=' '.join(g.text.title().split(' ')[:3]),
+        publisher=g.business.company(),
+        pub_date=str(randint(1970, 2018))
+    )
+
+    book = Book(
+        title=form.title.data,
+        authors=[author],
+        table_of_contents=form.table_of_contents.data,
+        language=form.language.data,
+        category=form.category.data,
+        tags=[tag],
+        description=form.description.data,
+        isbn=form.isbn.data,
+        original_title=form.original_title.data,
+        publisher=form.publisher.data,
+        pub_date=datetime(year=int(form.pub_date.data),
+                          month=1,
+                          day=1))
+
+    session.add(book)
+    session.commit()
+
+    return form
+
+
+@pytest.fixture(scope="function")
+def view_edit_magazine(session):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+
+    tag = Tag(name=g.text.words(1))
+    session.add(tag)
+    session.commit()
+    form = MagazineForm(
+        radio='magazine',
+        title_of_magazine=' '.join(g.text.title().split(' ')[:3]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=tag.name,
+        description=g.text.sentence(),
+        pub_date=str(randint(1970, 2018))
+    )
+
+    magazine = Magazine(
+        title=form.title_of_magazine.data,
+        table_of_contents=form.table_of_contents.data,
+        language=form.language.data,
+        category=form.category.data,
+        tags=[tag],
+        description=form.description.data,
+        year=datetime(year=int(form.pub_date.data),
+                      month=1,
+                      day=1))
+
+    session.add(magazine)
+    session.commit()
+
+    return form
 
 
 @pytest.fixture(scope="function")
