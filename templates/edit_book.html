@@ -133,38 +133,38 @@
                         {{ input( form.language ,error['language']) }}
                     </div>
 
-                    </div>
                 </div>
-
-                <div class="row">
-                    <div class="col">
-                        <br>
-                        {{ input( form.tag ,error['tag']) }}
-                    </div>
-                    <div class="col">
-                        <p id="myText">Category:</p>
-                        {{ input( form.category ,error['category']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.table_of_contents ,error['table_of_contents']) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.description ,error['description']) }}
-                    </div>
-                </div>
-
-                {{form.submit}}
-
             </div>
-            {% endif %}
-        </form>
-    </main>
+
+            <div class="row">
+                <div class="col">
+                    <br>
+                    {{ input( form.tag ,error['tag']) }}
+                </div>
+                <div class="col">
+                    <p id="myText">Category:</p>
+                    {{ input( form.category ,error['category']) }}
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col">
+                    {{ input( form.table_of_contents ,error['table_of_contents']) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ input( form.description ,error['description']) }}
+                </div>
+            </div>
+
+            {{form.submit}}
+
+</div>
+{% endif %}
+</form>
+</main>
 </div>
 {% endblock %}
 
@@ -173,7 +173,9 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
 <script>
-    $(document).ready(function show_magazine() {
+
+
+    function showMagazine() {
         $("#title_of_magazine").prop("disabled", false).show();
         $("#table_of_contest").prop("disabled", false).show();
         $("[name='pub_date']").prop("disabled", false).show();
@@ -183,8 +185,9 @@
         $("#description").prop("disabled", false).show();
         $("#button").prop("disabled", false).show();
         $("#issue").prop("disabled", false).show();
-    })
-    $(document).ready(function show_books() {
+    }
+
+    function showBooks() {
         $("#title").prop("disabled", false).show();
         $("#original_title").prop("disabled", false).show();
         $("#publisher").prop("disabled", false).show();
@@ -202,7 +205,13 @@
         $("[name='first_name_2']").prop("disabled", false).show();
         $("[name='surname_2']").prop("disabled", false).show();
         $("#isbn").prop("disabled", false).show();
-    })
+    }
+
+    $(document).ready(function show_form() {
+       showBooks()
+       showMagazine()
+    });
+
 </script>
 
 {% endblock %}

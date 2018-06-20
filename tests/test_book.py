@@ -1,5 +1,5 @@
 from flask import url_for
-from models import Author, Book, Tag, Magazine
+from models import Author, Book, Tag, Magazine, LibraryItem
 from datetime import date
 import pytest
 
@@ -106,6 +106,10 @@ def test_add_the_same_book(view_book, client):
                 follow_redirects=True)
     assert not bool(view_book.errors), \
         "Two same books have been added."
+
+
+def test_update_book(view_book):
+    view_book.radio.data == 'book'
 
 
 # Testing separated validators
