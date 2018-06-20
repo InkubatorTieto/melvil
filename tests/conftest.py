@@ -262,8 +262,7 @@ def db_tieto_user(session):
     Creates and return function-scoped Tieto user database entry
     """
     password = g.person.password(length=8)
-    u = User(
-             email=g.person.name() + g.person.surname() + '.' + '@tieto.com',
+    u = User(email=g.person.name() + g.person.surname() + '.' + '@tieto.com',
              first_name=g.person.name(),
              surname=g.person.surname(),
              password_hash=generate_password_hash(password),
