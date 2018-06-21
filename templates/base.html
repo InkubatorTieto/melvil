@@ -11,8 +11,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authentication.css') }}/">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
     {% block head %}
         <title> Melvil library - {% block title %}{% endblock %}</title>
     {% endblock %}
@@ -28,7 +28,7 @@
                     {{ nav_button('index', 'library.index', 'Home' ) }}
                     {{ nav_button('search', 'library.search', 'Search' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
-                    {{ nav_button('add_book', 'library_books.add_book', 'Add new book' ) }}
+                    {{ nav_button('add_book', 'library_books.add_book', 'Add new book/magazine' ) }}
                     {% if session['id'] %}
                         {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                         {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
@@ -54,8 +54,11 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
-<script type="text/javascript" src="/static/js/search.min.js"></script>
-<script type="text/javascript" src="/static/js/search_wish.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static',filename = 'js/search.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/search_wish.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/popover.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/add_like.js') }}"></script>
+<script type="text/javascript" src="/static/js/tooltip_wish.js"></script>
 {% endblock %}
 </body>
 </html>
