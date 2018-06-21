@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile_cron
     environment:
-      - CRON_MINUTE=30 * * * * root curl http://web:5000/check_reservation_status_db
+      - CRON_MINUTE=* * * * * root curl http://web:5000/check_reservation_status_db
   web:
     build: .
     command: sh run.sh

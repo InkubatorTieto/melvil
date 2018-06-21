@@ -315,7 +315,7 @@ def reserve(copy_id):
                 user_id=session['id'],
                 book_status=BookStatus.RESERVED,
                 reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(tz=pytz.utc) + timedelta(hour=48)
+                reservation_end=datetime.now(tz=pytz.utc) + timedelta(minutes=3)
             )
             db.session.add(res)
             db.session.commit()
@@ -324,25 +324,20 @@ def reserve(copy_id):
             abort(500)
     return redirect(url_for('library.index'))
 
- '''That doesn't working:
- 
- res_end = RentalLog._reservation_begin.replace(tzinfo=pytz.utc)\
- 					.astimezone(tz=pytz.timezone('Europe/Warsaw'))
-'''
 
 @library.route('/check_reservation_status_db')
 def check_reservation_status_db():
-    Reserved_list = db.session.query(RentalLog)\
+    reserved_list = db.session.query(RentalLog)\
         .filter(RentalLog.book_status == BookStatus.RESERVED)\
-        .filter(RentalLog._reservation_end < datetime.utcnow)\
+        .filter(RentalLog._reservation_end < datetime.utcnow())\
         .all()
-    for reserved_row in Reserved_list:
+    for reserved_row in reserved_list:
         db.session.query(Copy)\
             .filter(Copy.id == reserved_row.copy_id)\
             .update({Copy.available_status: True})
     db.session.query(RentalLog)\
         .filter(RentalLog.book_status == BookStatus.RESERVED)\
-        .filter(RentalLog._reservation_end < datetime.utcnow)\
+        .filter(RentalLog._reservation_end < datetime.utcnow())\
         .update({RentalLog.book_status: BookStatus.RETURNED})
     return "OK"
 
