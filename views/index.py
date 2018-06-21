@@ -111,8 +111,8 @@ def registration():
         if form.validate_on_submit():
             try:
                 if User.query.filter_by(email=form.email.data).first():
-                    message_body = 'User already exists'
-                    message_title = 'Oops!'
+                    message_body = 'User already exist'
+                    message_title = 'Opss!'
                     return render_template('message.html',
                                            message_title=message_title,
                                            message_body=message_body)
@@ -330,7 +330,7 @@ def reserve(copy_id):
             )
             db.session.add(res)
             db.session.commit()
-            flash('pick up the book within two days!', 'Reservation done!')
+            flash('pick up the book within two days!', 'Resevation done!')
         except IntegrityError:
             abort(500)
     return redirect(url_for('library.index'))
@@ -444,10 +444,10 @@ def add_like():
                                                        .first().likes)})
 
 
-@library.route('/delete-wish/<int:wish_id>', methods=['GET', 'POST'])
+@library.route('/deleteWish/<int:wish_id>', methods=['GET', 'POST'])
 def delete_wish(wish_id):
     try:
-        WishListItem.delete_wish(wish_id)
+        WishListItem.deleteWish(wish_id)
     except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
     return redirect(url_for('library.wishlist'))
