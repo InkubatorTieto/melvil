@@ -14,7 +14,7 @@ def test_logout_logging_out_user(app, login_form):
         session['logged_in'] = False
         c.post(url_for('library.login'),
                data=login_form.data)
-        assert 'logged_in' in session, \
+        assert session['logged_in'] is True, \
             "Login view, user with valid data hasn't logged in"
         c.get(url_for('library.logout'))
         assert 'logged_in' not in session, \

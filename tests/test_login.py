@@ -21,7 +21,7 @@ def test_login_valid_data_inserted(app, login_form):
         session['logged_in'] = False
         c.post(url_for('library.login'),
                data=login_form.data)
-        assert 'logged_in' in session, \
+        assert session['logged_in'] is True, \
             "Login view, user with valid data hasn't logged in"
         session.clear()
 
