@@ -339,6 +339,7 @@ def check_reservation_status_db():
         .filter(RentalLog.book_status == BookStatus.RESERVED)\
         .filter(RentalLog._reservation_end < datetime.utcnow())\
         .update({RentalLog.book_status: BookStatus.RETURNED})
+    db.session.commit()
     return "OK"
 
 
