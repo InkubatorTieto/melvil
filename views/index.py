@@ -17,7 +17,6 @@ from flask import (
     session,
     url_for
 )
-from flask_login import login_required, current_user
 
 from config import DevConfig
 from forms.copy import CopyAddForm, CopyEditForm
