@@ -354,12 +354,12 @@ def registration_form_invalid():
 
 
 @pytest.fixture(scope="function")
-def forgot_pass():
+def forgot_pass(db_tieto_user):
     """
     Returns password reset form
     """
     form = ForgotPass(
-        email=g.person.name() + '.' + g.person.surname() + '@tieto.com',
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
         submit=True
     )
     yield form
