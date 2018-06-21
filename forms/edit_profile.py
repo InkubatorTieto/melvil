@@ -1,28 +1,30 @@
-from wtforms import StringField, PasswordField, SubmitField
+import re
+
 from wtforms_alchemy import ModelForm
 
-from forms.custom_validators import tieto_email
-
+from wtforms.validators import Regexp
 
 from flask_wtf import FlaskForm
 
 from models import User
 
 
+email_regex = Regexp('[0-9A-Za-z-.]*@tieto.com$',
+                     flags=re.IGNORECASE,
+                     message='Insert valid tieto mail.')
+
+first_name_regex = Regexp('^[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*$',
+                          flags=re.IGNORECASE,
+                          message='Insert valid name.')
+
+surname_regex = Regexp('^[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*$',
+                       flags=re.IGNORECASE,
+                       message='Insert valid surname.')
+
+
 class EditProfileForm(ModelForm, FlaskForm):
     class Meta:
         model = User
-        fields = ['First name', 'Surname', 'Email']
-        # labels = {
-        #     'Email': ('Email'),
-        # }
-        #help_texts = {
-            #'Email': ('Some useful help text.'),
-        #}
-
-# class EditProfileForm(FlaskForm):
-#         email = StringField('Email', validators=)
-#         first_name = StringField('First name')
-#         surname = StringField('Surname')
-#         password = PasswordField('Password')
-#         submit = SubmitField('Confirm')
+        only = ['first_name', 'surname', 'email']
+        unique_validator = None
+        validators = {'email': email_regex}#'name': first_name_regex, 'surname': surname_regex}

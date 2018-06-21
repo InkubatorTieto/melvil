@@ -17,6 +17,7 @@ from flask import (
     session,
     url_for
 )
+from flask_login import login_required, current_user
 
 from config import DevConfig
 from forms.copy import CopyAddForm, CopyEditForm
@@ -512,26 +513,18 @@ def edit_copy(copy_id):
                            action='Edit')
 
 
-@library.route('/edit_profile/<int:user_id>', methods=['GET', 'POST'])
+@library.route('/edit_profile/<int:user_id>', methods=['GET', 'POST']) # get the proper user from current session
 def edit_profile(user_id):
     user = User.query.get_or_404(user_id)
     form = EditProfileForm()
-    email_before = user.email
     if form.validate_on_submit():
         try:
             user.first_name = form.first_name.data
             user.surname = form.surname.data
-            email_after = form.email.data
-            #FIXME: check if email was changed
-            if email_before != email_after:
-                user.email = form.email.data
-                db.session.commit()
-            else:
-                flash('Email has not been updated.')
+            user.email = form.email.data
             db.session.commit()
             flash('Profile data has been updated!')
-            return redirect(url_for('library.index',
-                                    user_id=user_id))
+            return redirect(url_for('library.index'))
         except IntegrityError:
             abort(500)
 
