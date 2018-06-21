@@ -18,8 +18,6 @@
                                 {{ form.hidden_tag() }}
                                 {{ field_input(form.first_name, error['first_name'], placeholder="First name") }}
                                 {{ field_input(form.surname, error['surname'], placeholder="Surname") }}
-                                <!-- FIXME: check if email was changed
-                                FIXME: add proper mail, first name, surname validators -->
                                 {{ field_input(form.email, error['email'], placeholder="E-mail") }}
                                <input type="submit" class="btn btn-primary submits"
                                       name="submit" value="Save">
