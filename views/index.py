@@ -405,7 +405,7 @@ def wishlist():
     return render_template('wishlist.html', wishes=output, admin=admin)
 
 
-@library.route('/addWish', methods=['GET', 'POST'])
+@library.route('/add-wish', methods=['GET', 'POST'])
 def add_wish():
     form = WishlistForm()
     if form.validate_on_submit():
@@ -425,7 +425,7 @@ def add_wish():
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
-@library.route('/addLike', methods=['GET', 'POST'])
+@library.route('/add-like', methods=['GET', 'POST'])
 def add_like():
     wish_id = request.form['wish_id']
     user = User.query.filter_by(id=session['id']).first()
