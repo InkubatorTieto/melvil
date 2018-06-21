@@ -24,8 +24,8 @@ def send_confirmation_email(user_email):
         "Confirm Your Email Address - Tieto library",
         DevConfig.ADMINS[0],
         [user_email],
-        body,
         None,
+        body,
     )
 
 
