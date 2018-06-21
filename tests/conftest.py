@@ -12,6 +12,7 @@ from app import mail as _mail
 from forms.book import BookForm
 from models import User, Book, Magazine, Copy, WishListItem
 from forms.copy import CopyAddForm, CopyEditForm
+from forms.edit_profile import EditProfileForm
 from models import User, Book, Magazine, Copy
 
 g = Generic('en')
@@ -270,3 +271,14 @@ def db_wishlist_item(session):
     if WishListItem.query.get(w.id):
         session.delete(w)
         session.commit()
+
+
+@pytest.fixture(scope="function")
+def edit_profile_form(session, client):
+    form_edit = EditProfileForm(
+        first_name='Fryderyk',
+        surname='Pumpernikiel',
+        email="pumpernikiel@tieto.com"
+    )
+
+    yield (form_edit)
