@@ -142,7 +142,8 @@ def add_book():
 
 
 def book_exists(new_book):
-    results = Book.query.filter(Book.title.startswith(new_book.title[:2])).all()
+    results = Book.query.filter(
+        Book.title.startswith(new_book.title[:2])).all()
     for i in results:
         if i.isbn == new_book.isbn:
             return False
