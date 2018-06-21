@@ -43,6 +43,25 @@ def create_library_item(session, model, **kwargs):
         return instance
 
 
+def create_copy(book, asset):
+    if not asset:
+        create_library_item(db.session, Copy,
+                            library_item_id=book.id,
+                            library_item=book)
+
+    elif "płyta" in asset:
+        create_library_item(db.session, Copy,
+                            library_item_id=book.id,
+                            library_item=book,
+                            has_cd_disk=True)
+
+    else:
+        create_library_item(db.session, Copy,
+                            library_item_id=book.id,
+                            library_item=book,
+                            asset_code=asset)
+
+
 # reading author's data from file
 def get_authors_data(authors):
     if (',' in authors and 'Jr.' not in authors) \
@@ -83,7 +102,7 @@ def get_book_data(file_location):
                 date_of_rental = current_sheet.cell(row_index, 5)
                 status = current_sheet.cell(row_index, 5)
                 author = get_authors_data(authors)
-                asset = current_sheet.cell_value(row_index, 3)
+                asset = str(current_sheet.cell_value(row_index, 3))
                 book_properties = {'authors': author,
                                    'title': title,
                                    'asset': asset,
@@ -91,7 +110,7 @@ def get_book_data(file_location):
                 book_list.append(book_properties)
 
             else:
-                asset = current_sheet.cell_value(row_index, 3)
+                asset = str(current_sheet.cell_value(row_index, 3))
                 book_properties = {'authors': author,
                                    'current_shelf': current_shelf,
                                    'title': title,
@@ -145,6 +164,7 @@ def get_books(file_location):
             list_of_authors.append(author)
             book = create_library_item(db.session, Book, title=title)
             book.authors.append(author)
+            create_copy(book, asset)
 
         elif isinstance(authors, list):
             authors_id = []
@@ -160,17 +180,7 @@ def get_books(file_location):
                 book = create_library_item(db.session, Book,
                                            title=title)
                 book.authors.append(author)
-                # checking if asset value is an empty string
-                # which violates uniqueness of the asset code
-                if not asset:
-                    create_library_item(db.session, Copy,
-                                        library_item_id=book.id,
-                                        library_item=book)
-                else:
-                    create_library_item(db.session, Copy,
-                                        library_item_id=book.id,
-                                        library_item=book,
-                                        asset_code=asset)
+                create_copy(book, asset)
 
 
 # writing magazine's data in database
@@ -179,12 +189,22 @@ def get_magazines(file_location):
     for i in magazines_properties:
         title = i['title']
         issue = str(i['issue'])
-        year = str(i['year'])
+        year = i['year']
         if not year:
-            print('Magazine ', title, issue, ' has no year information.')
+            magazine = create_library_item(db.session, Magazine,
+                                           title=title,
+                                           issue=issue)
+
+            create_library_item(db.session, Copy,
+                                library_item_id=magazine.id,
+                                library_item=magazine)
         else:
             year = datetime.strptime(str(int(i['year'])), '%Y')
-            create_library_item(db.session, Magazine,
-                                title=title,
-                                year=year,
-                                issue=issue)
+            magazine = create_library_item(db.session, Magazine,
+                                           title=title,
+                                           year=year,
+                                           issue=issue)
+
+            create_library_item(db.session, Copy,
+                                library_item_id=magazine.id,
+                                library_item=magazine)

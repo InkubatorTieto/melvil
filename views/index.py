@@ -31,7 +31,7 @@ from forms.forms import (
     RemoveForm
 )
 from init_db import db
-from messages import ErrorMessage
+from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
 from models.books import Book
@@ -180,19 +180,27 @@ def contact():
     if form.validate_on_submit():
         email_template = open(
             './templates/contact_confirmation.html', 'r').read()
-        send_email(
-            'Contact confirmation, title: ' + form.title.data,
-            DevConfig.MAIL_USERNAME,
-            [form.email.data],
-            None,
-            email_template)
-        send_email(
-            'Contact form: ' + form.title.data,
-            DevConfig.MAIL_USERNAME,
-            [DevConfig.MAIL_USERNAME],
-            'Send by: ' + form.email.data + '\n\n' + form.message.data,
-            None)
-        return redirect('/contact')
+        try:
+            send_email(
+                'Contact confirmation, title: ' + form.title.data,
+                DevConfig.MAIL_USERNAME,
+                [form.email.data],
+                None,
+                email_template)
+
+            send_email(
+                'Contact form: ' + form.title.data,
+                DevConfig.MAIL_USERNAME,
+                [DevConfig.MAIL_USERNAME],
+                'Send by: ' + form.email.data + '\n\n' + form.message.data,
+                None)
+            return SuccessMessage\
+                .message('Your email has been sent to administrator!')
+        except TimeoutError:
+            return ErrorMessage\
+                .message('Oops, '
+                         'some problem occurred'
+                         ' and your email has not been sent ')
     return render_template('contact.html',
                            title='Contact',
                            form=form,
