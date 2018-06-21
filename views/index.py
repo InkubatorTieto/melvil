@@ -325,6 +325,24 @@ def reserve(copy_id):
     return redirect(url_for('library.index'))
 
 
+@library.route('/check_reservation_status_db')
+def check_reservation_status_db():
+    reserved_list = db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .filter(RentalLog._reservation_end < datetime.utcnow())\
+        .all()
+    for reserved_row in reserved_list:
+        db.session.query(Copy)\
+            .filter(Copy.id == reserved_row.copy_id)\
+            .update({Copy.available_status: True})
+    db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .filter(RentalLog._reservation_end < datetime.utcnow())\
+        .update({RentalLog.book_status: BookStatus.RETURNED})
+    db.session.commit()
+    return "OK"
+
+
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
     data = db.session.query(WishListItem).all()

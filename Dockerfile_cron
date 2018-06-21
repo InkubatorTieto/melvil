@@ -1,0 +1,3 @@
+FROM morbz/docker-cron
+
+RUN apt-get update && apt-get -y install curl
