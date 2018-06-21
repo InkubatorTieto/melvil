@@ -405,7 +405,7 @@ def wishlist():
     return render_template('wishlist.html', wishes=output, admin=admin)
 
 
-@library.route('/add-wish', methods=['GET', 'POST'])
+@library.route('/add_wish', methods=['GET', 'POST'])
 def add_wish():
     form = WishlistForm()
     if form.validate_on_submit():
@@ -425,7 +425,7 @@ def add_wish():
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
-@library.route('/add-like', methods=['GET', 'POST'])
+@library.route('/add_like', methods=['GET', 'POST'])
 def add_like():
     wish_id = request.form['wish_id']
     user = User.query.filter_by(id=session['id']).first()
@@ -444,7 +444,7 @@ def add_like():
                                                        .first().likes)})
 
 
-@library.route('/delete-wish/<int:wish_id>', methods=['GET', 'POST'])
+@library.route('/delete_wish/<int:wish_id>', methods=['GET', 'POST'])
 def delete_wish(wish_id):
     try:
         WishListItem.delete_wish(wish_id)
