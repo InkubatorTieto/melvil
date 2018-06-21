@@ -11,8 +11,8 @@ from config import DevConfig, ProdConfig
 from init_db import db, ma
 from views.index import library
 from views.book import library_books
+from utils.xlsx_reader import get_books, get_magazines
 from views.book_borrowing_dashboard import library_book_borrowing_dashboard
-from xlsx_reader import get_books, get_magazines
 
 
 mail = Mail()
@@ -54,8 +54,8 @@ app = create_app()
 
 @app.cli.command(with_appcontext=True)
 def load_xls_into_db():
-    get_magazines('./biblioteka_probna.xlsx')
-    get_books('./biblioteka_probna.xlsx')
+    get_magazines('./library_example.xlsx')
+    get_books('./library_example.xlsx')
 
 
 app.cli.add_command(load_xls_into_db)

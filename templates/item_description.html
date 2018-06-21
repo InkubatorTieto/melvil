@@ -57,7 +57,7 @@
                                     <a type="button" role="button" class="btn btn-primary btn-sm"
                                        href="#">Edit {{ item.type|capitalize }}</a>
                                     <a type="button" role="button" class="btn btn-danger btn-sm"
-                                       href="#">Delete {{ item.type|capitalize }}</a>
+                                       href="{{ url_for('library.remove_item', item_id=item.id)}}">Delete {{ item.type|capitalize }}</a>
                                 </div>
                             {% endif %}
 
@@ -79,7 +79,6 @@
                                                    class="btn btn-success btn-sm {{ 'disabled' if not copy.available_status }}"
                                                    href="{{ url_for( 'library.reserve', copy_id=copy.id ) }}">Reserve</a>
                                             </td>
-
                                             {% if admin %}
                                                 <td class="table-button">
                                                     <a type="button" role="button" class="btn btn-primary btn-sm"
@@ -87,12 +86,11 @@
                                                 </td>
                                                 <td class="table-button">
                                                     <a type="button" role="button" class="btn btn-danger btn-sm"
-                                                       href="#">Delete</a>
+                                                       href="{{ url_for('library.remove_copy', item_id=item.id, copy_id=copy.id)}}">Delete</a>
                                                 </td>
                                             {% endif %}
                                         </tr>
                                     {% endfor %}
-
                                 </table>
                             {% else %}
                                 <p class="error-info">No Copies - nothing to borrow.</p>
