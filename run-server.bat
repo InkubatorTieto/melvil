@@ -9,7 +9,7 @@ SET ARG=%1
 SET ARG2=%2
 
 IF "%ARG%"=="/t" (
-     IF "%ARG2%"=="--cov" (
+     IF "%ARG2%"=="/cov" (
      docker-compose -f %DEV% run web pytest --cov
     ) ELSE (
      docker-compose -f %DEV% run web pytest
