@@ -15,19 +15,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Error handle views for 401, 404 and 500. 
 - Adding book view without test
 - Add custom validators for every field in add book view
-### Fixed
 - Fix bug - Eliminate bug with already registered user registration handling
 - Creating form for add books in wishlist
 - Creating like button in wishlist for users
-
-##[0.0.1] - 2018.06.11
-### Added
+- Added button that user is logged or not
+- Added different options for logged out or logged in user, redirecting to the right page
 - Magazine option in add wish view
 - Icons of book and magazine in wish list view
 - Like button click without reloading page
 - Tests for wish list
 - Popover with info about wish list
-
-## [0.0.1] - 2018-06-11
-###Added
 - Creating delete button in wishlist only for admin
