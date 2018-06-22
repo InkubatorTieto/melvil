@@ -10,11 +10,9 @@ from sqlalchemy.exc import OperationalError
 
 from config import DevConfig, ProdConfig
 from init_db import db, ma
-from views.index import library
-from views.book import library_books
 from utils.xlsx_reader import get_books, get_magazines
+from views.book import library_books
 from views.book_borrowing_dashboard import library_book_borrowing_dashboard
-
 from views.index import library
 
 mail = Mail()
