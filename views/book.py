@@ -286,7 +286,17 @@ def create_get_form(item):
             surname_2=authors_list[2].last_name
         )
     else:
-        form = BookForm()
+        form = BookForm(
+            title=item.title,
+            table_of_contents=item.table_of_contents,
+            language=item.language,
+            category=item.category,
+            tag=item.tags_string,
+            description=item.description,
+            isbn=item.isbn,
+            original_title=item.original_title,
+            publisher=item.publisher,
+            pub_date=item.pub_date)
     return form
 
 
@@ -374,12 +384,9 @@ def update_book(form, item):
                     first_name=form.first_name.data,
                     last_name=form.surname.data
                 )
-                item.authors.append_author(new_author)
+                item.authors.append(new_author)
                 db.session.add(new_author)
                 db.session.commit()
-
-
-
 
     try:
         author_1 = Author.query.filter_by(
@@ -399,15 +406,9 @@ def update_book(form, item):
                     first_name=form.first_name_1.data,
                     last_name=form.surname_1.data
                 )
-                item.authors.append_author(new_author)
+                item.authors.append(new_author)
                 db.session.add(new_author)
                 db.session.commit()
-
-
-
-
-
-
 
     try:
         author_2 = Author.query.filter_by(
@@ -427,13 +428,11 @@ def update_book(form, item):
                     first_name=form.first_name_2.data,
                     last_name=form.surname_2.data
                 )
-                item.authors.append_author(new_author)
+                item.authors.append(new_author)
                 db.session.add(new_author)
                 db.session.commit()
 
-
-
-    db.session.commit()
+        db.session.commit()
 
 
 def check_diff_magazine(form, item):
