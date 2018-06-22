@@ -141,7 +141,7 @@ def registration():
                                message_body=message_body)
 
 
-@library.route('/search', methods=['GET', 'POST'])
+@library.route('/search', methods=['GET'])
 def search():
     try:
         user = User.query.get(session['id'])

@@ -178,5 +178,4 @@ class LibraryItem(db.Model):
                 'id': self.id,
                 'title': self.title,
                 'issue': self.issue,
-                'type': self.type,
-            }
+                'type': self.type}
