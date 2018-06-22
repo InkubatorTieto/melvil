@@ -6,7 +6,7 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from raven import Client
 from raven.contrib.flask import Sentry
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, TimeoutError
 
 from config import DevConfig, ProdConfig
 from init_db import db, ma
