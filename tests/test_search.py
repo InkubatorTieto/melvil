@@ -24,7 +24,7 @@ def test_search_query_match(client, app_session, search_query):
 
 
 def test_search_query_null(client, app_session, search_form):
-    resp = client.post(url_for('library.search'),
+    resp = client.get(url_for('library.search'),
                        data=search_form.data,
                        follow_redirects=True)
     assert resp.status_code == 200
@@ -39,7 +39,7 @@ def test_search_query_null(client, app_session, search_form):
 
 
 def test_search_query(client, app_session, get_title):
-    resp = client.post(url_for('library.search'),
+    resp = client.get(url_for('library.search'),
                        data=get_title.title,
                        follow_redirects=True)
     assert resp.status_code == 200
