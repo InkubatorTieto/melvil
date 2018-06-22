@@ -167,3 +167,21 @@ class LibraryItem(db.Model):
             return ', '.join(t.name for t in self.tags)
         else:
             return '-'
+
+
+    def serialize(self):
+
+        if self.type == 'book':
+            return {
+                'id': self.id,
+                'title': self.title,
+                'authors': self.authors_string.split(', '),
+                'type': self.type,
+            }
+        else:
+            return {
+                'id': self.id,
+                'title': self.title,
+                'issue': self.issue,
+                'type': self.type,
+            }

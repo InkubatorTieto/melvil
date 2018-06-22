@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import json
 
 from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import exc, func
@@ -144,6 +145,7 @@ def registration():
 @library.route('/search', methods=['GET', 'POST'])
 def search():
 
+
     try:
         user = User.query.get(session['id'])
         admin = user.has_role('ADMIN')
@@ -153,62 +155,55 @@ def search():
         abort(500)
 
     if request.method == 'GET':
-        form = SearchForm()
-        try:
-            if request.args.get('query') is None:
+        if not request.args or not request.args.get('query'):
+            form = SearchForm()
+            page = request.args.get('page', 1, type=int)
+            paginate_query = LibraryItem.query.order_by(
+                                LibraryItem.title.asc()
+                                    ).paginate(page, 10, False)
 
-                page = request.args.get('page', 1, type=int)
-                paginate_query = LibraryItem.query.order_by(
-                                    LibraryItem.title.asc()
-                                        ).paginate(page, 10, False)
+            next_url = (url_for(
+                                'library.search',
+                                page=paginate_query.next_num)
+                        if paginate_query.has_next else None)
+            prev_url = (url_for(
+                                'library.search',
+                                page=paginate_query.prev_num)
+                        if paginate_query.has_prev else None)
+            output = [d.serialize() for d in paginate_query.items]
+            return render_template('search.html',
+                                   all_query=output,
+                                   admin=admin,
+                                   form=form,
+                                   next_url=next_url,
+                                   prev_url=prev_url)
 
-                next_url = (url_for(
-                                    'library.search',
-                                    page=paginate_query.next_num)
-                            if paginate_query.has_next else None)
-                prev_url = (url_for(
-                                    'library.search',
-                                    page=paginate_query.prev_num)
-                            if paginate_query.has_prev else None)
+        elif request.args.get('query'):
+            form = SearchForm()
+            query_str = request.args.get('query')
+            page = request.args.get('page', 1, type=int)
+            paginate_query = (
+                LibraryItem.query.filter(
+                    func.lower(LibraryItem.title).like(
+                        '%{}%'.format(query_str)))).paginate(page, 10, False)
+            next_url = (url_for(
+                                'library.search',
+                                page=paginate_query.next_num)
+                        if paginate_query.has_next else None)
+            prev_url = (url_for(
+                                'library.search',
+                                page=paginate_query.prev_num)
+                        if paginate_query.has_prev else None)
+            output = [d.serialize() for d in paginate_query.items]
+            return render_template('search.html',
+                                   all_query=output,
+                                   admin=admin,
+                                   form=form,
+                                   next_url=next_url,
+                                   prev_url=prev_url)
 
-            else:
-
-                q_param = request.args.get('query',)
-                page = request.args.get('page', 1, type=int)
-                paginate_query = (
-                    LibraryItem.query.filter(
-                        func.lower(LibraryItem.title).like(
-                            '%{}%'.format(q_param))).paginate(page, 10, False)
-                    )
-
-                next_url = (url_for(
-                                    'library.search',
-                                    page=paginate_query.next_num)
-                            if paginate_query.has_next else None)
-                prev_url = (url_for(
-                                    'library.search',
-                                    page=paginate_query.prev_num)
-                            if paginate_query.has_prev else None)
-
-        except TimeoutError:
-            return abort(500)
-
-        return render_template('search.html',
-                               title='Search',
-                               all_query=paginate_query.items,
-                               next_url=next_url,
-                               prev_url=prev_url,
-                               admin=admin,
-                               form=form)
-
-    elif request.method == 'POST':
-        form = SearchForm()
-        if form.validate_on_submit():
-            return redirect(url_for('library.search',
-                                    query=form.query.data))
-
-    else:
-        return abort(405)
+        else:
+            abort(500)
 
 
 @library.route('/contact', methods=['GET', 'POST'])
