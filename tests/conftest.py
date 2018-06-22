@@ -275,10 +275,13 @@ def db_wishlist_item(session):
 
 @pytest.fixture(scope="function")
 def edit_profile_form(session, client):
+    f_name = g.person.name()
+    surname = g.person.surname()
+    mail = f_name + surname+"@tieto.com"
     form_edit = EditProfileForm(
-        first_name='Fryderyk',
-        surname='Pumpernikiel',
-        email="pumpernikiel@tieto.com"
+        first_name=f_name,
+        surname=surname,
+        email=mail
     )
 
     yield (form_edit)

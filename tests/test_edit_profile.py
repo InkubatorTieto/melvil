@@ -20,11 +20,11 @@ def test_edit_prof_post(edit_profile_form, client, db_user):
 
 
 @pytest.mark.parametrize("values, expected", [
-    ("abc@tieto.com", True),
-    ("qwerty@tieto.com", True),
-    ("m2345@buziaczek.pl", False),
-    ("mnbk@wp.pl", False),
-    ("whazzuup@tieto.com", True)
+    ("a.bc@tieto.com", True),
+    ("qwerty.xyqz@tieto.com", True),
+    ("m23.45@gmail.pl", False),
+    ("name.surname@wp.pl", False),
+    ("name.surname123456789@tieto.com", True)
 ])
 def test_email_regex(values, expected):
     assert bool(re.compile('[0-9A-Za-z-.]*@tieto.com$',

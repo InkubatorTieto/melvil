@@ -1,17 +1,16 @@
 import re
 
 from wtforms_alchemy import ModelForm
-
 from wtforms.validators import Regexp
-
 from flask_wtf import FlaskForm
 
 from models import User
+from forms.custom_validators import email_regex
 
 
-email_regex = Regexp('[0-9A-Za-z-.]*@tieto.com$',
-                     flags=re.IGNORECASE,
-                     message='Insert valid tieto mail.')
+tieto_mail_regex = Regexp(email_regex(),
+                          flags=re.IGNORECASE,
+                          message='Insert valid tieto mail.')
 
 
 class EditProfileForm(ModelForm, FlaskForm):
@@ -19,4 +18,4 @@ class EditProfileForm(ModelForm, FlaskForm):
         model = User
         only = ['first_name', 'surname', 'email']
         unique_validator = None
-        validators = {'email': email_regex}
+        validators = {'email': tieto_mail_regex}
