@@ -12,7 +12,6 @@ from app import mail as _mail
 from forms.book import BookForm
 from models import User, Book, Magazine, Copy, WishListItem
 from forms.copy import CopyAddForm, CopyEditForm
-from models import User, Book, Magazine, Copy
 from forms.forms import WishlistForm
 
 g = Generic('en')
