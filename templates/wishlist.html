@@ -1,49 +1,64 @@
 {% extends "base.html" %}
 {% block title %}Wish list{% endblock %}
 {% block content %}
-   {% from "macros.html" import input with context %}
-<h1>Search<button type="button" class="btn btn-link" data-container="body" data-toggle="popover"
-                        data-placement="right" data-content="If you can't find the book you want just add a new one to wishlist!">
-  <i class="fas fa-info-circle"></i>
-</button></h1>
+    {% from "macros.html" import input with context %}
+    <h1>Search
+        <button type="button" class="btn btn-link" data-container="body" data-toggle="popover"
+                data-placement="right"
+                data-content="If you can't find the book you want just add a new one to wishlist!">
+            <i class="fas fa-info-circle"></i>
+        </button>
+    </h1>
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-      <main role="main" class="inner cover">
-       <div class="cover-container d-flex h-80 p-3 mx-auto flex-column" >
-           <main role="main" class="inner cover">
-               <input class="form-control" id="bookInput" type="text" placeholder="Search...">
-               <div class="container my_wishlist">
-                   <div class="row">
-                       <div class="col-md-12">
-                           <div class="wrap">
-                               <p class="form-title"> Wish list</p>
-                               <div class="scrollspy-example" data-target="#scrollspy" data-offset="1">
-                               <ul class="list-group" align="left" id="wishList" >
-                                   {% for item in wishes %}
-                                   {% for wish_item in item %}
-                                  <tr> <li>
-                                    <td>{% if wish_item.item_type == 'book' %}<img src="../../static/img/i_book.png" alt = 'book'/>{% endif %}
-                                        {% if wish_item.item_type == 'magazine' %}<img src="../../static/img/i_newspaper.png" alt= 'journal'/>{% endif %}
-                                        "{{wish_item.title}}" {{wish_item.authors}} {{wish_item.pub_year[:4]}}
-                                       <button type="button" id="addLike_{{wish_item.id}}" class="btn btn-outline-danger" style="border:none;" >
-                                         <i class="fas fa-heart"></i>
-                                       </button><span id="likes_{{wish_item.id}}">{{wish_item.likes|length}}</span>
-                                       </button>
-                                      {% if admin %}
-                                        <button type="button" class="btn btn-outline-light" style="border:none;" href="#" id="tooltip-ex" data-toggle="tooltip" data-placement="right" title="Delete"  onclick="window.location.href='{{ url_for('library.delete_wish',wish_id=wish_item.id)}}';">
-                                         <i class="fa fa-trash"></i></button>
-                                        {% endif %}</td></li>
-                                    </tr> {% endfor %}{% endfor %} </ul>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
-                   <button type="button" id="addWishButton" class="btn btn-primary btn-sample" data-toggle="modal" onclick="window.location.href='{{ url_for('library.add_wish')}}';">
-                      Create new wish
-                   </button>
-               </div>
-           </main>
-       </div>
-      </main>
+        <main role="main" class="inner cover">
+            <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+                <main role="main" class="inner cover">
+                    <input class="form-control" id="bookInput" type="text" placeholder="Search...">
+                    <div class="container my_wishlist">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="wrap">
+                                    <p class="form-title"> Wish list</p>
+                                    <div class="scrollspy-example" data-target="#scrollspy" data-offset="1">
+                                        <ul class="list-group" align="left" id="wishList">
+                                            {% for item in wishes %}
+                                                {% for wish_item in item %}
+                                                    <li>
+                                                        {% if wish_item.item_type == 'book' %}
+                                                            <img src="../../static/img/i_book.png"
+                                                                 alt='book'/>{% endif %}
+                                                        {% if wish_item.item_type == 'magazine' %}
+                                                            <img src="../../static/img/i_newspaper.png"
+                                                                 alt='journal'/>{% endif %}
+                                                        "{{ wish_item.title }}" {{ wish_item.authors }} {{ wish_item.pub_year[:4] }}
+                                                        <button type="button" id="addLike_{{ wish_item.id }}"
+                                                                class="btn btn-outline-danger"
+                                                                style="border:none;">
+                                                            <i class="fas fa-heart"></i>
+                                                        </button>
+                                                        <span id="likes_{{ wish_item.id }}">{{ wish_item.likes|length }}</span>
+                                                        {% if admin %}
+                                                            <button type="button" class="btn btn-outline-light"
+                                                                    style="border:none;" href="#"
+                                                                    id="tooltip-ex" data-toggle="tooltip"
+                                                                    data-placement="right" title="Delete"
+                                                                    onclick="window.location.href='{{ url_for('library.delete_wish',wish_id=wish_item.id) }}';">
+                                                                <i class="fa fa-trash"></i></button>
+                                                        {% endif %}
+                                                    </li>
+                                                {% endfor %}{% endfor %} </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addWishButton" class="btn btn-primary btn-sample" data-toggle="modal"
+                                onclick="window.location.href='{{ url_for('library.add_wish') }}';">
+                            Create new wish
+                        </button>
+                    </div>
+                </main>
+            </div>
+        </main>
     </div>
 
 {% endblock %}
