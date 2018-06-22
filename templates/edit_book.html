@@ -134,37 +134,37 @@
                     </div>
 
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <br>
-                    {{ input( form.tag ,error['tag']) }}
-                </div>
-                <div class="col">
-                    <p id="myText">Category:</p>
-                    {{ input( form.category ,error['category']) }}
-                </div>
-            </div>
 
 
-            <div class="row">
-                <div class="col">
-                    {{ input( form.table_of_contents ,error['table_of_contents']) }}
+                <div class="row">
+                    <div class="col">
+                        <br>
+                        {{ input( form.tag ,error['tag']) }}
+                    </div>
+                    <div class="col">
+                        <p id="myText">Category:</p>
+                        {{ input( form.category ,error['category']) }}
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    {{ input( form.description ,error['description']) }}
-                </div>
-            </div>
 
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.table_of_contents ,error['table_of_contents']) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.description ,error['description']) }}
+                    </div>
+                </div>
+            </div>
             {{form.submit}}
 
-</div>
-{% endif %}
-</form>
-</main>
+
+            {% endif %}
+        </form>
+    </main>
 </div>
 {% endblock %}
 
@@ -208,8 +208,8 @@
     }
 
     $(document).ready(function show_form() {
-       showBooks()
-       showMagazine()
+        showBooks()
+        showMagazine()
     });
 
 </script>

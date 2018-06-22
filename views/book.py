@@ -203,6 +203,7 @@ def edit_book(item_id):
                                    error=form.errors)
         if item.type == 'magazine':
             form = MagazineForm(radio='magazine')
+
             to_validate = check_diff_magazine(form, item)
             for i in to_validate:
                 i.validate(form)
@@ -317,23 +318,29 @@ def check_diff_book(form, item):
         if form.surname.data != item.authors[0].last_name:
             to_validate.append(form.surname)
     except IndexError:
-        pass
+        if form.first_name.data and form.surname.data:
+            to_validate.append(form.first_name)
+            to_validate.append(form.surname)
 
     try:
         if form.first_name_1.data != item.authors[1].first_name:
             to_validate.append(form.first_name_1)
-        if form.surname_1.data == item.authors[1].last_name:
+        if form.surname_1.data != item.authors[1].last_name:
             to_validate.append(form.surname_1)
     except IndexError:
-        pass
+        if form.first_name_1.data and form.surname_1.data:
+            to_validate.append(form.first_name_1)
+            to_validate.append(form.surname_1)
 
     try:
         if form.first_name_2.data != item.authors[2].first_name:
             to_validate.append(form.first_name_2)
-        if form.surname_2.data == item.authors[2].last_name:
+        if form.surname_2.data != item.authors[2].last_name:
             to_validate.append(form.surname_2)
     except IndexError:
-        pass
+        if form.first_name_2.data and form.surname_2.data:
+            to_validate.append(form.first_name_2)
+            to_validate.append(form.surname_2)
     return to_validate
 
 
@@ -351,7 +358,6 @@ def update_book(form, item):
                              day=1)
     tag = Tag.query.filter_by(name=item.tags_string).first()
     tag.name = form.tag.data
-
     try:
         author = Author.query.filter_by(first_name=item.authors[0].first_name,
                                         last_name=item.authors[0].last_name
@@ -359,28 +365,74 @@ def update_book(form, item):
         author.first_name = form.first_name.data
         author.last_name = form.surname.data
     except IndexError:
-        pass
+        if form.first_name.data and form.surname.data:
+            author = Author.query.filter_by(first_name=form.first_name.data,
+                                            last_name=form.surname.data
+                                            ).first()
+            if not author:
+                new_author = Author(
+                    first_name=form.first_name.data,
+                    last_name=form.surname.data
+                )
+                item.authors.append_author(new_author)
+                db.session.add(new_author)
+                db.session.commit()
+
+
+
 
     try:
         author_1 = Author.query.filter_by(
-            first_name=item.authors[1].first_name_1,
-            last_name=item.authors[1].last_name_2
+            first_name=item.authors[1].first_name,
+            last_name=item.authors[1].last_name
         ).first()
-        author_1.first_name_1 = form.first_name_1.data
-        author_1.last_name_1 = form.surname_1.data
+        author_1.first_name = form.first_name_1.data
+        author_1.last_name = form.surname_1.data
     except IndexError:
-        pass
+        if form.first_name_1.data and form.surname_1.data:
+            author = Author.query.filter_by(first_name=form.first_name_1.data,
+                                            last_name=form.surname_1.data
+                                            ).first()
+
+            if not author:
+                new_author = Author(
+                    first_name=form.first_name_1.data,
+                    last_name=form.surname_1.data
+                )
+                item.authors.append_author(new_author)
+                db.session.add(new_author)
+                db.session.commit()
+
+
+
+
+
+
 
     try:
         author_2 = Author.query.filter_by(
-            first_name=item.authors[2].first_name_2,
-            last_name=item.authors[2].last_name_2
+            first_name=item.authors[2].first_name,
+            last_name=item.authors[2].last_name
         ).first()
 
-        author_2.first_name_2 = form.first_name_2.data
-        author_2.last_name_2 = form.surname_2.data
+        author_2.first_name = form.first_name_2.data
+        author_2.last_name = form.surname_2.data
     except IndexError:
-        pass
+        if form.first_name_2.data and form.surname_2.data:
+            author = Author.query.filter_by(first_name=form.first_name_2.data,
+                                            last_name=form.surname_2.data
+                                            ).first()
+            if not author:
+                new_author = Author(
+                    first_name=form.first_name_2.data,
+                    last_name=form.surname_2.data
+                )
+                item.authors.append_author(new_author)
+                db.session.add(new_author)
+                db.session.commit()
+
+
+
     db.session.commit()
 
 
