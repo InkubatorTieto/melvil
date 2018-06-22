@@ -71,8 +71,8 @@ class Base(FlaskForm):
                                             'disabled': True}))
 
     pub_date = SelectField('Year of publication',
-                           choices=[(str(x), str(x))
-                                    for x in
+                           choices=[(str(year), str(year))
+                                    for year in
                                     range(1970,
                                           datetime.now().year + 1)],
                            validators=[check_pub_date],
