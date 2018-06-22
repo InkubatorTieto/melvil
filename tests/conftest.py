@@ -277,7 +277,7 @@ def db_wishlist_item(session):
 def edit_profile_form(session, client):
     f_name = g.person.name()
     surname = g.person.surname()
-    mail = f_name + surname+"@tieto.com"
+    mail = f_name + surname + "@tieto.com"
     form_edit = EditProfileForm(
         first_name=f_name,
         surname=surname,
