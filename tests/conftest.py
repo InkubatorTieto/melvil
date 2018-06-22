@@ -12,6 +12,7 @@ from app import mail as _mail
 from forms.book import BookForm
 from models import User, Book, Magazine, Copy, WishListItem
 from forms.copy import CopyAddForm, CopyEditForm
+from forms.forms import LoginForm, RegistrationForm, ForgotPass
 from models import User, Book, Magazine, Copy
 from forms.forms import WishlistForm
 from tests.populate import (
@@ -23,6 +24,7 @@ from tests.populate import (
     populate_magazines
 )
 from models.library import BookStatus
+from werkzeug.security import generate_password_hash
 
 g = Generic('en')
 
@@ -34,6 +36,7 @@ def app():
     """
     app = create_app()
     app.config["WTF_CSRF_ENABLED"] = False
+    app.config["TESTING"] = True
     _mail.init_app(app)
     ctx = app.app_context()
     ctx.push()
@@ -296,6 +299,115 @@ def db_wishlist_item(session):
     if WishListItem.query.get(w.id):
         session.delete(w)
         session.commit()
+
+
+@pytest.fixture(scope="function")
+def db_tieto_user(session):
+    """
+    Creates and return function-scoped Tieto user database entry
+    """
+    password = g.person.password(length=8)
+    u = User(email=g.person.name() + g.person.surname() + '.' + '@tieto.com',
+             first_name=g.person.name(),
+             surname=g.person.surname(),
+             password_hash=generate_password_hash(password),
+             active=True,
+             roles=[])
+    session.add(u)
+    session.commit()
+
+    yield u, password
+
+    if User.query.get(u.id):
+        session.delete(u)
+        session.commit()
+
+
+@pytest.fixture(scope="function")
+def login_form(db_tieto_user):
+    """
+    Returns login form containing valid data of registered user.
+    """
+    form = LoginForm(
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
+        password=db_tieto_user[1],
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def login_form_invalid(db_tieto_user):
+    """
+    Returns login form containing invalid data.
+    """
+    invalid_password = g.person.password(length=8)
+    while(invalid_password == db_tieto_user[1]):
+        invalid_password = g.person.password(length=8)
+
+    form = LoginForm(
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
+        password=invalid_password,
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def registration_form():
+    """
+    Returns registration form containing valid data.
+    """
+    new_password = g.person.password(length=8)
+    form = RegistrationForm(
+        email=g.person.name() + '.' + g.person.surname() + '@tieto.com',
+        first_name=g.person.name(),
+        surname=g.person.surname(),
+        password=new_password,
+        confirm_pass=new_password,
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def registration_form_registered_user(db_tieto_user):
+    """
+    Returns registration form containing data of already registered user.
+    """
+    form = RegistrationForm(
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
+        first_name=User.query.filter_by
+        (id=db_tieto_user[0].id).first().first_name,
+        surname=User.query.filter_by(id=db_tieto_user[0].id).first().surname,
+        password=db_tieto_user[1],
+        confirm_pass=db_tieto_user[1],
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def registration_form_invalid():
+    """
+    Returns registration form containing invalid data
+    """
+    form = RegistrationForm(
+        email=g.person.name() + '.' + g.person.surname() + '@gmail.com',
+        first_name=g.person.name(),
+        surname=g.person.surname(),
+        password=g.cryptographic.hash(),
+        confirm_pass=g.cryptographic.hash(),
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def forgot_pass(db_tieto_user):
+    """
+    Returns password reset form
+    """
+    form = ForgotPass(
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
+        submit=True
+    )
+    yield form
 
 
 @pytest.fixture
