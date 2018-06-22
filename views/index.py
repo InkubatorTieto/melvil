@@ -21,6 +21,7 @@ from flask import (
 
 from config import DevConfig
 from forms.copy import CopyAddForm, CopyEditForm
+from forms.edit_profile import EditProfileForm
 from forms.forms import (
     ContactForm,
     ForgotPass,
@@ -525,6 +526,30 @@ def edit_copy(copy_id):
                            form=form,
                            error=form.errors,
                            action='Edit')
+
+
+@library.route('/edit_profile/<int:user_id>',
+               methods=['GET', 'POST'])
+def edit_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        try:
+            user.first_name = form.first_name.data
+            user.surname = form.surname.data
+            user.email = form.email.data
+            db.session.commit()
+            flash('Profile data has been updated!')
+            return redirect(url_for('library.index'))
+        except IntegrityError:
+            abort(500)
+
+    form.first_name.data = user.first_name
+    form.surname.data = user.surname
+    form.email.data = user.email
+    return render_template('edit_profile.html',
+                           form=form,
+                           error=form.errors)
 
 
 @library.errorhandler(401)
