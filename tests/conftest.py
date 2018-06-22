@@ -315,6 +315,8 @@ def edit_profile_form(session, client):
 
     yield (form_edit)
 
+
+@pytest.fixture(scope="function")
 def db_tieto_user(session):
     """
     Creates and return function-scoped Tieto user database entry
