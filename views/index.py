@@ -533,8 +533,7 @@ def edit_profile(user_id):
     form.email.data = user.email
     return render_template('edit_profile.html',
                            form=form,
-                           error=form.errors,
-                           action='Submit')
+                           error=form.errors)
 
 
 @library.errorhandler(401)
