@@ -25,8 +25,12 @@
 
                 <div class="row">
                     <div class="col">
+                        {% if form.title != None %}
                         {{ input( form.title ,error['title']) }}
+                        {% endif %}
+                        {% if form.title_of_magazine != None %}
                         {{ input( form.title_of_magazine ,error['title_of_magazine']) }}
+                        {% endif %}
                     </div>
                     <div class="col">
                         {{ input( form.original_title ,error['original_title']) }}
@@ -36,8 +40,12 @@
 
                 <div class="row">
                     <div class="col">
+                        {% if form.publisher != None %}
                         {{ input( form.publisher ,error['publisher']) }}
+                        {% endif %}
+                        {% if form.issue != None %}
                         {{ input( form.issue ,error['issue']) }}
+                        {% endif %}
                     </div>
 
                     <div class="col">
@@ -191,7 +199,7 @@
                 hideMagazine();
                 showBooks();
             }
-        })
+        });
     });
 
 </script>
