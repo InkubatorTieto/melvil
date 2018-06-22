@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
-import json
 
 from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import exc, func
-from sqlalchemy.exc import IntegrityError, TimeoutError
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
@@ -144,8 +143,6 @@ def registration():
 
 @library.route('/search', methods=['GET', 'POST'])
 def search():
-
-
     try:
         user = User.query.get(session['id'])
         admin = user.has_role('ADMIN')
@@ -159,15 +156,13 @@ def search():
             form = SearchForm()
             page = request.args.get('page', 1, type=int)
             paginate_query = LibraryItem.query.order_by(
-                                LibraryItem.title.asc()
-                                    ).paginate(page, 10, False)
+                LibraryItem.title.asc()
+                    ).paginate(page, 10, False)
 
-            next_url = (url_for(
-                                'library.search',
+            next_url = (url_for('library.search',
                                 page=paginate_query.next_num)
                         if paginate_query.has_next else None)
-            prev_url = (url_for(
-                                'library.search',
+            prev_url = (url_for('library.search',
                                 page=paginate_query.prev_num)
                         if paginate_query.has_prev else None)
             output = [d.serialize() for d in paginate_query.items]
@@ -190,8 +185,7 @@ def search():
                                 'library.search',
                                 page=paginate_query.next_num)
                         if paginate_query.has_next else None)
-            prev_url = (url_for(
-                                'library.search',
+            prev_url = (url_for('library.search',
                                 page=paginate_query.prev_num)
                         if paginate_query.has_prev else None)
             output = [d.serialize() for d in paginate_query.items]

@@ -25,8 +25,8 @@ def test_search_query_match(client, app_session, search_query):
 
 def test_search_query_null(client, app_session, search_form):
     resp = client.get(url_for('library.search'),
-                       data=search_form.data,
-                       follow_redirects=True)
+                      data=search_form.data,
+                      follow_redirects=True)
     assert resp.status_code == 200
 
     lib_items = LibraryItem.query.filter(
@@ -40,8 +40,8 @@ def test_search_query_null(client, app_session, search_form):
 
 def test_search_query(client, app_session, get_title):
     resp = client.get(url_for('library.search'),
-                       data=get_title.title,
-                       follow_redirects=True)
+                      data=get_title.title,
+                      follow_redirects=True)
     assert resp.status_code == 200
 
     lib_items = LibraryItem.query.filter(
