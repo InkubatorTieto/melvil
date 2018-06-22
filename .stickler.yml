@@ -3,6 +3,7 @@ linters:
     ignore: 'E999'
     max-line-length: 79
     fixer: false
+    builtins: "TimeoutError"
 files:
   ignore:
     - 'alembic/versions/*.py'
