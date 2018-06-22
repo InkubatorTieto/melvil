@@ -157,7 +157,7 @@ def search():
             page = request.args.get('page', 1, type=int)
             paginate_query = LibraryItem.query.order_by(
                 LibraryItem.title.asc()
-                    ).paginate(page, 10, False)
+                ).paginate(page, 10, False)
 
             next_url = (url_for('library.search',
                                 page=paginate_query.next_num)
