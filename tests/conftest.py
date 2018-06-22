@@ -15,6 +15,15 @@ from forms.copy import CopyAddForm, CopyEditForm
 from forms.forms import LoginForm, RegistrationForm, ForgotPass
 from models import User, Book, Magazine, Copy
 from forms.forms import WishlistForm
+from tests.populate import (
+    populate_users,
+    populate_copies,
+    populate_authors,
+    populate_books,
+    populate_rental_logs,
+    populate_magazines
+)
+from models.library import BookStatus
 from werkzeug.security import generate_password_hash
 
 g = Generic('en')
@@ -399,3 +408,53 @@ def forgot_pass(db_tieto_user):
         submit=True
     )
     yield form
+
+
+@pytest.fixture
+def user_reservations(session):
+    """
+    Creates reservations for one user
+    """
+    user = populate_users(n=1)
+    session.add_all(user)
+    session.commit()
+    authors = populate_authors(n=2)
+    session.add_all(authors)
+    session.commit()
+    books = populate_books(n=2, authors=authors)
+    session.add_all(books)
+    session.commit()
+    magazines = populate_magazines(n=2)
+    session.add_all(magazines)
+    session.commit()
+    copies = []
+    copies.append(populate_copies(books[0], n=1)[0])
+    copies.append(populate_copies(books[1], n=1)[0])
+    copies.append(populate_copies(magazines[0], n=1)[0])
+    copies.append(populate_copies(magazines[1], n=1)[0])
+    session.add_all(copies)
+    session.commit()
+    reservations = []
+    reservations.append(populate_rental_logs(copies[0].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[1].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[2].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[3].id, user[0].id, n=1)[0])
+    session.add_all(reservations)
+    session.commit()
+    reservations[0].book_status = BookStatus.RESERVED
+    reservations[1].book_status = BookStatus.BORROWED
+    reservations[2].book_status = BookStatus.RESERVED
+    reservations[3].book_status = BookStatus.BORROWED
+
+    yield user[0], (books[0], reservations[0]), (books[1], reservations[1]), \
+        (magazines[0], reservations[2]), (magazines[1], reservations[3])
+    for r in reservations:
+        session.delete(r)
+    for c in copies:
+        session.delete(c)
+    for b in books:
+        session.delete(b)
+    for m in magazines:
+        session.delete(m)
+    session.delete(user[0])
+    session.commit()

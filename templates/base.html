@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authentication.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}/">
     {% block head %}
         <title> Melvil library - {% block title %}{% endblock %}</title>
     {% endblock %}
@@ -30,6 +31,7 @@
                     {{ nav_button('index', 'library.index', 'Home' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
                     {% if session['id'] %}
+                        {{ nav_button('borrowedBooks', 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' ) }}
                         {{ nav_button('search', 'library.search', 'Search' ) }}
                         {{ nav_button('add_book', 'library_books.add_book', 'Add new book/magazine' ) }}
                         {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
@@ -60,6 +62,7 @@
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/popover.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/add_like.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/tooltip_wish.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/book_borrowing_dashboard.js') }}"></script>
 {% endblock %}
 </body>
 </html>
