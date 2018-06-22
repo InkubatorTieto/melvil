@@ -19,6 +19,17 @@ On Windows
 ```CMD
 run-server.bat /b
 ```
+
+If database does not exist yet run:
+
+```bash
+$ . run-server.sh create-db
+``` 
+
+```CMD
+>run-server.bat create-db
+```
+
 2. And start it on localhost:5000  
 
 ```bash

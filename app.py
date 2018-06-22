@@ -6,6 +6,7 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from raven import Client
 from raven.contrib.flask import Sentry
+from sqlalchemy.exc import OperationalError
 
 from config import DevConfig, ProdConfig
 from init_db import db, ma
@@ -30,20 +31,27 @@ def create_app(config=config_env):
     app.register_blueprint(library_books)
     app.secret_key = os.urandom(24)
     mail.init_app(app)
-
-    db_not_ready = True
-    while db_not_ready:
-        try:
-            db.init_app(app)
-            with app.app_context():
-                db.create_all()
-            db_not_ready = False
-        except:
-            print("DB not ready!")
-            print("Polling DB..")
-            time.sleep(1)
+    db.init_app(app)
     ma.init_app(app)
+    wait_for_db(app)
     return app
+
+
+def wait_for_db(app):
+    counter = 0
+    with app.app_context():
+        while counter < 30:
+            try:
+                db.session.execute('SELECT 1')
+                print('DB ready!')
+                return
+            except (ValueError, OperationalError):
+                counter += 1
+                print('DB not ready!\nRetry...')
+                time.sleep(1)
+            except KeyboardInterrupt:
+                return
+        raise TimeoutError('DB not ready!\nTimed out.')
 
 
 app = create_app()
@@ -57,5 +65,3 @@ def load_xls_into_db():
 
 
 app.cli.add_command(load_xls_into_db)
-
-create_app(DevConfig)
