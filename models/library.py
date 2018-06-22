@@ -59,7 +59,6 @@ class RentalLog(db.Model):
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
     _reservation_begin = db.Column(db.DateTime)
     _reservation_end = db.Column(db.DateTime)
-    book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
 
     @property
     def borrow_time(self):
@@ -85,7 +84,7 @@ class RentalLog(db.Model):
 
     @property
     def reservation_begin(self):
-        return self._reservation_begin.replace(tzinfo=pytz.utc).\
+        return self._reservation_begin.replace(tzinfo=pytz.utc). \
             astimezone(tz=pytz.timezone('Europe/Warsaw'))
 
     @reservation_begin.setter
@@ -96,7 +95,7 @@ class RentalLog(db.Model):
 
     @property
     def reservation_end(self):
-        return self._reservation_end.replace(tzinfo=pytz.utc).\
+        return self._reservation_end.replace(tzinfo=pytz.utc). \
             astimezone(tz=pytz.timezone('Europe/Warsaw'))
 
     @reservation_end.setter

@@ -4,8 +4,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/static/css/wishlist.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -13,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authentication.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
     {% block head %}
         <title> Melvil library - {% block title %}{% endblock %}</title>
     {% endblock %}
@@ -26,10 +25,10 @@
             <div class="inner">
                 <nav class="nav nav-masthead justify-content-center">
                     {{ nav_button('index', 'library.index', 'Home' ) }}
-                    {{ nav_button('search', 'library.search', 'Search' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
-                    {{ nav_button('add_book', 'library_books.add_book', 'Add new book' ) }}
                     {% if session['id'] %}
+                        {{ nav_button('search', 'library.search', 'Search' ) }}
+                        {{ nav_button('add_book', 'library_books.add_book', 'Add new book/magazine' ) }}
                         {{ nav_button('logout', 'library.logout', 'Logout' ) }}
                         {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
                     {% else %}
@@ -42,7 +41,7 @@
     </div>
 {% endblock %}
 {% block content %}{% endblock %}
-{% block scripts%}
+{% block scripts %}
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -54,8 +53,11 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
-<script type="text/javascript" src="/static/js/search.min.js"></script>
-<script type="text/javascript" src="/static/js/search_wish.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static',filename = 'js/search.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/search_wish.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/popover.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/add_like.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/tooltip_wish.js') }}"></script>
 {% endblock %}
 </body>
 </html>

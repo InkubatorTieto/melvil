@@ -6,10 +6,6 @@ body {
     background-size: cover;
 }
 
-h1 {
-    color: silver;
-}
-
 .cover-container {
     max-width: 42em;
 }
@@ -30,7 +26,6 @@ h1 {
     border-radius: 15px;
     height: auto;
     margin-top: 50px;
-    color:silver;
     }
 
 .modal-content{
@@ -49,9 +44,4 @@ h1 {
     font-size: 12px;
     font-weight: 400;
     color: rgba(255, 26, 26, 1);
-}
-
-#addWishButton{
-    margin-top:3px;
-    margin-bottom:7px;
 }
