@@ -335,7 +335,8 @@ def reserve(copy_id):
             flash('pick up the book within two days!', 'Resevation done!')
         except IntegrityError:
             abort(500)
-    return redirect(url_for('library.index'))
+    return redirect(url_for(
+        'library_book_borrowing_dashboard.book_borrowing_dashboad'))
 
 
 @library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])

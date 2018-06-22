@@ -29,7 +29,7 @@ class BookForm(FlaskForm):
                                 ('magazine', 'Magazine')],
                        render_kw=({'class': 'radio_but'}))
 
-    # LibraryItem
+    """LibraryItem"""
     title = StringField('Title',
                         validators=[DataRequired(),
                                     Length(3),
@@ -87,8 +87,7 @@ class BookForm(FlaskForm):
                                             'placeholder': 'Description',
                                             'disabled': True}))
 
-    # Book
-
+    """Book"""
     isbn = StringField('ISBN number',
                        validators=[DataRequired(), check_isbn],
                        render_kw=({'class': 'inputs',
@@ -121,7 +120,7 @@ class BookForm(FlaskForm):
                                'placeholder': 'Year of publication',
                                'disabled': True}))
 
-    # Authors
+    """Authors"""
     first_name = StringField('First name',
                              validators=[check_author],
                              render_kw=({'class': 'inputs',
