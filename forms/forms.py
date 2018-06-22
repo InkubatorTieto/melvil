@@ -81,7 +81,7 @@ class SearchForm(FlaskForm):
     query = StringField('Search',
                         render_kw=({'class': 'form-control',
                                     'type': 'text',
-                                    'placeholder': 'Search...',}))
+                                    'placeholder': 'Search...'}))
     submit = SubmitField('Search')
 
 

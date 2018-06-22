@@ -4,8 +4,6 @@ from sqlalchemy_utils import ChoiceType
 from init_db import db
 
 
-
-
 class Copy(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     asset_code = db.Column(db.String(8), unique=True)
@@ -63,8 +61,6 @@ class RentalLog(db.Model):
     _reservation_end = db.Column(db.DateTime)
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
 
-
-
     @property
     def borrow_time(self):
         return self._borrow_time.replace(tzinfo=pytz.utc).\
@@ -121,6 +117,7 @@ class RentalLog(db.Model):
             self.copy_id
         )
 
+
 class Tag(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
@@ -168,9 +165,7 @@ class LibraryItem(db.Model):
         else:
             return '-'
 
-
     def serialize(self):
-
         if self.type == 'book':
             return {
                 'id': self.id,
