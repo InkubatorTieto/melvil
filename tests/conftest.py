@@ -17,6 +17,7 @@ from models import User, Book, Magazine, Copy
 from forms.forms import WishlistForm
 from werkzeug.security import generate_password_hash
 
+
 g = Generic('en')
 
 
