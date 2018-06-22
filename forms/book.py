@@ -15,7 +15,7 @@ from forms.custom_validators import \
     check_pub_date, title_book_exists
 
 
-class Base(FlaskForm):
+class LibraryItemForm(FlaskForm):
     languages = [('polish', 'Polish'),
                  ('english', 'English'),
                  ('other', 'Other')]
@@ -88,7 +88,7 @@ class Base(FlaskForm):
                                      'disabled': True}))
 
 
-class BookForm(Base):
+class BookForm(LibraryItemForm):
     title = StringField('Title',
                         validators=[DataRequired(),
                                     Length(3),
@@ -153,7 +153,7 @@ class BookForm(Base):
                                         'disabled': True}))
 
 
-class MagazineForm(Base):
+class MagazineForm(LibraryItemForm):
     title_of_magazine = StringField('Title',
                                     validators=[DataRequired(),
                                                 Length(3)],
