@@ -13,18 +13,31 @@ from forms.book import BookForm
 from models import User, Book, Magazine, Copy, WishListItem
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
+from forms.forms import LoginForm, RegistrationForm, ForgotPass
 from models import User, Book, Magazine, Copy
+from forms.forms import WishlistForm
+from tests.populate import (
+    populate_users,
+    populate_copies,
+    populate_authors,
+    populate_books,
+    populate_rental_logs,
+    populate_magazines
+)
+from models.library import BookStatus
+from werkzeug.security import generate_password_hash
 
 g = Generic('en')
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def app():
     """
     Returns flask app with context for testing.
     """
     app = create_app()
-    app.config['WTF_CSRF_ENABLED'] = False
+    app.config["WTF_CSRF_ENABLED"] = False
+    app.config["TESTING"] = True
     _mail.init_app(app)
     ctx = app.app_context()
     ctx.push()
@@ -168,11 +181,14 @@ def view_book(session, client):
     languages = ['polish', 'english', 'other']
     categories = ['developers', 'managers',
                   'magazines', 'other']
+    type_book = ['book', 'magazine']
 
     form = BookForm(
+        radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
         title=' '.join(g.text.title().split(' ')[:5]),
+        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
         table_of_contents=g.text.sentence(),
         language=choice(languages),
         category=choice(categories),
@@ -181,7 +197,8 @@ def view_book(session, client):
         isbn=str(1861972717),
         original_title=' '.join(g.text.title().split(' ')[:5]),
         publisher=g.business.company(),
-        pub_date=str(randint(1970, 2018))
+        pub_date=str(randint(1970, 2018)),
+        issue=g.text.words(1)
     )
 
     yield form
@@ -255,6 +272,16 @@ def app_session(client, db_user):
         return app_session
 
 
+@pytest.fixture
+def view_wish_list(app):
+    form = WishlistForm()
+    form.authors.data = g.person.surname() + " " + g.person.name()
+    form.title.data = ' '.join(g.text.title().split(' ')[:5])
+    form.pub_date.data = str(randint(1970, 2018))
+    form.type.data = 'book'
+    return form
+
+
 @pytest.fixture(scope="function")
 def db_wishlist_item(session):
     """
@@ -262,12 +289,14 @@ def db_wishlist_item(session):
     """
     w = WishListItem(authors=g.person.surname() + " " + g.person.name(),
                      title=' '.join(g.text.title().split(' ')[:5]),
-                     pub_year=g.datetime.datetime()
+                     pub_year=g.datetime.datetime(),
+                     item_type='book'
                      )
     session.add(w)
     session.commit()
 
     yield w
+
     if WishListItem.query.get(w.id):
         session.delete(w)
         session.commit()
@@ -285,3 +314,160 @@ def edit_profile_form(session, client):
     )
 
     yield (form_edit)
+
+def db_tieto_user(session):
+    """
+    Creates and return function-scoped Tieto user database entry
+    """
+    password = g.person.password(length=8)
+    u = User(email=g.person.name() + g.person.surname() + '.' + '@tieto.com',
+             first_name=g.person.name(),
+             surname=g.person.surname(),
+             password_hash=generate_password_hash(password),
+             active=True,
+             roles=[])
+    session.add(u)
+    session.commit()
+
+    yield u, password
+
+    if User.query.get(u.id):
+        session.delete(u)
+        session.commit()
+
+
+@pytest.fixture(scope="function")
+def login_form(db_tieto_user):
+    """
+    Returns login form containing valid data of registered user.
+    """
+    form = LoginForm(
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
+        password=db_tieto_user[1],
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def login_form_invalid(db_tieto_user):
+    """
+    Returns login form containing invalid data.
+    """
+    invalid_password = g.person.password(length=8)
+    while(invalid_password == db_tieto_user[1]):
+        invalid_password = g.person.password(length=8)
+
+    form = LoginForm(
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
+        password=invalid_password,
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def registration_form():
+    """
+    Returns registration form containing valid data.
+    """
+    new_password = g.person.password(length=8)
+    form = RegistrationForm(
+        email=g.person.name() + '.' + g.person.surname() + '@tieto.com',
+        first_name=g.person.name(),
+        surname=g.person.surname(),
+        password=new_password,
+        confirm_pass=new_password,
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def registration_form_registered_user(db_tieto_user):
+    """
+    Returns registration form containing data of already registered user.
+    """
+    form = RegistrationForm(
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
+        first_name=User.query.filter_by
+        (id=db_tieto_user[0].id).first().first_name,
+        surname=User.query.filter_by(id=db_tieto_user[0].id).first().surname,
+        password=db_tieto_user[1],
+        confirm_pass=db_tieto_user[1],
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def registration_form_invalid():
+    """
+    Returns registration form containing invalid data
+    """
+    form = RegistrationForm(
+        email=g.person.name() + '.' + g.person.surname() + '@gmail.com',
+        first_name=g.person.name(),
+        surname=g.person.surname(),
+        password=g.cryptographic.hash(),
+        confirm_pass=g.cryptographic.hash(),
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def forgot_pass(db_tieto_user):
+    """
+    Returns password reset form
+    """
+    form = ForgotPass(
+        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
+        submit=True
+    )
+    yield form
+
+
+@pytest.fixture
+def user_reservations(session):
+    """
+    Creates reservations for one user
+    """
+    user = populate_users(n=1)
+    session.add_all(user)
+    session.commit()
+    authors = populate_authors(n=2)
+    session.add_all(authors)
+    session.commit()
+    books = populate_books(n=2, authors=authors)
+    session.add_all(books)
+    session.commit()
+    magazines = populate_magazines(n=2)
+    session.add_all(magazines)
+    session.commit()
+    copies = []
+    copies.append(populate_copies(books[0], n=1)[0])
+    copies.append(populate_copies(books[1], n=1)[0])
+    copies.append(populate_copies(magazines[0], n=1)[0])
+    copies.append(populate_copies(magazines[1], n=1)[0])
+    session.add_all(copies)
+    session.commit()
+    reservations = []
+    reservations.append(populate_rental_logs(copies[0].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[1].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[2].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[3].id, user[0].id, n=1)[0])
+    session.add_all(reservations)
+    session.commit()
+    reservations[0].book_status = BookStatus.RESERVED
+    reservations[1].book_status = BookStatus.BORROWED
+    reservations[2].book_status = BookStatus.RESERVED
+    reservations[3].book_status = BookStatus.BORROWED
+
+    yield user[0], (books[0], reservations[0]), (books[1], reservations[1]), \
+        (magazines[0], reservations[2]), (magazines[1], reservations[3])
+    for r in reservations:
+        session.delete(r)
+    for c in copies:
+        session.delete(c)
+    for b in books:
+        session.delete(b)
+    for m in magazines:
+        session.delete(m)
+    session.delete(user[0])
+    session.commit()
