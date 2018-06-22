@@ -42,7 +42,8 @@ def wait_for_db(app):
     with app.app_context():
         while counter < 30:
             try:
-                db.session.execute('SELECT 1')
+                r = db.engine.execute('SELECT 1')
+                r.close()
                 print('DB ready!')
                 return
             except (ValueError, OperationalError):
