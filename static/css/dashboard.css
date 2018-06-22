@@ -1,0 +1,30 @@
+
+.book_borrowing_dashboard {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    color: rgba(255, 255, 255, 1);
+    display : inline-block;
+    min-width: 500px;
+}
+
+.book_dashboard_button{
+    width: 45%;
+    margin: 0px 10px 20px 10px;
+}
+
+#reserved_table{
+    display: block;
+}
+
+#booked_table{
+    display: none;
+}
+
+#reserv_button{
+    text-decoration : underline;
+}
+
+.booking_dashboard td, .booking_dashboard th{
+    min-width: 150px;
+}
+
