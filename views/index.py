@@ -111,7 +111,7 @@ def registration():
         if form.validate_on_submit():
             try:
                 if User.query.filter_by(email=form.email.data).first():
-                    message_body = 'User already exits'
+                    message_body = 'User already exists'
                     message_title = 'Oops!'
                     return render_template('message.html',
                                            message_title=message_title,
