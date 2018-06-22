@@ -4,15 +4,16 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authentication.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}/">
     {% block head %}
         <title> Melvil library - {% block title %}{% endblock %}</title>
     {% endblock %}
@@ -20,21 +21,23 @@
 <body class="text-center">
 {% block nav %}
     {% from "macros.html" import nav_button with context %}
+    {% from "macros.html" import downout_button with context %}
+    {% from "macros.html" import downlog_button with context %}
     <img class="tieto_logo" src="{{ url_for('static', filename='img/logo.png') }}" alt="logo">
     <div class="cover-container d-flex h-20 p-3 mx-auto flex-column">
         <header class="masthead mb-auto">
             <div class="inner">
                 <nav class="nav nav-masthead justify-content-center">
                     {{ nav_button('index', 'library.index', 'Home' ) }}
-                    {{ nav_button('search', 'library.search', 'Search' ) }}
                     {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
-                    {{ nav_button('add_book', 'library_books.add_book', 'Add new book/magazine' ) }}
                     {% if session['id'] %}
-                        {{ nav_button('logout', 'library.logout', 'Logout' ) }}
+                        {{ nav_button('borrowedBooks', 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' ) }}
+                        {{ nav_button('search', 'library.search', 'Search' ) }}
+                        {{ nav_button('add_book', 'library_books.add_book', 'Add new book/magazine' ) }}
                         {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
+                        {{ downout_button('library.logout' ) }}
                     {% else %}
-                        {{ nav_button('login', 'library.login', 'Login' ) }}
-                        {{ nav_button('registration', 'library.registration', 'New User?' ) }}
+                        {{ downlog_button('library.login', 'library.registration' ) }}
                     {% endif %}
                 </nav>
             </div>
@@ -42,7 +45,7 @@
     </div>
 {% endblock %}
 {% block content %}{% endblock %}
-{% block scripts%}
+{% block scripts %}
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -58,7 +61,8 @@
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/search_wish.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/popover.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/add_like.js') }}"></script>
-<script type="text/javascript" src="/static/js/tooltip_wish.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/tooltip_wish.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/book_borrowing_dashboard.js') }}"></script>
 {% endblock %}
 </body>
 </html>

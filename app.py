@@ -10,8 +10,11 @@ from sqlalchemy.exc import OperationalError
 
 from config import DevConfig, ProdConfig
 from init_db import db, ma
-from utils.xlsx_reader import get_books, get_magazines
+from views.index import library
 from views.book import library_books
+from utils.xlsx_reader import get_books, get_magazines
+from views.book_borrowing_dashboard import library_book_borrowing_dashboard
+
 from views.index import library
 
 mail = Mail()
@@ -29,6 +32,7 @@ def create_app(config=config_env):
     app.config.from_object(config)
     app.register_blueprint(library)
     app.register_blueprint(library_books)
+    app.register_blueprint(library_book_borrowing_dashboard)
     app.secret_key = os.urandom(24)
     mail.init_app(app)
     db.init_app(app)
