@@ -10,19 +10,21 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm
+from models import User, Book, Magazine, Copy, WishListItem
+from forms.copy import CopyAddForm, CopyEditForm
 from models import User, Book, Magazine, Copy
-
+from forms.forms import WishlistForm
 
 g = Generic('en')
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def app():
     """
     Returns flask app with context for testing.
     """
     app = create_app()
-    app.config['WTF_CSRF_ENABLED'] = False
+    app.config["WTF_CSRF_ENABLED"] = False
     _mail.init_app(app)
     ctx = app.app_context()
     ctx.push()
@@ -106,7 +108,6 @@ def password_generator(chars=string.ascii_letters):
 
 @pytest.fixture(scope='module')
 def user(app):
-
     data = {
         'email': g.person.email(),
         'first_name': g.person.name(),
@@ -167,11 +168,14 @@ def view_book(session, client):
     languages = ['polish', 'english', 'other']
     categories = ['developers', 'managers',
                   'magazines', 'other']
+    type_book = ['book', 'magazine']
 
     form = BookForm(
+        radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
         title=' '.join(g.text.title().split(' ')[:5]),
+        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
         table_of_contents=g.text.sentence(),
         language=choice(languages),
         category=choice(categories),
@@ -180,10 +184,29 @@ def view_book(session, client):
         isbn=str(1861972717),
         original_title=' '.join(g.text.title().split(' ')[:5]),
         publisher=g.business.company(),
-        pub_date=str(randint(1970, 2018))
+        pub_date=str(randint(1970, 2018)),
+        issue=g.text.words(1)
     )
 
     yield form
+
+
+@pytest.fixture(scope="function")
+def copy_form(session, client):
+    form_add = CopyAddForm(
+        asset_code='wr109100',
+        has_cd_disk=True,
+        shelf='shelf_one'
+    )
+
+    form_edit = CopyEditForm(
+        asset_code='ab109100',
+        has_cd_disk=True,
+        available_status=True,
+        shelf='shelf_two'
+    )
+
+    yield (form_add, form_edit)
 
 
 @pytest.fixture(scope="function")
@@ -234,3 +257,33 @@ def app_session(client, db_user):
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
         return app_session
+
+
+@pytest.fixture
+def view_wish_list(app):
+    form = WishlistForm()
+    form.authors.data = g.person.surname() + " " + g.person.name()
+    form.title.data = ' '.join(g.text.title().split(' ')[:5])
+    form.pub_date.data = str(randint(1970, 2018))
+    form.type.data = 'book'
+    return form
+
+
+@pytest.fixture(scope="function")
+def db_wishlist_item(session):
+    """
+    Creates and return function-scoped User database entry
+    """
+    w = WishListItem(authors=g.person.surname() + " " + g.person.name(),
+                     title=' '.join(g.text.title().split(' ')[:5]),
+                     pub_year=g.datetime.datetime(),
+                     item_type='book'
+                     )
+    session.add(w)
+    session.commit()
+
+    yield w
+
+    if WishListItem.query.get(w.id):
+        session.delete(w)
+        session.commit()

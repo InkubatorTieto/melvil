@@ -1,5 +1,5 @@
 from init_db import ma
-from models import WishListItem
+from models.wishlist import WishListItem
 
 
 class WishListItemSchema(ma.ModelSchema):
