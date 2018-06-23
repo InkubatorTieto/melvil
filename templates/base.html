@@ -15,54 +15,56 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}/">
     {% block head %}
-        <title> Melvil library - {% block title %}{% endblock %}</title>
+    <title> Melvil library - {% block title %}{% endblock %}</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+            integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename = 'js/search.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/search_wish.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/popover.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/add_like.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/tooltip_wish.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/book_borrowing_dashboard.js') }}"></script>
     {% endblock %}
 </head>
 <body class="text-center">
 {% block nav %}
-    {% from "macros.html" import nav_button with context %}
-    {% from "macros.html" import downout_button with context %}
-    {% from "macros.html" import downlog_button with context %}
-    <img class="tieto_logo" src="{{ url_for('static', filename='img/logo.png') }}" alt="logo">
-    <div class="cover-container d-flex h-20 p-3 mx-auto flex-column">
-        <header class="masthead mb-auto">
-            <div class="inner">
-                <nav class="nav nav-masthead justify-content-center">
-                    {{ nav_button('index', 'library.index', 'Home' ) }}
-                    {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
-                    {% if session['id'] %}
-                        {{ nav_button('borrowedBooks', 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' ) }}
-                        {{ nav_button('search', 'library.search', 'Search' ) }}
-                        {{ nav_button('add_book', 'library_books.add_book', 'Add new book/magazine' ) }}
-                        {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
-                        {{ downout_button('library.logout' ) }}
-                    {% else %}
-                        {{ downlog_button('library.login', 'library.registration' ) }}
-                    {% endif %}
-                </nav>
-            </div>
-        </header>
-    </div>
+{% from "macros.html" import nav_button with context %}
+{% from "macros.html" import downout_button with context %}
+{% from "macros.html" import downlog_button with context %}
+<img class="tieto_logo" src="{{ url_for('static', filename='img/logo.png') }}" alt="logo">
+<div class="cover-container d-flex h-20 p-3 mx-auto flex-column">
+    <header class="masthead mb-auto">
+        <div class="inner">
+            <nav class="nav nav-masthead justify-content-center">
+                {{ nav_button('index', 'library.index', 'Home' ) }}
+                {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
+                {% if session['id'] %}
+                {{ nav_button('borrowedBooks', 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' )
+                }}
+                {{ nav_button('search', 'library.search', 'Search' ) }}
+                {{ nav_button('add_book', 'library_books.add_book', 'Add new item' ) }}
+                {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
+                {{ downout_button('library.logout' ) }}
+                {% else %}
+                {{ downlog_button('library.login', 'library.registration' ) }}
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+</div>
 {% endblock %}
 {% block content %}{% endblock %}
 {% block scripts %}
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
-        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
-        crossorigin="anonymous"></script>
-<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
-<script type="text/javascript" src="{{ url_for('static',filename = 'js/search.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename = 'js/search_wish.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename = 'js/popover.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename = 'js/add_like.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename = 'js/tooltip_wish.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/book_borrowing_dashboard.js') }}"></script>
 {% endblock %}
 </body>
 </html>
