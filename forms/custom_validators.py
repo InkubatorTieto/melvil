@@ -6,9 +6,14 @@ from isbnlib import is_isbn10, is_isbn13
 from models.books import Book
 
 
+def email_regex():
+    e_mail_regex = '[0-9A-Za-z-.]*@tieto.com$'
+    return e_mail_regex
+
+
 def tieto_email(form, field):
-    if not re.compile("[0-9A-Za-z-.]*@tieto.com$").match(field.data):
-        raise ValidationError("Only Tieto emails are accepted.")
+    if not re.compile(email_regex()).match(field.data):
+        raise ValidationError('Only Tieto emails are accepted.')
 
 
 def name(form, field):

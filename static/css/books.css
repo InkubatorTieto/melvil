@@ -79,7 +79,7 @@ li {
     padding-left: 15px;
 }
 
-#title_of_magazine{
+#title_of_magazine, #issue{
      display: none;
 }
 
