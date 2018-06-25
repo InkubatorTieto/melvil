@@ -51,30 +51,8 @@
         </div>
 
         <nav aria-label="Page navigation example">
-            {% if prev_url %}
-              <a href="{{ prev_url }}">
-                <button type="button" class="btn btn-dark">
-                  <
-                </button>
-              </a>
-            {% else %}
-              <button type="button" class="btn btn-dark" disabled>
-                <
-              </button>
-            {% endif %}
-
-            {% if next_url %}
-              <a href="{{ next_url }}">
-                <button type="button" class="btn btn-dark">
-                  >
-                </button>
-              </a>
-            {% else %}
-              <button type="button" class="btn btn-dark" disabled>
-                >
-              </button>
-            {% endif %}
-            </ul>
+          {% from "macros.html" import render_pagination with context %}
+            {{ render_pagination(pagination, endpoint) }}
         </nav>
 
       </main>

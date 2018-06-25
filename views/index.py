@@ -143,6 +143,7 @@ def registration():
 
 @library.route('/search', methods=['GET'])
 def search():
+
     try:
         user = User.query.get(session['id'])
         admin = user.has_role('ADMIN')
@@ -158,19 +159,13 @@ def search():
             paginate_query = LibraryItem.query.order_by(
                 LibraryItem.title.asc()).paginate(page, 10, False)
 
-            next_url = (url_for('library.search',
-                                page=paginate_query.next_num)
-                        if paginate_query.has_next else None)
-            prev_url = (url_for('library.search',
-                                page=paginate_query.prev_num)
-                        if paginate_query.has_prev else None)
             output = [d.serialize() for d in paginate_query.items]
             return render_template('search.html',
                                    all_query=output,
                                    admin=admin,
-                                   form=form,
-                                   next_url=next_url,
-                                   prev_url=prev_url)
+                                   pagination=paginate_query,
+                                   endpoint='library.search',
+                                   form=form,)
 
         elif request.args.get('query'):
             form = SearchForm()
@@ -180,20 +175,14 @@ def search():
                 LibraryItem.query.filter(
                     func.lower(LibraryItem.title).like(
                         '%{}%'.format(query_str)))).paginate(page, 10, False)
-            next_url = (url_for(
-                                'library.search',
-                                page=paginate_query.next_num)
-                        if paginate_query.has_next else None)
-            prev_url = (url_for('library.search',
-                                page=paginate_query.prev_num)
-                        if paginate_query.has_prev else None)
+
             output = [d.serialize() for d in paginate_query.items]
             return render_template('search.html',
                                    all_query=output,
+                                   pagination=paginate_query,
+                                   endpoint='library.search',
                                    admin=admin,
-                                   form=form,
-                                   next_url=next_url,
-                                   prev_url=prev_url)
+                                   form=form,)
 
         else:
             abort(500)
