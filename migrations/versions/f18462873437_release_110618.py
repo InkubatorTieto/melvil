@@ -1,13 +1,12 @@
 """release 110618
 
 Revision ID: f18462873437
-Revises: 
+Revises:
 Create Date: 2018-06-08 11:24:11.833997
 
 """
 from alembic import op
 import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
 revision = "f18462873437"

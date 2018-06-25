@@ -15,7 +15,6 @@ from models import User, Book, Magazine, Copy, WishListItem, Author, Tag
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import LoginForm, RegistrationForm, ForgotPass
-from models import User, Book, Magazine, Copy
 from forms.forms import WishlistForm
 from tests.populate import (
     populate_users,

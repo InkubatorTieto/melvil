@@ -19,6 +19,17 @@ On Windows
 ```CMD
 run-server.bat /b
 ```
+
+If database does not exist yet run:
+
+```bash
+$ . run-server.sh create-db
+``` 
+
+```CMD
+>run-server.bat create-db
+```
+
 2. And start it on localhost:5000  
 
 ```bash
@@ -55,7 +66,11 @@ run-server.bat /p
 
 ## Running tests  
 
+
 [Run tests: HOW TO](tests/README.md)
+
+## Database Migrations
+[Run migrations: HOW TO](migrations/README.md)
 
 ## Heroku configuration  
 
@@ -64,3 +79,4 @@ run-server.bat /p
 ## Using Travis CI:  
 
 [Travis CI short manual](docs/Travis_CI/Travis_ci.md)
+
