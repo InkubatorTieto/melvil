@@ -340,18 +340,36 @@ def reserve(copy_id):
 def check_reservation_status_db():
     reserved_list = db.session.query(RentalLog)\
         .filter(RentalLog.book_status == BookStatus.RESERVED)\
-        .filter(RentalLog._reservation_end < datetime.utcnow())\
         .all()
-    for reserved_row in reserved_list:
-        db.session.query(Copy)\
-            .filter(Copy.id == reserved_row.copy_id)\
-            .update({Copy.available_status: True})
+    db.session.query(Copy).filter(
+        Copy.id.in_([obj.copy_id for obj in reserved_list])
+    ).update(
+        {Copy.available_status: True},
+        synchronize_session='fetch'
+    )
     db.session.query(RentalLog)\
         .filter(RentalLog.book_status == BookStatus.RESERVED)\
-        .filter(RentalLog._reservation_end < datetime.utcnow())\
         .update({RentalLog.book_status: BookStatus.RETURNED})
     db.session.commit()
     return "OK"
+
+
+# @library.route('/check_reservation_status_db')
+# def check_reservation_status_db():
+#     reserved_list = db.session.query(RentalLog)\
+#         .filter(RentalLog.book_status == BookStatus.RESERVED)\
+#         .filter(RentalLog._reservation_end < datetime.utcnow())\
+#         .all()
+#     for reserved_row in reserved_list:
+#         db.session.query(Copy)\
+#             .filter(Copy.id == reserved_row.copy_id)\
+#             .update({Copy.available_status: True})
+#     db.session.query(RentalLog)\
+#         .filter(RentalLog.book_status == BookStatus.RESERVED)\
+#         .filter(RentalLog._reservation_end < datetime.utcnow())\
+#         .update({RentalLog.book_status: BookStatus.RETURNED})
+#     db.session.commit()
+#     return "OK"
 
 
 @library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
