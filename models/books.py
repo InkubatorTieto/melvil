@@ -72,10 +72,3 @@ class Author(db.Model):
 
     def __repr__(self):
         return "<Author: {} {}>".format(self.first_name, self.last_name)
-
-
-book_author = db.Table(
-    "books_authors",
-    db.Column("author_id", db.Integer, db.ForeignKey("authors.id")),
-    db.Column("book_id", db.Integer, db.ForeignKey("books.id")),
-)
