@@ -28,6 +28,7 @@ from tests.populate import (
 from models.library import BookStatus
 from werkzeug.security import generate_password_hash
 
+
 g = Generic('en')
 
 
