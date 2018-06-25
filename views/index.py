@@ -21,6 +21,7 @@ from flask import (
 
 from config import DevConfig
 from forms.copy import CopyAddForm, CopyEditForm
+from forms.edit_profile import EditProfileForm
 from forms.forms import (
     ContactForm,
     ForgotPass,
@@ -78,7 +79,8 @@ def login():
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
-                    return render_template('index.html', session=session)
+                    return render_template('index.html',
+                                           session=session)
                 else:
                     message_body = 'Login failed or ' \
                                    'your account is not activated'
@@ -111,8 +113,8 @@ def registration():
         if form.validate_on_submit():
             try:
                 if User.query.filter_by(email=form.email.data).first():
-                    message_body = 'User already exist'
-                    message_title = 'Opss!'
+                    message_body = 'User already exists'
+                    message_title = 'Oops!'
                     return render_template('message.html',
                                            message_title=message_title,
                                            message_body=message_body)
@@ -269,7 +271,7 @@ def reset():
                                        message_body=message_body)
         else:
             message_body = "This email doesn't exist"
-            message_title = 'Error!'
+            message_title = '!'
             return render_template('message.html',
                                    message_title=message_title,
                                    message_body=message_body)
@@ -330,10 +332,11 @@ def reserve(copy_id):
             )
             db.session.add(res)
             db.session.commit()
-            flash('pick up the book within two days!', 'Resevation done!')
+            flash('pick up the book within two days!', 'Reservation done!')
         except IntegrityError:
             abort(500)
-    return redirect(url_for('library.index'))
+    return redirect(url_for(
+        'library_book_borrowing_dashboard.book_borrowing_dashboad'))
 
 
 @library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
@@ -405,7 +408,7 @@ def wishlist():
     return render_template('wishlist.html', wishes=output, admin=admin)
 
 
-@library.route('/addWish', methods=['GET', 'POST'])
+@library.route('/add_wish', methods=['GET', 'POST'])
 def add_wish():
     form = WishlistForm()
     if form.validate_on_submit():
@@ -425,7 +428,7 @@ def add_wish():
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
-@library.route('/addLike', methods=['GET', 'POST'])
+@library.route('/add_like', methods=['GET', 'POST'])
 def add_like():
     wish_id = request.form['wish_id']
     user = User.query.filter_by(id=session['id']).first()
@@ -444,10 +447,10 @@ def add_like():
                                                        .first().likes)})
 
 
-@library.route('/deleteWish/<int:wish_id>', methods=['GET', 'POST'])
+@library.route('/delete_wish/<int:wish_id>', methods=['GET', 'POST'])
 def delete_wish(wish_id):
     try:
-        WishListItem.deleteWish(wish_id)
+        WishListItem.delete_wish(wish_id)
     except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
     return redirect(url_for('library.wishlist'))
@@ -524,6 +527,30 @@ def edit_copy(copy_id):
                            form=form,
                            error=form.errors,
                            action='Edit')
+
+
+@library.route('/edit_profile/<int:user_id>',
+               methods=['GET', 'POST'])
+def edit_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        try:
+            user.first_name = form.first_name.data
+            user.surname = form.surname.data
+            user.email = form.email.data
+            db.session.commit()
+            flash('Profile data has been updated!')
+            return redirect(url_for('library.index'))
+        except IntegrityError:
+            abort(500)
+
+    form.first_name.data = user.first_name
+    form.surname.data = user.surname
+    form.email.data = user.email
+    return render_template('edit_profile.html',
+                           form=form,
+                           error=form.errors)
 
 
 @library.errorhandler(401)

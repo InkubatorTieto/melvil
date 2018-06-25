@@ -27,9 +27,9 @@ user_roles = db.Table(
 class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(128), unique=True)
-    first_name = db.Column(db.String(64))
-    surname = db.Column(db.String(64))
+    email = db.Column(db.String(128), unique=True, nullable=False)
+    first_name = db.Column(db.String(64), nullable=False)
+    surname = db.Column(db.String(64), nullable=False)
     password_hash = db.deferred(db.Column(db.String(128)))
     active = db.Column(db.Boolean)
     roles = db.relationship(

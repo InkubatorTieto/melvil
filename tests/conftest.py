@@ -5,16 +5,27 @@ import string
 import pytest
 from mimesis import Generic
 from sqlalchemy import event
+from datetime import datetime
 
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from forms.book import BookForm
-from models import User, Book, Magazine, Copy, WishListItem
+from forms.book import BookForm, MixedForm, MagazineForm
+from models import User, Book, Magazine, Copy, WishListItem, Author, Tag
 from forms.copy import CopyAddForm, CopyEditForm
+from forms.edit_profile import EditProfileForm
 from forms.forms import LoginForm, RegistrationForm, ForgotPass
 from models import User, Book, Magazine, Copy
 from forms.forms import WishlistForm
+from tests.populate import (
+    populate_users,
+    populate_copies,
+    populate_authors,
+    populate_books,
+    populate_rental_logs,
+    populate_magazines
+)
+from models.library import BookStatus
 from werkzeug.security import generate_password_hash
 
 
@@ -174,7 +185,7 @@ def view_book(session, client):
                   'magazines', 'other']
     type_book = ['book', 'magazine']
 
-    form = BookForm(
+    form = MixedForm(
         radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
@@ -192,7 +203,94 @@ def view_book(session, client):
         issue=g.text.words(1)
     )
 
-    yield form
+    return form
+
+
+@pytest.fixture(scope="function")
+def view_edit_book(session):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+
+    author = Author(first_name=g.person.name(),
+                    last_name=g.person.surname())
+    session.add(author)
+
+    tag = Tag(name=g.text.words(1))
+    session.add(tag)
+    session.commit()
+    form = BookForm(
+        radio='book',
+        first_name=author.first_name,
+        surname=author.last_name,
+        title=' '.join(g.text.title().split(' ')[:3]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=tag.name,
+        description=g.text.sentence(),
+        isbn=str(9789295055025),
+        original_title=' '.join(g.text.title().split(' ')[:3]),
+        publisher=g.business.company(),
+        pub_date=str(randint(1970, 2018))
+    )
+
+    book = Book(
+        title=form.title.data,
+        authors=[author],
+        table_of_contents=form.table_of_contents.data,
+        language=form.language.data,
+        category=form.category.data,
+        tags=[tag],
+        description=form.description.data,
+        isbn=form.isbn.data,
+        original_title=form.original_title.data,
+        publisher=form.publisher.data,
+        pub_date=datetime(year=int(form.pub_date.data),
+                          month=1,
+                          day=1))
+
+    session.add(book)
+    session.commit()
+
+    return form
+
+
+@pytest.fixture(scope="function")
+def view_edit_magazine(session):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+
+    tag = Tag(name=g.text.words(1))
+    session.add(tag)
+    session.commit()
+    form = MagazineForm(
+        radio='magazine',
+        title_of_magazine=' '.join(g.text.title().split(' ')[:3]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=tag.name,
+        description=g.text.sentence(),
+        pub_date=str(randint(1970, 2018))
+    )
+
+    magazine = Magazine(
+        title=form.title_of_magazine.data,
+        table_of_contents=form.table_of_contents.data,
+        language=form.language.data,
+        category=form.category.data,
+        tags=[tag],
+        description=form.description.data,
+        year=datetime(year=int(form.pub_date.data),
+                      month=1,
+                      day=1))
+
+    session.add(magazine)
+    session.commit()
+
+    return form
 
 
 @pytest.fixture(scope="function")
@@ -291,6 +389,20 @@ def db_wishlist_item(session):
     if WishListItem.query.get(w.id):
         session.delete(w)
         session.commit()
+
+
+@pytest.fixture(scope="function")
+def edit_profile_form(session, client):
+    f_name = g.person.name()
+    surname = g.person.surname()
+    mail = f_name + surname + "@tieto.com"
+    form_edit = EditProfileForm(
+        first_name=f_name,
+        surname=surname,
+        email=mail
+    )
+
+    yield (form_edit)
 
 
 @pytest.fixture(scope="function")
@@ -400,3 +512,53 @@ def forgot_pass(db_tieto_user):
         submit=True
     )
     yield form
+
+
+@pytest.fixture
+def user_reservations(session):
+    """
+    Creates reservations for one user
+    """
+    user = populate_users(n=1)
+    session.add_all(user)
+    session.commit()
+    authors = populate_authors(n=2)
+    session.add_all(authors)
+    session.commit()
+    books = populate_books(n=2, authors=authors)
+    session.add_all(books)
+    session.commit()
+    magazines = populate_magazines(n=2)
+    session.add_all(magazines)
+    session.commit()
+    copies = []
+    copies.append(populate_copies(books[0], n=1)[0])
+    copies.append(populate_copies(books[1], n=1)[0])
+    copies.append(populate_copies(magazines[0], n=1)[0])
+    copies.append(populate_copies(magazines[1], n=1)[0])
+    session.add_all(copies)
+    session.commit()
+    reservations = []
+    reservations.append(populate_rental_logs(copies[0].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[1].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[2].id, user[0].id, n=1)[0])
+    reservations.append(populate_rental_logs(copies[3].id, user[0].id, n=1)[0])
+    session.add_all(reservations)
+    session.commit()
+    reservations[0].book_status = BookStatus.RESERVED
+    reservations[1].book_status = BookStatus.BORROWED
+    reservations[2].book_status = BookStatus.RESERVED
+    reservations[3].book_status = BookStatus.BORROWED
+
+    yield user[0], (books[0], reservations[0]), (books[1], reservations[1]), \
+        (magazines[0], reservations[2]), (magazines[1], reservations[3])
+    for r in reservations:
+        session.delete(r)
+    for c in copies:
+        session.delete(c)
+    for b in books:
+        session.delete(b)
+    for m in magazines:
+        session.delete(m)
+    session.delete(user[0])
+    session.commit()
