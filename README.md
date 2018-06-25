@@ -4,21 +4,73 @@ Melvil application for Tieto Python Incubator.
 
 ## Project configuration:  
 
-(a) Clone repository from: git@github.com:InkubatorTieto/melvil.git  
-(b) [Install docker and docker-compose:](https://docs.docker.com/install/).  
-(c) To build docker image run:  
+1. Clone repository from: git@github.com:InkubatorTieto/melvil.git  
+2. [Install docker and docker-compose:](https://docs.docker.com/install/).  
+
+### Development:  
+
+1. To build image for development server run:  
 
 ```bash
-docker-compose -f docker-compose-dev.yml up
+. run-server.sh -b
+```
+On Windows  
+
+```CMD
+run-server.bat /b
 ```
 
-(d) Go to: localhost:5000  
-
-## Running application:  
+If database does not exist yet run:
 
 ```bash
-docker-compose run web
+$ . run-server.sh create-db
+``` 
+
+```CMD
+>run-server.bat create-db
 ```
+
+2. And start it on localhost:5000  
+
+```bash
+. run-server.sh
+```
+On Windows  
+
+```CMD
+run-server.bat
+```
+### Production:  
+
+1. To build image for production server run:  
+
+```bash
+. run-server.sh -p -b 
+```
+On Windows  
+
+```CMD
+run-server.bat /p /b 
+```
+
+2. And start it on localhost:8080:  
+
+```bash
+. run-server.sh -p
+```
+On Windows  
+
+```CMD
+run-server.bat /p 
+```
+
+## Running tests  
+
+
+[Run tests: HOW TO](tests/README.md)
+
+## Database Migrations
+[Run migrations: HOW TO](migrations/README.md)
 
 ## Heroku configuration  
 
@@ -27,3 +79,4 @@ docker-compose run web
 ## Using Travis CI:  
 
 [Travis CI short manual](docs/Travis_CI/Travis_ci.md)
+
