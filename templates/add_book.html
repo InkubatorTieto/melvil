@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
+{{ super() }}
 <link rel="stylesheet" type="text/css" href="/static/css/books.css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
@@ -129,8 +130,6 @@
 {% endblock %}
 
 {% block scripts %}
-
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
 
     function showMagazine() {

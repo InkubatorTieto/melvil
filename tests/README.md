@@ -23,3 +23,13 @@ or cmd
 ```CMD
 run-server.bat /t
 ```
+
+On Windows Powershell with coverage
+```PS
+.\run-server.bat /t /cov
+```
+
+or cmd with coverage
+```CMD
+run-server.bat /t /cov
+```

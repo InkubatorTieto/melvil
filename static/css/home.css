@@ -77,3 +77,30 @@
     float: left;
     padding: 10px;
 }
+
+
+btn-outline-dark {
+    color: #343a40;
+    background-color: transparent;
+    background-image: none;
+    border-color: #343a40;
+    margin-left: 1rem;
+    border-radius: 15px;
+}
+
+.dropdown {
+    position: relative;
+    margin-left: 7px;
+    border-radius: 15px;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    color: #000000;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.dropdown-menu.show {
+    display: block;
+    box-size: auto;
+}

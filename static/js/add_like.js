@@ -1,7 +1,7 @@
 $(document).on('click', '[id^="addLike_"]', function() {
     var wish_id=$(this).attr('id').split('_')[1]
     $.ajax({
-        url: '/addLike',
+        url: '/add_like',
         method: 'POST',
         data: {
             wish_id: wish_id,

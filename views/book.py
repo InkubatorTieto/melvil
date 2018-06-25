@@ -472,16 +472,17 @@ def update_magazine(form, item):
     db.session.commit()
 
 
-def book_exists(newbook):
-    results = Book.query.filter(Book.title.startswith(newbook.title[:2])).all()
+def book_exists(new_book):
+    results = Book.query.filter(
+        Book.title.startswith(new_book.title[:2])).all()
     for i in results:
-        if i.isbn == newbook.isbn:
+        if i.isbn == new_book.isbn:
             return False
         i = str(i.title)
         i = i.replace(" ", "").replace("_", "") \
             .replace("-", "").replace(",", ""). \
             replace(".", "").lower()
-        tmp = str(newbook.title)
+        tmp = str(new_book.title)
         tmp = tmp.replace(" ", "").replace("_", "") \
             .replace("-", "").replace(",", ""). \
             replace(".", "").lower()
