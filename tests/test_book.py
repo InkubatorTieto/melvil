@@ -1,7 +1,11 @@
 from flask import url_for
-from models import Author, Book, Tag, Magazine
 from datetime import date
+from random import choice, randint
+from mimesis import Generic
 import pytest
+
+from models import Author, Book, Tag, Magazine, LibraryItem
+from forms.book import BookForm, MagazineForm
 
 
 def test_add_book(view_book, client):
@@ -195,4 +199,106 @@ def test_check_pub_date(view_book, values, result):
     assert bool(view_book.errors) != result, \
         "The validator 'check_pub_date' returns not" \
         " a valid value\n Errors:{0}".format(view_book.errors)
+
+
 # End of Testing separated validators
+
+
+def test_update_book(view_edit_book, client):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+    g = Generic('en')
+
+    item = LibraryItem.query.filter_by(title=view_edit_book.title.data).first()
+
+    form = BookForm(
+        radio='book',
+        first_name=g.person.name(),
+        surname=g.person.surname(),
+        title=' '.join(g.text.title().split(' ')[:3]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=g.text.words(1),
+        description=g.text.sentence(),
+        isbn=str(9789295055025),
+        original_title=' '.join(g.text.title().split(' ')[:3]),
+        publisher=g.business.company(),
+        pub_date=str(randint(1970, 2018))
+    )
+
+    client.post(url_for('library_books.edit_book', item_id=item.id),
+                data=form.data,
+                follow_redirects=True)
+    tmp_item = LibraryItem.query.filter_by(id=item.id).first()
+
+    assert tmp_item.title == form.title.data, \
+        "Book title has not been updated"
+    assert tmp_item.authors[0].first_name == form.first_name.data, \
+        "Authors first name has not been updated"
+    assert tmp_item.authors[0].last_name == form.surname.data, \
+        "Authors last name not been updated"
+    assert tmp_item.table_of_contents == form.table_of_contents.data, \
+        "Book table of contents has not been updated"
+    assert tmp_item.language == form.language.data, \
+        "Book language has not been updated"
+    assert tmp_item.category == form.category.data, \
+        "Book category has not been updated"
+    assert tmp_item.description == form.description.data, \
+        "Book description has not been updated"
+    assert tmp_item.isbn == form.isbn.data, \
+        "Book isbn has not been updated"
+    assert tmp_item.original_title == form.original_title.data, \
+        "Book original_title has not been updated"
+    assert tmp_item.publisher == form.publisher.data, \
+        "Book publisher has not been updated"
+    assert tmp_item.pub_date == date(year=int(form.pub_date.data),
+                                     month=1,
+                                     day=1), \
+        "Book pub_date has not been updated"
+    assert tmp_item.tags[0].name == form.tag.data[0], \
+        "Book tags has not been updated"
+
+
+def test_update_magazine(view_edit_magazine, client):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+    g = Generic('en')
+
+    item = LibraryItem.query.filter_by(
+        title=view_edit_magazine.title_of_magazine.data).first()
+
+    form = MagazineForm(
+        radio='magazine',
+        title_of_magazine=' '.join(g.text.title().split(' ')[:3]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=g.text.words(1),
+        description=g.text.sentence(),
+        pub_date=str(randint(1970, 2018))
+    )
+
+    client.post(url_for('library_books.edit_book', item_id=item.id),
+                data=form.data,
+                follow_redirects=True)
+    tmp_item = LibraryItem.query.filter_by(id=item.id).first()
+
+    assert tmp_item.title == form.title_of_magazine.data, \
+        "Book title has not been updated"
+    assert tmp_item.table_of_contents == form.table_of_contents.data, \
+        "Book table of contents has not been updated"
+    assert tmp_item.language == form.language.data, \
+        "Book language has not been updated"
+    assert tmp_item.category == form.category.data, \
+        "Book category has not been updated"
+    assert tmp_item.description == form.description.data, \
+        "Book description has not been updated"
+    assert tmp_item.year == date(year=int(form.pub_date.data),
+                                 month=1,
+                                 day=1), \
+        "Book pub_date has not been updated"
+    assert tmp_item.tags[0].name == form.tag.data[0], \
+        "Book tags has not been updated"

@@ -55,7 +55,7 @@
                                     <a type="button" role="button" class="btn btn-success btn-sm"
                                        href="{{ url_for( 'library.add_copy', item_id=item.id ) }}">Add Copy</a>
                                     <a type="button" role="button" class="btn btn-primary btn-sm"
-                                       href="#">Edit {{ item.type|capitalize }}</a>
+                                       href="{{ url_for( 'library_books.edit_book', item_id=item.id ) }}">Edit {{ item.type|capitalize }}</a>
                                     <a type="button" role="button" class="btn btn-danger btn-sm"
                                        href="{{ url_for('library.remove_item', item_id=item.id)}}">Delete {{ item.type|capitalize }}</a>
                                 </div>

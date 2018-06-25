@@ -26,3 +26,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Tests for wish list
 - Popover with info about wish list
 - Creating delete button in wishlist only for admin
+
+
+## [0.0.1] - 2018-06-20
+###Added
+Implement editing book
+* change book/magazine forms more modular
+* add  "edit_book.html" templates
+*add view "edit_book"
+*add tests

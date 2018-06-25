@@ -1,37 +1,27 @@
 {% extends "base.html" %}
 {% block head %}
-{{ super() }}
+{{super()}}
 <link rel="stylesheet" type="text/css" href="/static/css/books.css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
 
 {% endblock %}
-{% block title %}Add new book{% endblock %}
+{% block title %}EDIT BOOK/MAGAZINE{% endblock %}
 
 {% block content %}
 {% from "macros.html" import input with context %}
 <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
     <main role="main" class="inner cover">
-        <p class="form-title">ADD NEW BOOK</p>
+        <p class="form-title">EDIT BOOK/MAGAZINE</p>
         <form class="login" method="post">
             {{ form.hidden_tag() }}
+            {% if item_type == 'book' %}
             <div class="container">
-                <div class="form-check form-check-inline">
-                    <div class="row justify-content-center">
-
-                        {{ form.radio}}
-                    </div>
-                </div>
 
 
                 <div class="row">
                     <div class="col">
-                        {% if form.title != None %}
                         {{ input( form.title ,error['title']) }}
-                        {% endif %}
-                        {% if form.title_of_magazine != None %}
-                        {{ input( form.title_of_magazine ,error['title_of_magazine']) }}
-                        {% endif %}
                     </div>
                     <div class="col">
                         {{ input( form.original_title ,error['original_title']) }}
@@ -41,12 +31,7 @@
 
                 <div class="row">
                     <div class="col">
-                        {% if form.publisher != None %}
                         {{ input( form.publisher ,error['publisher']) }}
-                        {% endif %}
-                        {% if form.issue != None %}
-                        {{ input( form.issue ,error['issue']) }}
-                        {% endif %}
                     </div>
 
                     <div class="col">
@@ -124,13 +109,69 @@
                 {{form.submit}}
 
             </div>
+            {% elif item_type == 'magazine' %}
+            <div class="container">
+
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.title_of_magazine ,error['title_of_magazine']) }}
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.issue ,error['issue']) }}
+                    </div>
+
+                    <div class="col">
+                        <br>
+                        <p id="myText">Year of publication:</p>
+                        {{ input(form.pub_date, error['pub_date'])}}
+
+                        <p id="myText">Language:</p>
+                        {{ input( form.language ,error['language']) }}
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col">
+                        <br>
+                        {{ input( form.tag ,error['tag']) }}
+                    </div>
+                    <div class="col">
+                        <p id="myText">Category:</p>
+                        {{ input( form.category ,error['category']) }}
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.table_of_contents ,error['table_of_contents']) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ input( form.description ,error['description']) }}
+                    </div>
+                </div>
+            </div>
+            {{form.submit}}
+
+
+            {% endif %}
         </form>
     </main>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
+
+<script>
 
     function showMagazine() {
         $("#title_of_magazine").prop("disabled", false).show();
@@ -144,61 +185,29 @@
         $("#issue").prop("disabled", false).show();
     }
 
-    function hideBooks() {
-        $("#title").prop("disabled", true).hide();
-
-        $("#isbn").prop("disabled", true).hide();
-        $("#original_title").prop("disabled", true).hide();
-        $("#publisher").prop("disabled", true).hide();
-
-        $("#myText1").hide();
-        $("[name='first_name']").prop("disabled", true).hide();
-        $("[name='surname']").prop("disabled", true).hide();
-        $("[name='first_name_1']").prop("disabled", true).hide();
-        $("[name='surname_1']").prop("disabled", true).hide();
-        $("[name='first_name_2']").prop("disabled", true).hide();
-        $("[name='surname_2']").prop("disabled", true).hide();
-    }
-
-    function hideMagazine() {
-        $("#title_of_magazine").prop("disabled", true).hide();
-        $("#issue").prop("disabled", true).hide();
-    }
-
     function showBooks() {
         $("#title").prop("disabled", false).show();
+        $("#original_title").prop("disabled", false).show();
+        $("#publisher").prop("disabled", false).show();
         $("#table_of_contest").prop("disabled", false).show();
         $("[name='pub_date']").prop("disabled", false).show();
         $("[name='language']").prop("disabled", false).show();
         $("[name='category']").prop("disabled", false).show();
         $("#tag").prop("disabled", false).show();
         $("#description").prop("disabled", false).show();
-        $("#isbn").prop("disabled", false).show();
-        $("#original_title").prop("disabled", false).show();
-        $("#publisher").prop("disabled", false).show();
-
-        $("#myText1").show();
+        $("#button").prop("disabled", false).show();
         $("[name='first_name']").prop("disabled", false).show();
         $("[name='surname']").prop("disabled", false).show();
         $("[name='first_name_1']").prop("disabled", false).show();
         $("[name='surname_1']").prop("disabled", false).show();
         $("[name='first_name_2']").prop("disabled", false).show();
         $("[name='surname_2']").prop("disabled", false).show();
-        $("#button").prop("disabled", false).show();
+        $("#isbn").prop("disabled", false).show();
     }
 
-    $(document).ready(function () {
-        $("input[type='radio']").click(function () {
-            var radioValue = $("input[name='radio']:checked").val();
-            if (radioValue == 'magazine') {
-                hideBooks();
-                showMagazine();
-            }
-            if (radioValue == 'book') {
-                hideMagazine();
-                showBooks();
-            }
-        });
+    $(document).ready(function show_form() {
+        showBooks()
+        showMagazine()
     });
 
 </script>
