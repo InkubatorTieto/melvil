@@ -76,7 +76,7 @@
                                             {{ copy_info_row(copy, loop.index) }}
                                             <td class="table-button">
                                                 <a type="button" role="button"
-                                                   class="btn btn-success btn-sm {{ 'disabled' if not copy.available_status }}"
+                                                   class="btn btn-success btn-sm {{ 'disabled' if copy.available_status|string() == 'BookStatus.RESERVED' }}"
                                                    href="{{ url_for( 'library.reserve', copy_id=copy.id ) }}">Reserve</a>
                                             </td>
                                             {% if admin %}
