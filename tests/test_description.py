@@ -4,6 +4,7 @@ from models import LibraryItem
 from models.users import RoleEnum, Role
 from models.library import BookStatus
 
+
 def test_status_code(client, db_book, app_session):
     resp = client.get(url_for("library.item_description", item_id=db_book.id))
     assert resp.status_code == 200

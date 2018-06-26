@@ -25,7 +25,9 @@ class Copy(db.Model):
                                        cascade='all, delete-orphan'))
     shelf = db.Column(db.String(56))
     has_cd_disk = db.Column(db.Boolean)
-    available_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()), server_default='3', default=BookStatus.RETURNED)
+    available_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()),
+                                 server_default='3',
+                                 default=BookStatus.RETURNED)
     rental_logs = db.relationship('RentalLog',
                                   lazy='dynamic',
                                   cascade='all, delete-orphan',
