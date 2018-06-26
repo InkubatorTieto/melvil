@@ -557,7 +557,12 @@ def edit_profile(user_id):
 @library.route('/edit_password/<int:user_id>',
                methods=['GET', 'POST'])
 def edit_password(user_id):
-    user = User.query.get_or_404(user_id)
+    try:
+        user = User.query.get(session['id'])
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
     form = EditPasswordForm()
     if form.validate_on_submit():
         if check_password_hash(user.password_hash, form.password.data):
@@ -575,7 +580,8 @@ def edit_password(user_id):
                                    message_body=message_body)
     return render_template('edit_password.html',
                            form=form,
-                           error=form.errors)
+                           error=form.errors,
+                           user=user)
 
 
 @library.errorhandler(401)
