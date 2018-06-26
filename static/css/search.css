@@ -11,6 +11,26 @@ a:hover {
 
 #query {
     padding-bottom: 5px;
+    width: 100%;
+}
+
+.page-link {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+.page-link:hover {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+.page-item.disabled
+.page-link {
+    background-color: #000;
+    border-color: rgba(0,0,0,0.0);
+    color: #fff;
 }
 
 .my_search_main {
@@ -52,13 +72,6 @@ a:hover {
     color: white;
 }
 
-.col-lg-1 {
-    float: left;
-    color: white;
-    font-size: 20px;
-    opacity: 0.7;
-}
-
 .btn-dark {
     background-color: #000;
     border-color: #000;
@@ -69,4 +82,11 @@ a:hover {
     color: #fff;
     background-color: #000;
     border-color: #000;
+}
+
+.btn-outline-dark {
+    color: rgba(255,255,255,0.75);
+    background-color: transparent;
+    background-image: none;
+    border-color: rgba(0,0,0,0.0);
 }

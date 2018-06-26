@@ -41,16 +41,14 @@
                       <p>Issue no.: {{ item['issue'] }}</p>
                     {% endif %}
                   </div>
-                  <div class="col-lg-1" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">
-                    <p>?</p>
-                  </div>
+                    <button type="button" class="btn btn-outline-dark" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">?</button>
                 </li>
               {% endfor %}
             {% endif %}
           </ul>
         </div>
 
-        <nav aria-label="Page navigation example">
+        <nav aria-label="Page navigation search">
           {% from "macros.html" import render_pagination with context %}
             {{ render_pagination(pagination, endpoint) }}
         </nav>
