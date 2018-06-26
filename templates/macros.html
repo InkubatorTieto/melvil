@@ -42,7 +42,10 @@
                 </div>
             </li>
              <div class="dropdown-divider"></div>
-             <a class="dropdown-item disabled" href="{{ url_for('library.edit_profile', user_id=session.id)}}"><i class="fas fa-user-edit"></i> Edit your profile</a>
+             <a class="dropdown-item disabled" href="{{ url_for('library.edit_profile', user_id=session.id)}}"><i class="fas fa-user-edit"></i>Edit profile</a>
+            <div class="dropdown-divider"></div>
+             <a class="dropdown-item disabled" href="{{ url_for('library.edit_password', user_id=session.id)}}"><i class="fas fa-user-edit"></i>Change password</a>
+
              <div class="dropdown-divider"></div>
              <a class="dropdown-item disabled" href="{{ url_for(path)}}"><i class="fas fa-power-off"></i> Logout</a>
         </div>
