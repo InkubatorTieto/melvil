@@ -26,7 +26,7 @@
     <td>{{ index }}</td>
     <td>{{ copy.asset_code }}</td>
     <td>{{ copy.has_cd_disk }}</td>
-    <td>{{ 'Available' if copy.available_status|string() != "BookStatus.RESERVED"  else 'Occupied' }}</td>
+    <td>{{ 'Available' if copy.available_status|string() == "BookStatus.RETURNED"  else 'Occupied' }}</td>
 {% endmacro %}
 
 
