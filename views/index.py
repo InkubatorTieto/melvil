@@ -328,8 +328,8 @@ def reserve(copy_id):
                 user_id=session['id'],
                 book_status=BookStatus.RESERVED,
                 reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
-            )
+                reservation_end=datetime.now(
+                    tz=pytz.utc) + timedelta(minutes=2))
             db.session.add(res)
             db.session.commit()
             flash('pick up the book within two days!', 'Reservation done!')
@@ -337,6 +337,24 @@ def reserve(copy_id):
             abort(500)
     return redirect(url_for(
         'library_book_borrowing_dashboard.book_borrowing_dashboad'))
+
+
+@library.route('/check_reservation_status_db')
+def check_reservation_status_db():
+    reserved_list = db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .all()
+    db.session.query(Copy).filter(
+        Copy.id.in_([obj.copy_id for obj in reserved_list])
+    ).update(
+        {Copy.available_status: True},
+        synchronize_session='fetch'
+    )
+    db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .update({RentalLog.book_status: BookStatus.RETURNED})
+    db.session.commit()
+    return "OK"
 
 
 @library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
