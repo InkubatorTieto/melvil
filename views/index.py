@@ -173,7 +173,7 @@ def search():
             page = request.args.get('page', 1, type=int)
             paginate_query = (
                 LibraryItem.query.filter(LibraryItem.title.ilike(
-                        '%{}%'.format(query_str)))).paginate(page, 10, False)
+                    '%{}%'.format(query_str)))).paginate(page, 10, False)
 
             output = [d.serialize() for d in paginate_query.items]
             return render_template('search.html',
