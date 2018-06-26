@@ -60,6 +60,11 @@ class RegistrationForm(FlaskForm):
 
 
 class EditPasswordForm(FlaskForm):
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired()],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Password'}))
     new_password = PasswordField(
         'Password',
         validators=[DataRequired(),
@@ -67,17 +72,12 @@ class EditPasswordForm(FlaskForm):
                             message='Passwords must match.')],
         render_kw=({'class': 'inputs',
                     'placeholder': 'New Password'}))
-    password = PasswordField(
-        'Password',
-        validators=[DataRequired()],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Password'}))
     confirm_pass = PasswordField(
         'Confirm password',
         validators=[DataRequired()],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Sign Up',
+    submit = SubmitField('Save',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 

@@ -565,23 +565,22 @@ def edit_password(user_id):
         abort(500)
     form = EditPasswordForm()
     if form.validate_on_submit():
-        if check_password_hash(user.password_hash, form.password.data):
-            try:
-                    user.password_hash = generate_password_hash(form.new_password.data)
-                    db.session.commit()
-                    return redirect(url_for('library.index'))
-            except IntegrityError:
-                abort(500)
-        else:
-            message_body = "Incorrect current password"
-            message_title = '!'
-            return render_template('message.html',
-                                   message_title=message_title,
-                                   message_body=message_body)
+        try:
+            if check_password_hash(user.password_hash, form.password.data):
+                user.password_hash = generate_password_hash(form.new_password.data)
+                db.session.commit()
+                return redirect(url_for('library.index'))
+            else:
+                message_body = "Incorrect current password"
+                message_title = '!'
+                return render_template('message.html',
+                                       message_title=message_title,
+                                       message_body=message_body)
+        except IntegrityError:
+            abort(500)
     return render_template('edit_password.html',
                            form=form,
-                           error=form.errors,
-                           user=user)
+                           error=form.errors)
 
 
 @library.errorhandler(401)
