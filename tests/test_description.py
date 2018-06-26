@@ -2,7 +2,7 @@ from flask import url_for
 
 from models import LibraryItem
 from models.users import RoleEnum, Role
-
+from models.library import BookStatus
 
 def test_status_code(client, db_book, app_session):
     resp = client.get(url_for("library.item_description", item_id=db_book.id))
@@ -61,11 +61,16 @@ def test_types(db_magazine, db_book):
 def test_copy_available(db_book, db_copies):
     assert db_book.copies[
         0
-    ].available_status, (
-        "available_status=True on copy does not work properly with books"
+    ].available_status == BookStatus.RETURNED, (
+        "available_status=RETURNED on copy does not work properly with books"
     )
-    assert not db_book.copies[
+    assert db_book.copies[
         1
-    ].available_status, (
-        "available_status=False on copy does not work properly with books"
+    ].available_status == BookStatus.RESERVED, (
+        "available_status=RESERVED on copy does not work properly with books"
+    )
+    assert db_book.copies[
+        2
+    ].available_status == BookStatus.BORROWED, (
+        "available_status=BORROWED on copy does not work properly with books"
     )

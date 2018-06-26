@@ -322,7 +322,7 @@ def reserve(copy_id):
     if 'logged_in' in session:
         try:
             copy = Copy.query.get(copy_id)
-            copy.available_status = False
+            copy.available_status = BookStatus.RESERVED
             res = RentalLog(
                 copy_id=copy_id,
                 user_id=session['id'],
@@ -347,7 +347,7 @@ def check_reservation_status_db():
     db.session.query(Copy).filter(
         Copy.id.in_([obj.copy_id for obj in reserved_list])
     ).update(
-        {Copy.available_status: True},
+        {Copy.available_status: BookStatus.RETURNED},
         synchronize_session='fetch'
     )
     db.session.query(RentalLog)\
@@ -507,7 +507,7 @@ def add_copy(item_id):
                 library_item_id=item_id,
                 shelf=form.shelf.data,
                 has_cd_disk=form.has_cd_disk.data,
-                available_status=True,
+                available_status=BookStatus.RETURNED,
             )
             db.session.add(new_copy)
             db.session.commit()
