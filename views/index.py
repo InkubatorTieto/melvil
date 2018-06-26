@@ -371,7 +371,8 @@ def remove_item(item_id):
     if form.validate_on_submit():
         db.session.delete(item)
         db.session.commit()
-        flash('Item has been removed', 'success')
+        flash(item.type.capitalize() + ' has been removed.')
+        return redirect(url_for('library.search'))
     authors_list = []
     if item.type == 'book':
         authors_list = item.authors_string
@@ -401,7 +402,9 @@ def remove_copy(item_id, copy_id):
     if form.validate_on_submit():
         db.session.delete(copy)
         db.session.commit()
-        flash('Copy has been removed', 'success')
+        flash('Copy has been removed.')
+        return redirect(url_for('library.item_description',
+                                item_id=item_id))
     return render_template('remove_copy.html',
                            form=form,
                            item=item,
