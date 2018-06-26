@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy import exc, func
+from sqlalchemy import exc
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -172,8 +172,7 @@ def search():
             query_str = request.args.get('query')
             page = request.args.get('page', 1, type=int)
             paginate_query = (
-                LibraryItem.query.filter(
-                    func.lower(LibraryItem.title).like(
+                LibraryItem.query.filter(LibraryItem.title.ilike(
                         '%{}%'.format(query_str)))).paginate(page, 10, False)
 
             output = [d.serialize() for d in paginate_query.items]
