@@ -29,8 +29,9 @@
     {% if copy.available_status|string() == "BookStatus.RESERVED" %}
     <td>
         <div class="tooltip"> Occupied (Reserved)
-            <span class="tooltiptext">This copy has been reserved, its status will change to "Borrowed"
-                or "Available" within 2 days.</span>
+            <span class="tooltiptext">This copy has been reserved,
+                its status will change to "Borrowed" or "Available"
+                within 2 days.</span>
         </div>
     </td>
     {% elif copy.available_status|string() == "BookStatus.BORROWED" %}
