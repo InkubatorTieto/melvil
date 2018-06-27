@@ -332,7 +332,7 @@ def reserve(copy_id):
                     tz=pytz.utc) + timedelta(minutes=2))
             db.session.add(res)
             db.session.commit()
-            flash('pick up the book within two days!', 'Reservation done!')
+            flash('Pick up the book within two days!')
         except IntegrityError:
             abort(500)
     return redirect(url_for(
