@@ -26,7 +26,23 @@
     <td>{{ index }}</td>
     <td>{{ copy.asset_code }}</td>
     <td>{{ copy.has_cd_disk }}</td>
-    <td>{{ 'Available' if copy.available_status|string() == "BookStatus.RETURNED"  else 'Occupied' }}</td>
+    {% if copy.available_status|string() == "BookStatus.RESERVED" %}
+    <td>
+        <div class="tooltip"> Occupied (Reserved)
+            <span class="tooltiptext">This copy has been reserved, its status will change to "Borrowed"
+                or "Available" within 2 days.</span>
+        </div>
+    </td>
+    {% elif copy.available_status|string() == "BookStatus.BORROWED" %}
+    <td>
+        <div class="tooltip"> Occupied (Borrowed)
+            <span class="tooltiptext">This copy has been borrowed,
+                it may take a while until it becomes available.</span>
+        </div>
+    </td>
+    {% else %}
+    <td>Available</td>
+    {% endif %}
 {% endmacro %}
 
 
