@@ -366,8 +366,15 @@ def update_book(form, item):
     item.pub_date = datetime(year=int(form.pub_date.data),
                              month=1,
                              day=1)
-    tag = Tag.query.filter_by(name=item.tags_string).first()
-    tag.name = form.tag.data
+    try:
+        tag = Tag.query.filter_by(name=item.tags_string).first()
+        tag.name = form.tag.data
+    except AttributeError:
+        new_tag = Tag(name=form.tag.data)
+        item.tags.append(new_tag)
+        db.session.add(new_tag)
+        db.session.commit()
+
     try:
         author = Author.query.filter_by(first_name=item.authors[0].first_name,
                                         last_name=item.authors[0].last_name
