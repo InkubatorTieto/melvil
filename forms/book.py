@@ -31,8 +31,6 @@ class LibraryItemForm(FlaskForm):
                        render_kw=({'class': 'radio_but'}))
 
     table_of_contents = TextAreaField('Table of contents',
-                                      validators=[DataRequired(),
-                                                  Length(3)],
                                       render_kw=({'class': 'inputs',
                                                   'id': 'table_of_contest',
                                                   'placeholder':
@@ -58,13 +56,11 @@ class LibraryItemForm(FlaskForm):
                                'disabled': True}))
 
     tag = StringField('Tag',
-                      validators=[DataRequired(), Length(3)],
                       render_kw=({'class': 'inputs',
                                   'id': 'tag',
                                   'placeholder': 'Tag',
                                   'disabled': True}))
     description = TextAreaField('Description',
-                                validators=[DataRequired(), Length(3)],
                                 render_kw=({'class': 'inputs',
                                             'id': 'description',
                                             'placeholder': 'Description',
@@ -106,7 +102,6 @@ class BookForm(LibraryItemForm):
                                    'disabled': True}))
 
     original_title = StringField('Original title',
-                                 validators=[DataRequired(), Length(3)],
                                  render_kw=({'class': 'inputs',
                                              'id': 'original_title',
                                              'placeholder': 'Original title',
@@ -120,12 +115,12 @@ class BookForm(LibraryItemForm):
 
     # Authors
     first_name = StringField('First name',
-                             validators=[check_author],
+                             validators=[DataRequired(), check_author],
                              render_kw=({'class': 'inputs',
                                          'placeholder': 'First Name',
                                          'disabled': True}))
     surname = StringField('Surname',
-                          validators=[check_author],
+                          validators=[DataRequired(), check_author],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Surname',
                                       'disabled': True}))
