@@ -4,7 +4,7 @@ import pytest
 from flask import url_for
 
 
-def test_edit_prof_get(client, db_user):
+def test_edit_prof_get(client, db_user, app_session):
     resp = client.get(url_for('library.edit_profile',
                               user_id=db_user.id))
     assert resp.status_code == 200, \

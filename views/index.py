@@ -567,7 +567,8 @@ def edit_password(user_id):
     if form.validate_on_submit():
         try:
             if check_password_hash(user.password_hash, form.password.data):
-                user.password_hash = generate_password_hash(form.new_password.data)
+                user.password_hash = \
+                    generate_password_hash(form.new_password.data)
                 db.session.commit()
                 return redirect(url_for('library.index'))
             else:

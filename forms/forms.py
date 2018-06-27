@@ -72,7 +72,7 @@ class EditPasswordForm(FlaskForm):
                             message='Passwords must match.')],
         render_kw=({'class': 'inputs',
                     'placeholder': 'New Password'}))
-    confirm_pass = PasswordField(
+    confirm_password = PasswordField(
         'Confirm password',
         validators=[DataRequired()],
         render_kw=({'class': 'inputs',
