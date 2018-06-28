@@ -49,7 +49,8 @@
                 {{ nav_button('index', 'library.index', 'Home' ) }}
                 {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
                 {% if session['id'] %}
-                {{ nav_button('borrowedBooks', 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' )
+                {{ nav_button('book_borrowing_dashboad',
+                'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' )
                 }}
                 {{ nav_button('search', 'library.search', 'Search' ) }}
                 {{ nav_button('add_book', 'library_books.add_book', 'Add new item' ) }}

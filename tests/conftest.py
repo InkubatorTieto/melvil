@@ -303,7 +303,7 @@ def copy_form(session, client):
     form_edit = CopyEditForm(
         asset_code='ab109100',
         has_cd_disk=True,
-        available_status=True,
+        available_status=BookStatus.RETURNED,
         shelf='shelf_two'
     )
 
@@ -337,19 +337,26 @@ def db_copies(session, db_book):
             g.code.locale_code()[:2],
             g.code.pin(mask='######')),
         library_item=db_book,
-        available_status=True
+        available_status=BookStatus.RETURNED
     )
-    copy_not_available = Copy(
+    copy_reserved = Copy(
         asset_code='{}{}'.format(
             g.code.locale_code()[:2],
             g.code.pin(mask='######')),
         library_item=db_book,
-        available_status=False
+        available_status=BookStatus.RESERVED
     )
-    session.add_all([copy_available, copy_not_available])
+    copy_borrowed = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        available_status=BookStatus.BORROWED
+    )
+    session.add_all([copy_available, copy_reserved, copy_borrowed])
     session.commit()
 
-    yield (copy_available, copy_not_available)
+    yield (copy_available, copy_reserved, copy_borrowed)
 
 
 @pytest.fixture
