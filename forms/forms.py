@@ -78,7 +78,10 @@ class ContactForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    query = StringField('Search')
+    query = StringField('Search',
+                        render_kw=({'class': 'form-control',
+                                    'type': 'text',
+                                    'placeholder': 'Search...'}))
     submit = SubmitField('Search')
 
 
@@ -134,3 +137,15 @@ class WishlistForm(FlaskForm):
 class RemoveForm(FlaskForm):
     submit = SubmitField('Delete',
                          render_kw=({'class': 'btn btn-danger btn-sm'}))
+
+
+class BorrowForm(FlaskForm):
+    submit = SubmitField('Borrow',
+                         render_kw=({'class': 'btn btn-success submits',
+                                     'disabled': False}))
+
+
+class ReturnForm(FlaskForm):
+    submit = SubmitField('Return',
+                         render_kw=({'class': 'btn btn-success submits',
+                                     'disabled': False}))
