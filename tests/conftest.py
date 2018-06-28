@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 from random import choice, randint
 import string
@@ -5,13 +6,14 @@ import string
 import pytest
 from mimesis import Generic
 from sqlalchemy import event
-from datetime import datetime
+from werkzeug.security import generate_password_hash
 
 from app import create_app
 from app import db as _db
 from app import mail as _mail
+from forms.forms import SearchForm
 from forms.book import BookForm, MixedForm, MagazineForm
-from models import User, Book, Magazine, Copy, WishListItem, Author, Tag
+from models import User, Book, Magazine, Copy, WishListItem, Author, Tag, LibraryItem
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import LoginForm, RegistrationForm, ForgotPass
@@ -25,7 +27,8 @@ from tests.populate import (
     populate_magazines
 )
 from models.library import BookStatus
-from werkzeug.security import generate_password_hash
+
+
 
 
 g = Generic('en')
@@ -367,6 +370,15 @@ def app_session(client, db_user):
         return app_session
 
 
+@pytest.fixture(scope="function")
+def search_form(session, client):
+    """
+    Form for searching for an item in library.search view
+    """
+    form = SearchForm(query=g.text.word())
+    return form
+
+
 @pytest.fixture
 def view_wish_list(app):
     form = WishlistForm()
@@ -443,6 +455,32 @@ def login_form(db_tieto_user):
         password=db_tieto_user[1],
     )
     yield form
+
+
+@pytest.fixture(scope="function")
+def search_query(session, client):
+    """
+    Create db entries for books and magazines
+    """
+    authors = populate_authors(n=5)
+    books = populate_books(authors=authors)
+    magazines = populate_magazines()
+
+    for i in [authors, books, magazines]:
+        session.add_all(i)
+
+    session.commit()
+
+    yield (books, magazines)
+
+
+@pytest.fixture(scope="function")
+def get_title(session, client, search_query):
+    """
+    Get title of item in Library
+    """
+    item = LibraryItem.query.first()
+    yield item
 
 
 @pytest.fixture(scope="function")

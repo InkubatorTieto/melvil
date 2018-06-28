@@ -61,6 +61,7 @@ class RentalLog(db.Model):
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
     _reservation_begin = db.Column(db.DateTime)
     _reservation_end = db.Column(db.DateTime)
+    book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
 
     @property
     def borrow_time(self):
@@ -165,3 +166,18 @@ class LibraryItem(db.Model):
             return ', '.join(t.name for t in self.tags)
         else:
             return '-'
+
+    def serialize(self):
+        if self.type == 'book':
+            return {
+                'id': self.id,
+                'title': self.title,
+                'authors': self.authors_string.split(', '),
+                'type': self.type,
+            }
+        else:
+            return {
+                'id': self.id,
+                'title': self.title,
+                'issue': self.issue,
+                'type': self.type}

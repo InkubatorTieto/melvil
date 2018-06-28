@@ -4,41 +4,71 @@
 
 {% block content %}
     {% from "macros.html" import flashed_message with context %}
+    {% from "macros.html" import input with context %}
     <h1>Search</h1>
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-        <main role="main" class="inner cover">
-            <div>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {{ flashed_message(messages) }}
-                {% endwith %}
-            </div>
-            <input class="form-control" id="bookInput" type="text" placeholder="Search...">
-            <ul class="list-group" id="bookList">
-                <li class="list-group-item my_container list_header my_container_header">
-                    <div class="col-lg-6">
-                        Title
-                    </div>
-                    <div class="col-lg-6">
-                        Author
-                    </div>
-                </li>
+      <main role="main" class="inner cover">
+        <div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {{ flashed_message(messages) }}
+          {% endwith %}
+        </div>
+        <form action="" method="get" id=query>
+          {{ input(form.query) }}
+        </form>
 
-                {% for book in books %}
-                    <li class="list-group-item my_container">
-                        <a href="{{ url_for('library.item_description', item_id=book[0]) }}">
-                            <div class="col-lg-6">
-                                {{ book[1] }}
-                            </div>
+        <div class="container my_search_main">
+          <ul class="list-group" id="bookList">
+            <li class="list-group-item my_container list_header my_container_header">
+              <div class="col-lg-6">
+                Title
+              </div>
+              <div class="col-lg-6">
+                Author
+              </div>
+            </li>
+            {% if all_query|length == 0 %}
+              <li class="list-group-item my_search">
+                <div class="col-lg-12">
+                  <b>No result found!</b>
+                </div>
+              </li>
+            {% else %}
+              {% for item in all_query %}
+                <li class="list-group-item my_search">
+                  <div class="col-lg-5" id="title_{{ loop.index }}">
+                    <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
+                      {{ item['title'] }}
+                    </a>
+                  </div>
+                  <div class="col-lg-6" id="auth_iss_{{ loop.index }}">
+                    {% if item['type'] == 'book' %}
+                      {% for author in item['authors'] %}
+                        <a href="{{ url_for('library.index', author_name=author) }}" id="author_{{ loop.index }}">
+                          {% if loop.last %}
+                            {{ author }}...
+                          {% else %}
+                            {{ author }},
+                          {% endif %}
                         </a>
-                        <a href="{{ url_for('library.item_description', item_id=book[0]) }}">
-                            <div class="col-lg-6">
-                                {{ ' '.join(book[2]) }}
-                            </div>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </main>
+                      {% endfor %}
+                    {% elif item['type'] == 'magazine' %}
+                      <p>Issue no.: {{ item['issue'] }}</p>
+                    {% endif %}
+                  </div>
+                    <button type="button" class="btn btn-outline-dark" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">?</button>
+                </li>
+              {% endfor %}
+            {% endif %}
+          </ul>
+        </div>
+
+        <nav aria-label="Page navigation search">
+          {% from "macros.html" import render_pagination with context %}
+            {{ render_pagination(pagination, endpoint) }}
+        </nav>
+
+      </main>
     </div>
 
 {% endblock %}

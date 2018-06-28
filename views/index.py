@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import exc
-from sqlalchemy.exc import IntegrityError, TimeoutError
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
@@ -28,6 +28,7 @@ from forms.forms import (
     LoginForm,
     PasswordForm,
     RegistrationForm,
+    SearchForm,
     WishlistForm,
     RemoveForm
 )
@@ -35,7 +36,6 @@ from init_db import db
 from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
-from models.books import Book
 from models.users import User
 from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
@@ -148,32 +148,58 @@ def registration():
 
 @library.route('/search', methods=['GET'])
 def search():
+
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
     if request.method == 'GET':
-        try:
-            retrieve_book_data = db.session.query(Book).all()
-        except TimeoutError:
-            return abort(500)
+        if not request.args or not request.args.get('query'):
+            form = SearchForm()
+            page = request.args.get('page', 1, type=int)
+            try:
+                paginate_query = LibraryItem.query.order_by(
+                    LibraryItem.title.asc()).paginate(page, 10, False)
 
-        books = []
-        for row in retrieve_book_data:
-            book = []
-            book.append(row.id)
-            book.append(row.original_title)
-            book.append([])
-            while row.authors is not None:
-                try:
-                    book[2].append(str(row.authors.pop()))
-                except IndexError:
-                    break
+                output = [d.serialize() for d in paginate_query.items]
+                return render_template('search.html',
+                                       all_query=output,
+                                       admin=admin,
+                                       pagination=paginate_query,
+                                       endpoint='library.search',
+                                       form=form,)
+            except RuntimeError:
+                return ErrorMessage.message('Cannot connect to database!')
 
-            books.append(book)
-        books.sort(key=lambda x: x[2])
+        elif request.args.get('query'):
+            form = SearchForm()
+            query_str = request.args.get('query')
+            page = request.args.get('page', 1, type=int)
+            try:
+                paginate_query = (
+                    LibraryItem.query.filter(LibraryItem.title.ilike(
+                        '%{}%'.format(query_str)))).paginate(page, 10, False)
 
-        return render_template('search.html',
-                               title='Search',
-                               books=books)
-    else:
-        return abort(405)
+                output = [d.serialize() for d in paginate_query.items]
+
+            except RuntimeError:
+                message_title = "Ooops!"
+                message_body = "Something went wrong!"
+                return ErrorMessage.message('Cannot connect to database!')
+
+            return render_template('search.html',
+                                   all_query=output,
+                                   pagination=paginate_query,
+                                   endpoint='library.search',
+                                   admin=admin,
+                                   form=form,)
+
+        else:
+            abort(500)
 
 
 @library.route('/contact', methods=['GET', 'POST'])
