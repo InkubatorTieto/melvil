@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from itsdangerous import URLSafeTimedSerializer
-from sqlalchemy import exc, update
+from sqlalchemy import exc
 from sqlalchemy.exc import IntegrityError, TimeoutError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -78,10 +78,11 @@ def login():
                         check_password_hash(data.password_hash,
                                             form.password.data) and
                         data.active):
-
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
+                    if data.has_role('ADMIN'):
+                        session['admin'] = True
                     return render_template('index.html',
                                            session=session)
                 else:
@@ -575,7 +576,8 @@ def admin_dashboard():
             reserv_page = request.args.get('page', 1, type=int)
             borrow_page = request.args.get('page', 1, type=int)
             reserv_query = RentalLog.query.filter_by(book_status=1).order_by(
-                RentalLog._reservation_begin.asc()).paginate(reserv_page, 10, False)
+                RentalLog._reservation_begin.asc()).paginate(
+                reserv_page, 10, False)
             borrow_query = RentalLog.query.filter_by(book_status=2).order_by(
                 RentalLog._return_time.asc()).paginate(borrow_page, 10, False)
 
@@ -630,14 +632,16 @@ def admin_dashboard():
 
             copy_asset = request.args.get('asset')
             borrow_item = Copy.query.filter_by(asset_code=copy_asset).first()
-            rental_log_change = RentalLog.query.filter_by(copy_id=borrow_item.id).first()
+            rental_log_change = RentalLog.query.filter_by(
+                copy_id=borrow_item.id).first()
             try:
                 rental_log_change.book_status = BookStatus.BORROWED
                 rental_log_change._borrow_time = datetime.now(tz=pytz.utc)
-                rental_log_change._return_time = (datetime.now(tz=pytz.utc) + timedelta(days=14))
+                rental_log_change._return_time = (
+                    datetime.now(tz=pytz.utc) + timedelta(days=14))
                 db.session.commit()
 
-            except SQLAlchemyError:
+            except exc.SQLAlchemyError:
                 abort(500)
             flash('Item borrowed', 'Success!')
             return redirect(url_for('library.admin_dashboard'))
@@ -645,7 +649,8 @@ def admin_dashboard():
         if return_form.submit.data and return_form.validate_on_submit():
             copy_asset = request.args.get('asset')
             borrow_item = Copy.query.filter_by(asset_code=copy_asset).first()
-            rental_log_change = RentalLog.query.filter_by(copy_id=borrow_item.id).first()
+            rental_log_change = RentalLog.query.filter_by(
+                copy_id=borrow_item.id).first()
 
             try:
                 rental_log_change.book_status = BookStatus.RETURNED
@@ -653,14 +658,13 @@ def admin_dashboard():
                 rental_log_change._return_time = datetime.now(tz=pytz.utc)
                 db.session.commit()
 
-            except SQLAlchemyError:
+            except exc.SQLAlchemyError:
                 abort(500)
             flash('Item returned!', 'Success!')
             return redirect(url_for('library.admin_dashboard'))
 
     else:
         abort(500)
-
 
 
 @library.errorhandler(401)
