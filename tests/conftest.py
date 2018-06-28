@@ -569,20 +569,12 @@ def user_reservations(session):
 
 
 @pytest.fixture(scope="function")
-def edit_pass_form(session, client):
-    u = User(email=g.person.email(),
-             first_name=g.person.name(),
-             surname=g.person.surname(),
-             password_hash=g.cryptographic.hash(),
-             active=g.development.boolean(),
-             roles=[])
-    old_pass = u.password_hash
-    new_pass = password_generator()
-    form_edit = EditPasswordForm(
-        user_id=u.id,
-        password=old_pass,
-        new_password=new_pass,
-        confirm_password=new_pass
+def password_edition_form(db_user):
+    password = g.person.password(length=8)
+    new_password = g.person.password(length=8)
+    form = EditPasswordForm(
+        password=password,
+        new_password=new_password,
+        confirm_password=new_password,
     )
-
-    yield (form_edit)
+    yield form
