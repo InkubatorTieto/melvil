@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}/">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}/">
     {% block head %}
     <title> Melvil library - {% block title %}{% endblock %}</title>
 
@@ -34,6 +35,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/add_like.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/tooltip_wish.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/book_borrowing_dashboard.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/admin.js') }}"></script>
     {% endblock %}
 </head>
 <body class="text-center">
