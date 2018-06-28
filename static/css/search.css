@@ -28,3 +28,7 @@ a:visited {
 .list-group {
     margin-top: 10px;
 }
+
+.my_container_header {
+    background: rgba(0, 0, 0, 0.9);
+}

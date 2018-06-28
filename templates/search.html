@@ -14,6 +14,15 @@
             </div>
             <input class="form-control" id="bookInput" type="text" placeholder="Search...">
             <ul class="list-group" id="bookList">
+                <li class="list-group-item my_container my_container_header">
+                    <div class="col-lg-6">
+                        <font color="white"><b>Title</b></font>
+                    </div>
+                    <div class="col-lg-6">
+                        <font color="white"><b>Author</b></font>
+                    </div>
+                </li>
+
                 {% for book in books %}
                     <li class="list-group-item my_container">
                         <a href="{{ url_for('library.item_description', item_id=book[0]) }}">
