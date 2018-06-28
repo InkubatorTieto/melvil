@@ -23,6 +23,10 @@ elif [ "$1" == "-p" ] ; then
       # create initial database and set alembic's head
       docker-compose -f $PROD_DOCKER run web python create_db.py
       docker-compose -f $PROD_DOCKER stop postgresql
+   elif [ "$1" == "load-xls" ] ; then
+      # load xls data into db
+      docker-compose -f $PROD_DOCKER run web flask load_xls_into_db
+      docker-compose -f $PROD_DOCKER stop postgresql
    elif [ "$2" == "-b" ] ; then
       # build new development image
       docker-compose -f $PROD_DOCKER build
@@ -41,6 +45,10 @@ else
    elif [ "$1" == "create-db" ] ; then
       # create initial database and set alembic's head
       docker-compose -f $DEV_DOCKER run web python create_db.py
+      docker-compose -f $DEV_DOCKER stop postgresql
+   elif [ "$1" == "load-xls" ] ; then
+      # load xls data into db
+      docker-compose -f $DEV_DOCKER run web flask load_xls_into_db
       docker-compose -f $DEV_DOCKER stop postgresql
    elif [ "$1" == "-b" ] ; then
       # build new development server

@@ -4,6 +4,12 @@ from sqlalchemy_utils import ChoiceType
 from init_db import db
 
 
+class BookStatus(Enum):
+    RESERVED = 1
+    BORROWED = 2
+    RETURNED = 3
+
+
 class Copy(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     asset_code = db.Column(db.String(8), unique=True)
@@ -19,7 +25,9 @@ class Copy(db.Model):
                                        cascade='all, delete-orphan'))
     shelf = db.Column(db.String(56))
     has_cd_disk = db.Column(db.Boolean)
-    available_status = db.Column(db.Boolean, server_default='t', default=True)
+    available_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()),
+                                 server_default='3',
+                                 default=BookStatus.RETURNED)
     rental_logs = db.relationship('RentalLog',
                                   lazy='dynamic',
                                   cascade='all, delete-orphan',
@@ -38,12 +46,6 @@ class Copy(db.Model):
             self.asset_code,
             self.library_item_id
         )
-
-
-class BookStatus(Enum):
-    RESERVED = 1
-    BORROWED = 2
-    RETURNED = 3
 
 
 class RentalLog(db.Model):
