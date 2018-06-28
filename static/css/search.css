@@ -32,3 +32,7 @@ a:visited {
 .my_container_header {
     background: rgba(0, 0, 0, 0.9);
 }
+.list_header {
+    color: white;
+    font-weight: bold;
+}
