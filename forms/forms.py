@@ -59,6 +59,28 @@ class RegistrationForm(FlaskForm):
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
+class EditPasswordForm(FlaskForm):
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired()],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Password'}))
+    new_password = PasswordField(
+        'Password',
+        validators=[DataRequired(),
+                    EqualTo('confirm_pass',
+                            message='Passwords must match.')],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'New Password'}))
+    confirm_password = PasswordField(
+        'Confirm password',
+        validators=[DataRequired()],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Confirm Password'}))
+    submit = SubmitField('Save',
+                         render_kw=({'class': 'btn btn-primary submits'}))
+
+
 class ContactForm(FlaskForm):
     email = StringField('email',
                         validators=[Email()],

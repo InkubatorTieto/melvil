@@ -30,7 +30,8 @@ from forms.forms import (
     RegistrationForm,
     SearchForm,
     WishlistForm,
-    RemoveForm
+    RemoveForm,
+    EditPasswordForm
 )
 from init_db import db
 from messages import ErrorMessage, SuccessMessage
@@ -601,6 +602,36 @@ def edit_profile(user_id):
     form.surname.data = user.surname
     form.email.data = user.email
     return render_template('edit_profile.html',
+                           form=form,
+                           error=form.errors)
+
+
+@library.route('/edit_password/<int:user_id>',
+               methods=['GET', 'POST'])
+def edit_password(user_id):
+    try:
+        user = User.query.get(session['id'])
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = EditPasswordForm()
+    if form.validate_on_submit():
+        try:
+            if check_password_hash(user.password_hash, form.password.data):
+                user.password_hash = \
+                    generate_password_hash(form.new_password.data)
+                db.session.commit()
+                return redirect(url_for('library.index'))
+            else:
+                message_body = "Incorrect current password"
+                message_title = '!'
+                return render_template('message.html',
+                                       message_title=message_title,
+                                       message_body=message_body)
+        except IntegrityError:
+            abort(500)
+    return render_template('edit_password.html',
                            form=form,
                            error=form.errors)
 
