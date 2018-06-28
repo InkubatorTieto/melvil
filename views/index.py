@@ -553,7 +553,12 @@ def edit_copy(copy_id):
 @library.route('/edit_profile/<int:user_id>',
                methods=['GET', 'POST'])
 def edit_profile(user_id):
-    user = User.query.get_or_404(user_id)
+    try:
+        user = User.query.get(session['id'])
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
     form = EditProfileForm()
     if form.validate_on_submit():
         try:
