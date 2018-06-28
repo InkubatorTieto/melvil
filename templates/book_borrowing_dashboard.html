@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+  <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <main role="main">
+            <div class="book_borrowing_dashboard">
+                <div >
+                    <button id="reserv_button" type="button" class="btn btn-primary book_dashboard_button">
+                        Reserved : {{ num_of_reserved }}</button>
+                    <button id="booked_button" type="button" class="btn btn-primary book_dashboard_button">
+                        Borrowed : {{ num_of_borrowed }}</button>
+                </div>
+                <table id="reserved_table" class="table booking_dashboard">
+                  <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Author</th>
+                        <th scope="col">Reservation date</th>
+                        <th scope="col">Reservation expiry date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if  not reserved_books %}
+                    <tr>
+                        <td>------</td>
+                        <td>------</td>
+                        <td>------</td>
+                        <td>------</td>
+                    </tr>
+                  {% else %}
+                  {% for item in reserved_books %}
+                    <tr>
+                        <td>
+                            {{item[0].title}}
+                            {% if item[0].type == "magazine" %}
+                                [magazine]
+                            {% endif%}
+                        </td>
+                        {% if item[0].authors %}
+                            <td>
+                                {% for author in item[0].authors %}
+                                {{author.first_name}} {{author.last_name}}
+                                {% endfor %}
+                            </td>
+                        {% else %}
+                            <td>------</td>
+                        {% endif %}
+                        <td>{{item._reservation_begin.strftime('%Y-%m-%d')}}</td>
+                        <td>{{item._reservation_end.strftime('%Y-%m-%d')}}</td>
+                    </tr>
+                  {% endfor %}
+                  {% endif %}
+                  </tbody>
+                </table>
+                <table id="booked_table" class="table booking_dashboard" >
+                  <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Author</th>
+                        <th scope="col">Rental date</th>
+                        <th scope="col">Rental due date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if not borrowed_books %}
+                    <tr>
+                        <td>------</td>
+                        <td>------</td>
+                        <td>------</td>
+                        <td>------</td>
+                    </tr>
+                  {% else %}
+                  {% for item in borrowed_books %}
+                    <tr>
+                        <td>
+                            {{item[0].title}}
+                            {% if item[0].type == "magazine" %}
+                                [magazine]
+                            {% endif%}
+                        </td>
+                        {% if item[0].authors %}
+                            <td>
+                                {% for author in item[0].authors %}
+                                {{author.first_name}} {{author.last_name}}
+                                {% endfor %}
+                            </td>
+                        {% else %}
+                            <td>------</td>
+                        {% endif %}
+                        <td>{{item._borrow_time.strftime('%Y-%m-%d')}}</td>
+                        <td>{{item._return_time.strftime('%Y-%m-%d')}}</td>
+                    </tr>
+                  {% endfor %}
+                  {% endif %}
+                  </tbody>
+                </table>
+            </div>
+      </main>
+  </div>
+{% endblock %}

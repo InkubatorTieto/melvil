@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Item removal{% endblock %}
+{% block content %}
+    {% from "macros.html" import input, table_row with context %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/item_description.css') }}">
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+        <main role="main" class="inner cover">
+            <div class="container my_container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="wrap">
+                            <button type="button" style="white" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href='{{ url_for('library.index')}}';">
+                              <span aria-hidden="true">&times;</span>
+                                </button>
+                                  <p class="form-title">CONFIRM REMOVAL OF A COPY</p>
+                                    <p class="text_item"> Are you sure you want to delete following copy? </p>
+                                      <table class="item-removal">
+                                            {{ table_row('Title', item.title) }}
+                                            {% if item.type == 'magazine' %}
+                                                {{ table_row('Year', item.year) }}
+                                                {{ table_row('Issue', item.issue) }}
+                                            {% elif item.type == 'book' %}
+                                                {{ table_row('Authors', authors_list) }}
+                                            {% else %}
+                                                <p class="error-info"> There occurred some problems with loading library item. </p>
+                                            {% endif %}
+                                            {{ table_row('Asset code', copy.asset_code) }}
+                                      </table>
+                                    {% if admin %}
+                                    <form action="" method="post">
+                                        {{ form.hidden_tag() }}
+                                        {{ form.submit() }}
+                                    </form>
+                                    {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}
+

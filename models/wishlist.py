@@ -36,12 +36,19 @@ class WishListItem(db.Model):
     __tablename__ = 'wish_list_items'
     id = db.Column(db.Integer, primary_key=True)
     authors = db.Column(db.String(256))
-    title = db.Column(db.String(256))
+    title = db.Column(db.String(256), nullable=False)
     likes = db.relationship('Like',
                             backref='wish_list_item',
                             cascade="all, delete-orphan",
                             lazy=True)
     pub_year = db.Column(db.Date)
+    item_type = db.Column(db.String(256), nullable=False)
 
     def __repr__(self):
         return '<Wish List Item {}>'.format(self.title)
+
+    @classmethod
+    def delete_wish(cls, wish_id):
+        delete_wish_admin = WishListItem.query.get(wish_id)
+        db.session.delete(delete_wish_admin)
+        db.session.commit()

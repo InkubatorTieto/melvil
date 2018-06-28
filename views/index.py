@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
+
 from flask import (
     abort,
     Blueprint,
@@ -14,10 +15,13 @@ from flask import (
     render_template,
     request,
     session,
-    url_for
+    url_for,
+    json
 )
 
 from config import DevConfig
+from forms.copy import CopyAddForm, CopyEditForm
+from forms.edit_profile import EditProfileForm
 from forms.forms import (
     ContactForm,
     ForgotPass,
@@ -25,10 +29,11 @@ from forms.forms import (
     PasswordForm,
     RegistrationForm,
     SearchForm,
-    WishlistForm
+    WishlistForm,
+    RemoveForm
 )
 from init_db import db
-from messages import ErrorMessage
+from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
 from models.users import User
@@ -36,7 +41,6 @@ from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 from serializers.wishlist import WishListItemSchema
-
 
 library = Blueprint('library', __name__,
                     template_folder='templates')
@@ -75,7 +79,8 @@ def login():
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
-                    return render_template('index.html', session=session)
+                    return render_template('index.html',
+                                           session=session)
                 else:
                     message_body = 'Login failed or ' \
                                    'your account is not activated'
@@ -108,8 +113,8 @@ def registration():
         if form.validate_on_submit():
             try:
                 if User.query.filter_by(email=form.email.data).first():
-                    message_body = 'User already exist'
-                    message_title = 'Opss!'
+                    message_body = 'User already exists'
+                    message_title = 'Oops!'
                     return render_template('message.html',
                                            message_title=message_title,
                                            message_body=message_body)
@@ -156,26 +161,36 @@ def search():
         if not request.args or not request.args.get('query'):
             form = SearchForm()
             page = request.args.get('page', 1, type=int)
-            paginate_query = LibraryItem.query.order_by(
-                LibraryItem.title.asc()).paginate(page, 10, False)
+            try:
+                paginate_query = LibraryItem.query.order_by(
+                    LibraryItem.title.asc()).paginate(page, 10, False)
 
-            output = [d.serialize() for d in paginate_query.items]
-            return render_template('search.html',
-                                   all_query=output,
-                                   admin=admin,
-                                   pagination=paginate_query,
-                                   endpoint='library.search',
-                                   form=form,)
+                output = [d.serialize() for d in paginate_query.items]
+                return render_template('search.html',
+                                       all_query=output,
+                                       admin=admin,
+                                       pagination=paginate_query,
+                                       endpoint='library.search',
+                                       form=form,)
+            except RuntimeError:
+                return ErrorMessage.message('Cannot connect to database!')
 
         elif request.args.get('query'):
             form = SearchForm()
             query_str = request.args.get('query')
             page = request.args.get('page', 1, type=int)
-            paginate_query = (
-                LibraryItem.query.filter(LibraryItem.title.ilike(
-                    '%{}%'.format(query_str)))).paginate(page, 10, False)
+            try:
+                paginate_query = (
+                    LibraryItem.query.filter(LibraryItem.title.ilike(
+                        '%{}%'.format(query_str)))).paginate(page, 10, False)
 
-            output = [d.serialize() for d in paginate_query.items]
+                output = [d.serialize() for d in paginate_query.items]
+
+            except RuntimeError:
+                message_title = "Ooops!"
+                message_body = "Something went wrong!"
+                return ErrorMessage.message('Cannot connect to database!')
+
             return render_template('search.html',
                                    all_query=output,
                                    pagination=paginate_query,
@@ -193,19 +208,27 @@ def contact():
     if form.validate_on_submit():
         email_template = open(
             './templates/contact_confirmation.html', 'r').read()
-        send_email(
-            'Contact confirmation, title: ' + form.title.data,
-            DevConfig.MAIL_USERNAME,
-            [form.email.data],
-            None,
-            email_template)
-        send_email(
-            'Contact form: ' + form.title.data,
-            DevConfig.MAIL_USERNAME,
-            [DevConfig.MAIL_USERNAME],
-            'Send by: ' + form.email.data + '\n\n' + form.message.data,
-            None)
-        return redirect('/contact')
+        try:
+            send_email(
+                'Contact confirmation, title: ' + form.title.data,
+                DevConfig.MAIL_USERNAME,
+                [form.email.data],
+                None,
+                email_template)
+
+            send_email(
+                'Contact form: ' + form.title.data,
+                DevConfig.MAIL_USERNAME,
+                [DevConfig.MAIL_USERNAME],
+                'Send by: ' + form.email.data + '\n\n' + form.message.data,
+                None)
+            return SuccessMessage\
+                .message('Your email has been sent to administrator!')
+        except TimeoutError:
+            return ErrorMessage\
+                .message('Oops, '
+                         'some problem occurred'
+                         ' and your email has not been sent ')
     return render_template('contact.html',
                            title='Contact',
                            form=form,
@@ -274,7 +297,7 @@ def reset():
                                        message_body=message_body)
         else:
             message_body = "This email doesn't exist"
-            message_title = 'Error!'
+            message_title = '!'
             return render_template('message.html',
                                    message_title=message_title,
                                    message_body=message_body)
@@ -325,38 +348,124 @@ def reserve(copy_id):
     if 'logged_in' in session:
         try:
             copy = Copy.query.get(copy_id)
-            copy.available_status = False
+            copy.available_status = BookStatus.RESERVED
             res = RentalLog(
                 copy_id=copy_id,
                 user_id=session['id'],
                 book_status=BookStatus.RESERVED,
                 reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
-            )
+                reservation_end=datetime.now(
+                    tz=pytz.utc) + timedelta(minutes=2))
             db.session.add(res)
             db.session.commit()
-            flash('pick up the book within two days!', 'Resevation done!')
+            flash('pick up the book within two days!', 'Reservation done!')
         except IntegrityError:
             abort(500)
-    return redirect(url_for('library.index'))
+    return redirect(url_for(
+        'library_book_borrowing_dashboard.book_borrowing_dashboad'))
+
+
+@library.route('/check_reservation_status_db')
+def check_reservation_status_db():
+    reserved_list = db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .all()
+    db.session.query(Copy).filter(
+        Copy.id.in_([obj.copy_id for obj in reserved_list])
+    ).update(
+        {Copy.available_status: BookStatus.RETURNED},
+        synchronize_session='fetch'
+    )
+    db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .update({RentalLog.book_status: BookStatus.RETURNED})
+    db.session.commit()
+    return "OK"
+
+
+@library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
+def remove_item(item_id):
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = RemoveForm()
+    item = LibraryItem.query.get_or_404(item_id)
+    if form.validate_on_submit():
+        db.session.delete(item)
+        db.session.commit()
+        flash(item.type.capitalize() + ' has been removed.')
+        return redirect(url_for('library.search'))
+    authors_list = []
+    if item.type == 'book':
+        authors_list = item.authors_string
+    return render_template('remove_item.html',
+                           form=form,
+                           item=item,
+                           authors_list=authors_list,
+                           admin=admin)
+
+
+@library.route('/remove_copy/<int:item_id>/<int:copy_id>',
+               methods=['GET', 'POST'])
+def remove_copy(item_id, copy_id):
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = RemoveForm()
+    item = LibraryItem.query.get_or_404(item_id)
+    copy = Copy.query.filter_by(id=copy_id).first_or_404()
+    authors_list = []
+    if item.type == "book":
+        authors_list = item.authors_string
+    if form.validate_on_submit():
+        db.session.delete(copy)
+        db.session.commit()
+        flash('Copy has been removed.')
+        return redirect(url_for('library.item_description',
+                                item_id=item_id))
+    return render_template('remove_copy.html',
+                           form=form,
+                           item=item,
+                           copy=copy,
+                           authors_list=authors_list,
+                           admin=admin)
 
 
 @library.route('/wishlist', methods=['GET', 'POST'])
 def wishlist():
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
     data = db.session.query(WishListItem).all()
     wish_list_schema = WishListItemSchema(many=True)
     output = wish_list_schema.dump(data)
-    return render_template('wishlist.html', wishes=output)
+    return render_template('wishlist.html', wishes=output, admin=admin)
 
 
-@library.route('/addWish', methods=['GET', 'POST'])
+@library.route('/add_wish', methods=['GET', 'POST'])
 def add_wish():
     form = WishlistForm()
     if form.validate_on_submit():
         try:
             new_wish_item = WishListItem(authors=form.authors.data,
+                                         item_type=form.type.data,
                                          title=form.title.data,
-                                         pub_year=form.pub_year.data)
+                                         pub_year=datetime.strptime(
+                                             form.pub_date.data,
+                                             "%Y").date())
 
             db.session.add(new_wish_item)
             db.session.commit()
@@ -366,8 +475,9 @@ def add_wish():
     return render_template('wishlist_add.html', form=form, error=form.errors)
 
 
-@library.route('/addLike/<int:wish_id>', methods=['GET', 'POST'])
-def add_like(wish_id):
+@library.route('/add_like', methods=['GET', 'POST'])
+def add_like():
+    wish_id = request.form['wish_id']
     user = User.query.filter_by(id=session['id']).first()
     if not Like.like_exists(wish_id, user):
         try:
@@ -378,6 +488,17 @@ def add_like(wish_id):
         try:
             Like.unlike(wish_id, user)
         except exc.SQLAlchemyError:
+            return ErrorMessage.message(error_body='Oops something went wrong')
+    return json.dumps({'num_of_likes': len(WishListItem.query
+                                                       .filter_by(id=wish_id)
+                                                       .first().likes)})
+
+
+@library.route('/delete_wish/<int:wish_id>', methods=['GET', 'POST'])
+def delete_wish(wish_id):
+    try:
+        WishListItem.delete_wish(wish_id)
+    except exc.SQLAlchemyError:
             return ErrorMessage.message(error_body='Oops something went wrong')
     return redirect(url_for('library.wishlist'))
 
@@ -403,6 +524,85 @@ def item_description(item_id):
                            tags_list=tags_list,
                            authors_list=authors_list,
                            admin=admin)
+
+
+@library.route('/add_copy/<int:item_id>', methods=['GET', 'POST'])
+def add_copy(item_id):
+    form = CopyAddForm()
+    if form.validate_on_submit():
+        try:
+            new_copy = Copy(
+                asset_code=form.asset_code.data,
+                library_item_id=item_id,
+                shelf=form.shelf.data,
+                has_cd_disk=form.has_cd_disk.data,
+                available_status=BookStatus.RETURNED,
+            )
+            db.session.add(new_copy)
+            db.session.commit()
+            flash('Copy successfully added!')
+            return redirect(url_for('library.item_description',
+                                    item_id=item_id))
+        except IntegrityError:
+            abort(500)
+    return render_template('copy_form.html',
+                           form=form,
+                           error=form.errors,
+                           action='Add')
+
+
+@library.route('/edit_copy/<int:copy_id>', methods=['GET', 'POST'])
+def edit_copy(copy_id):
+    copy = Copy.query.get_or_404(copy_id)
+    item_id = copy.library_item_id
+    form = CopyEditForm()
+    if form.validate_on_submit():
+        try:
+            copy.asset_code = form.asset_code.data
+            copy.shelf = form.shelf.data
+            copy.has_cd_disk = form.has_cd_disk.data
+            db.session.commit()
+            flash('Copy successfully edited!')
+            return redirect(url_for('library.item_description',
+                                    item_id=item_id))
+        except IntegrityError:
+            abort(500)
+    form.asset_code.data = copy.asset_code
+    form.shelf.data = copy.shelf
+    form.has_cd_disk.data = copy.has_cd_disk
+    return render_template('copy_form.html',
+                           form=form,
+                           error=form.errors,
+                           action='Edit')
+
+
+@library.route('/edit_profile/<int:user_id>',
+               methods=['GET', 'POST'])
+def edit_profile(user_id):
+    try:
+        user = User.query.get(session['id'])
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        try:
+            user.first_name = form.first_name.data
+            user.surname = form.surname.data
+            user.email = form.email.data
+            db.session.commit()
+            flash('Profile data has been updated!')
+            return redirect(url_for('library.index'))
+        except IntegrityError:
+            abort(500)
+
+    form.first_name.data = user.first_name
+    form.surname.data = user.surname
+    form.email.data = user.email
+    return render_template('edit_profile.html',
+                           form=form,
+                           error=form.errors)
 
 
 @library.errorhandler(401)

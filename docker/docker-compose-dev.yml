@@ -1,11 +1,19 @@
 version: '3'
 
 services:
+  cron:
+    build:
+      context: ..
+      dockerfile: './docker/Dockerfile-cron'
+    environment:
+        - CRON_MINUTE=* * * * * root curl http://web:5000/check_reservation_status_db
   web:
-    build: .
-    command: sh run.sh
+    build:
+      context: ..
+      dockerfile: './docker/Dockerfile'
+    command: sh './docker/run.sh'
     volumes:
-      - .:/code
+      - ..:/code
     env_file:
       - .env
     environment:

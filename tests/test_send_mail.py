@@ -1,14 +1,25 @@
-# import smtplib
-# import email.utils
-# from email.mime.text import MIMEText
-#
-#
-# msg = MIMEText('The body of your message.')
-# msg['To'] = email.utils.formataddr(('Recipient Name',
-#                                     'jahenstein@gmail.com'))
-# msg['From'] = email.utils.formataddr(('Your Name', 'test@test.com'))
-# msg['Subject'] = 'Your Subject'
-#
-# server = smtplib.SMTP()
-# server.connect()
-# server.sendmail('test@test.com', ['jahenstein@gmail.com'], msg.as_string())
+from send_email import send_email
+from config import DevConfig
+
+
+def test_send(mailbox,
+              text_generator_no_whitespaces,
+              email_generator,
+              text_generator):
+
+    with mailbox as outbox:
+        send_email(text_generator_no_whitespaces,
+                   DevConfig.ADMINS[0],
+                   [email_generator],
+                   text_generator,
+                   None)
+
+        msg = outbox[0]
+
+        if (len(outbox) != 1 or
+                msg.subject != text_generator_no_whitespaces or
+                msg.body != text_generator or
+                msg.send_to != {email_generator} or
+                msg.sender != DevConfig.ADMINS[0]):
+
+            assert False

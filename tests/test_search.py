@@ -11,7 +11,7 @@ def test_search_get(client, app_session):
     assert resp.status_code == 200
 
 
-def test_has_role(db_user):
+def test_has_role(client, app_session, db_user):
     role_admin = Role.query.filter_by(name=RoleEnum.ADMIN).first()
     db_user.roles.append(role_admin)
     assert db_user.has_role('ADMIN'), \
