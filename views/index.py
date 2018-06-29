@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import exc
-from sqlalchemy.exc import IntegrityError, TimeoutError
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
@@ -38,7 +38,6 @@ from init_db import db
 from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
-from models.books import Book
 from models.users import User
 from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
@@ -152,32 +151,58 @@ def registration():
 
 @library.route('/search', methods=['GET'])
 def search():
+
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
     if request.method == 'GET':
-        try:
-            retrieve_book_data = db.session.query(Book).all()
-        except TimeoutError:
-            return abort(500)
+        if not request.args or not request.args.get('query'):
+            form = SearchForm()
+            page = request.args.get('page', 1, type=int)
+            try:
+                paginate_query = LibraryItem.query.order_by(
+                    LibraryItem.title.asc()).paginate(page, 10, False)
 
-        books = []
-        for row in retrieve_book_data:
-            book = []
-            book.append(row.id)
-            book.append(row.original_title)
-            book.append([])
-            while row.authors is not None:
-                try:
-                    book[2].append(str(row.authors.pop()))
-                except IndexError:
-                    break
+                output = [d.serialize() for d in paginate_query.items]
+                return render_template('search.html',
+                                       all_query=output,
+                                       admin=admin,
+                                       pagination=paginate_query,
+                                       endpoint='library.search',
+                                       form=form,)
+            except RuntimeError:
+                return ErrorMessage.message('Cannot connect to database!')
 
-            books.append(book)
-        books.sort(key=lambda x: x[2])
+        elif request.args.get('query'):
+            form = SearchForm()
+            query_str = request.args.get('query')
+            page = request.args.get('page', 1, type=int)
+            try:
+                paginate_query = (
+                    LibraryItem.query.filter(LibraryItem.title.ilike(
+                        '%{}%'.format(query_str)))).paginate(page, 10, False)
 
-        return render_template('search.html',
-                               title='Search',
-                               books=books)
-    else:
-        return abort(405)
+                output = [d.serialize() for d in paginate_query.items]
+
+            except RuntimeError:
+                message_title = "Ooops!"
+                message_body = "Something went wrong!"
+                return ErrorMessage.message('Cannot connect to database!')
+
+            return render_template('search.html',
+                                   all_query=output,
+                                   pagination=paginate_query,
+                                   endpoint='library.search',
+                                   admin=admin,
+                                   form=form,)
+
+        else:
+            abort(500)
 
 
 @library.route('/contact', methods=['GET', 'POST'])
@@ -326,14 +351,14 @@ def reserve(copy_id):
     if 'logged_in' in session:
         try:
             copy = Copy.query.get(copy_id)
-            copy.available_status = False
+            copy.available_status = BookStatus.RESERVED
             res = RentalLog(
                 copy_id=copy_id,
                 user_id=session['id'],
                 book_status=BookStatus.RESERVED,
                 reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(tz=pytz.utc) + timedelta(hours=48)
-            )
+                reservation_end=datetime.now(
+                    tz=pytz.utc) + timedelta(minutes=2))
             db.session.add(res)
             db.session.commit()
             flash('pick up the book within two days!', 'Reservation done!')
@@ -341,6 +366,24 @@ def reserve(copy_id):
             abort(500)
     return redirect(url_for(
         'library_book_borrowing_dashboard.book_borrowing_dashboad'))
+
+
+@library.route('/check_reservation_status_db')
+def check_reservation_status_db():
+    reserved_list = db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .all()
+    db.session.query(Copy).filter(
+        Copy.id.in_([obj.copy_id for obj in reserved_list])
+    ).update(
+        {Copy.available_status: BookStatus.RETURNED},
+        synchronize_session='fetch'
+    )
+    db.session.query(RentalLog)\
+        .filter(RentalLog.book_status == BookStatus.RESERVED)\
+        .update({RentalLog.book_status: BookStatus.RETURNED})
+    db.session.commit()
+    return "OK"
 
 
 @library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
@@ -357,7 +400,8 @@ def remove_item(item_id):
     if form.validate_on_submit():
         db.session.delete(item)
         db.session.commit()
-        flash('Item has been removed', 'success')
+        flash(item.type.capitalize() + ' has been removed.')
+        return redirect(url_for('library.search'))
     authors_list = []
     if item.type == 'book':
         authors_list = item.authors_string
@@ -387,7 +431,9 @@ def remove_copy(item_id, copy_id):
     if form.validate_on_submit():
         db.session.delete(copy)
         db.session.commit()
-        flash('Copy has been removed', 'success')
+        flash('Copy has been removed.')
+        return redirect(url_for('library.item_description',
+                                item_id=item_id))
     return render_template('remove_copy.html',
                            form=form,
                            item=item,
@@ -493,7 +539,7 @@ def add_copy(item_id):
                 library_item_id=item_id,
                 shelf=form.shelf.data,
                 has_cd_disk=form.has_cd_disk.data,
-                available_status=True,
+                available_status=BookStatus.RETURNED,
             )
             db.session.add(new_copy)
             db.session.commit()
@@ -536,7 +582,12 @@ def edit_copy(copy_id):
 @library.route('/edit_profile/<int:user_id>',
                methods=['GET', 'POST'])
 def edit_profile(user_id):
-    user = User.query.get_or_404(user_id)
+    try:
+        user = User.query.get(session['id'])
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
     form = EditProfileForm()
     if form.validate_on_submit():
         try:
