@@ -191,8 +191,6 @@ def search():
                 output = [d.serialize() for d in paginate_query.items]
 
             except RuntimeError:
-                message_title = "Ooops!"
-                message_body = "Something went wrong!"
                 return ErrorMessage.message('Cannot connect to database!')
 
             return render_template('search.html',

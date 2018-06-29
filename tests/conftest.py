@@ -13,7 +13,16 @@ from app import db as _db
 from app import mail as _mail
 from forms.forms import SearchForm
 from forms.book import BookForm, MixedForm, MagazineForm
-from models import User, Book, Magazine, Copy, WishListItem, Author, Tag, LibraryItem
+from models import (
+    User,
+    Book,
+    Magazine,
+    Copy,
+    WishListItem,
+    Author,
+    Tag,
+    LibraryItem
+)
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import (
