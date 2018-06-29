@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 from random import choice, randint
 import string
@@ -5,16 +6,22 @@ import string
 import pytest
 from mimesis import Generic
 from sqlalchemy import event
-from datetime import datetime
+from werkzeug.security import generate_password_hash
 
 from app import create_app
 from app import db as _db
 from app import mail as _mail
+from forms.forms import SearchForm
 from forms.book import BookForm, MixedForm, MagazineForm
-from models import User, Book, Magazine, Copy, WishListItem, Author, Tag
+from models import User, Book, Magazine, Copy, WishListItem, Author, Tag, LibraryItem
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
-from forms.forms import LoginForm, RegistrationForm, ForgotPass
+from forms.forms import (
+    LoginForm,
+    RegistrationForm,
+    ForgotPass,
+    EditPasswordForm
+)
 from forms.forms import WishlistForm
 from tests.populate import (
     populate_users,
@@ -25,7 +32,8 @@ from tests.populate import (
     populate_magazines
 )
 from models.library import BookStatus
-from werkzeug.security import generate_password_hash
+
+
 
 
 g = Generic('en')
@@ -303,7 +311,7 @@ def copy_form(session, client):
     form_edit = CopyEditForm(
         asset_code='ab109100',
         has_cd_disk=True,
-        available_status=True,
+        available_status=BookStatus.RETURNED,
         shelf='shelf_two'
     )
 
@@ -337,19 +345,26 @@ def db_copies(session, db_book):
             g.code.locale_code()[:2],
             g.code.pin(mask='######')),
         library_item=db_book,
-        available_status=True
+        available_status=BookStatus.RETURNED
     )
-    copy_not_available = Copy(
+    copy_reserved = Copy(
         asset_code='{}{}'.format(
             g.code.locale_code()[:2],
             g.code.pin(mask='######')),
         library_item=db_book,
-        available_status=False
+        available_status=BookStatus.RESERVED
     )
-    session.add_all([copy_available, copy_not_available])
+    copy_borrowed = Copy(
+        asset_code='{}{}'.format(
+            g.code.locale_code()[:2],
+            g.code.pin(mask='######')),
+        library_item=db_book,
+        available_status=BookStatus.BORROWED
+    )
+    session.add_all([copy_available, copy_reserved, copy_borrowed])
     session.commit()
 
-    yield (copy_available, copy_not_available)
+    yield (copy_available, copy_reserved, copy_borrowed)
 
 
 @pytest.fixture
@@ -358,6 +373,15 @@ def app_session(client, db_user):
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
         return app_session
+
+
+@pytest.fixture(scope="function")
+def search_form(session, client):
+    """
+    Form for searching for an item in library.search view
+    """
+    form = SearchForm(query=g.text.word())
+    return form
 
 
 @pytest.fixture
@@ -436,6 +460,32 @@ def login_form(db_tieto_user):
         password=db_tieto_user[1],
     )
     yield form
+
+
+@pytest.fixture(scope="function")
+def search_query(session, client):
+    """
+    Create db entries for books and magazines
+    """
+    authors = populate_authors(n=5)
+    books = populate_books(authors=authors)
+    magazines = populate_magazines()
+
+    for i in [authors, books, magazines]:
+        session.add_all(i)
+
+    session.commit()
+
+    yield (books, magazines)
+
+
+@pytest.fixture(scope="function")
+def get_title(session, client, search_query):
+    """
+    Get title of item in Library
+    """
+    item = LibraryItem.query.first()
+    yield item
 
 
 @pytest.fixture(scope="function")
@@ -561,3 +611,15 @@ def user_reservations(session):
         session.delete(m)
     session.delete(user[0])
     session.commit()
+
+
+@pytest.fixture(scope="function")
+def password_edition_form(db_user):
+    password = g.person.password(length=8)
+    new_password = g.person.password(length=8)
+    form = EditPasswordForm(
+        password=password,
+        new_password=new_password,
+        confirm_password=new_password,
+    )
+    yield form

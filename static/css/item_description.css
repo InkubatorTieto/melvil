@@ -65,3 +65,43 @@ tr:last-child {
 table.copies-info {
     text-align: center;
 }
+
+/* Tooltip */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    font-style: inherit;
+    font-size: inherit;
+    opacity: inherit;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 210px;
+    background-color: rgba(85, 85, 85, 1);
+    color: rgba(255, 255, 255, 1);
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    margin-left: -60px;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(85, 85, 85, 1) transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
