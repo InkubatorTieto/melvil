@@ -59,6 +59,28 @@ class RegistrationForm(FlaskForm):
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
+class EditPasswordForm(FlaskForm):
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired()],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Password'}))
+    new_password = PasswordField(
+        'Password',
+        validators=[DataRequired(),
+                    EqualTo('confirm_pass',
+                            message='Passwords must match.')],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'New Password'}))
+    confirm_password = PasswordField(
+        'Confirm password',
+        validators=[DataRequired()],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Confirm Password'}))
+    submit = SubmitField('Save',
+                         render_kw=({'class': 'btn btn-primary submits'}))
+
+
 class ContactForm(FlaskForm):
     email = StringField('email',
                         validators=[Email()],
@@ -78,7 +100,10 @@ class ContactForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    query = StringField('Search')
+    query = StringField('Search',
+                        render_kw=({'class': 'form-control',
+                                    'type': 'text',
+                                    'placeholder': 'Search...'}))
     submit = SubmitField('Search')
 
 
@@ -134,3 +159,15 @@ class WishlistForm(FlaskForm):
 class RemoveForm(FlaskForm):
     submit = SubmitField('Delete',
                          render_kw=({'class': 'btn btn-danger btn-sm'}))
+
+
+class BorrowForm(FlaskForm):
+    submit = SubmitField('Borrow',
+                         render_kw=({'class': 'btn btn-success submits',
+                                     'disabled': False}))
+
+
+class ReturnForm(FlaskForm):
+    submit = SubmitField('Return',
+                         render_kw=({'class': 'btn btn-success submits',
+                                     'disabled': False}))

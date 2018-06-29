@@ -24,6 +24,9 @@ IF "%ARG%"=="/t" (
   ) ELSE IF "%ARG2%" == "create-db" (
     docker-compose -f %PROD% run web python create_db.py
     docker-compose -f %PROD% stop postgresql
+  ) ELSE IF "%ARG%" == "load-xls" (
+    docker-compose -f %PROD% run web flask load_xls_into_db
+    docker-compose -f %PROD% stop postgresql
   ) ELSE IF "%ARG2%"=="/b" (
     docker-compose -f %PROD% build
   ) ELSE (
@@ -38,6 +41,9 @@ IF "%ARG%"=="/t" (
     docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG%" == "create-db" (
     docker-compose -f %DEV% run web python create_db.py
+    docker-compose -f %DEV% stop postgresql
+  ) ELSE IF "%ARG%" == "load-xls" (
+    docker-compose -f %DEV% run web flask load_xls_into_db
     docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG%"=="/b" (
     docker-compose -f %DEV% build

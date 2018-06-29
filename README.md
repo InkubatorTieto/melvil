@@ -30,6 +30,18 @@ $ . run-server.sh create-db
 >run-server.bat create-db
 ```
 
+If you want to load book data from xls to the database
+specify proper path of the file in app.py and then run:
+
+```bash
+$ . run-server.sh load-xls
+
+```
+
+```CMD
+>run-server.bat load-xls
+```
+
 2. And start it on localhost:5000  
 
 ```bash
