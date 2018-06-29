@@ -24,7 +24,10 @@
                         {{ input( form.title ,error['title']) }}
                     </div>
                     <div class="col">
+                        {% if form.original_title != None %}
                         {{ input( form.original_title ,error['original_title']) }}
+                        {% endif %}
+
                     </div>
                 </div>
 
@@ -47,10 +50,14 @@
 
                 <div class="row">
                     <div class="col">
+                        {% if form.first_name != None %}
                         {{ input( form.first_name, error['first_name']) }}
+                        {% endif %}
                     </div>
                     <div class="col">
+                        {% if form.surname != None %}
                         {{ input( form.surname, error['surname']) }}
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row">
@@ -74,7 +81,9 @@
                 <div class="row">
                     <div class="col">
                         <br>
+                        {% if form.isbn != None %}
                         {{ input( form.isbn ,error['isbn']) }}
+                        {% endif %}
                     </div>
                     <div class="col">
                         <p id="myText">Language:</p>
