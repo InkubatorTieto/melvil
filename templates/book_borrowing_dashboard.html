@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Contact{% endblock %}
 {% block content %}
+{% from "macros.html" import flashed_message with context %}
   <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {{ flashed_message(messages) }}
+          {% endwith %}
+      </div>
       <main role="main">
             <div class="book_borrowing_dashboard">
                 <div >
