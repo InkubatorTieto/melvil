@@ -23,14 +23,17 @@ from config import DevConfig
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import (
+    BorrowForm,
     ContactForm,
     ForgotPass,
     LoginForm,
     PasswordForm,
     RegistrationForm,
+    ReturnForm,
     SearchForm,
     WishlistForm,
-    RemoveForm
+    RemoveForm,
+    EditPasswordForm
 )
 from init_db import db
 from messages import ErrorMessage, SuccessMessage
@@ -75,10 +78,11 @@ def login():
                         check_password_hash(data.password_hash,
                                             form.password.data) and
                         data.active):
-
                     session['logged_in'] = True
                     session['id'] = data.id
                     session['email'] = data.email
+                    if data.has_role('ADMIN'):
+                        session['admin'] = True
                     return render_template('index.html',
                                            session=session)
                 else:
@@ -187,8 +191,6 @@ def search():
                 output = [d.serialize() for d in paginate_query.items]
 
             except RuntimeError:
-                message_title = "Ooops!"
-                message_body = "Something went wrong!"
                 return ErrorMessage.message('Cannot connect to database!')
 
             return render_template('search.html',
@@ -358,7 +360,7 @@ def reserve(copy_id):
                     tz=pytz.utc) + timedelta(minutes=2))
             db.session.add(res)
             db.session.commit()
-            flash('pick up the book within two days!', 'Reservation done!')
+            flash('Pick up the book within two days!')
         except IntegrityError:
             abort(500)
     return redirect(url_for(
@@ -601,6 +603,145 @@ def edit_profile(user_id):
     form.surname.data = user.surname
     form.email.data = user.email
     return render_template('edit_profile.html',
+                           form=form,
+                           error=form.errors)
+
+
+@library.route('/reservations', methods=['GET', 'POST'])
+def admin_dashboard():
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+
+    if request.method == 'GET':
+        if not request.args or not request.args.get('search-query'):
+            search_form = SearchForm(prefix="search")
+            borrow_form = BorrowForm(prefix="borrow")
+            return_form = ReturnForm(prefix="return")
+            reserv_page = request.args.get('page', 1, type=int)
+            borrow_page = request.args.get('page', 1, type=int)
+            reserv_query = RentalLog.query.filter_by(book_status=1).order_by(
+                RentalLog._reservation_begin.asc()).paginate(
+                reserv_page, 10, False)
+            borrow_query = RentalLog.query.filter_by(book_status=2).order_by(
+                RentalLog._return_time.asc()).paginate(borrow_page, 10, False)
+
+            return render_template('admin.html',
+                                   reservations=reserv_query.items,
+                                   borrows=borrow_query.items,
+                                   admin=admin,
+                                   pagin_reserv=reserv_query,
+                                   pagin_borrow=borrow_query,
+                                   endpoint='library.admin_dashboard',
+                                   search_form=search_form,
+                                   borrow_form=borrow_form,
+                                   return_form=return_form)
+
+        elif request.args.get('search-query'):
+            search_form = SearchForm(prefix="search")
+            borrow_form = BorrowForm(prefix="borrow")
+            return_form = ReturnForm(prefix="return")
+            query_str = request.args.get('search-query')
+
+            reserv_page = request.args.get('page', 1, type=int)
+            borrow_page = request.args.get('page', 1, type=int)
+
+            reserv_query = RentalLog.query.filter_by(book_status=1).order_by(
+                RentalLog._reservation_begin.asc())
+            reserv_filter = reserv_query.filter(
+                User.surname.ilike("%{}%".format(query_str))).paginate(
+                reserv_page, 10, False)
+
+            borrow_query = RentalLog.query.filter_by(book_status=2).order_by(
+                RentalLog._return_time.asc())
+            borrow_filter = borrow_query.filter(
+                User.surname.ilike("%{}%".format(query_str))).paginate(
+                borrow_page, 10, False)
+
+            return render_template('admin.html',
+                                   reservations=reserv_filter.items,
+                                   borrows=borrow_filter.items,
+                                   admin=admin,
+                                   pagin_reserv=reserv_filter,
+                                   pagin_borrow=borrow_filter,
+                                   endpoint='library.admin_dashboard',
+                                   search_form=search_form,
+                                   borrow_form=borrow_form,
+                                   return_form=return_form,)
+
+    elif request.method == 'POST':
+        search_form = SearchForm(prefix="search")
+        borrow_form = BorrowForm(prefix="borrow")
+        return_form = ReturnForm(prefix="return")
+        if borrow_form.submit.data and borrow_form.validate_on_submit():
+
+            copy_asset = request.args.get('asset')
+            borrow_item = Copy.query.filter_by(asset_code=copy_asset).first()
+            rental_log_change = RentalLog.query.filter_by(
+                copy_id=borrow_item.id).first()
+            try:
+                rental_log_change.book_status = BookStatus.BORROWED
+                rental_log_change._borrow_time = datetime.now(tz=pytz.utc)
+                rental_log_change._return_time = (
+                    datetime.now(tz=pytz.utc) + timedelta(days=14))
+                db.session.commit()
+
+            except exc.SQLAlchemyError:
+                abort(500)
+            flash('Item borrowed', 'Success!')
+            return redirect(url_for('library.admin_dashboard'))
+
+        if return_form.submit.data and return_form.validate_on_submit():
+            copy_asset = request.args.get('asset')
+            borrow_item = Copy.query.filter_by(asset_code=copy_asset).first()
+            rental_log_change = RentalLog.query.filter_by(
+                copy_id=borrow_item.id).first()
+
+            try:
+                rental_log_change.book_status = BookStatus.RETURNED
+                rental_log_change._borrow_time = None
+                rental_log_change._return_time = datetime.now(tz=pytz.utc)
+                db.session.commit()
+
+            except exc.SQLAlchemyError:
+                abort(500)
+            flash('Item returned!', 'Success!')
+            return redirect(url_for('library.admin_dashboard'))
+
+    else:
+        abort(500)
+
+
+@library.route('/edit_password/<int:user_id>',
+               methods=['GET', 'POST'])
+def edit_password(user_id):
+    try:
+        user = User.query.get(session['id'])
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
+    form = EditPasswordForm()
+    if form.validate_on_submit():
+        try:
+            if check_password_hash(user.password_hash, form.password.data):
+                user.password_hash = \
+                    generate_password_hash(form.new_password.data)
+                db.session.commit()
+                return redirect(url_for('library.index'))
+            else:
+                message_body = "Incorrect current password"
+                message_title = '!'
+                return render_template('message.html',
+                                       message_title=message_title,
+                                       message_body=message_body)
+        except IntegrityError:
+            abort(500)
+    return render_template('edit_password.html',
                            form=form,
                            error=form.errors)
 

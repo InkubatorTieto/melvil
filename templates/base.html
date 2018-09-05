@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wishlist.css') }}/">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}/">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}/">
     {% block head %}
     <title> Melvil library - {% block title %}{% endblock %}</title>
 
@@ -34,6 +35,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/add_like.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/tooltip_wish.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/book_borrowing_dashboard.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/admin.js') }}"></script>
     {% endblock %}
 </head>
 <body class="text-center">
@@ -48,13 +50,16 @@
             <nav class="nav nav-masthead justify-content-center">
                 {{ nav_button('index', 'library.index', 'Home' ) }}
                 {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
+                {{ nav_button('search', 'library.search', 'Search' ) }}
                 {% if session['id'] %}
                 {{ nav_button('book_borrowing_dashboad',
                 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' )
                 }}
-                {{ nav_button('search', 'library.search', 'Search' ) }}
                 {{ nav_button('add_book', 'library_books.add_book', 'Add new item' ) }}
                 {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
+                    {% if session['admin'] == True %}
+                        {{ nav_button('reservations', 'library.admin_dashboard', 'Rentals') }}
+                    {% endif %}
                 {{ downout_button('library.logout' ) }}
                 {% else %}
                 {{ downlog_button('library.login', 'library.registration' ) }}
@@ -65,5 +70,7 @@
 </div>
 {% endblock %}
 {% block content %}{% endblock %}
+{% block scripts %}
+{% endblock %}
 </body>
 </html>

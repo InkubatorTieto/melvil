@@ -13,10 +13,24 @@ from app import db as _db
 from app import mail as _mail
 from forms.forms import SearchForm
 from forms.book import BookForm, MixedForm, MagazineForm
-from models import User, Book, Magazine, Copy, WishListItem, Author, Tag, LibraryItem
+from models import (
+    User,
+    Book,
+    Magazine,
+    Copy,
+    WishListItem,
+    Author,
+    Tag,
+    LibraryItem
+)
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
-from forms.forms import LoginForm, RegistrationForm, ForgotPass
+from forms.forms import (
+    LoginForm,
+    RegistrationForm,
+    ForgotPass,
+    EditPasswordForm
+)
 from forms.forms import WishlistForm
 from tests.populate import (
     populate_users,
@@ -606,3 +620,15 @@ def user_reservations(session):
         session.delete(m)
     session.delete(user[0])
     session.commit()
+
+
+@pytest.fixture(scope="function")
+def password_edition_form(db_user):
+    password = g.person.password(length=8)
+    new_password = g.person.password(length=8)
+    form = EditPasswordForm(
+        password=password,
+        new_password=new_password,
+        confirm_password=new_password,
+    )
+    yield form
