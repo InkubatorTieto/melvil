@@ -1,17 +1,40 @@
-a {
-    color: white;
-    opacity: 0.7;
-}
-
-a:hover {
-    color: white;
-    opacity: 1;
-    text-decoration: none;
-}
-
 #query {
     padding-bottom: 5px;
     width: 100%;
+}
+
+#reservDetail{
+    display: block;
+}
+
+#returnDetail{
+    display: none;
+}
+
+#reservDescrip {
+    display: block;
+    font-weight: bold;
+}
+
+#returnDescrip {
+    display: none;
+    font-weight: bold;
+}
+
+#paginReturn {
+    display: flex;
+}
+
+#paginBorrow {
+    display: none;
+}
+
+.returnBtn {
+    display: none;
+}
+
+.borrowBtn {
+    display: flex;
 }
 
 .page-link {
@@ -42,7 +65,7 @@ a:hover {
     padding-bottom: 10px;
  }
 
-.my_search {
+.my_reserv {
     background: rgba(0,0,0,0.0);
     width: 100%;
     font-size: 16px;
@@ -58,44 +81,30 @@ a:hover {
     color: white;
 }
 
-.col-lg-6 {
+.col-lg-4 {
     float: left;
     color: white;
 }
 
-.col-lg-6 p {
-    opacity: 0.7;
-}
-
-.my_container_header {
-    background: rgba(0, 0, 0, 0.9);
-}
-.list_header {
-    color: white;
-    font-weight: bold;
-}
-
-.col-lg-5 {
+.col-lg-2 {
     float: left;
     color: white;
 }
 
-.btn-dark {
-    background-color: #000;
-    border-color: #000;
+.col-lg-3 {
+    float: left;
+    color: white;
 }
 
-.btn-dark:disabled {
-    background: rgba(0,0,0,0.7);
-    color: #fff;
-    background-color: #000;
-    border-color: #000;
+.book_dashboard_button{
+    width: 45%;
+    margin: 0px 10px 20px 10px;
 }
 
-.btn-outline-dark {
-    color: rgba(255,255,255,0.75);
-    background-color: transparent;
-    background-image: none;
-    border-color: rgba(0,0,0,0.0);
+#reserv_button{
+    text-decoration : underline;
 }
 
+.btn.btn-success.submits {
+    width: auto;
+}
