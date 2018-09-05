@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+    <h1>Search</h1>
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+      <main role="main" class="inner cover">
+        {% from "macros.html" import input with context %}
+        <form action="" method="get" id=query>
+          {{ input(search_form.query) }}
+        </form>
+
+        <div class="container my_search_main">
+          <ul class="list-group">
+            {% from "macros.html" import render_content with context %}
+            <li class="list-group-item my_reserv">
+              <div >
+                <button id="showReserv" type="button" class="btn btn-primary book_dashboard_button">
+                  Reserved:
+                </button>
+                <button id="showReturn" type="button" class="btn btn-primary book_dashboard_button">
+                  Borrowed:
+                </button>
+              </div>
+            </li>
+            <li class="list-group-item my_reserv" id="reservDescrip">
+              {% for item in ["User", "Type", "Reservation date", "Title", "Asset No."] %}
+                {{ render_content("col-lg-2", item) }}
+              {% endfor %}
+            </li>
+            <li class="list-group-item my_reserv" id="returnDescrip">
+              {% for item in ["User", "Type", "Return date", "Title", "Asset No."] %}
+                {{ render_content("col-lg-2", item) }}
+              {% endfor %}
+            </li>
+          {% if reservations|length == 0 %}
+            <li class="list-group-item my_reserv">
+              {{ render_content("col-lg-12", "No reservations!") }}
+            </li>
+          {% else %}
+            {% for reservation in reservations %}
+              <li class="list-group-item my_reserv" id="reservDetail">
+                {{ render_content("col-lg-2", reservation.user.full_name) }}
+                {{ render_content("col-lg-2", reservation.copy.library_item.type.capitalize()) }}
+                {{ render_content("col-lg-2", reservation._reservation_begin.strftime('%d-%m-%Y')) }}
+                {{ render_content("col-lg-2", reservation.copy.library_item.title) }}
+                {{ render_content("col-lg-2", reservation.copy.asset_code) }}
+                <div class="col-lg-2">
+                  <form action="{{ url_for ('library.admin_dashboard', asset=reservation.copy.asset_code) }}" class="borrowBtn" method="post" id="borrowBtn_{{ reservation.copy.asset_code }}">
+                    {{ borrow_form.hidden_tag() }}
+                    {{ input(borrow_form.submit) }}
+                  </form>
+                </div>
+              </li>
+            {% endfor %}
+            {% for borrow in borrows %}
+              <li class="list-group-item my_reserv" id="returnDetail">
+                {{ render_content("col-lg-2", borrow.user.full_name) }}
+                {{ render_content("col-lg-2", borrow.copy.library_item.type.capitalize()) }}
+                {{ render_content("col-lg-2", borrow._reservation_end.strftime('%d-%m-%Y')) }}
+                {{ render_content("col-lg-2", borrow.copy.library_item.title) }}
+                {{ render_content("col-lg-2", borrow.copy.asset_code) }}
+                <div class="col-lg-2">
+                  <form action="{{ url_for ('library.admin_dashboard', asset=borrow.copy.asset_code) }}" class="returnBtn" method="post" id="returnBtn_{{ borrow.copy.asset_code }}">
+                    {{ return_form.hidden_tag() }}
+                    {{ input(return_form.submit) }}
+                  </form>
+                </div>
+              </li>
+            {% endfor %}
+          {% endif %}
+          </ul>
+        </div>
+
+        <nav aria-label="Page navigation search">
+          {% from "macros.html" import render_pagination with context %}
+            {{ render_pagination(pagin_reserv, endpoint, id_name="paginReturn") }}
+            {{ render_pagination(pagin_reserv, endpoint, id_name="paginBorrow") }}
+        </nav>
+
+      </main>
+    </div>
+
+{% endblock %}

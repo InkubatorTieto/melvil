@@ -104,6 +104,8 @@ def add_book():
             del form.original_title
             del form.isbn
             del form.title
+            del form.first_name
+            del form.surname
             if form.validate_on_submit():
 
                 tmp_tag = Tag.query.filter_by(name=form.tag.data).first()
