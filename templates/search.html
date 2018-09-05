@@ -19,6 +19,14 @@
 
         <div class="container my_search_main">
           <ul class="list-group" id="bookList">
+            <li class="list-group-item my_container list_header my_container_header">
+              <div class="col-lg-6">
+                Title
+              </div>
+              <div class="col-lg-6">
+                Author
+              </div>
+            </li>
             {% if all_query|length == 0 %}
               <li class="list-group-item my_search">
                 <div class="col-lg-12">
