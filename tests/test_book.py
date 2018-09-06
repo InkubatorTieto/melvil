@@ -1,6 +1,5 @@
 from datetime import date
 from random import choice, randint
-import time
 
 from flask import url_for
 from mimesis import Generic
@@ -26,7 +25,7 @@ def test_add_book(view_book, client):
     if not author:
         assert False, "Data validation failed"
     assert view_book.first_name.data == author.first_name \
-           and view_book.surname.data == author.last_name, \
+        and view_book.surname.data == author.last_name, \
         "First and last name of the first author is not" \
         " the same as given at the entrance"
 
@@ -116,6 +115,8 @@ def test_add_the_same_book(view_book, client):
 
 
 """Testing separated validators"""
+
+
 @pytest.mark.parametrize("values, result", [
     ("", True),
     (".", False),
@@ -127,6 +128,7 @@ def test_add_the_same_book(view_book, client):
     ("A.Adsa", True),
     ("A.AdsaA", False),
     ("Paweł", True)
+
 ])
 def test_check_author(view_book, values, result):
     view_book.first_name_1.data = values

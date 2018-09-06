@@ -14,10 +14,12 @@ def test_login(view_login, client):
 
 
 def test_registration(view_registration, client):
-    assert view_registration.password.data == view_registration.confirm_pass.data, \
+    assert (view_registration.password.data ==
+            view_registration.confirm_pass.data), \
         "Field password and confirm password are not the same "
 
-    resp = client.post(url_for('library.registration'), data=view_registration.data,
+    resp = client.post(url_for('library.registration'),
+                       data=view_registration.data,
                        follow_redirects=True)
     assert resp.status_code == 200
 
@@ -29,7 +31,8 @@ def test_registration(view_registration, client):
         "First name is not the same as given at the entrance"
     assert view_registration.surname.data == user.surname, \
         "Last name is not the same as given at the entrance"
-    assert check_password_hash(user.password_hash, view_registration.password.data), \
+    assert check_password_hash(user.password_hash,
+                               view_registration.password.data), \
         "Last name is not the same as given at the entrance"
 
 
@@ -39,7 +42,7 @@ def test_registration(view_registration, client):
     ("asdac.asd@o2.com", False)
 
 ])
-def test_name(view_registration, values, result):
+def test_email(view_registration, values, result):
     view_registration.email.data = values
     view_registration.email.validate(view_registration)
     assert bool(view_registration.errors) != result, \
