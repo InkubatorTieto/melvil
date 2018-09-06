@@ -29,7 +29,8 @@ def surname(form, field):
             re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*'
                        '-?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$').match(field.data) \
             and not re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*'
-                               '\s?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$').match(field.data):
+                               '\s?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$'
+                               ).match(field.data):
         raise ValidationError('Insert valid surname.')
 
 
@@ -39,11 +40,15 @@ def check_password(form, field):
     if re.search('[0-9]+', field.data) is None:
         raise ValidationError("Make sure your password has a number in it")
     if re.search("[A-ZĄĆŚĘŃŁÓŻŹ]+", field.data) is None:
-        raise ValidationError("Make sure your password has a capital letter in it")
+        raise ValidationError(
+            "Make sure your password has a capital letter in it")
     if re.search("[!#@\$%^&*()_]+", field.data) is None:
-        raise ValidationError("Make sure your password has a special character in it, for example: '! @ #'")
+        raise ValidationError(
+            "Make sure your password has a special character in"
+            " it, for example: '! @ #'")
     if re.search("[\.\,]+", field.data) is not None:
-        raise ValidationError("Your has a dot or comma, these characters are not allowed")
+        raise ValidationError(
+            "Your has a dot or comma, these characters are not allowed")
 
 
 def check_author(form, field):
