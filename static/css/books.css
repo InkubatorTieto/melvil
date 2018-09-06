@@ -15,9 +15,18 @@
     padding-left: 8px;
 }
 
+#myText1{
+    color: #fff;
+    text-align: left;
+    font-size: 13px;
+    margin-bottom: 5px;
+    padding-left: 8px;
+}
+
 .cover{
     background: rgba(0, 0, 0, 0.7);
 }
+
 form {
     width: 475px;
     margin: 0 auto;
@@ -32,7 +41,6 @@ form {
     font-size: 12px;
     width: -webkit-fill-available;
 }
-
 
 .add-one{
   color:green;
@@ -61,3 +69,18 @@ form {
 .dynamic-element{
   margin-bottom:0px;
 }
+
+.radio_but{
+    display: inline-flex;
+    list-style-type: none;
+
+}
+li {
+    padding-left: 15px;
+}
+
+#title_of_magazine, #issue{
+     display: none;
+}
+
+

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Edit profile data{% endblock %}
+{% block content %}
+    {% from "macros.html" import field_input with context %}
+    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+        <main role="main" class="inner cover">
+            <div class="container my_container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="wrap">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href='{{ url_for('library.index')}}';">
+                              <span aria-hidden="true">&times;</span>
+                                </button>
+                            <p class="form-title">
+                                Edit profile data</p>
+                            <form class="edit-profile" method="post">
+                                {{ form.hidden_tag() }}
+                                {{ field_input(form.first_name, error['first_name'], placeholder="First name") }}
+                                {{ field_input(form.surname, error['surname'], placeholder="Surname") }}
+                                {{ field_input(form.email, error['email'], placeholder="E-mail") }}
+                               <input type="submit" class="btn btn-primary submits"
+                                      name="submit" value="Save">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}

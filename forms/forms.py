@@ -6,14 +6,18 @@ from wtforms import (
     BooleanField,
     SubmitField,
     TextAreaField,
-    DateField,
+    SelectField,
 )
-from wtforms_components import DateRange
 from wtforms.validators import DataRequired, Email, EqualTo, Length
-
 from flask_wtf import FlaskForm
 
-from forms.custom_validators import tieto_email, name, surname, check_password
+from forms.custom_validators import (
+    tieto_email,
+    name,
+    surname,
+    check_password,
+    check_pub_date
+)
 
 
 class LoginForm(FlaskForm):
@@ -55,7 +59,29 @@ class RegistrationForm(FlaskForm):
         validators=[DataRequired(), check_password],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Sign In',
+    submit = SubmitField('Sign Up',
+                         render_kw=({'class': 'btn btn-primary submits'}))
+
+
+class EditPasswordForm(FlaskForm):
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired()],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Password'}))
+    new_password = PasswordField(
+        'Password',
+        validators=[DataRequired(),
+                    EqualTo('confirm_pass',
+                            message='Passwords must match.')],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'New Password'}))
+    confirm_password = PasswordField(
+        'Confirm password',
+        validators=[DataRequired()],
+        render_kw=({'class': 'inputs',
+                    'placeholder': 'Confirm Password'}))
+    submit = SubmitField('Save',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
@@ -78,7 +104,10 @@ class ContactForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    query = StringField('Search')
+    query = StringField('Search',
+                        render_kw=({'class': 'form-control',
+                                    'type': 'text',
+                                    'placeholder': 'Search...'}))
     submit = SubmitField('Search')
 
 
@@ -102,22 +131,47 @@ class PasswordForm(FlaskForm):
 
 
 class WishlistForm(FlaskForm):
+    type = SelectField('Item Type',
+                       choices=[('book', 'Book'), ('magazine', 'Magazine')],
+                       render_kw=({
+                           'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                           'id': 'mySelect'}))
+
     authors = StringField('authors',
-                          validators=[DataRequired()],
                           render_kw=({'class': 'inputs',
                                       'placeholder': 'Authors'}))
     title = StringField('title',
                         validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Title'}))
-    pub_year = DateField('pub_year',
-                         validators=[DateRange
-                                     (min=datetime.strptime('1900',
-                                                            '%Y').date(),
-                                      max=datetime.today().date())],
-                         render_kw=({'class': 'inputs',
-                                    'placeholder': 'Publication Year'}),
-                         format='%Y')
+
+    pub_date = SelectField('Year of publication',
+                           choices=[(str(x), str(x))
+                                    for x in
+                                    range(1970,
+                                          datetime.now().year + 1)],
+                           validators=[check_pub_date],
+                           render_kw=({
+                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'id': 'mySelect',
+                               'placeholder': 'Year of publication'}))
 
     add = SubmitField('Add new wish',
                       render_kw=({'class': 'btn btn-primary add'}))
+
+
+class RemoveForm(FlaskForm):
+    submit = SubmitField('Delete',
+                         render_kw=({'class': 'btn btn-danger btn-sm'}))
+
+
+class BorrowForm(FlaskForm):
+    submit = SubmitField('Borrow',
+                         render_kw=({'class': 'btn btn-success submits',
+                                     'disabled': False}))
+
+
+class ReturnForm(FlaskForm):
+    submit = SubmitField('Return',
+                         render_kw=({'class': 'btn btn-success submits',
+                                     'disabled': False}))

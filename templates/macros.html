@@ -16,15 +16,210 @@
 
 
 {% macro table_row(label, content) %}
-    <tr>
-        <th>{{ label }}</th>
-        <td>{{ content|default('-', true) }}</td>
-    </tr>
+   <tr>
+       <th>{{ label }}</th>
+       <td>{{ content|default('-', true) }}</td>
+   </tr>
 {% endmacro %}
 
+
 {% macro copy_info_row(copy, index) %}
-        <td>{{ index }}</td>
-        <td>{{ copy.asset_code }}</td>
-        <td>{{ copy.has_cd_disk }}</td>
-        <td>{{ 'Available' if copy.available_status else 'Occupied' }}</td>
+    <td>{{ index }}</td>
+    <td>{{ copy.asset_code }}</td>
+    <td>{{ copy.has_cd_disk }}</td>
+    {% if copy.available_status|string() == "BookStatus.RESERVED" %}
+    <td>
+        <div class="tooltip"> Occupied (Reserved)
+            <span class="tooltiptext">This copy has been reserved,
+                its status will change to "Borrowed" or "Available"
+                within 2 days.</span>
+        </div>
+    </td>
+    {% elif copy.available_status|string() == "BookStatus.BORROWED" %}
+    <td>
+        <div class="tooltip"> Occupied (Borrowed)
+            <span class="tooltiptext">This copy has been borrowed,
+                it may take a while until it becomes available.</span>
+        </div>
+    </td>
+    {% else %}
+    <td>Available</td>
+    {% endif %}
+{% endmacro %}
+
+
+{% macro downout_button(path) %}
+    <div class="dropdown">
+        <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" style="float:right;" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-user"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li class="dropdown-header"><i class="fas fa-user-circle"></i><td><strong>  Your Status:</strong> signed in</td>
+                <div class="col-sm-2">
+                <td><strong>Email:</strong> {{session.email}}</td>
+                </div>
+            </li>
+             <div class="dropdown-divider"></div>
+             <a class="dropdown-item disabled" href="{{ url_for('library.edit_profile', user_id=session.id)}}"><i class="fas fa-user-edit"></i>Edit profile</a>
+            <div class="dropdown-divider"></div>
+             <a class="dropdown-item disabled" href="{{ url_for('library.edit_password', user_id=session.id)}}"><i class="fas fa-user-edit"></i>Change password</a>
+
+             <div class="dropdown-divider"></div>
+             <a class="dropdown-item disabled" href="{{ url_for(path)}}"><i class="fas fa-power-off"></i> Logout</a>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro render_pagination(pagination, endpoint) %}
+    <ul class="pagination justify-content-center">
+    {% if pagination.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev_num) }}" aria-label="Previous">
+                <<
+            </a>
+        </li>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev_num) }}" aria-label="Previous">
+                <<
+            </a>
+        </li>
+    {% endif %}
+
+    {% for p in pagination.iter_pages(left_edge=1, left_current=2, right_current=3, right_edge=1) %}
+      {% if p %}
+        {% if p != pagination.page %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+          </li>
+        {% else %}
+          <li class="page-item active">
+            <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+          </li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if pagination.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.next_num) }}" aria-label="Previous">
+                >>
+            </a>
+        </li>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.next_num) }}" aria-label="Previous" class="disabled">
+                >>
+            </a>
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{% macro downlog_button(path1, path2) %}
+    <div class="dropdown">
+        <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" style="float:right;" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-user"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li class="dropdown-header"><i class="fas fa-user-circle"></i><td><strong>  Your Status:</strong> signed out</td></li>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item disabled" href="{{ url_for(path1) }}"><i class="fa fa-sign-in"></i> Login</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item disabled" href="{{ url_for(path2) }}"><i class="fa fa-id-card"></i> New User?</a>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro field_input(field, errors) %}
+    {% if kwargs['label'] %}
+        <label>
+            <p class="label">{{ kwargs['label'] }}</p>
+            {{ field(class_="inputs-with-label") }}
+        </label>
+    {% else %}
+        {{ field(class_="inputs", placeholder=kwargs['placeholder']) }}
+    {% endif %}
+
+    {% for error in errors %}
+        <p class="form_errors">{{ error }}</p>
+    {% endfor %}
+{% endmacro %}
+
+
+{% macro flashed_message(messages) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            {% if category == 'message' %}
+                <div class="alert alert-success" role="alert">
+            {% else %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                </div>
+            {% endif %}
+        <button type="button" class="close" data-dismiss="alert"
+                aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro render_pagination(pagination, endpoint, id_name=None) %}
+    <ul class="pagination justify-content-center" id="{{ id_name }}">
+    {% if pagination.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev_num) }}" aria-label="Previous">
+                <<
+            </a>
+        </li>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev_num) }}" aria-label="Previous">
+                <<
+            </a>
+        </li>
+    {% endif %}
+
+    {% for p in pagination.iter_pages(left_edge=1, left_current=2, right_current=3, right_edge=1) %}
+      {% if p %}
+        {% if p != pagination.page %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+          </li>
+        {% else %}
+          <li class="page-item active">
+            <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+          </li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if pagination.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.next_num) }}" aria-label="Previous">
+                >>
+            </a>
+        </li>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.next_num) }}" aria-label="Previous" class="disabled">
+                >>
+            </a>
+        </li>
+    {% endif %}
+    </ul>
+{% endmacro %}
+
+{% macro render_content(class_name, query, link=False, id_name=None, href=None) %}
+    {% if link %}
+        <div class="{{ class_name }}" id="{{ id_name }}">
+            <a href="{{ href }}">
+                {{ query }}
+            </a>
+        </div>
+    {% else %}
+        <div class="{{ class_name }}" id="{{ id_name }}">
+            {{ query }}
+        </div>
+    {% endif %}
 {% endmacro %}
