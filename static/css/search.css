@@ -53,6 +53,11 @@ a:hover {
     border: 0px;
  }
 
+.my_search_header {
+    background: rgba(0,0,0,0.5);
+    font-weight: bold;
+}
+
 .col-lg-12 {
     float: left;
     color: white;
@@ -61,23 +66,22 @@ a:hover {
 .col-lg-6 {
     float: left;
     color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
 }
 
 .col-lg-6 p {
     opacity: 0.7;
 }
 
-.my_container_header {
-    background: rgba(0, 0, 0, 0.9);
-}
-.list_header {
-    color: white;
-    font-weight: bold;
-}
-
 .col-lg-5 {
     float: left;
     color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+
 }
 
 .btn-dark {
@@ -92,7 +96,7 @@ a:hover {
     border-color: #000;
 }
 
-.btn-outline-dark {
+.btn-outline-dark-info {
     color: rgba(255,255,255,0.75);
     background-color: transparent;
     background-image: none;
