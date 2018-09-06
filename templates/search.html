@@ -19,8 +19,8 @@
 
         <div class="container my_search_main">
           <ul class="list-group" id="bookList">
-            <li class="list-group-item my_container list_header my_container_header">
-              <div class="col-lg-6">
+            <li class="list-group-item my_search my_search_header">
+              <div class="col-lg-5">
                 Title
               </div>
               <div class="col-lg-6">
@@ -36,7 +36,7 @@
             {% else %}
               {% for item in all_query %}
                 <li class="list-group-item my_search">
-                  <div class="col-lg-5" id="title_{{ loop.index }}">
+                  <div class="col-lg-5" id="title_{{ loop.index }}" title="{{ item.title }}">
                     <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
                       {{ item['title'] }}
                     </a>
@@ -44,9 +44,9 @@
                   <div class="col-lg-6" id="auth_iss_{{ loop.index }}">
                     {% if item['type'] == 'book' %}
                       {% for author in item['authors'] %}
-                        <a href="{{ url_for('library.index', author_name=author) }}" id="author_{{ loop.index }}">
+                        <a href="{{ url_for('library.index', author_name=author) }}" id="author_{{ loop.index }}" title="{{ ', '.join(item.authors) }}">
                           {% if loop.last %}
-                            {{ author }}...
+                            {{ author }}
                           {% else %}
                             {{ author }},
                           {% endif %}
@@ -56,7 +56,9 @@
                       <p>Issue no.: {{ item['issue'] }}</p>
                     {% endif %}
                   </div>
-                    <button type="button" class="btn btn-outline-dark" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">?</button>
+                  <button type="button" class="btn btn-outline-dark-info" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">
+                      &quest;
+                  </button>
                 </li>
               {% endfor %}
             {% endif %}
