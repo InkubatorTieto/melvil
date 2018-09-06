@@ -27,7 +27,7 @@ from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import (
     SearchForm,
-    WishlistForm
+    WishlistForm,
     LoginForm,
     RegistrationForm,
     ForgotPass,

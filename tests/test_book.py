@@ -1,11 +1,9 @@
-from flask import url_for
 from datetime import date
-<<<<<<< HEAD
-import time
-=======
 from random import choice, randint
+import time
+
+from flask import url_for
 from mimesis import Generic
->>>>>>> origin/master
 import pytest
 
 from models import Author, Book, Tag, Magazine, LibraryItem
