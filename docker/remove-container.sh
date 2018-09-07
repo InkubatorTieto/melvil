@@ -45,7 +45,7 @@ remove_container () {
             fi;;
       esac;;
 
-    "b")
+    "d")
       case "$2" in
         "m")
             # find IDs of all migration containers

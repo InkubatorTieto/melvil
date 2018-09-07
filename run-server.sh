@@ -46,21 +46,21 @@ elif [ "$1" == "-p" ] ; then
 else
    # development server
     if [ "$1" == "migrate" ] ; then
-      remove_container b m
+      remove_container d m
       docker-compose -f $DEV_DOCKER run --name melvil_db_migration_dev web flask db migrate
       docker-compose -f $DEV_DOCKER stop postgresql
     elif [ "$1" == "upgrade" ] ; then
-      remove_container b u
+      remove_container d u
       docker-compose -f $DEV_DOCKER run --name melvil_db_upgrade_dev web flask db upgrade
       docker-compose -f $DEV_DOCKER stop postgresql
    elif [ "$1" == "create-db" ] ; then
       # create initial database and set alembic's head
-      remove_container b d
+      remove_container d d
       docker-compose -f $DEV_DOCKER run --name melvil_db_dev web python create_db.py
       docker-compose -f $DEV_DOCKER stop postgresql
    elif [ "$1" == "load-xls" ] ; then
       # load xls data into db
-      remove_container b x
+      remove_container d x
       docker-compose -f $DEV_DOCKER run --name upload_lib_items_dev web flask load_xls_into_db
       docker-compose -f $DEV_DOCKER stop postgresql
    elif [ "$1" == "-b" ] ; then
