@@ -6,8 +6,7 @@
     line-height: 1.10;
     color: #000000;
 }
-
-#myText{
+.myText1{
     color: #fff;
     text-align: left;
     font-size: 13px;
@@ -15,12 +14,13 @@
     padding-left: 8px;
 }
 
-#myText1{
+.myText{
     color: #fff;
     text-align: left;
     font-size: 13px;
     margin-bottom: 5px;
     padding-left: 8px;
+    margin-top: 5px;
 }
 
 .cover{
@@ -75,12 +75,10 @@ form {
     list-style-type: none;
 
 }
+
+.radio_text{
+    color: #ffffff;
+}
 li {
     padding-left: 15px;
 }
-
-#title_of_magazine, #issue{
-     display: none;
-}
-
-
