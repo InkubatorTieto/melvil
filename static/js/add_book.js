@@ -16,7 +16,7 @@
     }
 
     function set_checked_form() {
-        var radioValue = $("input[name='item_category']:checked").val();
+        var radioValue = $("input[name='radio']:checked").val();
             if (radioValue == 'magazine') {
                 hideBooks();
                 showMagazine();
@@ -29,7 +29,7 @@
 
     $(document).ready(function () {
         set_checked_form();
-        $("input[name='item_category']").click(function () {
+        $("input[name='radio']").click(function () {
             set_checked_form();
         });
     });

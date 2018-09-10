@@ -3,7 +3,8 @@ from datetime import datetime
 from flask import Blueprint
 from flask import render_template, request, session, abort
 
-from forms.book import BookForm, MagazineForm, AddNewItemBookForm, AddNewItemMagazineForm
+from forms.book import BookForm, MagazineForm,\
+    AddNewItemBookForm, AddNewItemMagazineForm
 from init_db import db
 from models import User, Tag, Magazine, Book, Author, LibraryItem
 
@@ -23,6 +24,7 @@ def add_book():
                                    message_title=message_title,
                                    message_body=message_body)
 
+        book_form.radio.data = 'book'
         return render_template('add_book.html',
                                book_form=book_form,
                                magazine_form=magazine_form,
@@ -31,18 +33,21 @@ def add_book():
                                )
     else:
         if book_form.submit1.data and book_form.validate():
-            tmp_authors = [[book_form.first_name.data, book_form.surname.data],
-                            [book_form.first_name_1.data, book_form.surname_1.data],
-                            [book_form.first_name_2.data, book_form.surname_2.data],
-                            ]
+            tmp_authors = [[book_form.first_name.data,
+                            book_form.surname.data],
+                           [book_form.first_name_1.data,
+                            book_form.surname_1.data],
+                           [book_form.first_name_2.data,
+                            book_form.surname_2.data],
+                           ]
 
             new_authors = []
 
             for first_name, surname in tmp_authors:
                 if first_name is not '' and surname is not '':
                     author = Author.query.filter_by(first_name=first_name,
-                                                        last_name=surname
-                                                        ).first()
+                                                    last_name=surname
+                                                    ).first()
                     if not author:
                         new_author = Author(
                             first_name=first_name,
@@ -76,23 +81,22 @@ def add_book():
                 original_title=book_form.original_title.data,
                 publisher=book_form.publisher.data,
                 pub_date=datetime(year=int(book_form.pub_date.data),
-                                    month=1,
-                                    day=1))
+                                  month=1,
+                                  day=1))
             if book_exists(new_book):
                 message_body = 'This book already exists.'
                 message_title = 'Oops!'
                 return render_template('message.html',
-                                        message_title=message_title,
-                                        message_body=message_body)
+                                       message_title=message_title,
+                                       message_body=message_body)
             db.session.add(new_book)
             db.session.commit()
 
             message_body = 'The book has been added.'
             message_title = 'Success!'
             return render_template('message.html',
-                                    message_title=message_title,
-                                       message_body=message_body)
-
+                                   message_title=message_title,
+                                   message_body=message_body)
 
         if magazine_form.submit2.data and magazine_form.validate():
             tmp_tag = Tag.query.filter_by(name=magazine_form.tag.data).first()
@@ -113,8 +117,8 @@ def add_book():
                 tags=[new_tag],
                 description=magazine_form.description.data,
                 year=datetime(year=int(magazine_form.pub_date.data),
-                                month=1,
-                                day=1),
+                              month=1,
+                              day=1),
                 issue=magazine_form.issue.data)
 
             db.session.add(new_magazine)
@@ -123,16 +127,26 @@ def add_book():
             message_body = 'The magazine has been added.'
             message_title = 'Success!'
             return render_template('message.html',
-                                       message_title=message_title,
-                                       message_body=message_body)
+                                   message_title=message_title,
+                                   message_body=message_body)
 
+        if magazine_form.submit2.data:
+            book_form.radio.data = 'magazine'
+            return render_template('add_book.html',
+                                   book_form=book_form,
+                                   magazine_form=magazine_form,
+                                   book_error=book_form.errors,
+                                   magazine_error=magazine_form.errors
+                                   )
 
-        return render_template('add_book.html',
-                               book_form=book_form,
-                               magazine_form=magazine_form,
-                               book_error=book_form.errors,
-                               magazine_error=magazine_form.errors
-                               )
+        else:
+            book_form.radio.data = 'book'
+            return render_template('add_book.html',
+                                   book_form=book_form,
+                                   magazine_form=magazine_form,
+                                   book_error=book_form.errors,
+                                   magazine_error=magazine_form.errors)
+
 
 @library_books.route('/edit_book/<int:item_id>', methods=['GET', 'POST'])
 def edit_book(item_id):

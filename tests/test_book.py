@@ -64,13 +64,15 @@ def test_add_magazine(view_magazine, client):
                 data=view_magazine.data,
                 follow_redirects=True)
 
-    magazine = Magazine.query.filter_by(title=view_magazine.title_of_magazine.data,
-                                        issue=view_magazine.issue.data[0]).first()
+    magazine = Magazine.query\
+        .filter_by(title=view_magazine.title_of_magazine.data,
+                   issue=view_magazine.issue.data[0]).first()
     if not magazine:
         assert False, "Data validation failed"
     assert view_magazine.title_of_magazine.data == magazine.title, \
         "The title of the book is not the same as given at the entrance "
-    assert view_magazine.table_of_contents.data == magazine.table_of_contents, \
+    assert \
+        view_magazine.table_of_contents.data == magazine.table_of_contents, \
         "The table of content is not the same as given at the entrance "
     assert view_magazine.language.data == magazine.language, \
         "Language is not the same as given at the entrance "

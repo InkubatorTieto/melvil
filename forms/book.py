@@ -148,10 +148,11 @@ class MagazineForm(LibraryItemForm):
 
 class AddNewItemBookForm(BookForm):
     submit1 = SubmitField('Create Book',
-                         render_kw=({'class': 'btn btn-primary submits',
+                          render_kw=({'class': 'btn btn-primary submits',
                                      'id': 'button1'}))
+
 
 class AddNewItemMagazineForm(MagazineForm):
     submit2 = SubmitField('Create Magazine',
-                         render_kw=({'class': 'btn btn-primary submits',
+                          render_kw=({'class': 'btn btn-primary submits',
                                      'id': 'button2'}))

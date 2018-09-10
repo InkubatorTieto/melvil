@@ -12,7 +12,8 @@ from app import create_app
 from app import db as _db
 from app import mail as _mail
 from forms.forms import SearchForm
-from forms.book import BookForm, MagazineForm, AddNewItemBookForm, AddNewItemMagazineForm
+from forms.book import BookForm, MagazineForm,\
+    AddNewItemBookForm, AddNewItemMagazineForm
 from models import (
     User,
     Book,
@@ -41,8 +42,6 @@ from tests.populate import (
     populate_magazines
 )
 from models.library import BookStatus
-
-
 
 
 g = Generic('en')
@@ -218,6 +217,7 @@ def view_book(session, client):
     )
 
     return form
+
 
 @pytest.fixture(scope="function")
 def view_magazine(session, client):

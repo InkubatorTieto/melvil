@@ -13,8 +13,11 @@
 <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
     <main role="main" class="inner cover">
         <p class="form-title">ADD NEW BOOK</p>
-        <input type="radio" class="radio_but" name="item_category" value="book" checked="checked"/> <span class="radio_text">Book</span>
-        <input type="radio" class="radio_but" name="item_category" value="magazine"/> <span class="radio_text">Magazine</span>
+        <div class="form-check form-check-inline">
+            <div class="row justify-content-center">
+                {{ book_form.radio }}
+            </div>
+        </div>
         <div id="book_form" >
         <form class="login" method="post">
             {{ book_form.hidden_tag() }}

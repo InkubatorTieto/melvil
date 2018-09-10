@@ -73,12 +73,11 @@ form {
 .radio_but{
     display: inline-flex;
     list-style-type: none;
-
-}
-
-.radio_text{
     color: #ffffff;
+
 }
+
 li {
     padding-left: 15px;
 }
+
