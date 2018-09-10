@@ -135,18 +135,22 @@
         </li>
     {% endif %}
 
-    {% for p in pagination.iter_pages() %}
-      {% if p %}
-        {% if p != pagination.page %}
-          <li class="page-item">
-            <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
-          </li>
+    {% for p in pagination.iter_pages(left_edge=1, left_current=1, right_current=3, right_edge=1) %}
+        {% if p %}
+            {% if p != pagination.page %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+                </li>
+            {% else %}
+                <li class="page-item active">
+                    <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+                </li>
+            {% endif %}
         {% else %}
-          <li class="page-item active">
-            <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
-          </li>
+            <li class="page-item disabled">
+                <a class="page-link" href="#"><span aria-hidden="true">&hellip;</span></a>
+            </li>
         {% endif %}
-      {% endif %}
     {% endfor %}
 
     {% if pagination.has_next %}
