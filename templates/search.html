@@ -56,7 +56,7 @@
                       <p>Issue no.: {{ item['issue'] }}</p>
                     {% endif %}
                   </div>
-                    <button type="button" class="btn btn-outline-dark" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">?</button>
+                    <button type="button" class="btn question_mark_btn" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">?</button>
                 </li>
               {% endfor %}
             {% endif %}
