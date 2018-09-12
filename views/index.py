@@ -41,7 +41,11 @@ from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
 from models.users import User
 from models.wishlist import WishListItem, Like
-from models.decorators_roles import require_role,require_logged_in, require_not_logged_in
+from models.decorators_roles import (
+    require_role,
+    require_logged_in,
+    require_not_logged_in
+)
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 from serializers.wishlist import WishListItemSchema
@@ -282,6 +286,7 @@ def confirm_email(token):
 
 
 @library.route('/reset', methods=['GET', 'POST'])
+@require_not_logged_in()
 def reset():
     form = ForgotPass()
     if form.validate_on_submit():
@@ -353,22 +358,21 @@ def reset_with_token(token):
 @library.route('/reservation/<copy_id>')
 @require_logged_in()
 def reserve(copy_id):
-    if 'logged_in' in session:
-        try:
-            copy = Copy.query.get(copy_id)
-            copy.available_status = BookStatus.RESERVED
-            res = RentalLog(
-                copy_id=copy_id,
-                user_id=session['id'],
-                book_status=BookStatus.RESERVED,
-                reservation_begin=datetime.now(tz=pytz.utc),
-                reservation_end=datetime.now(
-                    tz=pytz.utc) + timedelta(minutes=2))
-            db.session.add(res)
-            db.session.commit()
-            flash('Pick up the book within two days!')
-        except IntegrityError:
-            abort(500)
+    try:
+        copy = Copy.query.get(copy_id)
+        copy.available_status = BookStatus.RESERVED
+        res = RentalLog(
+            copy_id=copy_id,
+            user_id=session['id'],
+            book_status=BookStatus.RESERVED,
+            reservation_begin=datetime.now(tz=pytz.utc),
+            reservation_end=datetime.now(
+                tz=pytz.utc) + timedelta(minutes=2))
+        db.session.add(res)
+        db.session.commit()
+        flash('Pick up the book within two days!')
+    except IntegrityError:
+        abort(500)
     return redirect(url_for(
         'library_book_borrowing_dashboard.book_borrowing_dashboad'))
 
