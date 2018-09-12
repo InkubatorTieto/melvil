@@ -451,10 +451,55 @@ def wishlist():
     except Exception:
         abort(500)
 
-    data = db.session.query(WishListItem).all()
-    wish_list_schema = WishListItemSchema(many=True)
-    output = wish_list_schema.dump(data)
-    return render_template('wishlist.html', wishes=output, admin=admin)
+    if request.method == 'GET':
+        if not request.args or not request.args.get('query'):
+            form = SearchForm()
+            page = request.args.get('page', 1, type=int)
+
+            if db.session.query(WishListItem).first() is None:
+                return render_template('wishlist.html', admin=admin)
+
+            try:
+                data = WishListItem.query.order_by(
+                    WishListItem.likes_count.desc()
+                    ).order_by(WishListItem.title.asc()
+                    ).paginate(page,
+                               error_out=True,
+                               max_per_page=5)
+            except RuntimeError:
+                return ErrorMessage.message('Cannot connect to database!')
+            output = [d.serialize() for d in data.items]
+            return render_template('wishlist.html',
+                                   wishes=output,
+                                   admin=admin,
+                                   pagination=data,
+                                   endpoint='library.wishlist',
+                                   form=form,)
+
+        elif request.args.get('query'):
+            form = SearchForm()
+            query_str = request.args.get('query')
+            page = request.args.get('page', 1, type=int)
+            try:
+                data = (
+                    WishListItem.query.filter(WishListItem.title.ilike(
+                        '%{}%'.format(query_str))).order_by(
+                        WishListItem.likes_count.desc()).order_by(
+                        WishListItem.title.asc()).paginate(page, error_out=True,
+                                                           max_per_page=5))
+
+            except RuntimeError:
+                return ErrorMessage.message('Cannot connect to database!')
+            output = [d.serialize() for d in data.items]
+            return render_template('wishlist.html',
+                                   wishes=output,
+                                   admin=admin,
+                                   pagination=data,
+                                   endpoint='library.wishlist',
+                                   form=form,)
+
+    else:
+        abort(500)
 
 
 @library.route('/add_wish', methods=['GET', 'POST'])
