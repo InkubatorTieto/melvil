@@ -3,8 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    {% from "macros.html" import flashed_message with context %}
-    {% from "macros.html" import input with context %}
+    {% from "macros.html" import input, render_pagination, flashed_message with context %}
     <h1>Search</h1>
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
@@ -61,14 +60,13 @@
                   </button>
                 </li>
               {% endfor %}
-            {% endif %}
           </ul>
         </div>
 
         <nav aria-label="Page navigation search">
-          {% from "macros.html" import render_pagination with context %}
             {{ render_pagination(pagination, endpoint) }}
         </nav>
+        {% endif %}
 
       </main>
     </div>
