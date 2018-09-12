@@ -54,6 +54,8 @@ def require_not_logged_in(redirect_page="library.index"):
 
 def require_role(role="USER", redirect_page="library.index"):
     def decorator(func):
+        if app.config["TESTING"] == True:
+            return func
         @wraps(func)
         def inner_func(*args, **kwargs):
             if "id" in session:

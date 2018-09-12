@@ -23,6 +23,7 @@ from models import (
     Tag,
     LibraryItem
 )
+from models.users import Role, RoleEnum
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import (
@@ -160,6 +161,28 @@ def db_user(session):
              password_hash=g.cryptographic.hash(),
              active=g.development.boolean(),
              roles=[])
+    session.add(u)
+    session.commit()
+
+    yield u
+
+    if User.query.get(u.id):
+        session.delete(u)
+        session.commit()
+
+@pytest.fixture(scope="function")
+def db_admin_user(session):
+    """
+    Creates and return function-scoped admin user database entry
+    """
+    u = User(email=g.person.email(),
+             first_name=g.person.name(),
+             surname=g.person.surname(),
+             password_hash=g.cryptographic.hash(),
+             active=g.development.boolean(),
+             roles=[])
+    role_admin = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+    u.roles.append(role_admin)
     session.add(u)
     session.commit()
 

@@ -78,7 +78,7 @@ def test_asset_code_regex(values, expected):
         "Regex for asset code is wrong"
 
 
-def test_edit_get_status_code(client, db_copies):
+def test_edit_get_status_code(client, db_copieszz):
     resp = client.get(url_for('library.edit_copy',
                               copy_id=db_copies[0].id))
     assert resp.status_code == 200, \
