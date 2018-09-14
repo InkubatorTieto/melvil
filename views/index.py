@@ -499,7 +499,7 @@ def wishlist():
                                    form=form,)
 
     else:
-        abort(500)
+        abort(405)
 
 
 @library.route('/add_wish', methods=['GET', 'POST'])
