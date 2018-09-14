@@ -113,6 +113,8 @@ def test_add_the_same_book(view_book, client):
 
 
 """Testing separated validators"""
+
+
 @pytest.mark.parametrize("values, result", [
     ("", True),
     (".", False),

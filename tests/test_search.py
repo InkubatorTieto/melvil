@@ -62,7 +62,7 @@ def test_search_query(app_session, get_title):
 
 
 def test_search_pagination(app):
-    with app.test_request_context(f"/search?page=") as cont:
+    with app.test_request_context(f"/search?page="):
         assert flask.request.path == '/search'
         assert flask.request.args['page'] == ''
         page = 1
@@ -75,7 +75,7 @@ def test_search_pagination(app):
 
         for i in range(1, paginate_query.pages):
 
-            with app.test_request_context(f"search?page={i}") as cont:
+            with app.test_request_context(f"search?page={i}"):
                 assert flask.request.path == '/search'
                 assert flask.request.args['page'] == f'{i}'
                 paginate_query = LibraryItem.query.order_by(
@@ -86,21 +86,21 @@ def test_search_pagination(app):
                 assert len(paginate_query.items) <= 10
 
                 if i == 1:
-                    assert paginate_query.has_prev == False
-                    assert paginate_query.has_next == True
+                    assert not paginate_query.has_prev
+                    assert paginate_query.has_next
                 if i == paginate_query.pages:
-                    assert paginate_query.has_prev == True
-                    assert paginate_query.has_next == False
+                    assert paginate_query.has_prev
+                    assert not paginate_query.has_next
 
 
 def test_search_serializer(app):
-    with app.test_request_context(f"/search?page=") as cont:
+    with app.test_request_context(f"/search?page="):
         assert flask.request.path == '/search'
         assert flask.request.args['page'] == ''
         page = 1
         paginate_query = LibraryItem.query.order_by(
-        LibraryItem.title.asc()).paginate(page,
-                                          error_out=True,
-                                          max_per_page=10)
+            LibraryItem.title.asc()).paginate(page,
+                                              error_out=True,
+                                              max_per_page=10)
         output = [d.serialize() for d in paginate_query.items]
         assert len(output) == len(paginate_query.items)
