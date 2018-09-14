@@ -205,7 +205,7 @@ def search():
                                    form=form,)
 
         else:
-            abort(500)
+            abort(405)
 
 
 @library.route('/contact', methods=['GET', 'POST'])
