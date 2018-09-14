@@ -8,6 +8,9 @@ PROD_DOCKER=./docker/docker-compose.yml
 
 if [ "$1" == "tests" ] ; then
 
+   if [ "$2" == "cov" ] ; then
+    docker-compose -f $DEV_DOCKER run web pytest --cov
+   fi
    # run tests
    docker-compose -f $DEV_DOCKER run web pytest
 
