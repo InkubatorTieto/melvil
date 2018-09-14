@@ -11,9 +11,11 @@
     </h1>
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
         <main role="main" class="inner cover">
+            {% if form %}
             <form action="" method="get" id=query>
                 {{ input(form.query) }}
             </form>
+            {% endif %}
             <div class="container my_search_main">
                 <p class="form-title"> Wish list</p>
                     <ul class="list-group" id="wishList">
