@@ -44,8 +44,6 @@ from tests.populate import (
 from models.library import BookStatus
 
 
-
-
 g = Generic('en')
 
 

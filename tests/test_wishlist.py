@@ -109,7 +109,7 @@ def test_wish_pagination(app):
 
 
 def test_wish_serializer(app):
-    with app.test_request_context(f"/search?page=") as cont:
+    with app.test_request_context(f"/search?page="):
         assert flask.request.path == '/search'
         assert flask.request.args['page'] == ''
         page = 1

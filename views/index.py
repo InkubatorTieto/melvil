@@ -460,12 +460,12 @@ def wishlist():
                 return render_template('wishlist.html', admin=admin)
 
             try:
-                data = WishListItem.query.order_by(
-                    WishListItem.likes_count.desc()
-                    ).order_by(WishListItem.title.asc()
-                    ).paginate(page,
-                               error_out=True,
-                               max_per_page=5)
+                data = (
+                    WishListItem.query.order_by(
+                        WishListItem.likes_count.desc()).order_by(
+                        WishListItem.title.asc()).paginate(page,
+                                                           error_out=True,
+                                                           max_per_page=5))
             except RuntimeError:
                 return ErrorMessage.message('Cannot connect to database!')
             output = [d.serialize() for d in data.items]
@@ -485,7 +485,8 @@ def wishlist():
                     WishListItem.query.filter(WishListItem.title.ilike(
                         '%{}%'.format(query_str))).order_by(
                         WishListItem.likes_count.desc()).order_by(
-                        WishListItem.title.asc()).paginate(page, error_out=True,
+                        WishListItem.title.asc()).paginate(page,
+                                                           error_out=True,
                                                            max_per_page=5))
 
             except RuntimeError:
