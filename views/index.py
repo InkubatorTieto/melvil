@@ -43,7 +43,7 @@ from models.users import User
 from models.wishlist import WishListItem, Like
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
-from serializers.wishlist import WishListItemSchema
+
 
 library = Blueprint('library', __name__,
                     template_folder='templates')
