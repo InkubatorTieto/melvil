@@ -29,14 +29,13 @@ body {
     }
 
 .modal-content{
-    background: rgba(1, 1, 1, 1);
-    border: double thick red;
-    border-radius: 15px;
+    background: rgba(0, 0, 0, 0.7);
     width: auto;
     height: auto;
     margin-top: 100px;
     margin-left: 50px;
     margin-right: 50px;
+    border-radius: 0rem;
 }
 
 .form_errors {
