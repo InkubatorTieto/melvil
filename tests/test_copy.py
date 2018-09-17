@@ -51,7 +51,7 @@ def test_db_after_add_copy(copy_form, db_book, client,
                 data=copy_form[0].data)
 
     copy = Copy.query.filter_by(
-            asset_code=copy_form[0].asset_code.data).first()
+        asset_code=copy_form[0].asset_code.data).first()
     assert copy, \
         "Copy not added to db"
     assert copy.library_item_id == db_book.id, \
