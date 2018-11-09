@@ -23,7 +23,7 @@ p.form-title {
 }
 
 form {
-    width: 250px;
+    /*width: 250px;*/
     margin: 0 auto;
 }
 
@@ -53,11 +53,11 @@ form {
     font-size: 14px;
     text-transform: uppercase;
     font-weight: 500;
-    margin-top: 16px;
+    /*margin-top: 16px;*/
     outline: 0;
     cursor: pointer;
     letter-spacing: 1px;
-    margin-bottom: 30px;
+    /*margin-bottom: 30px;*/
 }
 
 .submits:hover {

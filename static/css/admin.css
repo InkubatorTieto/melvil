@@ -91,6 +91,11 @@
     color: white;
 }
 
+.col-lg-1 {
+    float: left;
+    color: white;
+}
+
 .col-lg-3 {
     float: left;
     color: white;

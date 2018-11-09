@@ -3,72 +3,69 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    {% from "macros.html" import input, render_pagination, flashed_message with context %}
-    <h1>Search</h1>
-    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-      <main role="main" class="inner cover">
+{% from "macros.html" import input, render_pagination, flashed_message with context %}
+<h1>Search</h1>
+<div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
+    <main role="main" class="inner cover">
+        <div class="book_borrowing_dashboard">
         <div>
-          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% with messages = get_flashed_messages(with_categories=true) %}
             {{ flashed_message(messages) }}
-          {% endwith %}
+            {% endwith %}
         </div>
         <form action="" method="get" id=query>
-          {{ input(form.query) }}
+            {{ input(form.query) }}
         </form>
-
-        <div class="container my_search_main">
-          <ul class="list-group" id="bookList">
-            <li class="list-group-item my_search my_search_header">
-              <div class="col-lg-5">
-                Title
-              </div>
-              <div class="col-lg-6">
-                Author
-              </div>
-            </li>
-            {% if all_query|length == 0 %}
-              <li class="list-group-item my_search">
-                <div class="col-lg-12">
-                  <b>No result found!</b>
-                </div>
-              </li>
-            {% else %}
-              {% for item in all_query %}
-                <li class="list-group-item my_search">
-                  <div class="col-lg-5" id="title_{{ loop.index }}" title="{{ item.title }}">
-                    <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
-                      {{ item['title'] }}
-                    </a>
-                  </div>
-                  <div class="col-lg-6" id="auth_iss_{{ loop.index }}">
-                    {% if item['type'] == 'book' %}
-                      {% for author in item['authors'] %}
-                        <a href="{{ url_for('library.index', author_name=author) }}" id="author_{{ loop.index }}" title="{{ ', '.join(item.authors) }}">
-                          {% if loop.last %}
-                            {{ author }}
-                          {% else %}
-                            {{ author }},
-                          {% endif %}
+            <table class="table table-sm">
+                <thead>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th></th>
+                </thead>
+                {% if all_query|length == 0 %}
+                    <tr>No result found!</tr>
+                {% else %}
+                <tbody>
+                {% for item in all_query %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
+                            {{ item['title'] }}
                         </a>
-                      {% endfor %}
-                    {% elif item['type'] == 'magazine' %}
-                      <p>Issue no.: {{ item['issue'] }}</p>
-                    {% endif %}
-                  </div>
-                  <button type="button" class="btn question_mark_btn" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">
-                      &quest;
-                  </button>
-                </li>
-              {% endfor %}
-          </ul>
-        </div>
-
+                    </td>
+                    <td>
+                        {% if item['type'] == 'book' %}
+                            {% for author in item['authors'] %}
+                                <p>{% if loop.last %}
+                                    {{ author }}
+                                    {% else %}
+                                    {{ author }},
+                                    {% endif %}</p>
+                            {% endfor %}
+                        {% elif item['type'] == 'magazine' %}
+                            <p>Issue no.: {{ item['issue'] }}</p>
+                        {% endif %}
+                    </td>
+                    <td style="width: 10px;">
+                        <button type="button"
+                                class="btn question_mark_btn"
+                                id="type_{{ loop.index }}"
+                                data-toggle="tooltip"
+                                data-placement="right"
+                                title="{{ item['type'].capitalize() }}">
+                                ?
+                            </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         <nav aria-label="Page navigation search">
             {{ render_pagination(pagination, endpoint) }}
         </nav>
         {% endif %}
-
-      </main>
-    </div>
+        </div>
+    </main>
+</div>
 
 {% endblock %}

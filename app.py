@@ -60,7 +60,7 @@ app = create_app()
 migrate = Migrate(app, db)
 
 
-@app.cli.command(with_appcontext=True)
+@app.cli.command('load_xls_into_db', with_appcontext=True)
 def load_xls_into_db():
     get_magazines('./library_example.xlsx')
     get_books('./library_example.xlsx')
