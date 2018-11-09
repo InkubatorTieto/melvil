@@ -1,4 +1,6 @@
 from init_db import db
+from sqlalchemy import func, select
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class Like(db.Model):
@@ -47,8 +49,46 @@ class WishListItem(db.Model):
     def __repr__(self):
         return '<Wish List Item {}>'.format(self.title)
 
+    def __lt__(self, other):
+        return (self.likes_count < other.likes_count)
+
+    def __le__(self, other):
+        return (self.likes_count <= other.likes_count)
+
+    def __gt__(self, other):
+        return (self.likes_count > other.likes_count)
+
+    def __ge__(self, other):
+        return (self.likes_count >= other.likes_count)
+
+    def __eq__(self, other):
+        return (self.likes_count == other.likes_count)
+
+    def __ne__(self, other):
+        return not(self.__eq__)
+
     @classmethod
     def delete_wish(cls, wish_id):
         delete_wish_admin = WishListItem.query.get(wish_id)
         db.session.delete(delete_wish_admin)
         db.session.commit()
+
+    @hybrid_property
+    def likes_count(self):
+        return self.likes.count()
+
+    @likes_count.expression
+    def likes_count(cls):
+        return (select([func.count(Like.id)]).
+                where(Like.wish_item_id == cls.id).
+                label("likes_count"))
+
+    def serialize(self):
+            return {
+                'id': self.id,
+                'item_type': self.item_type,
+                'title': self.title,
+                'authors': self.authors,
+                'pub_year': self.pub_year,
+                'likes': self.likes,
+            }

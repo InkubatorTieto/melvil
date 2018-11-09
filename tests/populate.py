@@ -1,5 +1,5 @@
 from datetime import datetime
-from random import randint
+from random import randint, choice
 
 import pytz
 from mimesis import Generic
@@ -94,5 +94,5 @@ def populate_wish_list_items(n=30, likes=None):
         title=' '.join(g.text.title().split(' ')[:5]),
         pub_year=datetime.now(tz=pytz.utc),
         likes=likes if likes else [],
-
+        item_type=choice(['book', 'magazine'])
     ) for _ in range(n)]

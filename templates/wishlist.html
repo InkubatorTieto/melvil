@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Wish list{% endblock %}
 {% block content %}
-    {% from "macros.html" import input with context %}
+    {% from "macros.html" import render_pagination, input with context %}
     <h1>Search
         <button type="button" class="btn btn-link" data-container="body" data-toggle="popover"
                 data-placement="right"
@@ -11,53 +11,64 @@
     </h1>
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
         <main role="main" class="inner cover">
-            <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-                <main role="main" class="inner cover">
-                    <input class="form-control" id="bookInput" type="text" placeholder="Search...">
-                    <div class="container my_wishlist">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="wrap">
-                                    <p class="form-title"> Wish list</p>
-                                    <div class="scrollspy-example" data-target="#scrollspy" data-offset="1">
-                                        <ul class="list-group" align="left" id="wishList">
-                                            {% for item in wishes %}
-                                                {% for wish_item in item %}
-                                                    <li>
-                                                        {% if wish_item.item_type == 'book' %}
-                                                            <img src="../../static/img/i_book.png"
-                                                                 alt='book'/>{% endif %}
-                                                        {% if wish_item.item_type == 'magazine' %}
-                                                            <img src="../../static/img/i_newspaper.png"
-                                                                 alt='journal'/>{% endif %}
-                                                        "{{ wish_item.title }}" {{ wish_item.authors }} {{ wish_item.pub_year[:4] }}
-                                                        <button type="button" id="addLike_{{ wish_item.id }}"
-                                                                class="btn btn-outline-danger"
-                                                                style="border:none;">
-                                                            <i class="fas fa-heart"></i>
-                                                        </button>
-                                                        <span id="likes_{{ wish_item.id }}">{{ wish_item.likes|length }}</span>
-                                                        {% if admin %}
-                                                            <button type="button" class="btn btn-outline-light"
-                                                                    style="border:none;" href="#"
-                                                                    id="tooltip-ex" data-toggle="tooltip"
-                                                                    data-placement="right" title="Delete"
-                                                                    onclick="window.location.href='{{ url_for('library.delete_wish',wish_id=wish_item.id) }}';">
-                                                                <i class="fa fa-trash"></i></button>
-                                                        {% endif %}
-                                                    </li>
-                                                {% endfor %}{% endfor %} </ul>
+            {% if form %}
+            <form action="" method="get" id=query>
+                {{ input(form.query) }}
+            </form>
+            {% endif %}
+            <div class="container my_search_main">
+                <p class="form-title"> Wish list</p>
+                    <ul class="list-group" id="wishList">
+                        {% if wishes %}
+                            {% for item in wishes %}
+                                <li class="list-group-item my_search my_wish">
+                                    <div class="col-lg-2">
+                                    {% if item['item_type'] == 'book' %}
+                                        <img src="../../static/img/i_book.png"
+                                             alt='book'/>{% endif %}
+                                    {% if item['item_type'] == 'magazine' %}
+                                        <img src="../../static/img/i_newspaper.png"
+                                             alt='journal'/>{% endif %}
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" id="addWishButton" class="btn btn-primary btn-sample" data-toggle="modal"
-                                onclick="window.location.href='{{ url_for('library.add_wish') }}';">
-                            Create new wish
-                        </button>
-                    </div>
-                </main>
+                                    <div class="col-lg-3" title="{{ item['title'] }}">
+                                        "{{ item['title'] }}"
+                                    </div>
+                                    <div class="col-lg-3" title="{{ item['authors'] }}">
+                                        {{ item['authors'] }}
+                                    </div>
+                                    <div class="col-lg-2">
+                                        {{ item['pub_year'].strftime('%Y') }}
+                                    </div>
+                                    <button type="button" id="addLike_{{ item['id'] }}"
+                                            class="btn btn-outline-danger"
+                                            style="border:none;">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                    <span id="likes_{{ item['id'] }}" style="color:white;font-weight:bold;">{{ item.likes|length }}</span>
+                                    {% if admin %}
+                                        <button type="button" class="btn btn-outline-light"
+                                                style="border:none;" href="#"
+                                                id="tooltip-ex" data-toggle="tooltip"
+                                                data-placement="right" title="Delete"
+                                                onclick="window.location.href='{{ url_for('library.delete_wish',wish_id=item.id) }}';">
+                                            <i class="fa fa-trash"></i></button>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                        <p style="color: #fff;">There are no whishes! Create a new one!</p>
+                        {% endif %}
+                    </ul>
+                <button type="button" id="addWishButton" class="btn btn-primary btn-sample" data-toggle="modal"
+                        onclick="window.location.href='{{ url_for('library.add_wish') }}';">
+                    Create new wish
+                </button>
             </div>
+            {% if wishes %}
+            <nav aria-label="Page navigation search">
+                {{ render_pagination(pagination, endpoint) }}
+            </nav>
+            {% endif %}
         </main>
     </div>
 

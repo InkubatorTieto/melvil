@@ -41,7 +41,8 @@ from tests.populate import (
     populate_authors,
     populate_books,
     populate_rental_logs,
-    populate_magazines
+    populate_magazines,
+    populate_wish_list_items
 )
 from models.library import BookStatus
 
@@ -578,11 +579,35 @@ def search_query(session, client):
 
 
 @pytest.fixture(scope="function")
-def get_title(session):
+def wishlist_query(session, client):
+    """
+    Create db entries for wishlist items
+    """
+    wishlist = populate_wish_list_items()
+
+    for i in wishlist:
+        session.add(i)
+
+    session.commit()
+
+    yield wishlist
+
+
+@pytest.fixture(scope="function")
+def get_title(session, client):
     """
     Get title of item in Library
     """
     item = LibraryItem.query.first()
+    yield item
+
+
+@pytest.fixture(scope="function")
+def get_wish(session, client):
+    """
+    Get title of wish in wishlist db
+    """
+    item = WishListItem.query.first()
     yield item
 
 
