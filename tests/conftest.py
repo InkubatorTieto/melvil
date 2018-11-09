@@ -24,6 +24,7 @@ from models import (
     Tag,
     LibraryItem
 )
+from models.users import Role, RoleEnum
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import (
@@ -512,6 +513,30 @@ def db_tieto_user(session):
 
 
 @pytest.fixture(scope="function")
+def db_admin_user(session):
+    """
+    Creates and return function-scoped Admin user database entry
+    """
+    password = g.person.password(length=8)
+    u = User(email=g.person.name() + g.person.surname() + '.' + '@tieto.com',
+             first_name=g.person.name(),
+             surname=g.person.surname(),
+             password_hash=generate_password_hash(password),
+             active=True,
+             roles=[])
+    role_admin = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+    u.roles.append(role_admin)
+    session.add(u)
+    session.commit()
+
+    yield u, password
+
+    if User.query.get(u.id):
+        session.delete(u)
+        session.commit()
+
+
+@pytest.fixture(scope="function")
 def login_form(db_tieto_user):
     """
     Returns login form containing valid data of registered user.
@@ -524,7 +549,19 @@ def login_form(db_tieto_user):
 
 
 @pytest.fixture(scope="function")
-def search_query(session):
+def login_form_admin_credentials(db_admin_user):
+    """
+    Returns login form containing valid data of registered admin user.
+    """
+    form = LoginForm(
+        email=User.query.filter_by(id=db_admin_user[0].id).first().email,
+        password=db_admin_user[1],
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def search_query(session, client):
     """
     Create db entries for books and magazines
     """

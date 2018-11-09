@@ -1,6 +1,6 @@
 from flask import url_for
 from models import Copy
-
+from models.users import Role, RoleEnum
 from tests.populate import (
     populate_copies,
     populate_books)
@@ -8,6 +8,8 @@ from tests.populate import (
 
 def test_remove_copy(session, db_user, client, app_session):
     user = db_user
+    role_admin = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+    db_user.roles.append(role_admin)
     books = populate_books(n=5)
     session.add_all(books)
     session.commit()

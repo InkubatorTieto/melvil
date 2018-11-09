@@ -1,3 +1,4 @@
+from flask import url_for, session
 from datetime import date
 from random import choice, randint
 
@@ -9,13 +10,13 @@ from models import Author, Book, Tag, Magazine, LibraryItem
 from forms.book import BookForm, MagazineForm
 
 
-def test_add_book(view_book, client):
+def test_add_book(view_book, client, login_form_admin_credentials):
     view_book.radio.data = 'book'
-    result = client.post(url_for('library_books.add_book'),
-                         data=view_book.data,
-                         follow_redirects=True)
-
-    assert result.status_code == 200
+    client.post(url_for('library.login'),
+                data=login_form_admin_credentials.data)
+    client.post(url_for('library_books.add_book'),
+                data=view_book.data,
+                follow_redirects=True)
 
     author = Author.query.filter_by(first_name=view_book.first_name.data,
                                     last_name=view_book.surname.data).first()
@@ -57,11 +58,13 @@ def test_add_book(view_book, client):
 
     assert tag.name in view_book.tag.data, \
         "Tags ane not the same"
+    session.clear()
 
 
-def test_add_magazine(view_magazine, client):
-    view_magazine.radio.data = 'magazine'
-
+def test_add_magazine(view_book, client, login_form_admin_credentials):
+    view_book.radio.data = 'magazine'
+    client.post(url_for('library.login'),
+                data=login_form_admin_credentials.data)
     client.post(url_for('library_books.add_book'),
                 data=view_magazine.data,
                 follow_redirects=True)
@@ -94,6 +97,7 @@ def test_add_magazine(view_magazine, client):
         assert False, "Data validation failed"
     assert tag.name in view_magazine.tag.data, \
         "Tags ane not the same"
+    session.clear()
 
 
 def test_add_the_same_book(view_magazine, client):
@@ -203,7 +207,7 @@ def test_check_pub_date(view_book, values, result):
 # End of Testing separated validators
 
 
-def test_update_book(view_edit_book, client):
+def test_update_book(view_edit_book, client, login_form_admin_credentials):
     languages = ['polish', 'english', 'other']
     categories = ['developers', 'managers',
                   'magazines', 'other']
@@ -226,7 +230,8 @@ def test_update_book(view_edit_book, client):
         publisher=g.business.company(),
         pub_date=str(randint(1970, 2018))
     )
-
+    client.post(url_for('library.login'),
+                data=login_form_admin_credentials.data)
     client.post(url_for('library_books.edit_book', item_id=item.id),
                 data=form.data,
                 follow_redirects=True)
@@ -258,9 +263,11 @@ def test_update_book(view_edit_book, client):
         "Book pub_date has not been updated"
     assert tmp_item.tags[0].name == form.tag.data[0], \
         "Book tags has not been updated"
+    session.clear()
 
 
-def test_update_magazine(view_edit_magazine, client):
+def test_update_magazine(view_edit_magazine, client,
+                         login_form_admin_credentials):
     languages = ['polish', 'english', 'other']
     categories = ['developers', 'managers',
                   'magazines', 'other']
@@ -279,7 +286,8 @@ def test_update_magazine(view_edit_magazine, client):
         description=g.text.sentence(),
         pub_date=str(randint(1970, 2018))
     )
-
+    client.post(url_for('library.login'),
+                data=login_form_admin_credentials.data)
     client.post(url_for('library_books.edit_book', item_id=item.id),
                 data=form.data,
                 follow_redirects=True)
@@ -301,3 +309,4 @@ def test_update_magazine(view_edit_magazine, client):
         "Book pub_date has not been updated"
     assert tmp_item.tags[0].name == form.tag.data[0], \
         "Book tags has not been updated"
+    session.clear()
