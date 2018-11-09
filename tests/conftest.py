@@ -524,7 +524,7 @@ def login_form(db_tieto_user):
 
 
 @pytest.fixture(scope="function")
-def search_query(session, client):
+def search_query(session):
     """
     Create db entries for books and magazines
     """
@@ -541,7 +541,7 @@ def search_query(session, client):
 
 
 @pytest.fixture(scope="function")
-def get_title(session, client, search_query):
+def get_title(session):
     """
     Get title of item in Library
     """

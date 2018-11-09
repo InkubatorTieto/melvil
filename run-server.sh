@@ -16,6 +16,12 @@ if [ "$1" == "tests" ] ; then
   # run tests
   docker-compose -f $DEV_DOCKER run --name melvil_tests web pytest
 
+   if [ "$2" == "cov" ] ; then
+    docker-compose -f $DEV_DOCKER run web pytest --cov
+   fi
+   # run tests
+   docker-compose -f $DEV_DOCKER run web pytest
+
 elif [ "$1" == "-p" ] ; then
     # production server
     if [ "$2" == "migrate" ] ; then
