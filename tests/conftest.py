@@ -11,8 +11,9 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-
-from forms.book import BookForm, MixedForm, MagazineForm
+from forms.forms import SearchForm
+from forms.book import BookForm, MagazineForm,\
+    AddNewItemBookForm, AddNewItemMagazineForm
 from models import (
     User,
     Book,
@@ -200,12 +201,11 @@ def view_book(session, client):
                   'magazines', 'other']
     type_book = ['book', 'magazine']
 
-    form = MixedForm(
+    form = AddNewItemBookForm(
         radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
         title=' '.join(g.text.title().split(' ')[:5]),
-        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
         table_of_contents=g.text.sentence(),
         language=choice(languages),
         category=choice(categories),
@@ -214,6 +214,27 @@ def view_book(session, client):
         isbn=str(1861972717),
         original_title=' '.join(g.text.title().split(' ')[:5]),
         publisher=g.business.company(),
+        pub_date=str(randint(1970, 2018)),
+    )
+
+    return form
+
+
+@pytest.fixture(scope="function")
+def view_magazine(session, client):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+    type_book = ['book', 'magazine']
+
+    form = AddNewItemMagazineForm(
+        radio=choice(type_book),
+        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=g.text.words(1),
+        description=g.text.sentence(),
         pub_date=str(randint(1970, 2018)),
         issue=g.text.words(1)
     )

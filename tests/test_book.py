@@ -17,9 +17,6 @@ def test_add_book(view_book, client):
 
     assert result.status_code == 200
 
-    del view_book.issue
-    del view_book.title_of_magazine
-
     author = Author.query.filter_by(first_name=view_book.first_name.data,
                                     last_name=view_book.surname.data).first()
     if not author:
@@ -62,55 +59,52 @@ def test_add_book(view_book, client):
         "Tags ane not the same"
 
 
-def test_add_magazine(view_book, client):
-    view_book.radio.data = 'magazine'
+def test_add_magazine(view_magazine, client):
+    view_magazine.radio.data = 'magazine'
 
     client.post(url_for('library_books.add_book'),
-                data=view_book.data,
+                data=view_magazine.data,
                 follow_redirects=True)
 
-    del view_book.publisher
-    del view_book.original_title
-    del view_book.isbn
-    del view_book.title
-
-    magazine = Magazine.query.filter_by(title=view_book.title_of_magazine.data,
-                                        issue=view_book.issue.data[0]).first()
+    magazine = Magazine.query\
+        .filter_by(title=view_magazine.title_of_magazine.data,
+                   issue=view_magazine.issue.data[0]).first()
     if not magazine:
         assert False, "Data validation failed"
-    assert view_book.title_of_magazine.data == magazine.title, \
+    assert view_magazine.title_of_magazine.data == magazine.title, \
         "The title of the book is not the same as given at the entrance "
-    assert view_book.table_of_contents.data == magazine.table_of_contents, \
+    assert \
+        view_magazine.table_of_contents.data == magazine.table_of_contents, \
         "The table of content is not the same as given at the entrance "
-    assert view_book.language.data == magazine.language, \
+    assert view_magazine.language.data == magazine.language, \
         "Language is not the same as given at the entrance "
-    assert view_book.category.data == magazine.category, \
+    assert view_magazine.category.data == magazine.category, \
         "Category of book is not the same as given at the entrance "
-    assert view_book.description.data == magazine.description, \
+    assert view_magazine.description.data == magazine.description, \
         "The book description is not the same as given at the entrance "
-    assert date(year=int(view_book.pub_date.data),
+    assert date(year=int(view_magazine.pub_date.data),
                 month=1,
                 day=1) == magazine.year, \
         "The year of publication is not the same as given at the entrance "
-    assert view_book.issue.data[0] == magazine.issue, \
+    assert view_magazine.issue.data[0] == magazine.issue, \
         "The book description is not the same as given at the entrance "
 
-    tag = Tag.query.filter_by(name=view_book.tag.data[0]).first()
+    tag = Tag.query.filter_by(name=view_magazine.tag.data[0]).first()
     if not tag:
         assert False, "Data validation failed"
-    assert tag.name in view_book.tag.data, \
+    assert tag.name in view_magazine.tag.data, \
         "Tags ane not the same"
 
 
-def test_add_the_same_book(view_book, client):
+def test_add_the_same_book(view_magazine, client):
     client.post(url_for('library_books.add_book'),
-                data=view_book.data,
+                data=view_magazine.data,
                 follow_redirects=True)
 
     client.post(url_for('library_books.add_book'),
-                data=view_book.data,
+                data=view_magazine.data,
                 follow_redirects=True)
-    assert not bool(view_book.errors), \
+    assert not bool(view_magazine.errors), \
         "Two same books have been added."
 
 

@@ -13,194 +13,113 @@
 <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
     <main role="main" class="inner cover">
         <p class="form-title">ADD NEW BOOK</p>
-        <form class="login" method="post">
-            {{ form.hidden_tag() }}
-            <div class="container">
-                <div class="form-check form-check-inline">
-                    <div class="row justify-content-center">
-
-                        {{ form.radio}}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        {% if form.title != None %}
-                        {{ input( form.title ,error['title']) }}
-                        {% endif %}
-                        {% if form.title_of_magazine != None %}
-                        {{ input( form.title_of_magazine ,error['title_of_magazine']) }}
-                        {% endif %}
-                    </div>
-                    <div class="col">
-                        {{ input( form.original_title ,error['original_title']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        {% if form.publisher != None %}
-                        {{ input( form.publisher ,error['publisher']) }}
-                        {% endif %}
-                        {% if form.issue != None %}
-                        {{ input( form.issue ,error['issue']) }}
-                        {% endif %}
-                    </div>
-
-                    <div class="col">
-                        <br>
-                        <p id="myText">Year of publication:</p>
-                        {{ input(form.pub_date, error['pub_date'])}}
-
-                    </div>
-                </div>
-
-
-                <p id="myText1">Autors:</p>
-
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.first_name, error['first_name']) }}
-                    </div>
-                    <div class="col">
-                        {{ input( form.surname, error['surname']) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.first_name_1, error['first_name_1']) }}
-                    </div>
-                    <div class="col">
-                        {{ input( form.surname_1, error['surname_1']) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.first_name_2, error['first_name_2']) }}
-                    </div>
-                    <div class="col">
-                        {{ input( form.surname_2, error['surname_2']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        <br>
-                        {{ input( form.isbn ,error['isbn']) }}
-                    </div>
-                    <div class="col">
-                        <p id="myText">Language:</p>
-                        {{ input( form.language ,error['language']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        <br>
-                        {{ input( form.tag ,error['tag']) }}
-                    </div>
-                    <div class="col">
-                        <p id="myText">Category:</p>
-                        {{ input( form.category ,error['category']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.table_of_contents ,error['table_of_contents']) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.description ,error['description']) }}
-                    </div>
-                </div>
-
-                {{form.submit}}
-
+        <div class="form-check form-check-inline">
+            <div class="row justify-content-center">
+                {{ book_form.radio }}
             </div>
+        </div>
+        <div id="book_form" >
+        <form class="login" method="post">
+            {{ book_form.hidden_tag() }}
+            <div class="row">
+                <div class="col">
+                    {{ input( book_form.title ,book_error['title']) }}
+                </div>
+                <div class="col">
+                    {{ input( book_form.original_title ,book_error['original_title']) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ input( book_form.publisher ,book_error['publisher']) }}
+                </div>
+                <div class="col">
+                    {{ input( book_form.isbn ,book_error['isbn']) }}
+                </div>
+            </div>
+            <p class="myText">Authors:</p>
+            <div class="row">
+                <div class="col">
+                    {{ input(book_form.first_name, book_error['first_name'])}}
+                </div>
+                <div class="col">
+                    {{ input(book_form.surname, book_error['surname'])}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ input(book_form.first_name_1, book_error['first_name_1'])}}
+                </div>
+                <div class="col">
+                    {{ input(book_form.surname_1, book_error['surname_1'])}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ input(book_form.first_name_2, book_error['first_name_2'])}}
+                </div>
+                <div class="col">
+                    {{ input(book_form.surname_2, book_error['surname_2'])}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="myText">Language:</p>
+                    {{ input(book_form.language, book_error['language'])}}
+                </div>
+                <div class="col">
+                    <p class="myText">Category:</p>
+                    {{ input(book_form.category, book_error['category'])}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="myText">Year of publication:</p>
+                    {{ input(book_form.pub_date, book_error['pub_date'])}}
+                </div>
+                <div class="col">
+                </div>
+            </div>
+            {{ input(book_form.table_of_contents, book_error['table_of_contents'])}}
+            {{ input(book_form.description, book_error['description'])}}
+            {{book_form.submit1}}
         </form>
+        </div>
+        <div  id="magazine_form">
+        <form class="login" method="post">
+            {{ magazine_form.hidden_tag() }}
+            <div class="row">
+                <div class="col">
+                    {{ input( magazine_form.title_of_magazine ,magazine_error['title_of_magazine']) }}
+                </div>
+                <div class="col">
+                    {{ input(magazine_form.issue, magazine_error['issue'])}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="myText">Language:</p>
+                    {{ input(magazine_form.language, magazine_error['language'])}}
+                </div>
+                <div class="col">
+                    <p class="myText">Category:</p>
+                    {{ input(magazine_form.category, magazine_error['category'])}}
+                </div>
+            </div>
+                        <div class="row">
+                <div class="col">
+                    <p class="myText">Year of publication:</p>
+                    {{ input(book_form.pub_date, book_error['pub_date'])}}
+                </div>
+                <div class="col">
+                </div>
+            </div>
+            {{ input(magazine_form.tag, magazine_error['tag'])}}
+            {{ input(magazine_form.table_of_contents, magazine_error['table_of_contents'])}}
+            {{ input(magazine_form.description, magazine_error['description'])}}
+            {{ magazine_form.submit2}}
+        </form>
+        </div>
     </main>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script type="text/javascript">
-
-    function showMagazine() {
-        $("#title_of_magazine").prop("disabled", false).show();
-        $("#table_of_contest").prop("disabled", false).show();
-        $("[name='pub_date']").prop("disabled", false).show();
-        $("[name='language']").prop("disabled", false).show();
-        $("[name='category']").prop("disabled", false).show();
-        $("#tag").prop("disabled", false).show();
-        $("#description").prop("disabled", false).show();
-        $("#button").prop("disabled", false).show();
-        $("#issue").prop("disabled", false).show();
-    }
-
-    function hideBooks() {
-        $("#title").prop("disabled", true).hide();
-
-        $("#isbn").prop("disabled", true).hide();
-        $("#original_title").prop("disabled", true).hide();
-        $("#publisher").prop("disabled", true).hide();
-
-        $("#myText1").hide();
-        $("[name='first_name']").prop("disabled", true).hide();
-        $("[name='surname']").prop("disabled", true).hide();
-        $("[name='first_name_1']").prop("disabled", true).hide();
-        $("[name='surname_1']").prop("disabled", true).hide();
-        $("[name='first_name_2']").prop("disabled", true).hide();
-        $("[name='surname_2']").prop("disabled", true).hide();
-    }
-
-    function hideMagazine() {
-        $("#title_of_magazine").prop("disabled", true).hide();
-        $("#issue").prop("disabled", true).hide();
-    }
-
-    function showBooks() {
-        $("#title").prop("disabled", false).show();
-        $("#table_of_contest").prop("disabled", false).show();
-        $("[name='pub_date']").prop("disabled", false).show();
-        $("[name='language']").prop("disabled", false).show();
-        $("[name='category']").prop("disabled", false).show();
-        $("#tag").prop("disabled", false).show();
-        $("#description").prop("disabled", false).show();
-        $("#isbn").prop("disabled", false).show();
-        $("#original_title").prop("disabled", false).show();
-        $("#publisher").prop("disabled", false).show();
-
-        $("#myText1").show();
-        $("[name='first_name']").prop("disabled", false).show();
-        $("[name='surname']").prop("disabled", false).show();
-        $("[name='first_name_1']").prop("disabled", false).show();
-        $("[name='surname_1']").prop("disabled", false).show();
-        $("[name='first_name_2']").prop("disabled", false).show();
-        $("[name='surname_2']").prop("disabled", false).show();
-        $("#button").prop("disabled", false).show();
-    }
-
-    $(document).ready(function () {
-        $("input[type='radio']").click(function () {
-            var radioValue = $("input[name='radio']:checked").val();
-            if (radioValue == 'magazine') {
-                hideBooks();
-                showMagazine();
-            }
-            if (radioValue == 'book') {
-                hideMagazine();
-                showBooks();
-            }
-        });
-    });
-
-</script>
-
 {% endblock %}
