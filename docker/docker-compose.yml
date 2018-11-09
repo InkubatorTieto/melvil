@@ -21,6 +21,7 @@ services:
         - ENV=prod
     depends_on:
       - "postgresql"
+    container_name: melvil_web_prod
 
   postgresql:
       image: postgres
@@ -33,6 +34,7 @@ services:
         - POSTGRES_DB=psql_db
       ports:
         - "5432:5432"
+      container_name: melvil_postgres_prod
   nginx:
     image: nginx:alpine
     restart: always
