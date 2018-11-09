@@ -1,6 +1,7 @@
-from flask import url_for
 from datetime import date
 from random import choice, randint
+
+from flask import url_for
 from mimesis import Generic
 import pytest
 
@@ -10,10 +11,11 @@ from forms.book import BookForm, MagazineForm
 
 def test_add_book(view_book, client):
     view_book.radio.data = 'book'
+    result = client.post(url_for('library_books.add_book'),
+                         data=view_book.data,
+                         follow_redirects=True)
 
-    client.post(url_for('library_books.add_book'),
-                data=view_book.data,
-                follow_redirects=True)
+    assert result.status_code == 200
 
     del view_book.issue
     del view_book.title_of_magazine
@@ -22,8 +24,8 @@ def test_add_book(view_book, client):
                                     last_name=view_book.surname.data).first()
     if not author:
         assert False, "Data validation failed"
-    assert view_book.first_name.data == author.first_name and view_book. \
-        surname.data == author.last_name, \
+    assert view_book.first_name.data == author.first_name \
+        and view_book.surname.data == author.last_name, \
         "First and last name of the first author is not" \
         " the same as given at the entrance"
 
@@ -113,6 +115,8 @@ def test_add_the_same_book(view_book, client):
 
 
 """Testing separated validators"""
+
+
 @pytest.mark.parametrize("values, result", [
     ("", True),
     (".", False),
@@ -124,6 +128,7 @@ def test_add_the_same_book(view_book, client):
     ("A.Adsa", True),
     ("A.AdsaA", False),
     ("Paweł", True)
+
 ])
 def test_check_author(view_book, values, result):
     view_book.first_name_1.data = values

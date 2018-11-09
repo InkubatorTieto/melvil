@@ -8,12 +8,16 @@ from wtforms import (
     TextAreaField,
     SelectField,
 )
-
 from wtforms.validators import DataRequired, Email, EqualTo, Length
-
 from flask_wtf import FlaskForm
 
-from forms.custom_validators import tieto_email, name, surname, check_pub_date
+from forms.custom_validators import (
+    tieto_email,
+    name,
+    surname,
+    check_password,
+    check_pub_date
+)
 
 
 class LoginForm(FlaskForm):
@@ -45,14 +49,14 @@ class RegistrationForm(FlaskForm):
                                       'placeholder': 'Last Name'}))
     password = PasswordField(
         'Password',
-        validators=[DataRequired(),
+        validators=[DataRequired(), check_password,
                     EqualTo('confirm_pass',
                             message='Passwords must match.')],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Password'}))
     confirm_pass = PasswordField(
         'Confirm password',
-        validators=[DataRequired()],
+        validators=[DataRequired(), check_password],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Confirm Password'}))
     submit = SubmitField('Sign Up',

@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from forms.forms import SearchForm
+
 from forms.book import BookForm, MixedForm, MagazineForm
 from models import (
     User,
@@ -26,12 +26,13 @@ from models import (
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import (
+    SearchForm,
+    WishlistForm,
     LoginForm,
     RegistrationForm,
     ForgotPass,
     EditPasswordForm
 )
-from forms.forms import WishlistForm
 from tests.populate import (
     populate_users,
     populate_copies,
@@ -41,8 +42,6 @@ from tests.populate import (
     populate_magazines
 )
 from models.library import BookStatus
-
-
 
 
 g = Generic('en')
@@ -328,6 +327,31 @@ def copy_form(session, client):
 
 
 @pytest.fixture(scope="function")
+def view_login(session, client, db_user):
+    form = LoginForm(
+        email=db_user.email,
+        password=db_user.password_hash
+    )
+
+    yield form
+
+
+@pytest.fixture(scope="function")
+def view_registration(session):
+    """
+    Creates and return function-scoped User database entry
+    """
+    a = "65$asdMNB"
+    u = RegistrationForm(email="asd.qwe@tieto.com",
+                         first_name=g.person.name(),
+                         surname=g.person.surname(),
+                         password=a,
+                         confirm_pass=a)
+
+    yield u
+
+
+@pytest.fixture(scope="function")
 def db_magazine(session):
     m = Magazine(
         title=' '.join(g.text.title().split(' ')[:5]),
@@ -381,6 +405,13 @@ def app_session(client, db_user):
     with client.session_transaction() as app_session:
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
+        return app_session
+
+
+@pytest.fixture
+def empty_app_session(client):
+    with client.session_transaction() as app_session:
+        app_session['logged_in'] = False
         return app_session
 
 

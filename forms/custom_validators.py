@@ -1,8 +1,9 @@
-
 import re
-from wtforms.validators import ValidationError
 from datetime import datetime
+
+from wtforms.validators import ValidationError
 from isbnlib import is_isbn10, is_isbn13
+
 from models.books import Book
 
 
@@ -17,29 +18,47 @@ def tieto_email(form, field):
 
 
 def name(form, field):
-    if not re.compile("^[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*$").match(field.data):
-        raise ValidationError("Insert valid name.")
+    if not re.compile('^[A-ZĄĆŚĘŁŃÓŻŹ]{1}[a-ząćęłńśóżź]*$').match(field.data):
+        raise ValidationError('Insert valid name.')
 
 
 def surname(form, field):
     if not re.compile(
-        "^[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*-?[A-ZĄĆĘŁÓŻŹ]?[a-ząćęłóżź]*$"
-    ).match(field.data):
-        raise ValidationError("Insert valid surname.")
+            '^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*$'
+    ).match(field.data) and not \
+            re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*'
+                       '-?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$').match(field.data) \
+            and not re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*'
+                               '\s?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$'
+                               ).match(field.data):
+        raise ValidationError('Insert valid surname.')
+
+
+def check_password(form, field):
+    if len(field.data) < 8:
+        ValidationError("Make sure your password is at lest 8 letters")
+    if re.search('[0-9]+', field.data) is None:
+        raise ValidationError("Make sure your password has a number in it")
+    if re.search("[A-ZĄĆŚĘŃŁÓŻŹ]+", field.data) is None:
+        raise ValidationError(
+            "Make sure your password has a capital letter in it")
+    if re.search("[!#@\$%^&*()_]+", field.data) is None:
+        raise ValidationError(
+            "Make sure your password has a special character in"
+            " it, for example: '! @ #'")
+    if re.search("[\.\,]+", field.data) is not None:
+        raise ValidationError(
+            "Your has a dot or comma, these characters are not allowed")
 
 
 def check_author(form, field):
-    if field.data != "":
-        if (
-            not re.compile(
-                "^([A-ZĄĆĘŁÓŻŹ]?.*[A-ZĄĆĘŁÓŻŹa-ząćęłóżź]*" "[a-ząćęłóżź])$"
-            ).match(field.data) and
-            not re.compile("^[A-ZĄĆĘŁÓŻŹ]?." "[A-ZĄĆĘŁÓŻŹ]$").match(
-                field.data
-            ) or
-            re.compile("^[a-ząćęłóżź]*$").match(field.data)
-        ):
-            raise ValidationError("Insert valid author name or surname.")
+    if field.data != '':
+        if not re.compile('^([A-ZĄŚĆĘŁŃÓŻŹ]{1}.*[A-ZĄĆŚŃĘŁÓŻŹa-ząćęłśóńżź]*'
+                          '[a-ząćęłśóżńź])$').match(field.data) and \
+                not re.compile('^[A-ZŚĄĆŃĘŁÓŻŹ]{1}.'
+                               '[A-ZĄĆŚĘŃŁÓŻŹ]$').match(field.data) or \
+                re.compile('^[a-ząćęńśłóżź]*$').match(field.data):
+            raise ValidationError('Insert valid author name or surname.')
 
 
 def check_language(form, field):
