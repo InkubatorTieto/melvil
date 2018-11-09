@@ -3,8 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    {% from "macros.html" import flashed_message with context %}
-    {% from "macros.html" import input with context %}
+    {% from "macros.html" import input, render_pagination, flashed_message with context %}
     <h1>Search</h1>
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
@@ -19,8 +18,8 @@
 
         <div class="container my_search_main">
           <ul class="list-group" id="bookList">
-            <li class="list-group-item my_container list_header my_container_header">
-              <div class="col-lg-6">
+            <li class="list-group-item my_search my_search_header">
+              <div class="col-lg-5">
                 Title
               </div>
               <div class="col-lg-6">
@@ -36,7 +35,7 @@
             {% else %}
               {% for item in all_query %}
                 <li class="list-group-item my_search">
-                  <div class="col-lg-5" id="title_{{ loop.index }}">
+                  <div class="col-lg-5" id="title_{{ loop.index }}" title="{{ item.title }}">
                     <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
                       {{ item['title'] }}
                     </a>
@@ -44,9 +43,9 @@
                   <div class="col-lg-6" id="auth_iss_{{ loop.index }}">
                     {% if item['type'] == 'book' %}
                       {% for author in item['authors'] %}
-                        <a href="{{ url_for('library.index', author_name=author) }}" id="author_{{ loop.index }}">
+                        <a href="{{ url_for('library.index', author_name=author) }}" id="author_{{ loop.index }}" title="{{ ', '.join(item.authors) }}">
                           {% if loop.last %}
-                            {{ author }}...
+                            {{ author }}
                           {% else %}
                             {{ author }},
                           {% endif %}
@@ -56,17 +55,18 @@
                       <p>Issue no.: {{ item['issue'] }}</p>
                     {% endif %}
                   </div>
-                    <button type="button" class="btn question_mark_btn" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">?</button>
+                  <button type="button" class="btn question_mark_btn" id="type_{{ loop.index }}" data-toggle="tooltip" data-placement="right" title="{{ item['type'].capitalize() }}">
+                      &quest;
+                  </button>
                 </li>
               {% endfor %}
-            {% endif %}
           </ul>
         </div>
 
         <nav aria-label="Page navigation search">
-          {% from "macros.html" import render_pagination with context %}
             {{ render_pagination(pagination, endpoint) }}
         </nav>
+        {% endif %}
 
       </main>
     </div>
