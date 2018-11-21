@@ -1,36 +1,34 @@
     function show_reserved() {
-        $("[id^='returnDetail']").css('display', 'none');
-        $("[id^='reservDetail']").css('display', 'block');
         $(".borrowBtn").css('display', 'flex');
         $(".returnBtn").css('display', 'none');
-        $("#returnDescrip").css('display', 'none');
-        $("#reservDescrip").css('display', 'block');
+        $("#myReserv").show();
+        $("#myBorrows").hide();
         $("#paginReturn").css('display', 'none');
         $("#paginBorrow").css('display', 'flex');
-        $("#showReserv").css('text-decoration', 'underline');
-        $("#showReturn").css('text-decoration', 'none');
     }
     function show_borrowed() {
-        $("[id^='reservDetail']").css('display', 'none');
-        $("[id^='returnDetail']").css('display', 'block');
         $(".borrowBtn").css('display', 'none');
         $(".returnBtn").css('display', 'flex');
-        $("#reservDescrip").css('display', 'none');
-        $("#returnDescrip").css('display', 'block');
+        $("#myReserv").hide();
+        $("#myBorrows").show();
         $("#paginReturn").css('display', 'flex');
         $("#paginBorrow").css('display', 'none');
-        $("#showReturn").css('text-decoration', 'underline');
-        $("#showReserv").css('text-decoration', 'none');
     }
 
     $(document).ready(function(){
         var reservedBtn = $("#showReserv");
         var borrowedBtn = $("#showReturn");
+        var mystart = 0;
 
         if (reservedBtn){
             reservedBtn.on("click", show_reserved);
         }
         if (borrowedBtn){
             borrowedBtn.on("click", show_borrowed);
+        }
+
+        if (mystart === 0){
+            show_reserved();
+            mystart = 1;
         }
      });
