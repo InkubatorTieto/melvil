@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block head %}
+
+{% block styles %}
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="/static/css/books.css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -10,116 +11,115 @@
 
 {% block content %}
 {% from "macros.html" import input with context %}
-<div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-    <main role="main" class="inner cover">
-        <p class="form-title">ADD NEW BOOK</p>
-        <div class="form-check form-check-inline">
-            <div class="row justify-content-center">
-                {{ book_form.radio }}
+
+
+<p class="form-title">ADD NEW BOOK</p>
+    <div class="row justify-content-center">
+        {{ book_form.radio }}
+    </div>
+
+
+<div id="book_form">
+    <form class="login" method="post">
+        {{ book_form.hidden_tag() }}
+        <div class="row">
+            <div class="col">
+                {{ input( book_form.title ,book_error['title']) }}
+            </div>
+            <div class="col">
+                {{ input( book_form.original_title ,book_error['original_title']) }}
             </div>
         </div>
-        <div id="book_form" >
-        <form class="login" method="post">
-            {{ book_form.hidden_tag() }}
-            <div class="row">
-                <div class="col">
-                    {{ input( book_form.title ,book_error['title']) }}
-                </div>
-                <div class="col">
-                    {{ input( book_form.original_title ,book_error['original_title']) }}
-                </div>
+        <div class="row">
+            <div class="col">
+                {{ input( book_form.publisher ,book_error['publisher']) }}
             </div>
-            <div class="row">
-                <div class="col">
-                    {{ input( book_form.publisher ,book_error['publisher']) }}
-                </div>
-                <div class="col">
-                    {{ input( book_form.isbn ,book_error['isbn']) }}
-                </div>
+            <div class="col">
+                {{ input( book_form.isbn ,book_error['isbn']) }}
             </div>
-            <p class="myText">Authors:</p>
-            <div class="row">
-                <div class="col">
-                    {{ input(book_form.first_name, book_error['first_name'])}}
-                </div>
-                <div class="col">
-                    {{ input(book_form.surname, book_error['surname'])}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    {{ input(book_form.first_name_1, book_error['first_name_1'])}}
-                </div>
-                <div class="col">
-                    {{ input(book_form.surname_1, book_error['surname_1'])}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    {{ input(book_form.first_name_2, book_error['first_name_2'])}}
-                </div>
-                <div class="col">
-                    {{ input(book_form.surname_2, book_error['surname_2'])}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <p class="myText">Language:</p>
-                    {{ input(book_form.language, book_error['language'])}}
-                </div>
-                <div class="col">
-                    <p class="myText">Category:</p>
-                    {{ input(book_form.category, book_error['category'])}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <p class="myText">Year of publication:</p>
-                    {{ input(book_form.pub_date, book_error['pub_date'])}}
-                </div>
-                <div class="col">
-                </div>
-            </div>
-            {{ input(book_form.table_of_contents, book_error['table_of_contents'])}}
-            {{ input(book_form.description, book_error['description'])}}
-            {{book_form.submit1}}
-        </form>
         </div>
-        <div  id="magazine_form">
-        <form class="login" method="post">
-            {{ magazine_form.hidden_tag() }}
-            <div class="row">
-                <div class="col">
-                    {{ input( magazine_form.title_of_magazine ,magazine_error['title_of_magazine']) }}
-                </div>
-                <div class="col">
-                    {{ input(magazine_form.issue, magazine_error['issue'])}}
-                </div>
+        <p class="myText">Authors:</p>
+        <div class="row">
+            <div class="col">
+                {{ input(book_form.first_name, book_error['first_name'])}}
             </div>
-            <div class="row">
-                <div class="col">
-                    <p class="myText">Language:</p>
-                    {{ input(magazine_form.language, magazine_error['language'])}}
-                </div>
-                <div class="col">
-                    <p class="myText">Category:</p>
-                    {{ input(magazine_form.category, magazine_error['category'])}}
-                </div>
+            <div class="col">
+                {{ input(book_form.surname, book_error['surname'])}}
             </div>
-                        <div class="row">
-                <div class="col">
-                    <p class="myText">Year of publication:</p>
-                    {{ input(book_form.pub_date, book_error['pub_date'])}}
-                </div>
-                <div class="col">
-                </div>
-            </div>
-            {{ input(magazine_form.tag, magazine_error['tag'])}}
-            {{ input(magazine_form.table_of_contents, magazine_error['table_of_contents'])}}
-            {{ input(magazine_form.description, magazine_error['description'])}}
-            {{ magazine_form.submit2}}
-        </form>
         </div>
-    </main>
+        <div class="row">
+            <div class="col">
+                {{ input(book_form.first_name_1, book_error['first_name_1'])}}
+            </div>
+            <div class="col">
+                {{ input(book_form.surname_1, book_error['surname_1'])}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{ input(book_form.first_name_2, book_error['first_name_2'])}}
+            </div>
+            <div class="col">
+                {{ input(book_form.surname_2, book_error['surname_2'])}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p class="myText">Language:</p>
+                {{ input(book_form.language, book_error['language'])}}
+            </div>
+            <div class="col">
+                <p class="myText">Category:</p>
+                {{ input(book_form.category, book_error['category'])}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p class="myText">Year of publication:</p>
+                {{ input(book_form.pub_date, book_error['pub_date'])}}
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        {{ input(book_form.table_of_contents, book_error['table_of_contents'])}}
+        {{ input(book_form.description, book_error['description'])}}
+        {{book_form.submit1}}
+    </form>
 </div>
+<div id="magazine_form">
+    <form class="login" method="post">
+        {{ magazine_form.hidden_tag() }}
+        <div class="row">
+            <div class="col">
+                {{ input( magazine_form.title_of_magazine ,magazine_error['title_of_magazine']) }}
+            </div>
+            <div class="col">
+                {{ input(magazine_form.issue, magazine_error['issue'])}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p class="myText">Language:</p>
+                {{ input(magazine_form.language, magazine_error['language'])}}
+            </div>
+            <div class="col">
+                <p class="myText">Category:</p>
+                {{ input(magazine_form.category, magazine_error['category'])}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p class="myText">Year of publication:</p>
+                {{ input(book_form.pub_date, book_error['pub_date'])}}
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        {{ input(magazine_form.tag, magazine_error['tag'])}}
+        {{ input(magazine_form.table_of_contents, magazine_error['table_of_contents'])}}
+        {{ input(magazine_form.description, magazine_error['description'])}}
+        {{ magazine_form.submit2}}
+    </form>
+</div>
+
 {% endblock %}

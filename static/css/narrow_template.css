@@ -1,0 +1,12 @@
+.my_container {
+
+    max-width: 30em;
+}
+
+.submits {
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    /*background-color: #ffffff00;*/
+    /*border-color: #f8f9fa;*/
+}
