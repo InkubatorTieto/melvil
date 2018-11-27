@@ -1,4 +1,4 @@
-from flask import url_for, session
+from flask import session
 from datetime import date
 from random import choice, randint
 
@@ -61,8 +61,8 @@ def test_add_book(view_book, client, login_form_admin_credentials):
     session.clear()
 
 
-def test_add_magazine(view_book, client, login_form_admin_credentials):
-    view_book.radio.data = 'magazine'
+def test_add_magazine(view_magazine, client, login_form_admin_credentials):
+    view_magazine.radio.data = 'magazine'
     client.post(url_for('library.login'),
                 data=login_form_admin_credentials.data)
     client.post(url_for('library_books.add_book'),
