@@ -361,7 +361,6 @@ def reset_with_token(token):
 @require_logged_in()
 def reserve(copy_id):
     try:
-        print("TWORZE OBIEKT !!!")
         copy = Copy.query.get(copy_id)
         copy.available_status = BookStatus.RESERVED
         res = RentalLog(
