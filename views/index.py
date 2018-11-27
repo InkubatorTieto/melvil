@@ -219,7 +219,7 @@ def contact():
     form = ContactForm()
     if form.validate_on_submit():
         email_template = open(
-            './templates/contact_confirmation.html', 'r').read()
+            './templates/email_template/contact_confirmation.html', 'r').read()
         try:
             send_email(
                 'Contact confirmation, title: ' + form.title.data,
@@ -764,7 +764,7 @@ def admin_dashboard():
             
             except exc.SQLAlchemyError:
                 abort(500)
-            flash('Item borrowed', 'Success!')
+            flash('Item borrowed')
             return redirect(url_for('library.admin_dashboard'))
         
         if return_form.submit.data and return_form.validate_on_submit():
@@ -782,7 +782,7 @@ def admin_dashboard():
             
             except exc.SQLAlchemyError:
                 abort(500)
-            flash('Item returned!', 'Success!')
+            flash('Item returned!')
             return redirect(url_for('library.admin_dashboard'))
     
     else:

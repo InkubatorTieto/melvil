@@ -1,105 +1,102 @@
 {% extends "base.html" %}
 {% block title %} {{ item.type }} description {% endblock %}
-{% block head %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/item_description.css') }}">
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/item_description.css') }}">
 {% endblock %}
+
 {% block content %}
-    {% from "macros.html" import table_row, copy_info_row, flashed_message with context %}
-    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-        <main role="main" class="inner cover">
-            <div>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {{ flashed_message(messages) }}
-                {% endwith %}
+{% from "macros.html" import table_row, copy_info_row, flashed_message with context %}
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {{ flashed_message(messages) }}
+    {% endwith %}
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="wrap">
+            <p class="form-title">DESCRIPTION</p>
+
+            <table class="item-description">
+                {{ table_row('Title', item.title) }}
+
+                {% if item.type == 'magazine' %}
+                {{ table_row('Year', item.year) }}
+                {{ table_row('Issue', item.issue) }}
+                {% elif item.type == 'book' %}
+                {{ table_row('Original Title', item.original_title) }}
+                {{ table_row('Authors', authors_list) }}
+                {{ table_row('ISBN', item.isbn) }}
+                {{ table_row('Publication date', item.pub_date.strftime('%Y')) }}
+                {{ table_row('Publisher', item.publisher) }}
+                {% else %}
+                <p class="error-info"> There occurred some problems with loading library
+                    item. </p>
+                {% endif %}
+
+                {{ table_row('Language', item.language.capitalize()) }}
+                {{ table_row('Tags', tags_list) }}
+
+                <tr data-toggle="collapse" data-target="#collapseDescription">
+                    <th>
+                        Description <i class="fa fa-caret-down"></i>
+                    </th>
+                </tr>
+            </table>
+            <div id="collapseDescription" class="collapse" aria-labelledby="headingOne"
+                 data-parent="#accordion">
+                <p class="item-description">{{ item.description }}</p>
             </div>
-            <div class="container my_container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="wrap">
-                            <p class="subpage-title">DESCRIPTION</p>
 
-                            <table class="item-description">
-                                {{ table_row('Title', item.title) }}
-
-                                {% if item.type == 'magazine' %}
-                                    {{ table_row('Year', item.year) }}
-                                    {{ table_row('Issue', item.issue) }}
-                                {% elif item.type == 'book' %}
-                                    {{ table_row('Original Title', item.original_title) }}
-                                    {{ table_row('Authors', authors_list) }}
-                                    {{ table_row('ISBN', item.isbn) }}
-                                    {{ table_row('Publication date', item.pub_date.strftime('%Y')) }}
-                                    {{ table_row('Publisher', item.publisher) }}
-                                {% else %}
-                                    <p class="error-info"> There occurred some problems with loading library
-                                        item. </p>
-                                {% endif %}
-
-                                {{ table_row('Language', item.language.capitalize()) }}
-                                {{ table_row('Tags', tags_list) }}
-
-                                <tr data-toggle="collapse" data-target="#collapseDescription">
-                                    <th>
-                                        Description <i class="fa fa-caret-down"></i>
-                                    </th>
-                                </tr>
-                            </table>
-                            <div id="collapseDescription" class="collapse" aria-labelledby="headingOne"
-                                 data-parent="#accordion">
-                                <p class="item-description">{{ item.description }}</p>
-                            </div>
-
-                            {% if admin %}
-                                <div class="item-buttons">
-                                    <a type="button" role="button" class="btn btn-success btn-sm"
-                                       href="{{ url_for( 'library.add_copy', item_id=item.id ) }}">Add Copy</a>
-                                    <a type="button" role="button" class="btn btn-primary btn-sm"
-                                       href="{{ url_for( 'library_books.edit_book', item_id=item.id ) }}">Edit {{ item.type|capitalize }}</a>
-                                    <a type="button" role="button" class="btn btn-danger btn-sm"
-                                       href="{{ url_for('library.remove_item', item_id=item.id)}}">Delete {{ item.type|capitalize }}</a>
-                                </div>
-                            {% endif %}
-
-                            {% if item.copies %}
-                                <p class="subpage-title copies">COPIES of {{ item.type }}</p>
-                                <table class="copies-info">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Asset Code</th>
-                                        <th>Has CD?</th>
-                                        <th>Status</th>
-                                        <th colspan="3">Actions</th>
-                                    </tr>
-                                    {% for copy in item.copies %}
-                                        <tr>
-                                            {{ copy_info_row(copy, loop.index) }}
-                                            <td class="table-button">
-                                                <a type="button" role="button"
-                                                   class="btn btn-success btn-sm {{ 'disabled' if copy.available_status|string() != 'BookStatus.RETURNED' }}"
-                                                   href="{{ url_for( 'library.reserve', copy_id=copy.id ) }}">Reserve</a>
-                                            </td>
-                                            {% if admin %}
-                                                <td class="table-button">
-                                                    <a type="button" role="button" class="btn btn-primary btn-sm"
-                                                       href="{{ url_for( 'library.edit_copy', copy_id=copy.id ) }}">Edit</a>
-                                                </td>
-                                                <td class="table-button">
-                                                    <a type="button" role="button" class="btn btn-danger btn-sm"
-                                                       href="{{ url_for('library.remove_copy', item_id=item.id, copy_id=copy.id)}}">Delete</a>
-                                                </td>
-                                            {% endif %}
-                                        </tr>
-                                    {% endfor %}
-                                </table>
-                            {% else %}
-                                <p class="error-info">No Copies - nothing to borrow.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+            {% if admin %}
+            <div class="item-buttons">
+                <a type="button" role="button" class="btn btn-success btn-sm"
+                   href="{{ url_for( 'library.add_copy', item_id=item.id ) }}">Add Copy</a>
+                <a type="button" role="button" class="btn btn-primary btn-sm"
+                   href="{{ url_for( 'library_books.edit_book', item_id=item.id ) }}">Edit {{ item.type|capitalize
+                    }}</a>
+                <a type="button" role="button" class="btn btn-danger btn-sm"
+                   href="{{ url_for('library.remove_item', item_id=item.id)}}">Delete {{ item.type|capitalize }}</a>
             </div>
-        </main>
+            {% endif %}
+
+            {% if item.copies %}
+            <p class="subpage-title copies">COPIES of {{ item.type }}</p>
+            <table class="copies-info">
+                <tr>
+                    <th>#</th>
+                    <th>Asset Code</th>
+                    <th>Has CD?</th>
+                    <th>Status</th>
+                    <th colspan="3">Actions</th>
+                </tr>
+                {% for copy in item.copies %}
+                <tr>
+                    {{ copy_info_row(copy, loop.index) }}
+                    <td class="table-button">
+                        <a type="button" role="button"
+                           class="btn btn-success btn-sm {{ 'disabled' if copy.available_status|string() != 'BookStatus.RETURNED' }}"
+                           href="{{ url_for( 'library.reserve', copy_id=copy.id ) }}">Reserve</a>
+                    </td>
+                    {% if admin %}
+                    <td class="table-button">
+                        <a type="button" role="button" class="btn btn-primary btn-sm"
+                           href="{{ url_for( 'library.edit_copy', copy_id=copy.id ) }}">Edit</a>
+                    </td>
+                    <td class="table-button">
+                        <a type="button" role="button" class="btn btn-danger btn-sm"
+                           href="{{ url_for('library.remove_copy', item_id=item.id, copy_id=copy.id)}}">Delete</a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p class="error-info">No Copies - nothing to borrow.</p>
+            {% endif %}
+        </div>
     </div>
+</div>
 
 {% endblock %}

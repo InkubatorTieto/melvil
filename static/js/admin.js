@@ -18,7 +18,7 @@
     $(document).ready(function(){
         var reservedBtn = $("#showReserv");
         var borrowedBtn = $("#showReturn");
-        var mystart = 0;
+        var mystart = false;
 
         if (reservedBtn){
             reservedBtn.on("click", show_reserved);
@@ -27,8 +27,8 @@
             borrowedBtn.on("click", show_borrowed);
         }
 
-        if (mystart === 0){
+        if (mystart === false){
             show_reserved();
-            mystart = 1;
+            mystart = true;
         }
      });

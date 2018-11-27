@@ -29,7 +29,8 @@ class LoginForm(FlaskForm):
                              validators=[DataRequired()],
                              render_kw=({'class': 'inputs',
                                          'placeholder': 'Password'}))
-    remember_me = BooleanField('Remember Me')
+    remember_me = BooleanField(label='Remember Me')
+
     submit = SubmitField('Sign In',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
@@ -105,7 +106,7 @@ class ContactForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     query = StringField('Search',
-                        render_kw=({'class': 'form-control',
+                        render_kw=({'class': 'inputs',
                                     'type': 'text',
                                     'placeholder': 'Search...'}))
     submit = SubmitField('Search')
@@ -134,7 +135,7 @@ class WishlistForm(FlaskForm):
     type = SelectField('Item Type',
                        choices=[('book', 'Book'), ('magazine', 'Magazine')],
                        render_kw=({
-                           'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                           'class': 'inputs custom-select mb-2 mr-sm-2 mb-sm-0',
                            'id': 'mySelect'}))
 
     authors = StringField('authors',
@@ -152,7 +153,7 @@ class WishlistForm(FlaskForm):
                                           datetime.now().year + 1)],
                            validators=[check_pub_date],
                            render_kw=({
-                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'class': 'inputs custom-select mb-2 mr-sm-2 mb-sm-0',
                                'id': 'mySelect',
                                'placeholder': 'Year of publication'}))
 
