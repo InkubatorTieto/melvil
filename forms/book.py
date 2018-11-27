@@ -40,7 +40,8 @@ class LibraryItemForm(FlaskForm):
                            choices=languages,
                            validators=[check_language],
                            render_kw=({
-                               'class': 'inputs custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'class': 'inputs custom-select '
+                                        'mb-2 mr-sm-2 mb-sm-0',
                                'id': 'mySelect',
                                'placeholder': 'Language'}))
 
@@ -48,7 +49,8 @@ class LibraryItemForm(FlaskForm):
                            choices=categories,
                            validators=[check_category],
                            render_kw=({
-                               'class': 'inputs custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'class': 'inputs custom-select'
+                                        ' mb-2 mr-sm-2 mb-sm-0',
                                'id': 'mySelect',
                                'placeholder': 'Category'}))
 
@@ -68,7 +70,8 @@ class LibraryItemForm(FlaskForm):
                                           datetime.now().year + 1)],
                            validators=[check_pub_date],
                            render_kw=({
-                               'class': 'inputs custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'class': 'inputs custom-select '
+                                        'mb-2 mr-sm-2 mb-sm-0',
                                'id': 'mySelect',
                                'placeholder': 'Year of publication'}))
 
