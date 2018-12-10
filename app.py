@@ -19,10 +19,10 @@ mail = Mail()
 sentry = Sentry()
 client = Client()
 
-if os.getenv('APP_SETTINGS', '') == 'prod':
-    config_env = ProdConfig
-else:
+if os.getenv('FLASK_ENV', '') == 'development':
     config_env = DevConfig
+else:
+    config_env = ProdConfig
 
 
 def create_app(config=config_env):
