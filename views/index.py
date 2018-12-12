@@ -179,7 +179,7 @@ def search():
                                        admin=admin,
                                        pagination=paginate_query,
                                        endpoint='library.search',
-                                       form=form, )
+                                       form=form)
             except RuntimeError:
                 return ErrorMessage.message('Cannot connect to database!')
         elif request.args.get('query'):
@@ -412,13 +412,8 @@ def remove_item(item_id):
                methods=['GET', 'POST'])
 @require_role('ADMIN')
 def remove_copy(item_id, copy_id):
-    try:
-        user = User.query.get(session['id'])
-        admin = user.has_role('ADMIN')
-    except KeyError:
-        abort(401)
-    except Exception:
-        abort(500)
+    user = User.query.get(session['id'])
+    admin = user.has_role('ADMIN')
     form = RemoveForm()
     item = LibraryItem.query.get_or_404(item_id)
     copy = Copy.query.filter_by(id=copy_id).first_or_404()
@@ -442,22 +437,14 @@ def remove_copy(item_id, copy_id):
 @library.route('/wishlist', methods=['GET', 'POST'])
 @require_logged_in()
 def wishlist():
-    try:
-        user = User.query.get(session['id'])
-        admin = user.has_role('ADMIN')
-    except KeyError:
-        abort(401)
-    except Exception:
-        abort(500)
-
+    user = User.query.get(session['id'])
+    admin = user.has_role('ADMIN')
     if request.method == 'GET':
         if not request.args or not request.args.get('query'):
             form = SearchForm()
             page = request.args.get('page', 1, type=int)
-
             if db.session.query(WishListItem).first() is None:
                 return render_template('wishlist.html', admin=admin)
-
             try:
                 data = (
                     WishListItem.query.order_by(
@@ -711,7 +698,7 @@ def admin_dashboard():
                                    endpoint='library.admin_dashboard',
                                    search_form=search_form,
                                    borrow_form=borrow_form,
-                                   return_form=return_form, )
+                                   return_form=return_form)
 
     elif request.method == 'POST':
         search_form = SearchForm(prefix="search")
@@ -719,7 +706,7 @@ def admin_dashboard():
         return_form = ReturnForm(prefix="return")
         if borrow_form.submit.data and borrow_form.validate_on_submit():
             copy_asset = request.args.get('asset')
-            borrow_item = Copy.query.filter_by(asset_code=copy_asset).\
+            borrow_item = Copy.query.filter_by(asset_code=copy_asset). \
                 first_or_404()
             rental_log_change = RentalLog.query.filter_by(
                 copy_id=borrow_item.id).first_or_404()

@@ -632,13 +632,14 @@ def registration_form():
     """
     Returns registration form containing valid data.
     """
-    new_password = g.person.password(length=8)
+    new_password = g.cryptographic.hash() + "!A"
     form = RegistrationForm(
         email=g.person.name() + '.' + g.person.surname() + '@tieto.com',
         first_name=g.person.name(),
         surname=g.person.surname(),
         password=new_password,
         confirm_pass=new_password,
+        submit=True
     )
     yield form
 

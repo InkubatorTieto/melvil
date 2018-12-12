@@ -49,7 +49,6 @@ def test_db_after_add_copy(copy_form, db_book, client,
     client.post(url_for('library.add_copy',
                         item_id=db_book.id),
                 data=copy_form[0].data)
-
     copy = Copy.query.filter_by(
         asset_code=copy_form[0].asset_code.data).first()
     assert copy, \
@@ -86,9 +85,10 @@ def test_asset_code_regex(values, expected):
 
 
 def test_edit_get_status_code(client, db_copies, login_form_admin_credentials):
-    client.post(url_for('library.login'),
-                data=login_form_admin_credentials.data)
-
+    resp = client.post(url_for('library.login'),
+                       data=login_form_admin_credentials.data)
+    assert resp.status_code == 200, \
+        "Edit_copy GET view wrong response"
     resp = client.get(url_for('library.edit_copy',
                               copy_id=db_copies[0].id))
     assert resp.status_code == 200, \
@@ -129,12 +129,10 @@ def test_db_after_edit_copy(copy_form, db_copies, client,
     client.post(url_for('library.add_copy',
                         item_id=db_book.id), data=copy_form[0].data)
     copy_before_edit = Copy.query.get(db_copies[0].id)
-
     client.post(url_for('library.edit_copy',
                         copy_id=db_copies[0].id),
                 data=copy_form[1].data)
     copy = Copy.query.get(db_copies[0].id)
-
     assert copy, \
         "Copy not added to db"
     assert copy.id == copy_before_edit.id, \

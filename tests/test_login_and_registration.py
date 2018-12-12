@@ -85,7 +85,7 @@ def test_surname(view_registration, values, result):
 @pytest.mark.parametrize("values, result", [
     ("Pawełdsa", False),
     ("Żźćńęśńóąę", False),
-    # ("asdac.asd@o2", False),
+    ("asdac.asd@o2", False),
     ("P.awełasd", False),
     ("pawelasd", False),
     ("!123pasa", False),

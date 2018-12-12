@@ -12,7 +12,9 @@ IF "%ARG%"=="/t" (
     CALL docker\remove-container.bat /t >NUL
     IF "%ARG2%"=="/cov" (
     docker-compose -f %DEV% run --name melvil_tests web pytest --cov
-    ) ELSE (
+    ) ELSE IF "ARG2%"=="/s" (
+    docker-compose -f %DEV% run --name melvil_tests web pytest -s
+    )ElSE (
     docker-compose -f %DEV% run --name melvil_tests web pytest
     )
 ) ELSE IF "%ARG%"=="/p" (
