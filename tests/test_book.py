@@ -1,5 +1,5 @@
 from flask import session
-from datetime import date, datetime
+import datetime 
 from random import choice, randint
 
 from flask import url_for
@@ -8,6 +8,9 @@ import pytest
 
 from models import Author, Book, Tag, Magazine, LibraryItem
 from forms.book import BookForm, MagazineForm
+
+
+year_now = datetime.datetime.now().year
 
 
 def test_add_book(view_book, client, login_form_admin_credentials):
@@ -47,7 +50,7 @@ def test_add_book(view_book, client, login_form_admin_credentials):
         "The original title of book is not the same as given at the entrance "
     assert view_book.publisher.data == book.publisher, \
         "The publisher is not the same as given at the entrance "
-    assert date(year=int(view_book.pub_date.data),
+    assert datetime.date(year=int(view_book.pub_date.data),
                 month=1,
                 day=1) == book.pub_date, \
         "The year of publication is not the same as given at the entrance "
@@ -85,7 +88,7 @@ def test_add_magazine(view_magazine, client, login_form_admin_credentials):
         "Category of book is not the same as given at the entrance "
     assert view_magazine.description.data == magazine.description, \
         "The book description is not the same as given at the entrance "
-    assert date(year=int(view_magazine.pub_date.data),
+    assert datetime.date(year=int(view_magazine.pub_date.data),
                 month=1,
                 day=1) == magazine.year, \
         "The year of publication is not the same as given at the entrance "
@@ -191,8 +194,8 @@ def test_check_isbn(view_book, values, result):
 @pytest.mark.parametrize("values, result", [
     ("1969", False),
     ("1970", True),
-    (str(datetime.now().year), True),
-    (str(datetime.now().year + 1), False),
+    (str(year_now), True),
+    (str(year_now+1), False),
     (2005, False)
 
 ])
@@ -257,7 +260,7 @@ def test_update_book(view_edit_book, client, login_form_admin_credentials):
         "Book original_title has not been updated"
     assert tmp_item.publisher == form.publisher.data, \
         "Book publisher has not been updated"
-    assert tmp_item.pub_date == date(year=int(form.pub_date.data),
+    assert tmp_item.pub_date == datetime.date(year=int(form.pub_date.data),
                                      month=1,
                                      day=1), \
         "Book pub_date has not been updated"
@@ -303,7 +306,7 @@ def test_update_magazine(view_edit_magazine, client,
         "Book category has not been updated"
     assert tmp_item.description == form.description.data, \
         "Book description has not been updated"
-    assert tmp_item.year == date(year=int(form.pub_date.data),
+    assert tmp_item.year == datetime.date(year=int(form.pub_date.data),
                                  month=1,
                                  day=1), \
         "Book pub_date has not been updated"
