@@ -15,6 +15,13 @@ class Config(object):
     MAIL_PASSWORD = getenv("MAIL_PASSWORD")
     ADMINS = [getenv("MAIL_USERNAME")]
 
+    LDAP_HOST = getenv("LDAP_HOST")
+    LDAP_USERNAME = getenv("LDAP_USERNAME")
+    LDAP_PASSWORD = getenv("LDAP_PASSWORD")
+    LDAP_BASE_DN = getenv("LDAP_BASE_DN")
+    LDAP_LOGIN_VIEW = getenv("LDAP_LOGIN_VIEW")
+    LDAP_USER_OBJECT_FILTER = getenv("LDAP_USER_OBJECT_FILTER")
+
 
 class DevConfig(Config):
     SECRET_KEY = "4f\g45t45gfjerkfefker"
