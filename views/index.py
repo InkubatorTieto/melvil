@@ -11,6 +11,7 @@ from flask import (
     abort,
     Blueprint,
     flash,
+    g,
     redirect,
     render_template,
     request,
@@ -36,6 +37,7 @@ from forms.forms import (
     EditPasswordForm
 )
 from init_db import db
+from ldap_utils import ldap_client
 from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
@@ -59,54 +61,117 @@ def index():
 
 
 @library.route('/login', methods=['GET', 'POST'])
-@require_not_logged_in()
 def login():
-    if request.method == 'GET':
-        if 'logged_in' in session:
-            message_body = 'You are already logged in.'
-            message_title = 'Error!'
-            return render_template('message.html',
-                                   message_title=message_title,
-                                   message_body=message_body)
+
+    """Login view for client.
+
+    Connects to active directory check credentials
+    and login.
+    Retrieves desired data about user from AD.
+    """
+
+    form = LoginForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = form.username.data
+            passwd = form.password.data
+            test_conn = ldap_client.bind_user(user, passwd)
+            if not test_conn or passwd == '':
+                message = 'Invalid username or password !'
+                message_category = 'error'
+                flash(message, message_category)
+                return render_template('login.html',
+                                       form=form,
+                                       error=form.errors)
+            else:
+                # search user and get its data
+                result = ldap_client.get_object_details(user=user)
+                # op = UserOperations()
+                if '@' in user:
+                    user = result['sAMAccountName'][0].decode("utf-8")
+                # # checkes if user is not in db
+                # if not op.is_authorized(user):
+                #     message = 'You are not authorized !'
+                #     message_category = 'error'
+                #     flash(message, message_category)
+                #     return render_template('user_authentication/login.html',
+                #                            form=form,
+                #                            error=form.errors)
+                user = User.query.filter_by(email=user).first()
+                session['logged_in'] = True
+                session['username'] = user.username
+                session['full_name'] = user.full_name()
+                session['is_admin'] = user.has_role('admin')
+                response = redirect(url_for('backend.index'))
+                response.set_cookie('cookie_username', session['username'])
+                return response
         else:
-            form = LoginForm()
+            message = 'Invalid username or password !'
+            message_category = 'error'
+            flash(message, message_category)
             return render_template('login.html',
                                    form=form,
                                    error=form.errors)
+
+    elif request.method == 'GET':
+        if g.user:
+            return redirect(url_for('backend.index'))
+
     else:
-        form = LoginForm()
-        try:
-            if form.validate_on_submit():
-                data = User.query.filter_by(email=form.email.data).first()
-                if (data is not None and
-                        check_password_hash(data.password_hash,
-                                            form.password.data) and
-                        data.active):
-                    session['logged_in'] = True
-                    session['id'] = data.id
-                    session['email'] = data.email
-                    if data.has_role('ADMIN'):
-                        session['admin'] = True
-                    return render_template('index.html',
-                                           session=session)
-                else:
-                    message_body = 'Login failed or ' \
-                                   'your account is not activated'
-                    message_title = 'Error!'
-                    return render_template('message.html',
-                                           message_title=message_title,
-                                           message_body=message_body)
-            else:
-                return render_template('login.html',
-                                       title='Sign In',
-                                       form=form,
-                                       error=form.errors)
-        except (ValueError, TypeError):
-            message_body = 'Something went wrong'
-            message_title = 'Error!'
-            return render_template('message.html',
-                                   message_title=message_title,
-                                   message_body=message_body)
+        abort(405)
+
+    return render_template('login.html',
+                           form=form,
+                           error=form.errors)
+
+# @require_not_logged_in()
+# def login():
+#     if request.method == 'GET':
+#         if 'logged_in' in session:
+#             message_body = 'You are already logged in.'
+#             message_title = 'Error!'
+#             return render_template('message.html',
+#                                    message_title=message_title,
+#                                    message_body=message_body)
+#         else:
+#             form = LoginForm()
+#             return render_template('login.html',
+#                                    form=form,
+#                                    error=form.errors)
+#     else:
+#         form = LoginForm()
+#         try:
+#             if form.validate_on_submit():
+#                 data = User.query.filter_by(email=form.email.data).first()
+#                 if (data is not None and
+#                         check_password_hash(data.password_hash,
+#                                             form.password.data) and
+#                         data.active):
+#                     session['logged_in'] = True
+#                     session['id'] = data.id
+#                     session['email'] = data.email
+#                     if data.has_role('ADMIN'):
+#                         session['admin'] = True
+#                     return render_template('index.html',
+#                                            session=session)
+#                 else:
+#                     message_body = 'Login failed or ' \
+#                                    'your account is not activated'
+#                     message_title = 'Error!'
+#                     return render_template('message.html',
+#                                            message_title=message_title,
+#                                            message_body=message_body)
+#             else:
+#                 return render_template('login.html',
+#                                        title='Sign In',
+#                                        form=form,
+#                                        error=form.errors)
+#         except (ValueError, TypeError):
+#             message_body = 'Something went wrong'
+#             message_title = 'Error!'
+#             return render_template('message.html',
+#                                    message_title=message_title,
+#                                    message_body=message_body)
 
 
 @library.route('/registration', methods=['GET', 'POST'])
