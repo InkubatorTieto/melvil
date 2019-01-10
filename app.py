@@ -10,7 +10,7 @@ from sqlalchemy.exc import OperationalError, TimeoutError
 
 from config import DevConfig, ProdConfig
 from init_db import db
-from ldap_utils import register_hooks, ldap_client
+from ldap_utils.ldap_utils import register_hooks, ldap_client
 from utils.xlsx_reader import get_books, get_magazines
 from views.book import library_books
 from views.book_borrowing_dashboard import library_book_borrowing_dashboard

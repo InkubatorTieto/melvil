@@ -37,7 +37,7 @@ from forms.forms import (
     EditPasswordForm
 )
 from init_db import db
-from ldap_utils import ldap_client
+from ldap_utils.ldap_utils import ldap_client
 from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
@@ -77,18 +77,15 @@ def login():
             passwd = form.password.data
             test_conn = ldap_client.bind_user(user, passwd)
             if not test_conn or passwd == '':
-                message = 'Invalid username or password !'
-                message_category = 'error'
-                flash(message, message_category)
-                return render_template('login.html',
-                                       form=form,
-                                       error=form.errors)
+                message_body = 'Invalid username and/or password'
+                message_title = 'Error!'
+                return render_template('message.html',
+                                        message_title=message_title,
+                                        message_body=message_body)
             else:
                 # search user and get its data
-                result = ldap_client.get_object_details(user=user)
+                user = ldap_client.get_object_details(user=user)
                 # op = UserOperations()
-                if '@' in user:
-                    user = result['sAMAccountName'][0].decode("utf-8")
                 # # checkes if user is not in db
                 # if not op.is_authorized(user):
                 #     message = 'You are not authorized !'
@@ -97,21 +94,20 @@ def login():
                 #     return render_template('user_authentication/login.html',
                 #                            form=form,
                 #                            error=form.errors)
-                user = User.query.filter_by(email=user).first()
+                # user = User.query.filter_by(email=user).first()
                 session['logged_in'] = True
-                session['username'] = user.username
-                session['full_name'] = user.full_name()
-                session['is_admin'] = user.has_role('admin')
-                response = redirect(url_for('backend.index'))
-                response.set_cookie('cookie_username', session['username'])
-                return response
-        else:
-            message = 'Invalid username or password !'
-            message_category = 'error'
-            flash(message, message_category)
-            return render_template('login.html',
-                                   form=form,
-                                   error=form.errors)
+                session['id'] = user['employeeID'][0].decode('utf-8')
+                # session['email'] = user['userPrincipalName'][0].decode('utf-8')
+                # session['is_admin'] = user.has_role('admin')
+                return render_template('index.html', session=session)
+        # else:
+        #     print('!!!!!!!!!!!!!!!!!!!!')
+        #     message = 'Invalid username or password !'
+        #     message_category = 'error'
+        #     flash(message, message_category)
+        #     return render_template('login.html',
+        #                            form=form,
+        #                            error=form.errors)
 
     elif request.method == 'GET':
         if g.user:
@@ -174,61 +170,61 @@ def login():
 #                                    message_body=message_body)
 
 
-@library.route('/registration', methods=['GET', 'POST'])
-@require_not_logged_in()
-def registration():
-    if request.method == 'GET':
-        form = RegistrationForm()
-        return render_template('registration.html',
-                               form=form,
-                               error=form.errors)
-    else:
-        form = RegistrationForm()
-        if form.validate_on_submit():
-            try:
-                if User.query.filter_by(email=form.email.data).first():
-                    message_body = 'User already exists'
-                    message_title = 'Oops!'
-                    return render_template('message.html',
-                                           message_title=message_title,
-                                           message_body=message_body)
-                else:
-                    new_user = User(
-                        email=form.email.data,
-                        first_name=form.first_name.data,
-                        surname=form.surname.data,
-                        password_hash=generate_password_hash(
-                            form.password.data))
-                    send_confirmation_email(new_user.email)
-                    db.session.add(new_user)
-                    db.session.commit()
-            except (ValueError, TypeError):
-                message_body = 'Registration failed'
-                message_title = 'Error!'
-                return render_template('message.html',
-                                       message_title=message_title,
-                                       message_body=message_body)
-        else:
-            return render_template('registration.html',
-                                   form=form,
-                                   error=form.errors)
-        message_body = 'The registration was successful.'
-        message_title = 'Success!'
-        return render_template('message.html',
-                               message_title=message_title,
-                               message_body=message_body)
+# @library.route('/registration', methods=['GET', 'POST'])
+# @require_not_logged_in()
+# def registration():
+#     if request.method == 'GET':
+#         form = RegistrationForm()
+#         return render_template('registration.html',
+#                                form=form,
+#                                error=form.errors)
+#     else:
+#         form = RegistrationForm()
+#         if form.validate_on_submit():
+#             try:
+#                 if User.query.filter_by(email=form.email.data).first():
+#                     message_body = 'User already exists'
+#                     message_title = 'Oops!'
+#                     return render_template('message.html',
+#                                            message_title=message_title,
+#                                            message_body=message_body)
+#                 else:
+#                     new_user = User(
+#                         email=form.email.data,
+#                         first_name=form.first_name.data,
+#                         surname=form.surname.data,
+#                         password_hash=generate_password_hash(
+#                             form.password.data))
+#                     send_confirmation_email(new_user.email)
+#                     db.session.add(new_user)
+#                     db.session.commit()
+#             except (ValueError, TypeError):
+#                 message_body = 'Registration failed'
+#                 message_title = 'Error!'
+#                 return render_template('message.html',
+#                                        message_title=message_title,
+#                                        message_body=message_body)
+#         else:
+#             return render_template('registration.html',
+#                                    form=form,
+#                                    error=form.errors)
+#         message_body = 'The registration was successful.'
+#         message_title = 'Success!'
+#         return render_template('message.html',
+#                                message_title=message_title,
+#                                message_body=message_body)
 
 
 @library.route('/search', methods=['GET'])
 @require_logged_in()
 def search():
-    try:
-        user = User.query.get(session['id'])
-        admin = user.has_role('ADMIN')
-    except KeyError:
-        abort(401)
-    except Exception:
-        abort(500)
+    # try:
+    #     user = User.query.get(session['id'])
+    #     admin = user.has_role('ADMIN')
+    # except KeyError:
+    #     abort(401)
+    # except Exception:
+    #     abort(500)
     if request.method == 'GET':
         if not request.args or not request.args.get('query'):
             form = SearchForm()
@@ -309,101 +305,101 @@ def logout():
     return render_template('index.html')
 
 
-@library.route('/confirm/<token>')
-def confirm_email(token):
-    try:
-        confirm_serializer = URLSafeTimedSerializer(DevConfig.SECRET_KEY)
-        email = confirm_serializer.loads(token,
-                                         salt='email-confirmation-salt',
-                                         max_age=3600)
-    except RuntimeError:
-        message_body = 'The confirmation link is invalid or has expired.'
-        message_title = 'Error!'
-        return render_template('message.html',
-                               message_title=message_title,
-                               message_body=message_body)
-    user = User.query.filter_by(email=email).first()
-    if user.active:
-        message_body = 'Account already confirmed. Please login.'
-        message_title = 'Error!'
-        return render_template('message.html',
-                               message_title=message_title,
-                               message_body=message_body)
-    else:
-        user.active = True
-        db.session.add(user)
-        db.session.commit()
-        message_body = 'Thank you for confirming your email address!'
-        message_title = 'Success!'
-        return render_template('message.html',
-                               message_title=message_title,
-                               message_body=message_body)
+# @library.route('/confirm/<token>')
+# def confirm_email(token):
+#     try:
+#         confirm_serializer = URLSafeTimedSerializer(DevConfig.SECRET_KEY)
+#         email = confirm_serializer.loads(token,
+#                                          salt='email-confirmation-salt',
+#                                          max_age=3600)
+#     except RuntimeError:
+#         message_body = 'The confirmation link is invalid or has expired.'
+#         message_title = 'Error!'
+#         return render_template('message.html',
+#                                message_title=message_title,
+#                                message_body=message_body)
+#     user = User.query.filter_by(email=email).first()
+#     if user.active:
+#         message_body = 'Account already confirmed. Please login.'
+#         message_title = 'Error!'
+#         return render_template('message.html',
+#                                message_title=message_title,
+#                                message_body=message_body)
+#     else:
+#         user.active = True
+#         db.session.add(user)
+#         db.session.commit()
+#         message_body = 'Thank you for confirming your email address!'
+#         message_title = 'Success!'
+#         return render_template('message.html',
+#                                message_title=message_title,
+#                                message_body=message_body)
 
 
-@library.route('/reset', methods=['GET', 'POST'])
-@require_not_logged_in()
-def reset():
-    form = ForgotPass()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user is not None:
-            if user.active:
-                send_password_reset_email(user.email)
-                message_body = 'Please check your email \
-                                for a password reset link.'
-                message_title = 'Success!'
-                return render_template('message.html',
-                                       message_title=message_title,
-                                       message_body=message_body)
-            else:
-                message_body = 'Your email address must be confirmed \
-                                before attempting a password reset.'
-                message_title = 'Error!'
-                return render_template('message.html',
-                                       message_title=message_title,
-                                       message_body=message_body)
-        else:
-            message_body = "This email doesn't exist"
-            message_title = '!'
-            return render_template('message.html',
-                                   message_title=message_title,
-                                   message_body=message_body)
-    return render_template('forgot_pass.html', form=form, error=form.errors)
+# @library.route('/reset', methods=['GET', 'POST'])
+# @require_not_logged_in()
+# def reset():
+#     form = ForgotPass()
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(email=form.email.data).first()
+#         if user is not None:
+#             if user.active:
+#                 send_password_reset_email(user.email)
+#                 message_body = 'Please check your email \
+#                                 for a password reset link.'
+#                 message_title = 'Success!'
+#                 return render_template('message.html',
+#                                        message_title=message_title,
+#                                        message_body=message_body)
+#             else:
+#                 message_body = 'Your email address must be confirmed \
+#                                 before attempting a password reset.'
+#                 message_title = 'Error!'
+#                 return render_template('message.html',
+#                                        message_title=message_title,
+#                                        message_body=message_body)
+#         else:
+#             message_body = "This email doesn't exist"
+#             message_title = '!'
+#             return render_template('message.html',
+#                                    message_title=message_title,
+#                                    message_body=message_body)
+#     return render_template('forgot_pass.html', form=form, error=form.errors)
 
 
-@library.route('/reset/<token>', methods=["GET", "POST"])
-def reset_with_token(token):
-    try:
-        password_reset_serializer = URLSafeTimedSerializer(
-            DevConfig.SECRET_KEY)
-        email = password_reset_serializer.loads(token,
-                                                salt='password-reset-salt',
-                                                max_age=3600)
-    except RuntimeError:
-        message_body = 'The password reset link is invalid or has expired.'
-        message_title = 'Error!'
-        return render_template('message.html',
-                               message_title=message_title,
-                               message_body=message_body)
-    form = PasswordForm()
-    if form.validate_on_submit():
-        try:
-            user = User.query.filter_by(email=email).first_or_404()
-        except ValueError:
-            message_body = 'Invalid email address!'
-            message_title = 'Error!'
-            return render_template('message.html',
-                                   message_title=message_title,
-                                   message_body=message_body)
-        user.password_hash = generate_password_hash(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('Your password has been updated!', 'success')
-        return redirect(url_for('library.login'))
-    return render_template('reset_password_with_token.html',
-                           form=form,
-                           token=token,
-                           error=form.errors)
+# @library.route('/reset/<token>', methods=["GET", "POST"])
+# def reset_with_token(token):
+#     try:
+#         password_reset_serializer = URLSafeTimedSerializer(
+#             DevConfig.SECRET_KEY)
+#         email = password_reset_serializer.loads(token,
+#                                                 salt='password-reset-salt',
+#                                                 max_age=3600)
+#     except RuntimeError:
+#         message_body = 'The password reset link is invalid or has expired.'
+#         message_title = 'Error!'
+#         return render_template('message.html',
+#                                message_title=message_title,
+#                                message_body=message_body)
+#     form = PasswordForm()
+#     if form.validate_on_submit():
+#         try:
+#             user = User.query.filter_by(email=email).first_or_404()
+#         except ValueError:
+#             message_body = 'Invalid email address!'
+#             message_title = 'Error!'
+#             return render_template('message.html',
+#                                    message_title=message_title,
+#                                    message_body=message_body)
+#         user.password_hash = generate_password_hash(form.password.data)
+#         db.session.add(user)
+#         db.session.commit()
+#         flash('Your password has been updated!', 'success')
+#         return redirect(url_for('library.login'))
+#     return render_template('reset_password_with_token.html',
+#                            form=form,
+#                            token=token,
+#                            error=form.errors)
 
 
 @library.route('/reservation/<copy_id>')
