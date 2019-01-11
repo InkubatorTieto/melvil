@@ -20,3 +20,8 @@ def register_hooks(app):
             # Create a global with the LDAP groups the user is a member of.
             g.ldap_groups = ldap_client.get_user_groups(
                 user=session['username'])
+
+
+def refine_data(object, data_tag):
+    out = object[data_tag][0].decode('utf8')
+    return out

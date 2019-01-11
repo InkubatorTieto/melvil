@@ -37,7 +37,7 @@ from forms.forms import (
     EditPasswordForm
 )
 from init_db import db
-from ldap_utils.ldap_utils import ldap_client
+from ldap_utils.ldap_utils import ldap_client, refine_data
 from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
@@ -79,35 +79,47 @@ def login():
             if not test_conn or passwd == '':
                 message_body = 'Invalid username and/or password'
                 message_title = 'Error!'
-                return render_template('message.html',
-                                        message_title=message_title,
-                                        message_body=message_body)
+                return render_template(
+                    'message.html',
+                    message_title=message_title,
+                    message_body=message_body
+                    )
             else:
-                # search user and get its data
-                user = ldap_client.get_object_details(user=user)
-                # op = UserOperations()
-                # # checkes if user is not in db
-                # if not op.is_authorized(user):
-                #     message = 'You are not authorized !'
-                #     message_category = 'error'
-                #     flash(message, message_category)
-                #     return render_template('user_authentication/login.html',
-                #                            form=form,
-                #                            error=form.errors)
-                # user = User.query.filter_by(email=user).first()
+                user_ldap = ldap_client.get_object_details(user=user)
+                user_ldap_data = {
+                    'mail': refine_data(user_ldap, 'mail'),
+                    'givenName': refine_data(user_ldap, 'givenName'),
+                    'sn': refine_data(user_ldap, 'sn')
+                }
+                user_db =\
+                    User.query.filter_by(email=form.email.data).first()
+                create_user = None
+                if not user_db:
+                    create_user = True
+                else:
+                    user_db_data = {
+                        'mail': user_db.email,
+                        'givenName': user_db.first_name,
+                        'sn': user_db.surname
+                    }
+                    if user_db_data != user_ldap_data:
+                        create_user = True
+                        db.session.delete(user_db)
+                        db.session.commit()
+                if create_user:
+                    new_user = User(
+                        email=user_ldap_data['mail'],
+                        first_name=user_ldap_data['givenName'],
+                        surname=user_ldap_data['sn']
+                    )
+                    db.session.add(new_user)
+                    db.session.commit()
+                user_db =\
+                    User.query.filter_by(email=form.email.data).first()
                 session['logged_in'] = True
-                session['id'] = user['employeeID'][0].decode('utf-8')
-                # session['email'] = user['userPrincipalName'][0].decode('utf-8')
-                # session['is_admin'] = user.has_role('admin')
+                session['id'] = user_db.id
+                session['email'] = user_db.email
                 return render_template('index.html', session=session)
-        # else:
-        #     print('!!!!!!!!!!!!!!!!!!!!')
-        #     message = 'Invalid username or password !'
-        #     message_category = 'error'
-        #     flash(message, message_category)
-        #     return render_template('login.html',
-        #                            form=form,
-        #                            error=form.errors)
 
     elif request.method == 'GET':
         if g.user:
