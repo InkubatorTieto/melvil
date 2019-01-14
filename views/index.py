@@ -91,8 +91,9 @@ def login():
                     'givenName': refine_data(user_ldap, 'givenName'),
                     'sn': refine_data(user_ldap, 'sn')
                 }
-                user_db =\
-                    User.query.filter_by(email=form.email.data).first()
+                user_db = User.query.filter_by(
+                    email=user_ldap_data['mail']
+                    ).first()
                 create_user = None
                 if not user_db:
                     create_user = True
@@ -110,12 +111,14 @@ def login():
                     new_user = User(
                         email=user_ldap_data['mail'],
                         first_name=user_ldap_data['givenName'],
-                        surname=user_ldap_data['sn']
+                        surname=user_ldap_data['sn'],
+                        active=True
                     )
                     db.session.add(new_user)
                     db.session.commit()
-                user_db =\
-                    User.query.filter_by(email=form.email.data).first()
+                user_db = User.query.filter_by(
+                    email=user_ldap_data['mail']
+                    ).first()
                 session['logged_in'] = True
                 session['id'] = user_db.id
                 session['email'] = user_db.email
@@ -230,13 +233,13 @@ def login():
 @library.route('/search', methods=['GET'])
 @require_logged_in()
 def search():
-    # try:
-    #     user = User.query.get(session['id'])
-    #     admin = user.has_role('ADMIN')
-    # except KeyError:
-    #     abort(401)
-    # except Exception:
-    #     abort(500)
+    try:
+        user = User.query.get(session['id'])
+        admin = user.has_role('ADMIN')
+    except KeyError:
+        abort(401)
+    except Exception:
+        abort(500)
     if request.method == 'GET':
         if not request.args or not request.args.get('query'):
             form = SearchForm()
@@ -683,33 +686,33 @@ def edit_copy(copy_id):
                            action='Edit')
 
 
-@library.route('/edit_profile/<int:user_id>',
-               methods=['GET', 'POST'])
-@require_logged_in()
-def edit_profile(user_id):
-    try:
-        user = User.query.get(session['id'])
-    except KeyError:
-        abort(401)
-    except Exception:
-        abort(500)
-    form = EditProfileForm()
-    if form.validate_on_submit():
-        try:
-            user.first_name = form.first_name.data
-            user.surname = form.surname.data
-            user.email = form.email.data
-            db.session.commit()
-            flash('Profile data has been updated!')
-            return redirect(url_for('library.index'))
-        except IntegrityError:
-            abort(500)
-    form.first_name.data = user.first_name
-    form.surname.data = user.surname
-    form.email.data = user.email
-    return render_template('edit_profile.html',
-                           form=form,
-                           error=form.errors)
+# @library.route('/edit_profile/<int:user_id>',
+#                methods=['GET', 'POST'])
+# @require_logged_in()
+# def edit_profile(user_id):
+#     try:
+#         user = User.query.get(session['id'])
+#     except KeyError:
+#         abort(401)
+#     except Exception:
+#         abort(500)
+#     form = EditProfileForm()
+#     if form.validate_on_submit():
+#         try:
+#             user.first_name = form.first_name.data
+#             user.surname = form.surname.data
+#             user.email = form.email.data
+#             db.session.commit()
+#             flash('Profile data has been updated!')
+#             return redirect(url_for('library.index'))
+#         except IntegrityError:
+#             abort(500)
+#     form.first_name.data = user.first_name
+#     form.surname.data = user.surname
+#     form.email.data = user.email
+#     return render_template('edit_profile.html',
+#                            form=form,
+#                            error=form.errors)
 
 
 @library.route('/reservations', methods=['GET', 'POST'])
@@ -814,35 +817,35 @@ def admin_dashboard():
         abort(500)
 
 
-@library.route('/edit_password/<int:user_id>',
-               methods=['GET', 'POST'])
-@require_logged_in()
-def edit_password(user_id):
-    try:
-        user = User.query.get(session['id'])
-    except KeyError:
-        abort(401)
-    except Exception:
-        abort(500)
-    form = EditPasswordForm()
-    if form.validate_on_submit():
-        try:
-            if check_password_hash(user.password_hash, form.password.data):
-                user.password_hash = \
-                    generate_password_hash(form.new_password.data)
-                db.session.commit()
-                return redirect(url_for('library.index'))
-            else:
-                message_body = "Incorrect current password"
-                message_title = '!'
-                return render_template('message.html',
-                                       message_title=message_title,
-                                       message_body=message_body)
-        except IntegrityError:
-            abort(500)
-    return render_template('edit_password.html',
-                           form=form,
-                           error=form.errors)
+# @library.route('/edit_password/<int:user_id>',
+#                methods=['GET', 'POST'])
+# @require_logged_in()
+# def edit_password(user_id):
+#     try:
+#         user = User.query.get(session['id'])
+#     except KeyError:
+#         abort(401)
+#     except Exception:
+#         abort(500)
+#     form = EditPasswordForm()
+#     if form.validate_on_submit():
+#         try:
+#             if check_password_hash(user.password_hash, form.password.data):
+#                 user.password_hash = \
+#                     generate_password_hash(form.new_password.data)
+#                 db.session.commit()
+#                 return redirect(url_for('library.index'))
+#             else:
+#                 message_body = "Incorrect current password"
+#                 message_title = '!'
+#                 return render_template('message.html',
+#                                        message_title=message_title,
+#                                        message_body=message_body)
+#         except IntegrityError:
+#             abort(500)
+#     return render_template('edit_password.html',
+#                            form=form,
+#                            error=form.errors)
 
 
 @library.errorhandler(401)
