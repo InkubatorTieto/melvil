@@ -77,9 +77,9 @@ def login():
             user = form.username.data
             passwd = form.password.data
             test_conn = ldap_client.bind_user(user, passwd)
+            message_title = 'Error!'
             if not test_conn or passwd == '':
                 message_body = 'Invalid username and/or password'
-                message_title = 'Error!'
                 return render_template(
                     'message.html',
                     message_title=message_title,
@@ -87,6 +87,13 @@ def login():
                     )
             else:
                 user_ldap = ldap_client.get_object_details(user=user)
+                if refine_data(user_ldap, 'l') != 'Wroclaw':
+                    message_body = 'Only employees from Wroclaw are accepted'
+                    return render_template(
+                        'message.html',
+                        message_title=message_title,
+                        message_body=message_body
+                        )
                 user_ldap_data = {
                     'mail': refine_data(user_ldap, 'mail'),
                     'givenName': refine_data(user_ldap, 'givenName'),
