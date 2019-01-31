@@ -61,6 +61,7 @@ def index():
 
 
 @library.route('/login', methods=['GET', 'POST'])
+@require_not_logged_in()
 def login():
 
     """Login view for client.
@@ -96,18 +97,6 @@ def login():
                     ).first()
                 create_user = None
                 if not user_db:
-                    create_user = True
-                else:
-                    user_db_data = {
-                        'mail': user_db.email,
-                        'givenName': user_db.first_name,
-                        'sn': user_db.surname
-                    }
-                    if user_db_data != user_ldap_data:
-                        create_user = True
-                        db.session.delete(user_db)
-                        db.session.commit()
-                if create_user:
                     new_user = User(
                         email=user_ldap_data['mail'],
                         first_name=user_ldap_data['givenName'],
@@ -116,118 +105,33 @@ def login():
                     )
                     db.session.add(new_user)
                     db.session.commit()
+                else:
+                    user_db_data = {
+                        'mail': user_db.email,
+                        'givenName': user_db.first_name,
+                        'sn': user_db.surname
+                    }
+                    if user_db_data != user_ldap_data:
+                        user_db.update(user_ldap_data)
+                        db.session.commit()
+
+                  
                 user_db = User.query.filter_by(
                     email=user_ldap_data['mail']
                     ).first()
                 session['logged_in'] = True
                 session['id'] = user_db.id
                 session['email'] = user_db.email
+                if user_db.has_role('ADMIN'):
+                    session['admin'] = True
                 return render_template('index.html', session=session)
 
-    elif request.method == 'GET':
-        if g.user:
-            return redirect(url_for('backend.index'))
-
-    else:
+    elif request.method != 'GET':
         abort(405)
 
     return render_template('login.html',
                            form=form,
                            error=form.errors)
-
-# @require_not_logged_in()
-# def login():
-#     if request.method == 'GET':
-#         if 'logged_in' in session:
-#             message_body = 'You are already logged in.'
-#             message_title = 'Error!'
-#             return render_template('message.html',
-#                                    message_title=message_title,
-#                                    message_body=message_body)
-#         else:
-#             form = LoginForm()
-#             return render_template('login.html',
-#                                    form=form,
-#                                    error=form.errors)
-#     else:
-#         form = LoginForm()
-#         try:
-#             if form.validate_on_submit():
-#                 data = User.query.filter_by(email=form.email.data).first()
-#                 if (data is not None and
-#                         check_password_hash(data.password_hash,
-#                                             form.password.data) and
-#                         data.active):
-#                     session['logged_in'] = True
-#                     session['id'] = data.id
-#                     session['email'] = data.email
-#                     if data.has_role('ADMIN'):
-#                         session['admin'] = True
-#                     return render_template('index.html',
-#                                            session=session)
-#                 else:
-#                     message_body = 'Login failed or ' \
-#                                    'your account is not activated'
-#                     message_title = 'Error!'
-#                     return render_template('message.html',
-#                                            message_title=message_title,
-#                                            message_body=message_body)
-#             else:
-#                 return render_template('login.html',
-#                                        title='Sign In',
-#                                        form=form,
-#                                        error=form.errors)
-#         except (ValueError, TypeError):
-#             message_body = 'Something went wrong'
-#             message_title = 'Error!'
-#             return render_template('message.html',
-#                                    message_title=message_title,
-#                                    message_body=message_body)
-
-
-# @library.route('/registration', methods=['GET', 'POST'])
-# @require_not_logged_in()
-# def registration():
-#     if request.method == 'GET':
-#         form = RegistrationForm()
-#         return render_template('registration.html',
-#                                form=form,
-#                                error=form.errors)
-#     else:
-#         form = RegistrationForm()
-#         if form.validate_on_submit():
-#             try:
-#                 if User.query.filter_by(email=form.email.data).first():
-#                     message_body = 'User already exists'
-#                     message_title = 'Oops!'
-#                     return render_template('message.html',
-#                                            message_title=message_title,
-#                                            message_body=message_body)
-#                 else:
-#                     new_user = User(
-#                         email=form.email.data,
-#                         first_name=form.first_name.data,
-#                         surname=form.surname.data,
-#                         password_hash=generate_password_hash(
-#                             form.password.data))
-#                     send_confirmation_email(new_user.email)
-#                     db.session.add(new_user)
-#                     db.session.commit()
-#             except (ValueError, TypeError):
-#                 message_body = 'Registration failed'
-#                 message_title = 'Error!'
-#                 return render_template('message.html',
-#                                        message_title=message_title,
-#                                        message_body=message_body)
-#         else:
-#             return render_template('registration.html',
-#                                    form=form,
-#                                    error=form.errors)
-#         message_body = 'The registration was successful.'
-#         message_title = 'Success!'
-#         return render_template('message.html',
-#                                message_title=message_title,
-#                                message_body=message_body)
 
 
 @library.route('/search', methods=['GET'])
@@ -318,103 +222,6 @@ def contact():
 def logout():
     session.clear()
     return render_template('index.html')
-
-
-# @library.route('/confirm/<token>')
-# def confirm_email(token):
-#     try:
-#         confirm_serializer = URLSafeTimedSerializer(DevConfig.SECRET_KEY)
-#         email = confirm_serializer.loads(token,
-#                                          salt='email-confirmation-salt',
-#                                          max_age=3600)
-#     except RuntimeError:
-#         message_body = 'The confirmation link is invalid or has expired.'
-#         message_title = 'Error!'
-#         return render_template('message.html',
-#                                message_title=message_title,
-#                                message_body=message_body)
-#     user = User.query.filter_by(email=email).first()
-#     if user.active:
-#         message_body = 'Account already confirmed. Please login.'
-#         message_title = 'Error!'
-#         return render_template('message.html',
-#                                message_title=message_title,
-#                                message_body=message_body)
-#     else:
-#         user.active = True
-#         db.session.add(user)
-#         db.session.commit()
-#         message_body = 'Thank you for confirming your email address!'
-#         message_title = 'Success!'
-#         return render_template('message.html',
-#                                message_title=message_title,
-#                                message_body=message_body)
-
-
-# @library.route('/reset', methods=['GET', 'POST'])
-# @require_not_logged_in()
-# def reset():
-#     form = ForgotPass()
-#     if form.validate_on_submit():
-#         user = User.query.filter_by(email=form.email.data).first()
-#         if user is not None:
-#             if user.active:
-#                 send_password_reset_email(user.email)
-#                 message_body = 'Please check your email \
-#                                 for a password reset link.'
-#                 message_title = 'Success!'
-#                 return render_template('message.html',
-#                                        message_title=message_title,
-#                                        message_body=message_body)
-#             else:
-#                 message_body = 'Your email address must be confirmed \
-#                                 before attempting a password reset.'
-#                 message_title = 'Error!'
-#                 return render_template('message.html',
-#                                        message_title=message_title,
-#                                        message_body=message_body)
-#         else:
-#             message_body = "This email doesn't exist"
-#             message_title = '!'
-#             return render_template('message.html',
-#                                    message_title=message_title,
-#                                    message_body=message_body)
-#     return render_template('forgot_pass.html', form=form, error=form.errors)
-
-
-# @library.route('/reset/<token>', methods=["GET", "POST"])
-# def reset_with_token(token):
-#     try:
-#         password_reset_serializer = URLSafeTimedSerializer(
-#             DevConfig.SECRET_KEY)
-#         email = password_reset_serializer.loads(token,
-#                                                 salt='password-reset-salt',
-#                                                 max_age=3600)
-#     except RuntimeError:
-#         message_body = 'The password reset link is invalid or has expired.'
-#         message_title = 'Error!'
-#         return render_template('message.html',
-#                                message_title=message_title,
-#                                message_body=message_body)
-#     form = PasswordForm()
-#     if form.validate_on_submit():
-#         try:
-#             user = User.query.filter_by(email=email).first_or_404()
-#         except ValueError:
-#             message_body = 'Invalid email address!'
-#             message_title = 'Error!'
-#             return render_template('message.html',
-#                                    message_title=message_title,
-#                                    message_body=message_body)
-#         user.password_hash = generate_password_hash(form.password.data)
-#         db.session.add(user)
-#         db.session.commit()
-#         flash('Your password has been updated!', 'success')
-#         return redirect(url_for('library.login'))
-#     return render_template('reset_password_with_token.html',
-#                            form=form,
-#                            token=token,
-#                            error=form.errors)
 
 
 @library.route('/reservation/<copy_id>')
@@ -686,35 +493,6 @@ def edit_copy(copy_id):
                            action='Edit')
 
 
-# @library.route('/edit_profile/<int:user_id>',
-#                methods=['GET', 'POST'])
-# @require_logged_in()
-# def edit_profile(user_id):
-#     try:
-#         user = User.query.get(session['id'])
-#     except KeyError:
-#         abort(401)
-#     except Exception:
-#         abort(500)
-#     form = EditProfileForm()
-#     if form.validate_on_submit():
-#         try:
-#             user.first_name = form.first_name.data
-#             user.surname = form.surname.data
-#             user.email = form.email.data
-#             db.session.commit()
-#             flash('Profile data has been updated!')
-#             return redirect(url_for('library.index'))
-#         except IntegrityError:
-#             abort(500)
-#     form.first_name.data = user.first_name
-#     form.surname.data = user.surname
-#     form.email.data = user.email
-#     return render_template('edit_profile.html',
-#                            form=form,
-#                            error=form.errors)
-
-
 @library.route('/reservations', methods=['GET', 'POST'])
 @require_role('ADMIN')
 def admin_dashboard():
@@ -815,37 +593,6 @@ def admin_dashboard():
             return redirect(url_for('library.admin_dashboard'))
     else:
         abort(500)
-
-
-# @library.route('/edit_password/<int:user_id>',
-#                methods=['GET', 'POST'])
-# @require_logged_in()
-# def edit_password(user_id):
-#     try:
-#         user = User.query.get(session['id'])
-#     except KeyError:
-#         abort(401)
-#     except Exception:
-#         abort(500)
-#     form = EditPasswordForm()
-#     if form.validate_on_submit():
-#         try:
-#             if check_password_hash(user.password_hash, form.password.data):
-#                 user.password_hash = \
-#                     generate_password_hash(form.new_password.data)
-#                 db.session.commit()
-#                 return redirect(url_for('library.index'))
-#             else:
-#                 message_body = "Incorrect current password"
-#                 message_title = '!'
-#                 return render_template('message.html',
-#                                        message_title=message_title,
-#                                        message_body=message_body)
-#         except IntegrityError:
-#             abort(500)
-#     return render_template('edit_password.html',
-#                            form=form,
-#                            error=form.errors)
 
 
 @library.errorhandler(401)
