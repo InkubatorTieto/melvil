@@ -2,39 +2,47 @@ from werkzeug.security import generate_password_hash
 import re
 
 from forms.custom_validators import email_regex
+from ldap_utils.ldap_utils import ldap_client, refine_data
 from models.users import User, Role, RoleEnum
 from init_db import db
 
 
 def create_super_user():
-    email_data = input("What is your email: ")
-    print("Introduce yourself:\n")
-    first_name = input("First name: ")
-    surname = input("Surname: ")
-    password = input("Password: ")
-    password_2 = input("Password: ")
-    if User.query.filter_by(email=email_data).first():
-        return print("This e-mail already exists in the database!")
-    if not re.compile(email_regex()).match(email_data):
-        return print("Only Tieto emails are accepted!")
-    if password != password_2:
-        return print("Passwords are not the same!")
-    new_user = User(
-        email=email_data,
-        first_name=first_name,
-        surname=surname,
-        password_hash=generate_password_hash(
-            password),
-        active=True
-
-    )
-    db.session.add(new_user)
-    db.session.commit()
-
-    user = User.query.filter_by(id=new_user.id).first()
-    role = Role.query.filter_by(name=RoleEnum.USER).first()
-    user.roles.remove(role)
-    role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
-    user.roles.append(role)
-    db.session.commit()
-    print("Success!")
+    email_data = input("New admin email: ")
+    user_ldap = ldap_client.get_object_details(user=email_data)
+    if user_ldap:
+        user_ldap_data = {
+            'mail': refine_data(user_ldap, 'mail'),
+            'givenName': refine_data(user_ldap, 'givenName'),
+            'sn': refine_data(user_ldap, 'sn')
+        }
+        user_db = User.query.filter_by(
+            email=user_ldap_data['mail']
+            ).first()
+        if user_db:
+            user_db_data = {
+                'mail': user_db.email,
+                'givenName': user_db.first_name,
+                'sn': user_db.surname
+            }
+            if user_db_data != user_ldap_data:
+                user_db.email = user_ldap_data['mail']
+                user_db.first_name = user_ldap_data['givenName']
+                user_db.surname = user_db_data['sn']
+        else:
+            new_user = User(
+                email=user_ldap_data['mail'],
+                first_name=user_ldap_data['givenName'],
+                surname=user_ldap_data['sn'],
+                active=True
+            )
+            db.session.add(new_user)
+        user = User.query.filter_by(email=email_data).first()
+        role = Role.query.filter_by(name=RoleEnum.USER).first()
+        user.roles.remove(role)
+        role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+        user.roles.append(role)
+        db.session.commit()
+        print("Success!")
+    else:
+        print('Error - user not present in Tieto ldap.')
