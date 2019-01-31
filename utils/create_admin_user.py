@@ -11,6 +11,9 @@ def create_super_user():
     email_data = input("New admin email: ")
     user_ldap = ldap_client.get_object_details(user=email_data)
     if user_ldap:
+        if refine_data(user_ldap, 'l') != 'Wroclaw':
+            print('Only employees from Wroclaw are accepted')
+            return 
         user_ldap_data = {
             'mail': refine_data(user_ldap, 'mail'),
             'givenName': refine_data(user_ldap, 'givenName'),
