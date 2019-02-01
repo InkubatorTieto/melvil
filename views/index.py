@@ -119,7 +119,9 @@ def login():
                         'sn': user_db.surname
                     }
                     if user_db_data != user_ldap_data:
-                        user_db.update(user_ldap_data)
+                        user_db.mail = user_ldap_data['mail']
+                        user_db.first_name = user_ldap_data['givenName']
+                        user_db.surname = user_ldap_data['sn']
                         db.session.commit()
 
                   
@@ -258,17 +260,15 @@ def check_reservation_status_db():
     reserved_list = db.session.query(RentalLog) \
         .filter(RentalLog.book_status == BookStatus.RESERVED) \
         .all()
-    db.session.query(Copy).filter(
-        Copy.id.in_([obj.copy_id for obj in reserved_list])
-    ).update(
-        {Copy.available_status: BookStatus.RETURNED},
-        synchronize_session='fetch'
-    )
-    db.session.query(RentalLog) \
-        .filter(RentalLog.book_status == BookStatus.RESERVED) \
-        .update({RentalLog.book_status: BookStatus.RETURNED})
-    db.session.commit()
-    return "OK"
+    for obj in reserved_list:
+        end_date = obj._reservation_end
+        if end_date <= datetime.now():
+            print('runnnnnn')
+            obj.book_status = BookStatus.RETURNED
+            copy_list = Copy.query.filter_by(id=obj.copy_id)
+            copy_list.available_status = BookStatus.RETURNED
+            db.session.commit()
+    return 'OK'
 
 
 @library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])

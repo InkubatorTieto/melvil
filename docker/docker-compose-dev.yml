@@ -6,7 +6,7 @@ services:
       context: ..
       dockerfile: './docker/Dockerfile-cron'
     environment:
-        - CRON_MINUTE=* * * 2 * root curl http://web:5000/check_reservation_status_db
+        - CRON_MINUTE=* * * * * root curl http://web:5000/check_reservation_status_db
     container_name: melvil_cron
   web:
     build:
