@@ -68,7 +68,7 @@ def login():
 
     Connects to active directory check credentials
     and login.
-    Retrieves desired data about user from AD.
+    Retrieves desired data about user from LDAP.
     """
 
     form = LoginForm()
@@ -97,10 +97,11 @@ def login():
                 user_ldap_data = {
                     'mail': refine_data(user_ldap, 'mail'),
                     'givenName': refine_data(user_ldap, 'givenName'),
-                    'sn': refine_data(user_ldap, 'sn')
+                    'sn': refine_data(user_ldap, 'sn'),
+                    'employeeID' : refine_data(user_ldap, 'employeeID')
                 }
                 user_db = User.query.filter_by(
-                    email=user_ldap_data['mail']
+                    employee_id=user_ldap_data['employeeID']
                     ).first()
                 create_user = None
                 if not user_db:
@@ -108,6 +109,7 @@ def login():
                         email=user_ldap_data['mail'],
                         first_name=user_ldap_data['givenName'],
                         surname=user_ldap_data['sn'],
+                        employee_id=user_ldap_data['employeeID'],
                         active=True
                     )
                     db.session.add(new_user)
@@ -116,17 +118,19 @@ def login():
                     user_db_data = {
                         'mail': user_db.email,
                         'givenName': user_db.first_name,
-                        'sn': user_db.surname
+                        'sn': user_db.surname,
+                        'employeeID' : user_db.employee_id
                     }
                     if user_db_data != user_ldap_data:
-                        user_db.mail = user_ldap_data['mail']
+                        user_db.email = user_ldap_data['mail']
                         user_db.first_name = user_ldap_data['givenName']
                         user_db.surname = user_ldap_data['sn']
+                        user_db.employee_id = user_ldap_data['employeeID']
                         db.session.commit()
 
                   
                 user_db = User.query.filter_by(
-                    email=user_ldap_data['mail']
+                    employee_id=user_ldap_data['employeeID']
                     ).first()
                 session['logged_in'] = True
                 session['id'] = user_db.id
@@ -245,7 +249,7 @@ def reserve(copy_id):
             book_status=BookStatus.RESERVED,
             reservation_begin=datetime.now(tz=pytz.utc),
             reservation_end=datetime.now(
-                tz=pytz.utc) + timedelta(minutes=2))
+                tz=pytz.utc) + timedelta(days=2))
         db.session.add(res)
         db.session.commit()
         flash('Pick up the book within two days!')
@@ -263,7 +267,6 @@ def check_reservation_status_db():
     for obj in reserved_list:
         end_date = obj._reservation_end
         if end_date <= datetime.now():
-            print('runnnnnn')
             obj.book_status = BookStatus.RETURNED
             copy_list = Copy.query.filter_by(id=obj.copy_id)
             copy_list.available_status = BookStatus.RETURNED
