@@ -18,7 +18,7 @@
                 Sign In</p>
             <form class="login" action="" method="post">
                 {{ form.hidden_tag() }}
-                {{ input(form.email, error['email']) }}
+                {{ input(form.username, error['email']) }}
                 {{ input(form.password, error['password']) }}
                 {{ form.submit }}
                 <div class="remember-forgot">
@@ -28,10 +28,6 @@
                         </div>
                         <div class="col">
                             {{ form.remember_me.label }}
-                        </div>
-                        <div class="col">
-                            <a href="{{ url_for('library.reset') }}" class="forgot-pass">Forgot
-                                Password</a>
                         </div>
                     </div>
                 </div>

@@ -42,6 +42,11 @@ elif [ "$1" == "-p" ] ; then
       remove_container p x
       docker-compose -f $PROD_DOCKER run --name upload_lib_items_prod web flask load_xls_into_db
       docker-compose -f $PROD_DOCKER stop postgresql
+   elif [ "$2" == "create-admin" ] ; then
+      # load xls data into db
+      remove_container p x
+      docker-compose -f $PROD_DOCKER run --name upload_lib_items_prod web flask create_admin
+      docker-compose -f $PROD_DOCKER stop postgresql
    elif [ "$2" == "-b" ] ; then
       # build new development image
       docker-compose -f $PROD_DOCKER build
@@ -69,6 +74,11 @@ else
       remove_container d x
       docker-compose -f $DEV_DOCKER run --name upload_lib_items_dev web flask load_xls_into_db
       docker-compose -f $DEV_DOCKER stop postgresql
+   elif [ "$1" == "create-admin" ] ; then
+      # load xls data into db
+      remove_container p x
+      docker-compose -f $PROD_DOCKER run --name upload_lib_items_prod web flask create_admin
+      docker-compose -f $PROD_DOCKER stop postgresql
    elif [ "$1" == "-b" ] ; then
       # build new development server
       docker-compose -f $DEV_DOCKER build

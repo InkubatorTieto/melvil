@@ -34,6 +34,10 @@ IF "%ARG%"=="/t" (
     CALL docker\remove-container.bat /p /x >NUL
     docker-compose -f %PROD% run --name upload_lib_items_prod web flask load_xls_into_db
     docker-compose -f %PROD% stop postgresql
+  ) ELSE IF "%ARG%" == "create-admin" (
+    CALL docker\remove-container.bat /d /x >NUL
+    docker-compose -f %DEV% run --name upload_lib_items_dev web flask create_admin
+    docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG2%"=="/b" (
     docker-compose -f %PROD% build
   ) ELSE (
@@ -55,6 +59,10 @@ IF "%ARG%"=="/t" (
   ) ELSE IF "%ARG%" == "load-xls" (
     CALL docker\remove-container.bat /d /x >NUL
     docker-compose -f %DEV% run --name upload_lib_items_dev web flask load_xls_into_db
+    docker-compose -f %DEV% stop postgresql
+  ) ELSE IF "%ARG%" == "create-admin" (
+    CALL docker\remove-container.bat /d /x >NUL
+    docker-compose -f %DEV% run --name upload_lib_items_dev web flask create_admin
     docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG%"=="/b" (
     docker-compose -f %DEV% build

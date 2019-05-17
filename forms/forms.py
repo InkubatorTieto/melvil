@@ -21,10 +21,10 @@ from forms.custom_validators import (
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email',
-                        validators=[DataRequired(), tieto_email],
+    username = StringField('Username',
+                        validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
-                                    'placeholder': 'Email'}))
+                                    'placeholder': 'Username'}))
     password = PasswordField('Password',
                              validators=[DataRequired()],
                              render_kw=({'class': 'inputs',
