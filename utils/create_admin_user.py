@@ -8,10 +8,7 @@ from init_db import db
 
 
 email_list = [
-    'katarzyna.kaminska@tieto.com',
-    'hubert.nafalski@tieto.com',
-    'pawel.biel@tieto.com',
-    'lukasz.jaszewski@tieto.com'
+
 ]
 
 
