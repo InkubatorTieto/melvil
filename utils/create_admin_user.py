@@ -1,15 +1,14 @@
 from werkzeug.security import generate_password_hash
 import re
 
+from config import Config
 from forms.custom_validators import email_regex
+from init_db import db
 from ldap_utils.ldap_utils import ldap_client, refine_data
 from models.users import User, Role, RoleEnum
-from init_db import db
 
 
-email_list = [
-
-]
+email_list = Config.ADMIN_LIST.split()
 
 
 def create_super_user():
