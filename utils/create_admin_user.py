@@ -1,16 +1,10 @@
-from flask_simpleldap import LDAP
-
-from ldap_utils.ldap_utils import refine_data
-from models.users import User, Role, RoleEnum
+from config import Config
 from init_db import db
+from ldap_utils.ldap_utils import ldap_client, refine_data
+from models.users import User, Role, RoleEnum
 
 
-ldap_client = LDAP()
-
-
-email_list = [
-
-]
+email_list = Config.ADMIN_LIST.split()
 
 
 def create_super_user():

@@ -12,7 +12,7 @@ services:
     build:
       context: ..
       dockerfile: './docker/Dockerfile'
-    command: sh './docker/run-dev.sh'
+    command: sh './docker/run.sh'
     volumes:
       - ..:/code
     env_file:
