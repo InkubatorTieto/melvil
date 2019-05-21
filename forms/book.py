@@ -12,7 +12,7 @@ from wtforms.validators import DataRequired, Length
 from forms.custom_validators import \
     check_author, check_language, \
     check_category, check_isbn, \
-    check_pub_date, title_book_exists
+    check_pub_date
 
 
 class LibraryItemForm(FlaskForm):
@@ -82,9 +82,7 @@ class LibraryItemForm(FlaskForm):
 
 class BookForm(LibraryItemForm):
     title = StringField('Title',
-                        validators=[DataRequired(),
-                                    Length(3),
-                                    title_book_exists],
+                        validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
                                     'id': 'title',
                                     'placeholder': 'Title'}))
