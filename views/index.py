@@ -574,7 +574,7 @@ def admin_dashboard():
                 first_or_404()
             rental_log_change = RentalLog.query.filter_by(
                 copy_id=borrow_item.id
-                ).order_by(RentalLog.id.desc()).first()
+                ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_item.available_status = BookStatus.BORROWED
                 rental_log_change.book_status = BookStatus.BORROWED
@@ -592,7 +592,7 @@ def admin_dashboard():
             borrow_item = Copy.query.filter_by(asset_code=copy_asset).first()
             rental_log_change = RentalLog.query.filter_by(
                 copy_id=borrow_item.id
-                ).order_by(RentalLog.id.desc()).first()
+                ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_item.available_status = BookStatus.RETURNED
                 rental_log_change.book_status = BookStatus.RETURNED
