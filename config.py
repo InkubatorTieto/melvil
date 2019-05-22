@@ -15,6 +15,7 @@ class Config(object):
     MAIL_PASSWORD = getenv("MAIL_PASSWORD")
     ADMINS = [getenv("MAIL_USERNAME")]
 
+    # LDAP
     LDAP_HOST = getenv("LDAP_HOST")
     LDAP_USERNAME = getenv("LDAP_USERNAME")
     LDAP_PASSWORD = getenv("LDAP_PASSWORD")
