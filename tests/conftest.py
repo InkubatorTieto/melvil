@@ -11,7 +11,6 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from forms.forms import SearchForm
 from forms.book import BookForm, MagazineForm,\
     AddNewItemBookForm, AddNewItemMagazineForm
 from models import (

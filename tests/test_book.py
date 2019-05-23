@@ -1,5 +1,5 @@
 from flask import session
-from datetime import date
+from datetime import date, datetime
 from random import choice, randint
 
 from flask import url_for
@@ -191,8 +191,8 @@ def test_check_isbn(view_book, values, result):
 @pytest.mark.parametrize("values, result", [
     ("1969", False),
     ("1970", True),
-    ("2018", True),
-    ("2019", False),
+    (str(datetime.now().year), True),
+    (str(datetime.now().year + 1), False),
     (2005, False)
 
 ])

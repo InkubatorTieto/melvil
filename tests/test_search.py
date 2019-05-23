@@ -35,7 +35,7 @@ def test_search_queries(app_session, search_query):
 def test_search_queries_sorted(app_session):
     query_all = LibraryItem.query.order_by(LibraryItem.title).all()
     assert all(
-        query_all[i].title <= query_all[i + 1].title
+        query_all[i].title.lower() <= query_all[i + 1].title.lower()
         for i in range(len(query_all) - 1)), \
         "Items are not sorted by their title!"
 
