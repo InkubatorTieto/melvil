@@ -45,3 +45,20 @@ body {
     font-weight: 400;
     color: rgba(255, 26, 26, 1);
 }
+
+
+/*
+Placeholders
+*/
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgba(168, 168, 168, 1);
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgba(168, 168, 168, 1) !important;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgba(168, 168, 168, 1);
+}
