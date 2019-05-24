@@ -9,6 +9,7 @@ $(document).on('click', '[id^="addLike_"]', function() {
         success: function(response, data) {
             var obj = JSON.parse(response);
             $("#likes_"+wish_id).html(obj.num_of_likes);
+            window.location.href=window.location.href;
         },
         error: function(error) {
             alert("Oops, your like can't be added");
