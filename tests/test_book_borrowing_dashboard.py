@@ -1,14 +1,17 @@
-from flask import url_for
+from flask import url_for, session
 from views.book_borrowing_dashboard import (
     get_reserved_items,
     get_borrowed_items,
 )
 
 
-def test_dashboard_status_code(client):
+def test_dashboard_status_code(client, login_form_admin_credentials):
+    client.post(url_for('library.login'),
+                data=login_form_admin_credentials.data)
     resp = client.get(url_for(
         'library_book_borrowing_dashboard.book_borrowing_dashboad'))
     assert resp.status_code == 200
+    session.clear()
 
 
 def test_get_reserved_items(session, user_reservations):
