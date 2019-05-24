@@ -92,7 +92,7 @@ a:hover {
     border-color: #000;
 }
 
-.btn-outline-dark {
+.question_mark_btn {
     color: rgba(255,255,255,0.75);
     background-color: transparent;
     background-image: none;
