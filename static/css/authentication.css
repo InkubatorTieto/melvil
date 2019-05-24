@@ -5,6 +5,22 @@
  */
 
 /*
+Placeholders
+*/
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgba(224, 224, 224, 1);
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgba(224, 224, 224, 1);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgba(224, 224, 224, 1);
+}
+
+/*
 Forms
 */
 .my_message_input {
