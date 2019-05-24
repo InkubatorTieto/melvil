@@ -35,11 +35,20 @@ specify proper path of the file in app.py and then run:
 
 ```bash
 $ . run-server.sh load-xls
-
 ```
 
 ```CMD
 >run-server.bat load-xls
+```
+
+If you want create admin account:
+
+```bash
+$ . run-server.sh create-admin
+```
+
+```CMD
+>run-server.bat create-admin
 ```
 
 2. And start it on localhost:5000  

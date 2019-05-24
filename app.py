@@ -11,6 +11,7 @@ from sqlalchemy.exc import OperationalError, TimeoutError
 from config import DevConfig, ProdConfig
 from init_db import db
 from utils.xlsx_reader import get_books, get_magazines
+from utils.create_admin_user import create_super_user
 from views.book import library_books
 from views.book_borrowing_dashboard import library_book_borrowing_dashboard
 from views.index import library
@@ -67,3 +68,11 @@ def load_xls_into_db():
 
 
 app.cli.add_command(load_xls_into_db)
+
+
+@app.cli.command('create_admin', with_appcontext=True)
+def create_admin():
+    create_super_user()
+
+
+app.cli.add_command(create_admin)
