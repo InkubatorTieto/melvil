@@ -1,13 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-    {% from "macros.html" import input, flashed_message with context %}
+    {% from "macros.html" import input with context %}
     <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-        <div>
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {{ flashed_message(messages) }}
-          {% endwith %}
-        </div>
         <main role="main" class="inner cover">
             <div class="container my_container">
                 <div class="row">

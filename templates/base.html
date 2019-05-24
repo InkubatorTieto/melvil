@@ -57,9 +57,9 @@
                 {{ nav_button('book_borrowing_dashboad',
                 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' )
                 }}
+                {{ nav_button('add_book', 'library_books.add_book', 'Add new item' ) }}
                 {{ nav_button('wishlist', 'library.wishlist', 'Wish List' ) }}
                     {% if session['admin'] == True %}
-                        {{ nav_button('add_book', 'library_books.add_book', 'Add new item' ) }}
                         {{ nav_button('reservations', 'library.admin_dashboard', 'Rentals') }}
                     {% endif %}
                 {{ downout_button('library.logout' ) }}

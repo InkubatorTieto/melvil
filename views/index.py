@@ -41,11 +41,6 @@ from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
 from models.users import User
 from models.wishlist import WishListItem, Like
-from models.decorators_roles import (
-    require_role,
-    require_logged_in,
-    require_not_logged_in
-)
 from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 from serializers.wishlist import WishListItemSchema
@@ -60,7 +55,6 @@ def index():
 
 
 @library.route('/login', methods=['GET', 'POST'])
-@require_not_logged_in()
 def login():
     if request.method == 'GET':
         if 'logged_in' in session:
@@ -112,7 +106,6 @@ def login():
 
 
 @library.route('/registration', methods=['GET', 'POST'])
-@require_not_logged_in()
 def registration():
     if request.method == 'GET':
         form = RegistrationForm()
@@ -158,7 +151,6 @@ def registration():
 
 
 @library.route('/search', methods=['GET'])
-@require_logged_in()
 def search():
 
     try:
@@ -246,7 +238,6 @@ def contact():
 
 
 @library.route('/logout')
-@require_logged_in()
 def logout():
     session.clear()
     return render_template('index.html')
@@ -286,7 +277,6 @@ def confirm_email(token):
 
 
 @library.route('/reset', methods=['GET', 'POST'])
-@require_not_logged_in()
 def reset():
     form = ForgotPass()
     if form.validate_on_submit():
@@ -356,23 +346,23 @@ def reset_with_token(token):
 
 
 @library.route('/reservation/<copy_id>')
-@require_logged_in()
 def reserve(copy_id):
-    try:
-        copy = Copy.query.get(copy_id)
-        copy.available_status = BookStatus.RESERVED
-        res = RentalLog(
-            copy_id=copy_id,
-            user_id=session['id'],
-            book_status=BookStatus.RESERVED,
-            reservation_begin=datetime.now(tz=pytz.utc),
-            reservation_end=datetime.now(
-                tz=pytz.utc) + timedelta(minutes=2))
-        db.session.add(res)
-        db.session.commit()
-        flash('Pick up the book within two days!')
-    except IntegrityError:
-        abort(500)
+    if 'logged_in' in session:
+        try:
+            copy = Copy.query.get(copy_id)
+            copy.available_status = BookStatus.RESERVED
+            res = RentalLog(
+                copy_id=copy_id,
+                user_id=session['id'],
+                book_status=BookStatus.RESERVED,
+                reservation_begin=datetime.now(tz=pytz.utc),
+                reservation_end=datetime.now(
+                    tz=pytz.utc) + timedelta(minutes=2))
+            db.session.add(res)
+            db.session.commit()
+            flash('Pick up the book within two days!')
+        except IntegrityError:
+            abort(500)
     return redirect(url_for(
         'library_book_borrowing_dashboard.book_borrowing_dashboad'))
 
@@ -396,7 +386,6 @@ def check_reservation_status_db():
 
 
 @library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
-@require_role('ADMIN')
 def remove_item(item_id):
     try:
         user = User.query.get(session['id'])
@@ -424,7 +413,6 @@ def remove_item(item_id):
 
 @library.route('/remove_copy/<int:item_id>/<int:copy_id>',
                methods=['GET', 'POST'])
-@require_role('ADMIN')
 def remove_copy(item_id, copy_id):
     try:
         user = User.query.get(session['id'])
@@ -454,7 +442,6 @@ def remove_copy(item_id, copy_id):
 
 
 @library.route('/wishlist', methods=['GET', 'POST'])
-@require_logged_in()
 def wishlist():
     try:
         user = User.query.get(session['id'])
@@ -471,7 +458,6 @@ def wishlist():
 
 
 @library.route('/add_wish', methods=['GET', 'POST'])
-@require_logged_in()
 def add_wish():
     form = WishlistForm()
     if form.validate_on_submit():
@@ -492,7 +478,6 @@ def add_wish():
 
 
 @library.route('/add_like', methods=['GET', 'POST'])
-@require_logged_in()
 def add_like():
     wish_id = request.form['wish_id']
     user = User.query.filter_by(id=session['id']).first()
@@ -512,7 +497,6 @@ def add_like():
 
 
 @library.route('/delete_wish/<int:wish_id>', methods=['GET', 'POST'])
-@require_role('ADMIN')
 def delete_wish(wish_id):
     try:
         WishListItem.delete_wish(wish_id)
@@ -522,7 +506,6 @@ def delete_wish(wish_id):
 
 
 @library.route('/item_description/<int:item_id>')
-@require_logged_in()
 def item_description(item_id):
     try:
         user = User.query.get(session['id'])
@@ -546,7 +529,6 @@ def item_description(item_id):
 
 
 @library.route('/add_copy/<int:item_id>', methods=['GET', 'POST'])
-@require_role('ADMIN')
 def add_copy(item_id):
     form = CopyAddForm()
     if form.validate_on_submit():
@@ -572,7 +554,6 @@ def add_copy(item_id):
 
 
 @library.route('/edit_copy/<int:copy_id>', methods=['GET', 'POST'])
-@require_role('ADMIN')
 def edit_copy(copy_id):
     copy = Copy.query.get_or_404(copy_id)
     item_id = copy.library_item_id
@@ -599,7 +580,6 @@ def edit_copy(copy_id):
 
 @library.route('/edit_profile/<int:user_id>',
                methods=['GET', 'POST'])
-@require_logged_in()
 def edit_profile(user_id):
     try:
         user = User.query.get(session['id'])
@@ -628,7 +608,6 @@ def edit_profile(user_id):
 
 
 @library.route('/reservations', methods=['GET', 'POST'])
-@require_role('ADMIN')
 def admin_dashboard():
     try:
         user = User.query.get(session['id'])
@@ -739,7 +718,6 @@ def admin_dashboard():
 
 @library.route('/edit_password/<int:user_id>',
                methods=['GET', 'POST'])
-@require_logged_in()
 def edit_password(user_id):
     try:
         user = User.query.get(session['id'])
