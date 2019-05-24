@@ -1,19 +1,16 @@
 import re
 
 import pytest
-from flask import url_for, session
+from flask import url_for
 
 from models import Copy
 
 
-def test_add_get_status_code(client, db_book, login_form_admin_credentials):
-    client.post(url_for('library.login'),
-                data=login_form_admin_credentials.data)
+def test_add_get_status_code(client, db_book):
     resp = client.get(url_for('library.add_copy',
                               item_id=db_book.id))
     assert resp.status_code == 200, \
         "Add_copy GET view wrong response"
-    session.clear()
 
 
 def test_add_post_nothing_status_code(client, db_book):
@@ -42,10 +39,7 @@ def test_add_post_data_redirect_status_code(
         "Item_description view redirected from Add_copy view wrong response"
 
 
-def test_db_after_add_copy(copy_form, db_book, client,
-                           login_form_admin_credentials):
-    client.post(url_for('library.login'),
-                data=login_form_admin_credentials.data)
+def test_db_after_add_copy(copy_form, db_book, client):
     client.post(url_for('library.add_copy',
                         item_id=db_book.id),
                 data=copy_form[0].data)
@@ -66,7 +60,6 @@ def test_db_after_add_copy(copy_form, db_book, client,
         "Added copy asset_code is not the one from the Form"
     assert copy.shelf == copy_form[0].shelf.data, \
         "Added copy shelf is not the one from the Form"
-    session.clear()
 
 
 @pytest.mark.parametrize("values, expected", [
@@ -85,15 +78,11 @@ def test_asset_code_regex(values, expected):
         "Regex for asset code is wrong"
 
 
-def test_edit_get_status_code(client, db_copies, login_form_admin_credentials):
-    client.post(url_for('library.login'),
-                data=login_form_admin_credentials.data)
-
+def test_edit_get_status_code(client, db_copies):
     resp = client.get(url_for('library.edit_copy',
                               copy_id=db_copies[0].id))
     assert resp.status_code == 200, \
         "Edit_copy GET view wrong response"
-    session.clear()
 
 
 def test_edit_post_nothing_status_code(client, db_copies):
@@ -122,12 +111,10 @@ def test_edit_post_data_redirect_status_code(
         "Item_description view redirected from Edit_copy view wrong response"
 
 
-def test_db_after_edit_copy(copy_form, db_copies, client,
-                            db_book, login_form_admin_credentials):
-    client.post(url_for('library.login'),
-                data=login_form_admin_credentials.data)
+def test_db_after_edit_copy(copy_form, db_copies, client, db_book):
     client.post(url_for('library.add_copy',
-                        item_id=db_book.id), data=copy_form[0].data)
+                        item_id=db_book.id),
+                data=copy_form[0].data)
     copy_before_edit = Copy.query.get(db_copies[0].id)
 
     client.post(url_for('library.edit_copy',
@@ -151,4 +138,3 @@ def test_db_after_edit_copy(copy_form, db_copies, client,
         "Edited copy asset_code is not the one from the Form"
     assert copy.shelf == copy_form[1].shelf.data, \
         "Edited copy shelf is not the one from the Form"
-    session.clear()

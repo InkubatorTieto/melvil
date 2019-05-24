@@ -4,7 +4,6 @@ from init_db import db
 from sqlalchemy import desc
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
-from models.decorators_roles import require_logged_in
 
 library_book_borrowing_dashboard = \
     Blueprint('library_book_borrowing_dashboard', __name__,
@@ -13,7 +12,6 @@ library_book_borrowing_dashboard = \
 
 @library_book_borrowing_dashboard.route(
     '/borrowedBooks', methods=["GET", "POST"])
-@require_logged_in()
 def book_borrowing_dashboad():
 
     if 'logged_in' in session:

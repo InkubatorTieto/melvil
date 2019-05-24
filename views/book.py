@@ -6,14 +6,12 @@ from flask import render_template, request, session, abort
 from forms.book import BookForm, MixedForm, MagazineForm
 from init_db import db
 from models import User, Tag, Magazine, Book, Author, LibraryItem
-from models.decorators_roles import require_role
 
 library_books = Blueprint('library_books', __name__,
                           template_folder='templates')
 
 
 @library_books.route('/add_book', methods=['GET', 'POST'])
-@require_role('ADMIN')
 def add_book():
     if request.method == 'GET':
         if 'logged_in' not in session:
@@ -147,7 +145,6 @@ def add_book():
 
 
 @library_books.route('/edit_book/<int:item_id>', methods=['GET', 'POST'])
-@require_role('ADMIN')
 def edit_book(item_id):
     if request.method == 'GET':
         try:
