@@ -567,7 +567,7 @@ def admin_dashboard():
                 rental_log_change.book_status = BookStatus.BORROWED
                 rental_log_change._borrow_time = datetime.now(tz=pytz.utc)
                 rental_log_change._return_time = \
-                    (datetime.now(tz=pytz.utc) + timedelta(days=14))
+                    (datetime.now(tz=pytz.utc) + timedelta(days=30))
                 db.session.commit()
             except exc.SQLAlchemyError:
                 abort(500)
