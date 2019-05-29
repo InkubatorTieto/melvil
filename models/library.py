@@ -61,7 +61,6 @@ class RentalLog(db.Model):
     book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
     _reservation_begin = db.Column(db.DateTime)
     _reservation_end = db.Column(db.DateTime)
-    book_status = db.Column(ChoiceType(BookStatus, impl=db.Integer()))
 
     @property
     def borrow_time(self):
@@ -114,7 +113,8 @@ class RentalLog(db.Model):
         )
 
     def __repr__(self):
-        return "<RentalLog: user_id={} copy_id={}>".format(
+        return "<RentalLog: ID: {} user_id={} copy_id={}>".format(
+            self.id,
             self.user_id,
             self.copy_id
         )

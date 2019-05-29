@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Adding book view without test
 - Add custom validators for every field in add book view
 - Fix bug - Eliminate bug with already registered user registration handling
+- Fix validator for name and surname 
+- Fix test for registration and login
 - Creating form for add books in wishlist
 - Creating like button in wishlist for users
 - Fix for available statu
@@ -30,11 +32,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Popover with info about wish list
 - Creating delete button in wishlist only for admin
 
-
 ## [0.0.1] - 2018-06-20
 ###Added
 Implement editing book
 * change book/magazine forms more modular
 * add  "edit_book.html" templates
-*add view "edit_book"
-*add tests
+* add view "edit_book"
+* add tests

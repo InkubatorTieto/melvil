@@ -1,40 +1,42 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/narrow_template.css') }}/">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
+{% endblock %}
 {% block content %}
-    {% from "macros.html" import input with context %}
-    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-        <main role="main" class="inner cover">
-            <div class="container my_container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="wrap">
-                            <p class="form-title">
-                                Sign In</p>
-                            <form class="login" action="" method="post">
-                                {{ form.hidden_tag() }}
-                                {{ input(form.email, error['email']) }}
-                                {{ input(form.password, error['password']) }}
-                                {{ form.submit }}
-                                <div class="remember-forgot">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="checkbox">
-                                                <label>
-                                                    {{ form.remember_me() }} {{ form.remember_me.label }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 forgot-pass-content">
-                                            <a href="{{ url_for('library.reset') }}" class="forgot-pass">Forgot
-                                                Password</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+{% from "macros.html" import input, flashed_message with context %}
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {{ flashed_message(messages) }}
+    {% endwith %}
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="wrap">
+            <p class="form-title">
+                Sign In</p>
+            <form class="login" action="" method="post">
+                {{ form.hidden_tag() }}
+                {{ input(form.email, error['email']) }}
+                {{ input(form.password, error['password']) }}
+                {{ form.submit }}
+                <div class="remember-forgot">
+                    <div class="row" style="padding-top: 10px">
+                        <div class="col-1">
+                            {{ form.remember_me }}
+                        </div>
+                        <div class="col">
+                            {{ form.remember_me.label }}
+                        </div>
+                        <div class="col">
+                            <a href="{{ url_for('library.reset') }}" class="forgot-pass">Forgot
+                                Password</a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </form>
+        </div>
     </div>
+</div>
 {% endblock %}

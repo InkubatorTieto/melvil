@@ -9,24 +9,35 @@ SET ARG=%1
 SET ARG2=%2
 
 IF "%ARG%"=="/t" (
-     IF "%ARG2%"=="/cov" (
-     docker-compose -f %DEV% run web pytest --cov
-    ) ELSE (
-     docker-compose -f %DEV% run web pytest
+    CALL docker\remove-container.bat /t >NUL
+    IF "%ARG2%"=="/cov" (
+    docker-compose -f %DEV% run --name melvil_tests web pytest --cov
+    ) ELSE IF "ARG2%"=="/s" (
+    docker-compose -f %DEV% run --name melvil_tests web pytest -s
+    )ElSE (
+    docker-compose -f %DEV% run --name melvil_tests web pytest
     )
 ) ELSE IF "%ARG%"=="/p" (
   IF "%ARG2%" == "migrate" (
-    docker-compose -f %PROD% run web flask db migrate
+    CALL docker\remove-container.bat /p /m >NUL
+    docker-compose -f %PROD% run --name melvil_db_migration_prod web flask db migrate
     docker-compose -f %PROD% stop postgresql
   ) ELSE IF "%ARG2%" == "upgrade" (
-    docker-compose -f %PROD% run web flask db upgrade
+    CALL docker\remove-container.bat /p /u >NUL
+    docker-compose -f %PROD% run --name melvil_db_upgrade_prod web flask db upgrade
     docker-compose -f %PROD% stop postgresql
   ) ELSE IF "%ARG2%" == "create-db" (
-    docker-compose -f %PROD% run web python create_db.py
+    CALL docker\remove-container.bat /p /d >NUL
+    docker-compose -f %PROD% run --name melvil_db_prod web python create_db.py
     docker-compose -f %PROD% stop postgresql
-  ) ELSE IF "%ARG%" == "load-xls" (
-    docker-compose -f %PROD% run web flask load_xls_into_db
+  ) ELSE IF "%ARG2%" == "load-xls" (
+    CALL docker\remove-container.bat /p /x >NUL
+    docker-compose -f %PROD% run --name upload_lib_items_prod web flask load_xls_into_db
     docker-compose -f %PROD% stop postgresql
+  ) ELSE IF "%ARG%" == "create-admin" (
+    CALL docker\remove-container.bat /d /x >NUL
+    docker-compose -f %DEV% run --name upload_lib_items_dev web flask create_admin
+    docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG2%"=="/b" (
     docker-compose -f %PROD% build
   ) ELSE (
@@ -34,16 +45,24 @@ IF "%ARG%"=="/t" (
   )
 ) ELSE (
   IF "%ARG%" == "migrate" (
-    docker-compose -f %DEV% run web flask db migrate
+    CALL docker\remove-container.bat /d /m >NUL
+    docker-compose -f %DEV% run --name melvil_db_migration_dev web flask db migrate
     docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG%" == "upgrade" (
-    docker-compose -f %DEV% run web flask db upgrade
+    CALL docker\remove-container.bat /d /u >NUL
+    docker-compose -f %DEV% run --name melvil_db_upgrade_dev web flask db upgrade
     docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG%" == "create-db" (
-    docker-compose -f %DEV% run web python create_db.py
+    CALL docker\remove-container.bat /d /d >NUL
+    docker-compose -f %DEV% run --name melvil_db_dev web python create_db.py
     docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG%" == "load-xls" (
-    docker-compose -f %DEV% run web flask load_xls_into_db
+    CALL docker\remove-container.bat /d /x >NUL
+    docker-compose -f %DEV% run --name upload_lib_items_dev web flask load_xls_into_db
+    docker-compose -f %DEV% stop postgresql
+  ) ELSE IF "%ARG%" == "create-admin" (
+    CALL docker\remove-container.bat /d /x >NUL
+    docker-compose -f %DEV% run --name upload_lib_items_dev web flask create_admin
     docker-compose -f %DEV% stop postgresql
   ) ELSE IF "%ARG%"=="/b" (
     docker-compose -f %DEV% build

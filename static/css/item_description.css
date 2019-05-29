@@ -3,18 +3,6 @@
     padding: 5% 0;
 }
 
-.my_container {
-    width: 100%;
-}
-
-p.subpage-title {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-}
 
 p.copies {
     margin: 5% 0 1%;

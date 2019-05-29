@@ -1,6 +1,13 @@
 version: '3'
 
 services:
+  cron:
+    build:
+      context: ..
+      dockerfile: './docker/Dockerfile-cron'
+    environment:
+    - CRON_MINUTE=* * * * * root curl http://web:8000/check_reservation_status_db
+
   web:
     build:
       context: ..
@@ -18,9 +25,9 @@ services:
         - DB_HOST=postgresql
         - DB_PORT=5432
         - DB_ENGINE=postgresql
-        - ENV=prod
     depends_on:
       - "postgresql"
+    container_name: melvil_web_prod
 
   postgresql:
       image: postgres
@@ -33,6 +40,7 @@ services:
         - POSTGRES_DB=psql_db
       ports:
         - "5432:5432"
+      container_name: melvil_postgres_prod
   nginx:
     image: nginx:alpine
     restart: always

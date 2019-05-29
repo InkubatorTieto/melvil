@@ -10,172 +10,168 @@
 
 {% block content %}
 {% from "macros.html" import input with context %}
-<div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-    <main role="main" class="inner cover">
-        <p class="form-title">EDIT BOOK/MAGAZINE</p>
-        <form class="login" method="post">
-            {{ form.hidden_tag() }}
-            {% if item_type == 'book' %}
-            <div class="container">
+<p class="form-title">EDIT BOOK/MAGAZINE</p>
+<form class="login" method="post">
+    {{ form.hidden_tag() }}
+    {% if item_type == 'book' %}
+    <div class="container">
 
 
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.title ,error['title']) }}
-                    </div>
-                    <div class="col">
-                        {% if form.original_title != None %}
-                        {{ input( form.original_title ,error['original_title']) }}
-                        {% endif %}
-
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.publisher ,error['publisher']) }}
-                    </div>
-
-                    <div class="col">
-                        <br>
-                        <p id="myText">Year of publication:</p>
-                        {{ input(form.pub_date, error['pub_date'])}}
-
-                    </div>
-                </div>
-
-
-                <p id="myText1">Autors:</p>
-
-                <div class="row">
-                    <div class="col">
-                        {% if form.first_name != None %}
-                        {{ input( form.first_name, error['first_name']) }}
-                        {% endif %}
-                    </div>
-                    <div class="col">
-                        {% if form.surname != None %}
-                        {{ input( form.surname, error['surname']) }}
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.first_name_1, error['first_name_1']) }}
-                    </div>
-                    <div class="col">
-                        {{ input( form.surname_1, error['surname_1']) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.first_name_2, error['first_name_2']) }}
-                    </div>
-                    <div class="col">
-                        {{ input( form.surname_2, error['surname_2']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        <br>
-                        {% if form.isbn != None %}
-                        {{ input( form.isbn ,error['isbn']) }}
-                        {% endif %}
-                    </div>
-                    <div class="col">
-                        <p id="myText">Language:</p>
-                        {{ input( form.language ,error['language']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        <br>
-                        {{ input( form.tag ,error['tag']) }}
-                    </div>
-                    <div class="col">
-                        <p id="myText">Category:</p>
-                        {{ input( form.category ,error['category']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.table_of_contents ,error['table_of_contents']) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.description ,error['description']) }}
-                    </div>
-                </div>
-
-                {{form.submit}}
+        <div class="row">
+            <div class="col">
+                {{ input( form.title ,error['title']) }}
+            </div>
+            <div class="col">
+                {% if form.original_title != None %}
+                {{ input( form.original_title ,error['original_title']) }}
+                {% endif %}
 
             </div>
-            {% elif item_type == 'magazine' %}
-            <div class="container">
+        </div>
 
 
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.title_of_magazine ,error['title_of_magazine']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.issue ,error['issue']) }}
-                    </div>
-
-                    <div class="col">
-                        <br>
-                        <p id="myText">Year of publication:</p>
-                        {{ input(form.pub_date, error['pub_date'])}}
-
-                        <p id="myText">Language:</p>
-                        {{ input( form.language ,error['language']) }}
-                    </div>
-
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        <br>
-                        {{ input( form.tag ,error['tag']) }}
-                    </div>
-                    <div class="col">
-                        <p id="myText">Category:</p>
-                        {{ input( form.category ,error['category']) }}
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.table_of_contents ,error['table_of_contents']) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ input( form.description ,error['description']) }}
-                    </div>
-                </div>
+        <div class="row">
+            <div class="col">
+                {{ input( form.publisher ,error['publisher']) }}
             </div>
-            {{form.submit}}
+
+            <div class="col">
+                <br>
+                <p class="myText">Year of publication:</p>
+                {{ input(form.pub_date, error['pub_date'])}}
+
+            </div>
+        </div>
 
 
-            {% endif %}
-        </form>
-    </main>
-</div>
+        <p class="myText1">Autors:</p>
+
+        <div class="row">
+            <div class="col">
+                {% if form.first_name != None %}
+                {{ input( form.first_name, error['first_name']) }}
+                {% endif %}
+            </div>
+            <div class="col">
+                {% if form.surname != None %}
+                {{ input( form.surname, error['surname']) }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{ input( form.first_name_1, error['first_name_1']) }}
+            </div>
+            <div class="col">
+                {{ input( form.surname_1, error['surname_1']) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{ input( form.first_name_2, error['first_name_2']) }}
+            </div>
+            <div class="col">
+                {{ input( form.surname_2, error['surname_2']) }}
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <br>
+                {% if form.isbn != None %}
+                {{ input( form.isbn ,error['isbn']) }}
+                {% endif %}
+            </div>
+            <div class="col">
+                <p class="myText">Language:</p>
+                {{ input( form.language ,error['language']) }}
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <br>
+                {{ input( form.tag ,error['tag']) }}
+            </div>
+            <div class="col">
+                <p class="myText">Category:</p>
+                {{ input( form.category ,error['category']) }}
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                {{ input( form.table_of_contents ,error['table_of_contents']) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{ input( form.description ,error['description']) }}
+            </div>
+        </div>
+
+        {{form.submit}}
+
+    </div>
+    {% elif item_type == 'magazine' %}
+    <div class="container">
+
+
+        <div class="row">
+            <div class="col">
+                {{ input( form.title_of_magazine ,error['title_of_magazine']) }}
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                {{ input( form.issue ,error['issue']) }}
+            </div>
+
+            <div class="col">
+                <br>
+                <p class="myText">Year of publication:</p>
+                {{ input(form.pub_date, error['pub_date'])}}
+
+                <p class="myText">Language:</p>
+                {{ input( form.language ,error['language']) }}
+            </div>
+
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <br>
+                {{ input( form.tag ,error['tag']) }}
+            </div>
+            <div class="col">
+                <p class="myText">Category:</p>
+                {{ input( form.category ,error['category']) }}
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                {{ input( form.table_of_contents ,error['table_of_contents']) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{ input( form.description ,error['description']) }}
+            </div>
+        </div>
+    </div>
+    {{form.submit}}
+
+
+    {% endif %}
+</form>
 {% endblock %}
 
 {% block scripts %}

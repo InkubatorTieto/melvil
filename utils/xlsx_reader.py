@@ -1,6 +1,7 @@
 import xlrd
 
 from datetime import datetime
+from random import choice, randint
 
 from nameparser import HumanName
 
@@ -37,7 +38,16 @@ def create_library_item(session, model, **kwargs):
     if library_item:
         return library_item
     else:
-        instance = model(**kwargs)
+        language = choice(['polish', 'other', 'english'])
+        if model.__name__ == "Book":
+            rand_date = datetime.\
+                strptime(str(randint(1978, int(datetime.today().year))),
+                         '%Y')
+            instance = model(language=language, pub_date=rand_date, **kwargs)
+        elif model.__name__ == "Magazine":
+            instance = model(language=language, **kwargs)
+        else:
+            instance = model(**kwargs)
         session.add(instance)
         session.commit()
         return instance

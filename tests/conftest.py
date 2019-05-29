@@ -11,8 +11,8 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from forms.forms import SearchForm
-from forms.book import BookForm, MixedForm, MagazineForm
+from forms.book import BookForm, MagazineForm,\
+    AddNewItemBookForm, AddNewItemMagazineForm
 from models import (
     User,
     Book,
@@ -23,26 +23,27 @@ from models import (
     Tag,
     LibraryItem
 )
+from models.users import Role, RoleEnum
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.edit_profile import EditProfileForm
 from forms.forms import (
+    SearchForm,
+    WishlistForm,
     LoginForm,
     RegistrationForm,
     ForgotPass,
     EditPasswordForm
 )
-from forms.forms import WishlistForm
 from tests.populate import (
     populate_users,
     populate_copies,
     populate_authors,
     populate_books,
     populate_rental_logs,
-    populate_magazines
+    populate_magazines,
+    populate_wish_list_items
 )
 from models.library import BookStatus
-
-
 
 
 g = Generic('en')
@@ -201,12 +202,11 @@ def view_book(session, client):
                   'magazines', 'other']
     type_book = ['book', 'magazine']
 
-    form = MixedForm(
+    form = AddNewItemBookForm(
         radio=choice(type_book),
         first_name=g.person.name(),
         surname=g.person.surname(),
         title=' '.join(g.text.title().split(' ')[:5]),
-        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
         table_of_contents=g.text.sentence(),
         language=choice(languages),
         category=choice(categories),
@@ -215,6 +215,27 @@ def view_book(session, client):
         isbn=str(1861972717),
         original_title=' '.join(g.text.title().split(' ')[:5]),
         publisher=g.business.company(),
+        pub_date=str(randint(1970, 2018)),
+    )
+
+    return form
+
+
+@pytest.fixture(scope="function")
+def view_magazine(session, client):
+    languages = ['polish', 'english', 'other']
+    categories = ['developers', 'managers',
+                  'magazines', 'other']
+    type_book = ['book', 'magazine']
+
+    form = AddNewItemMagazineForm(
+        radio=choice(type_book),
+        title_of_magazine=' '.join(g.text.title().split(' ')[:5]),
+        table_of_contents=g.text.sentence(),
+        language=choice(languages),
+        category=choice(categories),
+        tag=g.text.words(1),
+        description=g.text.sentence(),
         pub_date=str(randint(1970, 2018)),
         issue=g.text.words(1)
     )
@@ -328,6 +349,31 @@ def copy_form(session, client):
 
 
 @pytest.fixture(scope="function")
+def view_login(session, client, db_user):
+    form = LoginForm(
+        email=db_user.email,
+        password=db_user.password_hash
+    )
+
+    yield form
+
+
+@pytest.fixture(scope="function")
+def view_registration(session):
+    """
+    Creates and return function-scoped User database entry
+    """
+    a = "65$asdMNB"
+    u = RegistrationForm(email="asd.qwe@tieto.com",
+                         first_name=g.person.name(),
+                         surname=g.person.surname(),
+                         password=a,
+                         confirm_pass=a)
+
+    yield u
+
+
+@pytest.fixture(scope="function")
 def db_magazine(session):
     m = Magazine(
         title=' '.join(g.text.title().split(' ')[:5]),
@@ -381,6 +427,13 @@ def app_session(client, db_user):
     with client.session_transaction() as app_session:
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
+        return app_session
+
+
+@pytest.fixture
+def empty_app_session(client):
+    with client.session_transaction() as app_session:
+        app_session['logged_in'] = False
         return app_session
 
 
@@ -460,6 +513,30 @@ def db_tieto_user(session):
 
 
 @pytest.fixture(scope="function")
+def db_admin_user(session):
+    """
+    Creates and return function-scoped Admin user database entry
+    """
+    password = g.person.password(length=8)
+    u = User(email=g.person.name() + g.person.surname() + '.' + '@tieto.com',
+             first_name=g.person.name(),
+             surname=g.person.surname(),
+             password_hash=generate_password_hash(password),
+             active=True,
+             roles=[])
+    role_admin = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+    u.roles.append(role_admin)
+    session.add(u)
+    session.commit()
+
+    yield u, password
+
+    if User.query.get(u.id):
+        session.delete(u)
+        session.commit()
+
+
+@pytest.fixture(scope="function")
 def login_form(db_tieto_user):
     """
     Returns login form containing valid data of registered user.
@@ -467,6 +544,18 @@ def login_form(db_tieto_user):
     form = LoginForm(
         email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
         password=db_tieto_user[1],
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def login_form_admin_credentials(db_admin_user):
+    """
+    Returns login form containing valid data of registered admin user.
+    """
+    form = LoginForm(
+        email=User.query.filter_by(id=db_admin_user[0].id).first().email,
+        password=db_admin_user[1],
     )
     yield form
 
@@ -489,11 +578,35 @@ def search_query(session, client):
 
 
 @pytest.fixture(scope="function")
-def get_title(session, client, search_query):
+def wishlist_query(session, client):
+    """
+    Create db entries for wishlist items
+    """
+    wishlist = populate_wish_list_items()
+
+    for i in wishlist:
+        session.add(i)
+
+    session.commit()
+
+    yield wishlist
+
+
+@pytest.fixture(scope="function")
+def get_title(session, client):
     """
     Get title of item in Library
     """
     item = LibraryItem.query.first()
+    yield item
+
+
+@pytest.fixture(scope="function")
+def get_wish(session, client):
+    """
+    Get title of wish in wishlist db
+    """
+    item = WishListItem.query.first()
     yield item
 
 
@@ -518,13 +631,14 @@ def registration_form():
     """
     Returns registration form containing valid data.
     """
-    new_password = g.person.password(length=8)
+    new_password = g.cryptographic.hash() + "!A"
     form = RegistrationForm(
         email=g.person.name() + '.' + g.person.surname() + '@tieto.com',
         first_name=g.person.name(),
         surname=g.person.surname(),
         password=new_password,
         confirm_pass=new_password,
+        submit=True
     )
     yield form
 

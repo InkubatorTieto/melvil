@@ -1,29 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Wish list{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/input_dropdown_list.css') }}">
+{% endblock %}
+
 {% block content %}
-   {% from "macros.html" import input with context %}
+{% from "macros.html" import input with context %}
 
-       <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-body wish" id="exampleModalLabel">
-                <button type="button" style="white" class="close close-button" data-dismiss="modal" aria-label="Close" onclick="window.location.href='{{ url_for('library.wishlist')}}';">
-                  <span aria-hidden="true">&times;</span>
-                    </button>
-                             <br>
-                               <p class="form-title">Create new wish</p>
-                                   <form class="wishlist_add" action="" method="post">
-                                       {{ form.hidden_tag() }}
-                                       <label>{{form.type.label}}</label>
-                                       {{ input( form.type, error['type'])}}
-                                       {{ input( form.authors, error['authors'])}}
-                                       {{ input( form.title, error['title'] ) }}
-                                       <label>Publication year</label>
-                                       {{ input(form.pub_date, error['pub_date'])}}
-                                       {{ form.add }}
-                                   </form>
-              </div>
-            </div>
-          </div>
 
+<div class="wrap">
+    <button type="button" id="exampleModalLabel" class="close close-button" data-dismiss="modal" aria-label="Close"
+            onclick="window.location.href='{{ url_for('library.wishlist')}}';">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <p class="form-title">Create new wish</p>
+
+
+    <form class="wishlist_add" action="" method="post">
+        {{ form.hidden_tag() }}
+        <label>{{form.type.label}}</label>
+        {{ input( form.type, error['type'])}}
+        {{ input( form.authors, error['authors'])}}
+        {{ input( form.title, error['title'] ) }}
+        <label>Publication year</label>
+        {{ input(form.pub_date, error['pub_date'])}}
+        {{ form.add }}
+    </form>
+</div>
 
 {% endblock %}

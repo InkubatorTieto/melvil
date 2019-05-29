@@ -8,12 +8,16 @@ from wtforms import (
     TextAreaField,
     SelectField,
 )
-
 from wtforms.validators import DataRequired, Email, EqualTo, Length
-
 from flask_wtf import FlaskForm
 
-from forms.custom_validators import tieto_email, name, surname, check_pub_date
+from forms.custom_validators import (
+    tieto_email,
+    name,
+    surname,
+    check_password,
+    check_pub_date
+)
 
 
 class LoginForm(FlaskForm):
@@ -25,7 +29,8 @@ class LoginForm(FlaskForm):
                              validators=[DataRequired()],
                              render_kw=({'class': 'inputs',
                                          'placeholder': 'Password'}))
-    remember_me = BooleanField('Remember Me')
+    remember_me = BooleanField(label='Remember Me')
+
     submit = SubmitField('Sign In',
                          render_kw=({'class': 'btn btn-primary submits'}))
 
@@ -45,14 +50,14 @@ class RegistrationForm(FlaskForm):
                                       'placeholder': 'Last Name'}))
     password = PasswordField(
         'Password',
-        validators=[DataRequired(),
+        validators=[DataRequired(), check_password,
                     EqualTo('confirm_pass',
                             message='Passwords must match.')],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Password'}))
     confirm_pass = PasswordField(
         'Confirm password',
-        validators=[DataRequired()],
+        validators=[DataRequired(), check_password],
         render_kw=({'class': 'inputs',
                     'placeholder': 'Confirm Password'}))
     submit = SubmitField('Sign Up',
@@ -68,7 +73,7 @@ class EditPasswordForm(FlaskForm):
     new_password = PasswordField(
         'Password',
         validators=[DataRequired(),
-                    EqualTo('confirm_pass',
+                    EqualTo('confirm_password',
                             message='Passwords must match.')],
         render_kw=({'class': 'inputs',
                     'placeholder': 'New Password'}))
@@ -101,7 +106,7 @@ class ContactForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     query = StringField('Search',
-                        render_kw=({'class': 'form-control',
+                        render_kw=({'class': 'inputs',
                                     'type': 'text',
                                     'placeholder': 'Search...'}))
     submit = SubmitField('Search')
@@ -130,7 +135,8 @@ class WishlistForm(FlaskForm):
     type = SelectField('Item Type',
                        choices=[('book', 'Book'), ('magazine', 'Magazine')],
                        render_kw=({
-                           'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                           'class': 'inputs custom-select'
+                                    ' mb-2 mr-sm-2 mb-sm-0',
                            'id': 'mySelect'}))
 
     authors = StringField('authors',
@@ -148,7 +154,8 @@ class WishlistForm(FlaskForm):
                                           datetime.now().year + 1)],
                            validators=[check_pub_date],
                            render_kw=({
-                               'class': 'custom-select mb-2 mr-sm-2 mb-sm-0',
+                               'class': 'inputs custom-select'
+                                        ' mb-2 mr-sm-2 mb-sm-0',
                                'id': 'mySelect',
                                'placeholder': 'Year of publication'}))
 

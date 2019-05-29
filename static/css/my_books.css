@@ -1,0 +1,11 @@
+.table{
+    margin-top: 5%;
+}
+
+.table thead th {
+    border-top: none;
+}
+
+.book_dashboard_button{
+    width: inherit;
+}

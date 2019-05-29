@@ -1,16 +1,22 @@
 {% extends "base.html" %}
-{% block title %}{{ title }}{% endblock %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}/">
+{% endblock %}
 
+{% block title %}{{ title }}{% endblock %}
 {% block content %}
-    <div class="cover-container d-flex h-80 p-3 mx-auto flex-column">
-        <main role="main" class="inner cover">
-            <h1 class="cover-heading">Melvil Library</h1>
-            <p class="lead">Welcome to Tieto online library, where you can view all available book resources.
-                Feel free to browse, choose books that you like and develop your knowledge in the fields
-                of computer science and management.</p>
-            <p class="lead">
-                <a href="{{ url_for('library.search') }}" class="btn btn-primary">Search book</a>
-            </p>
-        </main>
-    </div>
+{% from "macros.html" import flashed_message with context %}
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {{ flashed_message(messages) }}
+    {% endwith %}
+</div>
+<h1 class="cover-heading">Melvil Library</h1>
+<p class="lead">Welcome to Tieto online library, where you can view all available book resources.
+    Feel free to browse, choose books that you like and develop your knowledge in the fields
+    of computer science and management.</p>
+<p class="lead">
+    <a href="{{ url_for('library.search') }}" class="btn btn-primary">Search book</a>
+</p>
+
 {% endblock %}
