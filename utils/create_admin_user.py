@@ -17,10 +17,11 @@ def create_super_user():
         user_ldap_data = {
             'mail': refine_data(user_ldap, 'mail'),
             'givenName': refine_data(user_ldap, 'givenName'),
-            'sn': refine_data(user_ldap, 'sn')
+            'sn': refine_data(user_ldap, 'sn'),
+            'employeeID' : refine_data(user_ldap, 'employeeID')
         }
         user_db = User.query.filter_by(
-            email=user_ldap_data['mail']
+            employee_id=user_ldap_data['employeeID']
             ).first()
         if user_db:
             user_db_data = {
@@ -37,6 +38,7 @@ def create_super_user():
                 email=user_ldap_data['mail'],
                 first_name=user_ldap_data['givenName'],
                 surname=user_ldap_data['sn'],
+                employee_id=user_ldap_data['employeeID'],
                 active=True
             )
             db.session.add(new_user)
