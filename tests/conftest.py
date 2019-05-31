@@ -8,7 +8,7 @@ from mimesis import Generic
 from sqlalchemy import event
 from werkzeug.security import generate_password_hash
 
-from app import create_app
+from app import create_app, ldap_client
 from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm, MagazineForm,\
@@ -118,6 +118,77 @@ def mailbox(app):
 def email_generator(chars=string.ascii_letters + string.digits + '.' + '-'):
     size = random.randint(10, 25)
     return ''.join(random.choice(chars) for _ in range(size)) + '@tieto.com'
+
+
+@pytest.fixture(scope='module')
+def mock_ldap():
+    global ldap_client
+
+    # this class mimics ldap object
+    class MockLdap:
+        # those properties correspond to use cases
+        # for example user not present in ldap try to log in
+        def __init__(self, user, non_user, user_not_wroc):
+            self.user = user
+            self.non_user = non_user
+            self.user_not_wroc = user_not_wroc
+
+        # check id credentials are valid
+        def bind_user(self, user_name, passwd):
+            if ((user_name == self.user['user_name'] and
+                    passwd == self.user['passwd']) or
+                    (user_name == self.user_not_wroc['user_name'] and
+                        passwd == self.user_not_wroc['passwd'])):
+                return True
+            else:
+                return None
+
+        # return employee data
+        def get_object_details(self, user):
+            if (user == self.user['user_name'] or
+                    user == self.user['mail']):
+                return self.user
+            elif (user == self.user_not_wroc['user_name'] or
+                    user == self.user_not_wroc['mail']):
+                return self.user_not_wroc
+            else:
+                return None
+
+    # create fake user data
+    def create_user(wroclaw_usr=True, non_user=False):
+        login = Generic().person.identifier(mask='@@@@@@@@').lower()
+        email = Generic().person.email(['@tieto.com'])
+        passwd = Generic().person.password(length=12)
+        name = Generic().person.name()
+        surname = Generic().person.last_name()
+        identifier = Generic().person.identifier(mask='#####')
+
+        if wroclaw_usr:
+            location = 'Wroclaw'
+        else:
+            while True:
+                location = Generic().address.city()
+                if location != 'Wroclaw':
+                    break
+
+        if non_user:
+            return dict(user_name=login, passwd=passwd)
+        else:
+            return dict(
+                user_name=login,
+                passwd=passwd,
+                mail=email,
+                givenName=name,
+                sn=surname,
+                employeeID=identifier
+            )
+
+    # substitute ldap object
+    ldap_client = MockLdap(
+        create_user(),
+        create_user(non_user=True),
+        create_user(wroclaw_usr=False)
+    )
 
 
 @pytest.fixture(scope='module')

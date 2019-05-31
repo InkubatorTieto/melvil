@@ -4,13 +4,14 @@ import time
 from flask import Flask
 from flask_mail import Mail
 from flask_migrate import Migrate
+from flask_simpleldap import LDAP
 from raven import Client
 from raven.contrib.flask import Sentry
 from sqlalchemy.exc import OperationalError, TimeoutError
 
 from config import DevConfig, ProdConfig
 from init_db import db
-from ldap_utils.ldap_utils import register_hooks, ldap_client
+from ldap_utils.ldap_utils import register_hooks
 from utils.xlsx_reader import get_books, get_magazines
 from utils.create_admin_user import create_super_user
 from views.book import library_books
@@ -20,6 +21,7 @@ from views.index import library
 mail = Mail()
 sentry = Sentry()
 client = Client()
+ldap_client = LDAP()
 
 if os.getenv('FLASK_ENV', '') == 'development':
     config_env = DevConfig

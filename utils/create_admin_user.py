@@ -1,10 +1,14 @@
 from werkzeug.security import generate_password_hash
 import re
+from flask_simpleldap import LDAP
 
 from forms.custom_validators import email_regex
-from ldap_utils.ldap_utils import ldap_client, refine_data
+from ldap_utils.ldap_utils import refine_data
 from models.users import User, Role, RoleEnum
 from init_db import db
+
+
+ldap_client = LDAP()
 
 
 def create_super_user():
@@ -13,12 +17,12 @@ def create_super_user():
     if user_ldap:
         if refine_data(user_ldap, 'l') != 'Wroclaw':
             print('Only employees from Wroclaw are accepted')
-            return 
+            return
         user_ldap_data = {
             'mail': refine_data(user_ldap, 'mail'),
             'givenName': refine_data(user_ldap, 'givenName'),
             'sn': refine_data(user_ldap, 'sn'),
-            'employeeID' : refine_data(user_ldap, 'employeeID')
+            'employeeID': refine_data(user_ldap, 'employeeID')
         }
         user_db = User.query.filter_by(
             employee_id=user_ldap_data['employeeID']

@@ -98,7 +98,7 @@ def login():
                     'mail': refine_data(user_ldap, 'mail'),
                     'givenName': refine_data(user_ldap, 'givenName'),
                     'sn': refine_data(user_ldap, 'sn'),
-                    'employeeID' : refine_data(user_ldap, 'employeeID')
+                    'employeeID': refine_data(user_ldap, 'employeeID')
                 }
                 user_db = User.query.filter_by(
                     employee_id=user_ldap_data['employeeID']
@@ -119,7 +119,7 @@ def login():
                         'mail': user_db.email,
                         'givenName': user_db.first_name,
                         'sn': user_db.surname,
-                        'employeeID' : user_db.employee_id
+                        'employeeID': user_db.employee_id
                     }
                     if user_db_data != user_ldap_data:
                         user_db.email = user_ldap_data['mail']
