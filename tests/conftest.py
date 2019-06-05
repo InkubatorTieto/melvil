@@ -2,13 +2,14 @@ from datetime import datetime
 import random
 from random import choice, randint
 import string
+from unittest import mock
 
 import pytest
 from mimesis import Generic
 from sqlalchemy import event
 from werkzeug.security import generate_password_hash
 
-from app import create_app, ldap_client
+from app import create_app
 from app import db as _db
 from app import mail as _mail
 from forms.book import BookForm, MagazineForm,\
@@ -67,8 +68,9 @@ def app():
 
 
 @pytest.fixture
-def client(app):
+def client(app, mock_ldap):
     with app.test_client() as client:
+        app.ldap_client = mock_ldap
         return client
 
 
@@ -121,24 +123,25 @@ def email_generator(chars=string.ascii_letters + string.digits + '.' + '-'):
 
 
 @pytest.fixture(scope='module')
-def mock_ldap():
-    global ldap_client
-
+def mock_ldap(db):
     # this class mimics ldap object
-    class MockLdap:
+    class MockLdap():
         # those properties correspond to use cases
         # for example user not present in ldap try to log in
-        def __init__(self, user, non_user, user_not_wroc):
+        def __init__(self, user, non_user, user_not_wroc, admin):
             self.user = user
             self.non_user = non_user
             self.user_not_wroc = user_not_wroc
+            self.admin = admin
 
-        # check id credentials are valid
+        # check if credentials are valid
         def bind_user(self, user_name, passwd):
             if ((user_name == self.user['user_name'] and
                     passwd == self.user['passwd']) or
                     (user_name == self.user_not_wroc['user_name'] and
-                        passwd == self.user_not_wroc['passwd'])):
+                        passwd == self.user_not_wroc['passwd']) or
+                        (user_name == self.user_not_wroc['user_name'] and
+                            passwd == self.user_not_wroc['passwd'])):
                 return True
             else:
                 return None
@@ -155,7 +158,7 @@ def mock_ldap():
                 return None
 
     # create fake user data
-    def create_user(wroclaw_usr=True, non_user=False):
+    def create_user(wroclaw_usr=True, non_user=False, admin=False):
         login = Generic().person.identifier(mask='@@@@@@@@').lower()
         email = Generic().person.email(['@tieto.com'])
         passwd = Generic().person.password(length=12)
@@ -171,6 +174,22 @@ def mock_ldap():
                 if location != 'Wroclaw':
                     break
 
+        if admin:
+            new_user = User(
+                email=email,
+                first_name=name,
+                surname=surname,
+                employee_id=identifier,
+                active=True
+            )
+            db.session.add(new_user)
+            user = User.query.filter_by(email=email).first()
+            role = Role.query.filter_by(name=RoleEnum.USER).first()
+            user.roles.remove(role)
+            role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+            user.roles.append(role)
+            db.session.commit()
+
         if non_user:
             return dict(user_name=login, passwd=passwd)
         else:
@@ -180,14 +199,16 @@ def mock_ldap():
                 mail=email,
                 givenName=name,
                 sn=surname,
-                employeeID=identifier
+                employeeID=identifier,
+                l=location
             )
 
-    # substitute ldap object
-    ldap_client = MockLdap(
+        # substitute ldap-like object
+    return MockLdap(
         create_user(),
         create_user(non_user=True),
-        create_user(wroclaw_usr=False)
+        create_user(wroclaw_usr=False),
+        create_user(admin=True)
     )
 
 
@@ -620,15 +641,17 @@ def login_form(db_tieto_user):
 
 
 @pytest.fixture(scope="function")
-def login_form_admin_credentials(db_admin_user):
+def login_form_admin_credentials(mock_ldap):
     """
     Returns login form containing valid data of registered admin user.
     """
+    ldap_client = mock_ldap
     form = LoginForm(
-        email=User.query.filter_by(id=db_admin_user[0].id).first().email,
-        password=db_admin_user[1],
+        username=ldap_client.admin['user_name'],
+        password=ldap_client.admin['passwd'],
+        submit=True
     )
-    yield form
+    return form
 
 
 @pytest.fixture(scope="function")

@@ -78,6 +78,7 @@ def login():
             passwd = form.password.data
             test_conn = ldap_client.bind_user(user, passwd)
             message_title = 'Error!'
+            print(test_conn, user, passwd)
             if not test_conn or passwd == '':
                 message_body = 'Invalid username and/or password'
                 return render_template(
@@ -103,7 +104,6 @@ def login():
                 user_db = User.query.filter_by(
                     employee_id=user_ldap_data['employeeID']
                     ).first()
-                create_user = None
                 if not user_db:
                     new_user = User(
                         email=user_ldap_data['mail'],
@@ -128,7 +128,6 @@ def login():
                         user_db.employee_id = user_ldap_data['employeeID']
                         db.session.commit()
 
-                  
                 user_db = User.query.filter_by(
                     employee_id=user_ldap_data['employeeID']
                     ).first()

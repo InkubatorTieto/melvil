@@ -1,67 +1,75 @@
 from flask import session
 import datetime 
 from random import choice, randint
+from unittest import mock
+import sys
 
 from flask import url_for
 from mimesis import Generic
 import pytest
 
-from models import Author, Book, Tag, Magazine, LibraryItem
+from models import Author, Book, Tag, Magazine, LibraryItem, User
 from forms.book import BookForm, MagazineForm
+import views.index
 
 
 year_now = datetime.datetime.now().year
 
 
-def test_add_book(view_book, client, login_form_admin_credentials):
-    view_book.radio.data = 'book'
-    client.post(url_for('library.login'),
-                data=login_form_admin_credentials.data)
-    client.post(url_for('library_books.add_book'),
-                data=view_book.data,
-                follow_redirects=True)
+def test_add_book(view_book, client, login_form_admin_credentials, mock_ldap):
+    sys.path.append("..")
+    with mock.patch('views.index.ldap_client', mock_ldap):
+        view_book.radio.data = 'book'
+        client.post(url_for('library.login'),
+                    data=login_form_admin_credentials.data)
+        client.post(url_for('library_books.add_book'),
+                    data=view_book.data,
+                    follow_redirects=True)
 
-    author = Author.query.filter_by(first_name=view_book.first_name.data,
-                                    last_name=view_book.surname.data).first()
-    if not author:
-        assert False, "Data validation failed"
-    assert view_book.first_name.data == author.first_name \
-        and view_book.surname.data == author.last_name, \
-        "First and last name of the first author is not" \
-        " the same as given at the entrance"
+        author = Author.query.filter_by(
+            first_name=view_book.first_name.data,
+            last_name=view_book.surname.data
+        ).first()
 
-    book = Book.query.filter_by(title=view_book.title.data,
-                                isbn=view_book.isbn.data).first()
-    if not book:
-        assert False, "Data validation failed"
-    assert view_book.title.data == book.title, \
-        "The title of the book is not the same as given at the entrance "
-    assert view_book.isbn.data == book.isbn, \
-        "The ISBN number is not the same as given at the entrance "
-    assert view_book.table_of_contents.data == book.table_of_contents, \
-        "The table of content is not the same as given at the entrance "
-    assert view_book.language.data == book.language, \
-        "Language is not the same as given at the entrance "
-    assert view_book.category.data == book.category, \
-        "Category of book is not the same as given at the entrance "
-    assert view_book.description.data == book.description, \
-        "The book description is not the same as given at the entrance "
-    assert view_book.original_title.data == book.original_title, \
-        "The original title of book is not the same as given at the entrance "
-    assert view_book.publisher.data == book.publisher, \
-        "The publisher is not the same as given at the entrance "
-    assert datetime.date(year=int(view_book.pub_date.data),
-                month=1,
-                day=1) == book.pub_date, \
-        "The year of publication is not the same as given at the entrance "
+        if not author:
+            assert False, "Data validation failed"
+        assert view_book.first_name.data == author.first_name \
+            and view_book.surname.data == author.last_name, \
+            "First and last name of the first author is not" \
+            " the same as given at the entrance"
 
-    tag = Tag.query.filter_by(name=view_book.tag.data[0]).first()
-    if not tag:
-        assert False, "Data validation failed"
+        book = Book.query.filter_by(title=view_book.title.data,
+                                    isbn=view_book.isbn.data).first()
+        if not book:
+            assert False, "Data validation failed"
+        assert view_book.title.data == book.title, \
+            "The title of the book is not the same as given at the entrance "
+        assert view_book.isbn.data == book.isbn, \
+            "The ISBN number is not the same as given at the entrance "
+        assert view_book.table_of_contents.data == book.table_of_contents, \
+            "The table of content is not the same as given at the entrance "
+        assert view_book.language.data == book.language, \
+            "Language is not the same as given at the entrance "
+        assert view_book.category.data == book.category, \
+            "Category of book is not the same as given at the entrance "
+        assert view_book.description.data == book.description, \
+            "The book description is not the same as given at the entrance "
+        assert view_book.original_title.data == book.original_title, \
+            "The original title of book is not the same as given at the entrance "
+        assert view_book.publisher.data == book.publisher, \
+            "The publisher is not the same as given at the entrance "
+        assert datetime.date(year=int(view_book.pub_date.data),
+                    month=1,
+                    day=1) == book.pub_date, \
+            "The year of publication is not the same as given at the entrance "
 
-    assert tag.name in view_book.tag.data, \
-        "Tags ane not the same"
-    session.clear()
+        tag = Tag.query.filter_by(name=view_book.tag.data[0]).first()
+        if not tag:
+            assert False, "Data validation failed"
+
+        assert tag.name in view_book.tag.data, \
+            "Tags ane not the same"
+        session.clear()
 
 
 def test_add_magazine(view_magazine, client, login_form_admin_credentials):

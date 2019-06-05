@@ -5,11 +5,6 @@ from views.book_borrowing_dashboard import (
 )
 
 
-def test_check(mock_ldap):
-    from app import ldap_client
-    assert ldap_client.bind_user(ldap_client.user['user_name'], ldap_client.user['passwd'])
-
-
 def test_dashboard_status_code(client, login_form_admin_credentials):
     client.post(url_for('library.login'),
                 data=login_form_admin_credentials.data)
