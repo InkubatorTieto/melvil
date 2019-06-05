@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta
 
-from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import exc
 from sqlalchemy.exc import IntegrityError
-from werkzeug.security import generate_password_hash, check_password_hash
 
 import pytz
 
@@ -11,7 +9,6 @@ from flask import (
     abort,
     Blueprint,
     flash,
-    g,
     redirect,
     render_template,
     request,
@@ -22,19 +19,14 @@ from flask import (
 
 from config import DevConfig
 from forms.copy import CopyAddForm, CopyEditForm
-from forms.edit_profile import EditProfileForm
 from forms.forms import (
     BorrowForm,
     ContactForm,
-    ForgotPass,
     LoginForm,
-    PasswordForm,
-    RegistrationForm,
     ReturnForm,
     SearchForm,
     WishlistForm,
-    RemoveForm,
-    EditPasswordForm
+    RemoveForm
 )
 from init_db import db
 from ldap_utils.ldap_utils import ldap_client, refine_data
@@ -48,7 +40,6 @@ from models.decorators_roles import (
     require_logged_in,
     require_not_logged_in
 )
-from send_email import send_confirmation_email, send_password_reset_email
 from send_email.emails import send_email
 
 library = Blueprint('library', __name__,
@@ -78,7 +69,6 @@ def login():
             passwd = form.password.data
             test_conn = ldap_client.bind_user(user, passwd)
             message_title = 'Error!'
-            print(test_conn, user, passwd)
             if not test_conn or passwd == '':
                 message_body = 'Invalid username and/or password'
                 return render_template(

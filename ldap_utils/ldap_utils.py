@@ -22,6 +22,6 @@ def register_hooks(app):
                 user=session['username'])
 
 
-def refine_data(object, data_tag):
-    out = object[data_tag][0].decode('utf8')
+def refine_data(obj, data_tag):
+    out = obj[data_tag][0].decode('utf8')
     return out

@@ -2,7 +2,6 @@ from datetime import datetime
 import random
 from random import choice, randint
 import string
-from unittest import mock
 
 import pytest
 from mimesis import Generic
@@ -136,26 +135,23 @@ def mock_ldap(db):
 
         # check if credentials are valid
         def bind_user(self, user_name, passwd):
-            if ((user_name == self.user['user_name'] and
-                    passwd == self.user['passwd']) or
-                    (user_name == self.user_not_wroc['user_name'] and
-                        passwd == self.user_not_wroc['passwd']) or
-                        (user_name == self.user_not_wroc['user_name'] and
-                            passwd == self.user_not_wroc['passwd'])):
+            users = [self.user, self.admin, self.user_not_wroc]
+            check_login = [
+                user_name == usr['user_name'][0].decode() and
+                passwd == usr['passwd'][0].decode()
+                for usr in users
+            ]
+            if any(check_login):
                 return True
             else:
                 return None
 
         # return employee data
         def get_object_details(self, user):
-            if (user == self.user['user_name'] or
-                    user == self.user['mail']):
-                return self.user
-            elif (user == self.user_not_wroc['user_name'] or
-                    user == self.user_not_wroc['mail']):
-                return self.user_not_wroc
-            else:
-                return None
+            users = [self.user, self.admin, self.user_not_wroc]
+            for usr in users:
+                if user == usr['user_name'][0].decode():
+                    return usr
 
     # create fake user data
     def create_user(wroclaw_usr=True, non_user=False, admin=False):
@@ -194,13 +190,13 @@ def mock_ldap(db):
             return dict(user_name=login, passwd=passwd)
         else:
             return dict(
-                user_name=login,
-                passwd=passwd,
-                mail=email,
-                givenName=name,
-                sn=surname,
-                employeeID=identifier,
-                l=location
+                user_name=[login.encode()],
+                passwd=[passwd.encode()],
+                mail=[email.encode()],
+                givenName=[name.encode()],
+                sn=[surname.encode()],
+                employeeID=[identifier.encode()],
+                l=[location.encode()]    # noqa: E741
             )
 
         # substitute ldap-like object
