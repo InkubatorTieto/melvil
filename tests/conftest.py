@@ -35,7 +35,6 @@ from forms.forms import (
     EditPasswordForm
 )
 from tests.populate import (
-    populate_users,
     populate_copies,
     populate_authors,
     populate_books,
@@ -69,7 +68,6 @@ def app():
 @pytest.fixture
 def client(app, mock_ldap):
     with app.test_client() as client:
-        app.ldap_client = mock_ldap
         return client
 
 
@@ -122,7 +120,7 @@ def email_generator(chars=string.ascii_letters + string.digits + '.' + '-'):
 
 
 @pytest.fixture(scope='module')
-def mock_ldap(db):
+def mock_ldap(db, session):
     # this class mimics ldap object
     class MockLdap():
         # those properties correspond to use cases
@@ -155,22 +153,24 @@ def mock_ldap(db):
 
     # create fake user data
     def create_user(wroclaw_usr=True, non_user=False, admin=False):
-        login = Generic().person.identifier(mask='@@@@@@@@').lower()
-        email = Generic().person.email(['@tieto.com'])
-        passwd = Generic().person.password(length=12)
-        name = Generic().person.name()
-        surname = Generic().person.last_name()
-        identifier = Generic().person.identifier(mask='#####')
+        login = g.person.identifier(mask='@@@@@@@@').lower()
+        email = g.person.email(['@tieto.com'])
+        passwd = g.person.password(length=12)
+        name = g.person.name()
+        surname = g.person.last_name()
+        identifier = g.person.identifier(mask='#####')
 
         if wroclaw_usr:
             location = 'Wroclaw'
         else:
             while True:
-                location = Generic().address.city()
+                location = g.address.city()
                 if location != 'Wroclaw':
                     break
 
-        if admin:
+        if non_user:
+            return dict(user_name=login, passwd=passwd)
+        else:
             new_user = User(
                 email=email,
                 first_name=name,
@@ -179,16 +179,14 @@ def mock_ldap(db):
                 active=True
             )
             db.session.add(new_user)
-            user = User.query.filter_by(email=email).first()
-            role = Role.query.filter_by(name=RoleEnum.USER).first()
-            user.roles.remove(role)
-            role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
-            user.roles.append(role)
+            if admin:
+                user = User.query.filter_by(email=email).first()
+                role = Role.query.filter_by(name=RoleEnum.USER).first()
+                user.roles.remove(role)
+                role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+                user.roles.append(role)
             db.session.commit()
-
-        if non_user:
-            return dict(user_name=login, passwd=passwd)
-        else:
+            db_id = User.query.filter_by(employee_id=identifier).first().id
             return dict(
                 user_name=[login.encode()],
                 passwd=[passwd.encode()],
@@ -196,10 +194,11 @@ def mock_ldap(db):
                 givenName=[name.encode()],
                 sn=[surname.encode()],
                 employeeID=[identifier.encode()],
-                l=[location.encode()]    # noqa: E741
+                l=[location.encode()],    # noqa: E741
+                db_id=db_id
             )
 
-        # substitute ldap-like object
+    # substitute ldap-like object
     return MockLdap(
         create_user(),
         create_user(non_user=True),
@@ -246,7 +245,7 @@ def db_user(session):
     u = User(email=g.person.email(),
              first_name=g.person.name(),
              surname=g.person.surname(),
-             password_hash=g.cryptographic.hash(),
+             employee_id=g.person.identifier(mask='#####'),
              active=g.development.boolean(),
              roles=[])
     session.add(u)
@@ -579,28 +578,6 @@ def edit_profile_form(session, client):
 
 
 @pytest.fixture(scope="function")
-def db_tieto_user(session):
-    """
-    Creates and return function-scoped Tieto user database entry
-    """
-    password = g.person.password(length=8)
-    u = User(email=g.person.name() + g.person.surname() + '.' + '@tieto.com',
-             first_name=g.person.name(),
-             surname=g.person.surname(),
-             password_hash=generate_password_hash(password),
-             active=True,
-             roles=[])
-    session.add(u)
-    session.commit()
-
-    yield u, password
-
-    if User.query.get(u.id):
-        session.delete(u)
-        session.commit()
-
-
-@pytest.fixture(scope="function")
 def db_admin_user(session):
     """
     Creates and return function-scoped Admin user database entry
@@ -625,13 +602,13 @@ def db_admin_user(session):
 
 
 @pytest.fixture(scope="function")
-def login_form(db_tieto_user):
+def login_form(mock_ldap):
     """
     Returns login form containing valid data of registered user.
     """
     form = LoginForm(
-        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
-        password=db_tieto_user[1],
+        username=mock_ldap.user['user_name'],
+        password=mock_ldap.user['passwd'],
     )
     yield form
 
@@ -641,11 +618,9 @@ def login_form_admin_credentials(mock_ldap):
     """
     Returns login form containing valid data of registered admin user.
     """
-    ldap_client = mock_ldap
     form = LoginForm(
-        username=ldap_client.admin['user_name'],
-        password=ldap_client.admin['passwd'],
-        submit=True
+        username=mock_ldap.admin['user_name'],
+        password=mock_ldap.admin['passwd']
     )
     return form
 
@@ -701,17 +676,13 @@ def get_wish(session, client):
 
 
 @pytest.fixture(scope="function")
-def login_form_invalid(db_tieto_user):
+def login_form_invalid(mock_ldap):
     """
     Returns login form containing invalid data.
     """
-    invalid_password = g.person.password(length=8)
-    while(invalid_password == db_tieto_user[1]):
-        invalid_password = g.person.password(length=8)
-
     form = LoginForm(
-        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
-        password=invalid_password,
+        email=mock_ldap.non_user['user_name'],
+        password=mock_ldap.non_user['passwd']
     )
     yield form
 
@@ -777,12 +748,11 @@ def forgot_pass(db_tieto_user):
 
 
 @pytest.fixture
-def user_reservations(session):
+def user_reservations(session, mock_ldap):
     """
     Creates reservations for one user
     """
-    user = populate_users(n=1)
-    session.add_all(user)
+    user = mock_ldap.user
     session.commit()
     authors = populate_authors(n=2)
     session.add_all(authors)
@@ -801,10 +771,18 @@ def user_reservations(session):
     session.add_all(copies)
     session.commit()
     reservations = []
-    reservations.append(populate_rental_logs(copies[0].id, user[0].id, n=1)[0])
-    reservations.append(populate_rental_logs(copies[1].id, user[0].id, n=1)[0])
-    reservations.append(populate_rental_logs(copies[2].id, user[0].id, n=1)[0])
-    reservations.append(populate_rental_logs(copies[3].id, user[0].id, n=1)[0])
+    reservations.append(
+        populate_rental_logs(copies[0].id, user['db_id'], n=1)[0]
+    )
+    reservations.append(
+        populate_rental_logs(copies[1].id, user['db_id'], n=1)[0]
+    )
+    reservations.append(
+        populate_rental_logs(copies[2].id, user['db_id'], n=1)[0]
+    )
+    reservations.append(
+        populate_rental_logs(copies[3].id, user['db_id'], n=1)[0]
+    )
     session.add_all(reservations)
     session.commit()
     reservations[0].book_status = BookStatus.RESERVED
@@ -812,7 +790,7 @@ def user_reservations(session):
     reservations[2].book_status = BookStatus.RESERVED
     reservations[3].book_status = BookStatus.BORROWED
 
-    yield user[0], (books[0], reservations[0]), (books[1], reservations[1]), \
+    yield user, (books[0], reservations[0]), (books[1], reservations[1]), \
         (magazines[0], reservations[2]), (magazines[1], reservations[3])
     for r in reservations:
         session.delete(r)
@@ -822,7 +800,6 @@ def user_reservations(session):
         session.delete(b)
     for m in magazines:
         session.delete(m)
-    session.delete(user[0])
     session.commit()
 
 

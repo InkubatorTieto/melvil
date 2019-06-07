@@ -1,3 +1,5 @@
+from unittest import mock
+
 from flask import url_for
 from flask import session
 
@@ -9,8 +11,10 @@ def test_logout_status_code_for_get(client):
         "Logout, GET request gives wrong response"
 
 
-def test_logout_logging_out_user(app, login_form):
-    with app.test_client() as c:
+def test_logout_logging_out_user(app, login_form, mock_ldap):
+    with app.test_client() as c, mock.patch(
+        'views.index.ldap_client', mock_ldap
+    ):
         session['logged_in'] = False
         c.post(url_for('library.login'),
                data=login_form.data)

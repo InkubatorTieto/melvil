@@ -124,10 +124,10 @@ def login():
                 session['logged_in'] = True
                 session['id'] = user_db.id
                 session['email'] = user_db.email
+                print(session)
                 if user_db.has_role('ADMIN'):
                     session['admin'] = True
                 return render_template('index.html', session=session)
-
     elif request.method != 'GET':
         abort(405)
 

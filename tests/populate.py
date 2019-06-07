@@ -24,7 +24,7 @@ def populate_users(n=20, role=None):
         email=g.person.email(),
         first_name=g.person.name(),
         surname=g.person.surname(),
-        password_hash=g.cryptographic.hash(),
+        employee_id=g.person.identifier(mask='#####'),
         active=g.development.boolean(),
         roles=[role] if role else []
     ) for _ in range(n)]
@@ -58,7 +58,7 @@ def populate_magazines(n=10, tags=None):
 def populate_copies(item, n=35):
     return [Copy(
         asset_code='{}{}'.format(
-            g.code.locale_code()[:2],
+            g.person.identifier(mask='@@'),
             g.code.pin(mask='######')),
         library_item=item,
         shelf=g.code.pin(),
