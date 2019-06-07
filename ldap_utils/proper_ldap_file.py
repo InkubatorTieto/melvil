@@ -1,3 +1,4 @@
+# flake8: noqa
 """
 filters.py - misc stuff for handling LDAP filter strings (see RFC2254)
 

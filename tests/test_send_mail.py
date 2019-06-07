@@ -1,4 +1,4 @@
-from send_email import send_email
+from send_email.emails import send_email
 from config import DevConfig
 
 

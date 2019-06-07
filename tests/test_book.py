@@ -1,5 +1,5 @@
 from flask import session
-import datetime 
+import datetime
 from random import choice, randint
 from unittest import mock
 import sys
