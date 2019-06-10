@@ -24,6 +24,7 @@ class Config(object):
 
 
 class DevConfig(Config):
+    PRESERVE_CONTEXT_ON_EXCEPTION = False
     SECRET_KEY = "4f\g45t45gfjerkfefker"
     SECURITY_PASSWORD_SALT = "my_precious_two"
     SQLALCHEMY_TRACK_MODIFICATIONS = False

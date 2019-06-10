@@ -445,21 +445,6 @@ def view_login(session, client, db_user):
 
 
 @pytest.fixture(scope="function")
-def view_registration(session):
-    """
-    Creates and return function-scoped User database entry
-    """
-    a = "65$asdMNB"
-    u = RegistrationForm(email="asd.qwe@tieto.com",
-                         first_name=g.person.name(),
-                         surname=g.person.surname(),
-                         password=a,
-                         confirm_pass=a)
-
-    yield u
-
-
-@pytest.fixture(scope="function")
 def db_magazine(session):
     m = Magazine(
         title=' '.join(g.text.title().split(' ')[:5]),
@@ -668,66 +653,6 @@ def login_form_invalid(mock_ldap):
     form = LoginForm(
         email=mock_ldap.non_user['user_name'],
         password=mock_ldap.non_user['passwd']
-    )
-    yield form
-
-
-@pytest.fixture(scope="function")
-def registration_form():
-    """
-    Returns registration form containing valid data.
-    """
-    new_password = g.cryptographic.hash() + "!A"
-    form = RegistrationForm(
-        email=g.person.name() + '.' + g.person.surname() + '@tieto.com',
-        first_name=g.person.name(),
-        surname=g.person.surname(),
-        password=new_password,
-        confirm_pass=new_password,
-        submit=True
-    )
-    yield form
-
-
-@pytest.fixture(scope="function")
-def registration_form_registered_user(db_tieto_user):
-    """
-    Returns registration form containing data of already registered user.
-    """
-    form = RegistrationForm(
-        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
-        first_name=User.query.filter_by
-        (id=db_tieto_user[0].id).first().first_name,
-        surname=User.query.filter_by(id=db_tieto_user[0].id).first().surname,
-        password=db_tieto_user[1],
-        confirm_pass=db_tieto_user[1],
-    )
-    yield form
-
-
-@pytest.fixture(scope="function")
-def registration_form_invalid():
-    """
-    Returns registration form containing invalid data
-    """
-    form = RegistrationForm(
-        email=g.person.name() + '.' + g.person.surname() + '@gmail.com',
-        first_name=g.person.name(),
-        surname=g.person.surname(),
-        password=g.cryptographic.hash(),
-        confirm_pass=g.cryptographic.hash(),
-    )
-    yield form
-
-
-@pytest.fixture(scope="function")
-def forgot_pass(db_tieto_user):
-    """
-    Returns password reset form
-    """
-    form = ForgotPass(
-        email=User.query.filter_by(id=db_tieto_user[0].id).first().email,
-        submit=True
     )
     yield form
 
