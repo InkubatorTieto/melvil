@@ -29,8 +29,6 @@ from forms.forms import (
     SearchForm,
     WishlistForm,
     LoginForm,
-    RegistrationForm,
-    ForgotPass,
     EditPasswordForm
 )
 from tests.populate import (
