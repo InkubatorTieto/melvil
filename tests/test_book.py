@@ -59,7 +59,7 @@ def test_add_book(view_book, client, login_form_admin_credentials, mock_ldap):
             "The publisher is not the same as given at the entrance "
         assert datetime.date(
             year=int(view_book.pub_date.data), month=1, day=1
-            ) == book.pub_date, \
+        ) == book.pub_date, \
             "The year of publication is not the same as given at the entrance "
 
         tag = Tag.query.filter_by(name=view_book.tag.data[0]).first()
@@ -86,7 +86,7 @@ def test_add_magazine(
             .filter_by(
                 title=view_magazine.title_of_magazine.data,
                 issue=view_magazine.issue.data[0]
-                ).first()
+            ).first()
         if not magazine:
             assert False, "Data validation failed"
         assert view_magazine.title_of_magazine.data == magazine.title, \
@@ -102,7 +102,7 @@ def test_add_magazine(
             "The book description is not the same as given at the entrance "
         assert datetime.date(
             year=int(view_magazine.pub_date.data), month=1, day=1
-            ) == magazine.year, \
+        ) == magazine.year, \
             "The year of publication is not the same as given at the entrance "
         assert view_magazine.issue.data[0] == magazine.issue, \
             "The book description is not the same as given at the entrance "
@@ -206,7 +206,7 @@ def test_check_isbn(view_book, values, result):
     ("1969", False),
     ("1970", True),
     (str(year_now), True),
-    (str(year_now+1), False),
+    (str(year_now + 1), False),
     (2005, False)
 
 ])
@@ -231,7 +231,7 @@ def test_update_book(
 
         item = LibraryItem.query.filter_by(
             title=view_edit_book.title.data
-            ).first()
+        ).first()
 
         form = BookForm(
             radio='book',

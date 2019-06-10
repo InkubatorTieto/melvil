@@ -75,7 +75,7 @@ def login():
                     'message.html',
                     message_title=message_title,
                     message_body=message_body
-                    )
+                )
             else:
                 user_ldap = ldap_client.get_object_details(user=user)
                 if refine_data(user_ldap, 'l') != 'Wroclaw':
@@ -84,7 +84,7 @@ def login():
                         'message.html',
                         message_title=message_title,
                         message_body=message_body
-                        )
+                    )
                 user_ldap_data = {
                     'mail': refine_data(user_ldap, 'mail'),
                     'givenName': refine_data(user_ldap, 'givenName'),
@@ -93,7 +93,7 @@ def login():
                 }
                 user_db = User.query.filter_by(
                     employee_id=user_ldap_data['employeeID']
-                    ).first()
+                ).first()
                 if not user_db:
                     new_user = User(
                         email=user_ldap_data['mail'],
@@ -120,7 +120,7 @@ def login():
 
                 user_db = User.query.filter_by(
                     employee_id=user_ldap_data['employeeID']
-                    ).first()
+                ).first()
                 session['logged_in'] = True
                 session['id'] = user_db.id
                 session['email'] = user_db.email

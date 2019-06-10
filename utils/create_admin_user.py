@@ -23,7 +23,7 @@ def create_super_user():
         }
         user_db = User.query.filter_by(
             employee_id=user_ldap_data['employeeID']
-            ).first()
+        ).first()
         if user_db:
             user_db_data = {
                 'mail': user_db.email,
