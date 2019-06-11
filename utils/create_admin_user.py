@@ -14,24 +14,25 @@ def create_super_user():
         if user_ldap:
             if refine_data(user_ldap, 'l') != 'Wroclaw':
                 print(
-                    'Error - employee {} do not work in Wroclaw'.format(email_data)
-                    )
+                    'Error - employee {} do not work in Wroclaw'.format(
+                        email_data)
+                )
 
             user_ldap_data = {
                 'mail': refine_data(user_ldap, 'mail'),
                 'givenName': refine_data(user_ldap, 'givenName'),
                 'sn': refine_data(user_ldap, 'sn'),
-                'employeeID' : refine_data(user_ldap, 'employeeID')
+                'employeeID': refine_data(user_ldap, 'employeeID')
             }
             user_db = User.query.filter_by(
                 employee_id=user_ldap_data['employeeID']
-                ).first()
+            ).first()
             if user_db:
                 user_db_data = {
                     'mail': user_db.email,
                     'givenName': user_db.first_name,
                     'sn': user_db.surname,
-                    'employeeID' : user_db.employee_id
+                    'employeeID': user_db.employee_id
                 }
                 if user_db_data != user_ldap_data:
                     user_db.email = user_ldap_data['mail']
@@ -55,9 +56,9 @@ def create_super_user():
             db.session.commit()
             print(
                 "Employee {} granted with admin privileges".format(email_data)
-                )
+            )
         else:
             print(
-                'Error - employee {} not present in Tieto ldap.'.format(email_data)
-                )
-
+                'Error - employee {} not present in Tieto ldap.'.format(
+                    email_data)
+            )

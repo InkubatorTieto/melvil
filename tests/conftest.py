@@ -229,7 +229,7 @@ def user(app):
         'first_name': g.person.name(),
         'surname': g.person.surname(),
         'password': password_generator(),
-        'title': text_generator(),
+        'title': text_generator_no_whitespaces(),
         'message': text_generator()}
     yield data
 

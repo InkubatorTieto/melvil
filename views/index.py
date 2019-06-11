@@ -124,7 +124,6 @@ def login():
                 session['logged_in'] = True
                 session['id'] = user_db.id
                 session['email'] = user_db.email
-                print(session)
                 if user_db.has_role('ADMIN'):
                     session['admin'] = True
                 return render_template('index.html', session=session)
@@ -563,7 +562,7 @@ def admin_dashboard():
                 first_or_404()
             rental_log_change = RentalLog.query.filter_by(
                 copy_id=borrow_item.id
-                ).order_by(RentalLog.id.desc()).first_or_404()
+            ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_item.available_status = BookStatus.BORROWED
                 rental_log_change.book_status = BookStatus.BORROWED
@@ -581,7 +580,7 @@ def admin_dashboard():
             borrow_item = Copy.query.filter_by(asset_code=copy_asset).first()
             rental_log_change = RentalLog.query.filter_by(
                 copy_id=borrow_item.id
-                ).order_by(RentalLog.id.desc()).first_or_404()
+            ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_item.available_status = BookStatus.RETURNED
                 rental_log_change.book_status = BookStatus.RETURNED
