@@ -49,14 +49,21 @@ def create_super_user():
                 db.session.add(new_user)
                 db.session.commit()
             user = User.query.filter_by(email=email_data).first()
-            role = Role.query.filter_by(name=RoleEnum.USER).first()
-            user.roles.remove(role)
-            role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
-            user.roles.append(role)
-            db.session.commit()
-            print(
-                "Employee {} granted with admin privileges".format(email_data)
-            )
+            if not user.has_role('ADMIN'):
+                role = Role.query.filter_by(name=RoleEnum.USER).first()
+                user.roles.remove(role)
+                role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+                user.roles.append(role)
+                db.session.commit()
+                print(
+                    "Employee {} granted with admin privileges".format(
+                        email_data)
+                )
+            else:
+                print(
+                    "Employee {} already have admin privileges".format(
+                        email_data)
+                )
         else:
             print(
                 'Error - employee {} not present in Tieto ldap.'.format(
