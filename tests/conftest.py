@@ -138,8 +138,7 @@ def mock_ldap(db, session):
             ]
             if any(check_login):
                 return True
-            else:
-                return None
+            return None
 
         # return employee data
         def get_object_details(self, user):
@@ -164,36 +163,34 @@ def mock_ldap(db, session):
                 location = g.address.city()
                 if location != 'Wroclaw':
                     break
-
         if non_user:
             return dict(user_name=login, passwd=passwd)
-        else:
-            new_user = User(
-                email=email,
-                first_name=name,
-                surname=surname,
-                employee_id=identifier,
-                active=True
-            )
-            db.session.add(new_user)
-            if admin:
-                user = User.query.filter_by(email=email).first()
-                role = Role.query.filter_by(name=RoleEnum.USER).first()
-                user.roles.remove(role)
-                role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
-                user.roles.append(role)
-            db.session.commit()
-            db_id = User.query.filter_by(employee_id=identifier).first().id
-            return dict(
-                user_name=[login.encode()],
-                passwd=[passwd.encode()],
-                mail=[email.encode()],
-                givenName=[name.encode()],
-                sn=[surname.encode()],
-                employeeID=[identifier.encode()],
-                l=[location.encode()],    # noqa: E741
-                db_id=db_id
-            )
+        new_user = User(
+            email=email,
+            first_name=name,
+            surname=surname,
+            employee_id=identifier,
+            active=True
+        )
+        db.session.add(new_user)
+        if admin:
+            user = User.query.filter_by(email=email).first()
+            role = Role.query.filter_by(name=RoleEnum.USER).first()
+            user.roles.remove(role)
+            role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
+            user.roles.append(role)
+        db.session.commit()
+        db_id = User.query.filter_by(employee_id=identifier).first().id
+        return dict(
+            user_name=[login.encode()],
+            passwd=[passwd.encode()],
+            mail=[email.encode()],
+            givenName=[name.encode()],
+            sn=[surname.encode()],
+            employeeID=[identifier.encode()],
+            l=[location.encode()],    # noqa: E741
+            db_id=db_id
+        )
 
     # substitute ldap-like object
     return MockLdap(
