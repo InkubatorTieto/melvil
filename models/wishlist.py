@@ -84,11 +84,11 @@ class WishListItem(db.Model):
                 label("likes_count"))
 
     def serialize(self):
-            return {
-                'id': self.id,
-                'item_type': self.item_type,
-                'title': self.title,
-                'authors': self.authors,
-                'pub_year': self.pub_year,
-                'likes': self.likes,
-            }
+        return {
+            'id': self.id,
+            'item_type': self.item_type,
+            'title': self.title,
+            'authors': self.authors,
+            'pub_year': self.pub_year,
+            'likes': self.likes,
+        }

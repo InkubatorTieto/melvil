@@ -277,7 +277,7 @@ def test_update_book(
             "Book publisher has not been updated"
         assert tmp_item.pub_date == datetime.date(
             year=int(form.pub_date.data), month=1, day=1
-            ), "Book pub_date has not been updated"
+        ), "Book pub_date has not been updated"
         assert tmp_item.tags[0].name == form.tag.data[0], \
             "Book tags has not been updated"
         session.clear()
@@ -323,7 +323,7 @@ def test_update_magazine(
             "Book description has not been updated"
         assert tmp_item.year == datetime.date(
             year=int(form.pub_date.data), month=1, day=1
-            ), "Book pub_date has not been updated"
+        ), "Book pub_date has not been updated"
         assert tmp_item.tags[0].name == form.tag.data[0], \
             "Book tags has not been updated"
         session.clear()
