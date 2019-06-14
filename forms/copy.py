@@ -13,7 +13,8 @@ or six digits only
 """
 asset_code_regex = Regexp('^([A-Z]{2}[0-9]{6}|[0-9]{6})$',
                           flags=re.IGNORECASE,
-                          message='Insert valid asset code eg. ab123456 or 123456')
+                          message='Insert valid asset code\
+                              eg. ab123456 or 123456')
 
 
 class CopyAddForm(ModelForm, FlaskForm):
