@@ -12,5 +12,4 @@ tests/.pytest_cache/
 models/.pytest_cache/
 .pytest_cache/
 .cache/
-
 docker/\.env
