@@ -110,17 +110,21 @@ def get_book_data(file_location):
             if current_shelf == 'General':
                 author = get_authors_data(authors)
                 asset = str(current_sheet.cell_value(row_index, 3))
-                book_properties = {'authors': author,
-                                    'title': title,
-                                    'asset': asset}
+                book_properties = {
+                    'authors': author,
+                    'title': title,
+                    'asset': asset
+                }
                 book_list.append(book_properties)
 
             else:
                 asset = str(current_sheet.cell_value(row_index, 3))
-                book_properties = {'authors': author,
-                                    'current_shelf': current_shelf,
-                                    'title': title,
-                                    'asset': asset}
+                book_properties = {
+                    'authors': author,
+                    'current_shelf': current_shelf,
+                    'title': title,
+                    'asset': asset
+                }
                 book_list.append(book_properties)
 
     return book_list
@@ -147,7 +151,7 @@ def get_magazine_data(file_location):
 def get_books(file_location):
     books_properties = get_book_data(file_location)
     asset_codes = []
-    
+
     for book in books_properties:
         title = book['title']
         asset = book['asset']
