@@ -182,7 +182,7 @@ def search():
                                    endpoint='library.search',
                                    admin=admin,
                                    form=form,
-                                   query_str=query_str )
+                                   query_str=query_str)
         else:
             abort(405)
 
