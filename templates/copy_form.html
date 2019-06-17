@@ -18,11 +18,10 @@
             </button>
             <p class="form-title">{{ action }} new copy</p>
 
-
             <form class="login" method="post">
+                
                 {{ form.hidden_tag() }}
-
-                {{ field_input(form.asset_code, error['asset_code'], placeholder="Asset Code (eg. AB123456)") }}
+                {{ field_input(form.asset_code, error['asset_code'], placeholder="Asset Code") }}
                 {{ field_input(form.shelf, error['shelf'], placeholder="Shelf") }}
                 {{ field_input(form.has_cd_disk, error['has_cd_disk'], label="Has CD disk?") }}
 
