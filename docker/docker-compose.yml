@@ -12,7 +12,7 @@ services:
     build:
       context: ..
       dockerfile: './docker/Dockerfile'
-    command: gunicorn --bind=0.0.0.0:8000 app:create_app()
+    command: sh './docker/run.sh -p'
     volumes:
       - ..:/code
     env_file:
