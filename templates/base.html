@@ -52,8 +52,8 @@
             <nav class="nav nav-masthead justify-content-center">
                 {{ nav_button('index', 'library.index', 'Home' ) }}
                 {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
-                {{ nav_button('search', 'library.search', 'Search' ) }}
                 {% if session['id'] %}
+                {{ nav_button('search', 'library.search', 'Search' ) }}
                 {{ nav_button('book_borrowing_dashboad',
                 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' )
                 }}
