@@ -90,14 +90,14 @@
             </thead>
             {% if borrows|length == 0 %}
             <tr>
-                <th>"No reservations!"</th>
+                <th>"No borrowed items!"</th>
             </tr>
             {% else %}
             {% for borrow in borrows %}
             <tr>
                 <th scope="row">{{borrow.user.full_name}}</th>
                 <th scope="row">{{borrow.copy.library_item.type.capitalize()}}</th>
-                <th scope="row">{{borrow._reservation_begin.strftime('%d-%m-%Y')}}</th>
+                <th scope="row">{{borrow._return_time.strftime('%d-%m-%Y')}}</th>
                 <th scope="row">{{borrow.copy.library_item.title}}</th>
                 <th scope="row">{{borrow.copy.asset_code}}</th>
                 <th scope="row">

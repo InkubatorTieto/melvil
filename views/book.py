@@ -490,7 +490,7 @@ def update_magazine(form, item):
 
 def book_exists(new_book):
     results = Book.query.filter(
-        Book.title.startswith(new_book.title[:2])).all()
+        Book.title.like(new_book.title[:2])).all()
     for i in results:
         if i.isbn == new_book.isbn:
             return False

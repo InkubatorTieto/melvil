@@ -181,7 +181,8 @@ def search():
                                    pagination=paginate_query,
                                    endpoint='library.search',
                                    admin=admin,
-                                   form=form, )
+                                   form=form,
+                                   query_str=query_str)
         else:
             abort(405)
 
@@ -561,13 +562,14 @@ def admin_dashboard():
             borrow_item = Copy.query.filter_by(asset_code=copy_asset). \
                 first_or_404()
             rental_log_change = RentalLog.query.filter_by(
-                copy_id=borrow_item.id).first_or_404()
+                copy_id=borrow_item.id
+            ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_item.available_status = BookStatus.BORROWED
                 rental_log_change.book_status = BookStatus.BORROWED
                 rental_log_change._borrow_time = datetime.now(tz=pytz.utc)
                 rental_log_change._return_time = \
-                    (datetime.now(tz=pytz.utc) + timedelta(days=14))
+                    (datetime.now(tz=pytz.utc) + timedelta(days=30))
                 db.session.commit()
             except exc.SQLAlchemyError:
                 abort(500)
@@ -578,7 +580,8 @@ def admin_dashboard():
             copy_asset = request.args.get('asset')
             borrow_item = Copy.query.filter_by(asset_code=copy_asset).first()
             rental_log_change = RentalLog.query.filter_by(
-                copy_id=borrow_item.id).first()
+                copy_id=borrow_item.id
+            ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_item.available_status = BookStatus.RETURNED
                 rental_log_change.book_status = BookStatus.RETURNED

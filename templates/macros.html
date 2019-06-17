@@ -113,11 +113,11 @@
     {% endif %}
 {% endmacro %}
 
-{% macro render_pagination(pagination, endpoint, id_name=None) %}
+{% macro render_pagination(pagination, endpoint, query_str=None, id_name=None) %}
     <ul class="pagination justify-content-center" id="{{ id_name }}">
     {% if pagination.has_prev %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev_num) }}" aria-label="Previous">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev_num, query=query_str) }}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
@@ -133,11 +133,11 @@
         {% if p %}
             {% if p != pagination.page %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+                    <a class="page-link" href="{{ url_for(endpoint, page=p, query=query_str) }}">{{ p }}</a>
                 </li>
             {% else %}
                 <li class="page-item active">
-                    <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+                    <a class="page-link" href="{{ url_for(endpoint, page=p, query=query_str) }}">{{ p }}</a>
                 </li>
             {% endif %}
         {% else %}
@@ -149,7 +149,7 @@
 
     {% if pagination.has_next %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for(endpoint, page=pagination.next_num) }}" aria-label="Previous">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.next_num, query=query_str) }}" aria-label="Previous">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
