@@ -11,8 +11,7 @@ General template:
 two letters (letter case does not matter) + six digits
 or six digits only
 """
-asset_code_regex = Regexp('^([A-Z]{2}[0-9]{6}|[0-9]{6})$',
-                          flags=re.IGNORECASE,
+asset_code_regex = Regexp('^([A-Za-z]{2}[0-9]{6}|[0-9]{6})$',
                           message='Insert valid asset code\
                               eg. ab123456 or 123456')
 
