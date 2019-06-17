@@ -19,5 +19,4 @@ def test_create_admin():
             check.append(user.has_role('ADMIN'))
         except AttributeError:
             assert False, 'Admin accounts not created'
-    assert check, 'Admin accounts not created'
     assert all(check)
