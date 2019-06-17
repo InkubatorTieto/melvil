@@ -1,0 +1,2 @@
+* * * * * python /app/update_reservation_status.py >> /var/log/cron.log 2>&1
+* * * * * echo "test" >> /var/log/cron.log 2>&1
