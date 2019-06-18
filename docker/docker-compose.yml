@@ -6,13 +6,13 @@ services:
       context: ..
       dockerfile: './docker/Dockerfile-cron'
     environment:
-    - CRON_MINUTE=* * * * * root curl http://web:8000/check_reservation_status_db
+    - CRON_MINUTE=0 4 * * * root curl http://web:8080/check_reservation_status_db
 
   web:
     build:
       context: ..
       dockerfile: './docker/Dockerfile'
-    command: sh './docker/run.sh -p'
+    command: sh ./docker/run.sh -p
     volumes:
       - ..:/code
     env_file:
