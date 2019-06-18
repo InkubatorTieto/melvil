@@ -17,7 +17,6 @@ services:
       - ..:/code
     env_file:
       - .env
-
     environment:
         - DB_USER=psql_user
         - DB_PASSWORD=Ab132xw
@@ -25,6 +24,8 @@ services:
         - DB_HOST=postgresql
         - DB_PORT=5432
         - DB_ENGINE=postgresql
+    ports:
+      - "8080:8080"
     depends_on:
       - "postgresql"
     container_name: melvil_web_prod
@@ -41,12 +42,3 @@ services:
       ports:
         - "5432:5432"
       container_name: melvil_postgres_prod
-  nginx:
-    image: nginx:alpine
-    restart: always
-    volumes:
-      - ./nginx.template:/etc/nginx/conf.d/default.conf
-    ports:
-      - "8080:80"
-    depends_on:
-      - "web"
