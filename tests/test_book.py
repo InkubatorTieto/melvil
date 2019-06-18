@@ -206,7 +206,7 @@ def test_check_isbn(view_book, values, result):
     ("1969", False),
     ("1970", True),
     (str(year_now), True),
-    (str(year_now+1), False),
+    (str(year_now + 1), False),
     (2005, False)
 
 ])
