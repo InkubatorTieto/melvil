@@ -33,9 +33,41 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Creating delete button in wishlist only for admin
 
 ## [0.0.1] - 2018-06-20
-###Added
+### Added
 Implement editing book
 * change book/magazine forms more modular
 * add  "edit_book.html" templates
 * add view "edit_book"
 * add tests
+
+## [0.1.0] - 2019-06-19
+### Added 
+- login via ldap
+- admin accounts are created automatically while container starts
+
+### Changed
+- database schema to allow login via ldap
+- cron executes once a day at 4am on production
+- asset code accepted in two formats e.g. 123456 and ab123456
+- search button not present if user not logged in
+- borrow time extended to 30 days
+- two books with same title are accepted
+- app works on port 8080 in production environment
+
+### Deprecated
+- personal data storage in database
+- cron
+
+### Removed
+- password_hash row in User table inside database
+- account creation
+- password editing
+- account activation via email
+- nginx
+
+### Fixed
+- view reservations -> borrowed show proper return date
+- pagination in search, do not lose query during page changing anymore
+
+### Security
+- database credentials, secret_key and salt are stored in .env
