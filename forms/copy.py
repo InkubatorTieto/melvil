@@ -1,5 +1,3 @@
-import re
-
 from wtforms.validators import Regexp
 from wtforms_alchemy import ModelForm
 from flask_wtf import FlaskForm
