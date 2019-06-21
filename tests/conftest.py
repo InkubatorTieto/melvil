@@ -2,6 +2,7 @@ from datetime import datetime
 import random
 from random import choice, randint
 import string
+from os import getenv
 
 import pytest
 from mimesis import Generic
@@ -165,20 +166,29 @@ def mock_ldap(db, session):
                     break
         if non_user:
             return dict(user_name=login, passwd=passwd)
-        new_user = User(
-            email=email,
-            first_name=name,
-            surname=surname,
-            employee_id=identifier,
-            active=True
-        )
-        db.session.add(new_user)
         if admin:
+            email = getenv("ADMIN_LIST")
+            new_user = User(
+                email=email,
+                first_name=name,
+                surname=surname,
+                employee_id=identifier,
+                active=True
+            )
             user = User.query.filter_by(email=email).first()
             role = Role.query.filter_by(name=RoleEnum.USER).first()
             user.roles.remove(role)
             role = Role.query.filter_by(name=RoleEnum.ADMIN).first()
             user.roles.append(role)
+        else:
+            new_user = User(
+                email=email,
+                first_name=name,
+                surname=surname,
+                employee_id=identifier,
+                active=True
+            )
+        db.session.add(new_user)
         db.session.commit()
         db_id = User.query.filter_by(employee_id=identifier).first().id
         return dict(

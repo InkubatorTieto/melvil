@@ -11,11 +11,14 @@ def test_login_status_code_for_get(client, login_form, mock_ldap):
             "Login view, GET request gives wrong response"
 
 
-def test_login_status_code_for_post(client, login_form):
-    resp = client.post(url_for('library.login'),
-                       data=login_form.data)
-    assert resp.status_code == 200, \
-        "Login view, POST request gives wrong response"
+def test_login_status_code_for_post(client, login_form, mock_ldap):
+    with mock.patch('views.index.ldap_client', mock_ldap):
+        resp = client.post(
+            url_for('library.login'),
+            data=login_form.data
+        )
+        assert resp.status_code == 200, \
+            "Login view, POST request gives wrong response"
 
 
 def test_login_valid_data_inserted(login_form, mock_ldap, app):

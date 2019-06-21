@@ -4,10 +4,13 @@ from ldap_utils.ldap_utils import ldap_client, refine_data
 from models.users import User, Role, RoleEnum
 
 
-email_list = Config.ADMIN_LIST.split()
-
-
-def create_super_user(email_list=email_list):
+def create_super_user():
+    try:
+        email_list = Config.ADMIN_LIST.split()
+    except AttributeError:
+        print(
+            'No admins specified in ./docker/.env app will not work properly!'
+        )
     for email_data in email_list:
         user_ldap = ldap_client.get_object_details(user=email_data)
         if user_ldap:
