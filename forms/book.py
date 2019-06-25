@@ -8,7 +8,7 @@ from wtforms import (
     RadioField
 
 )
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired
 from forms.custom_validators import \
     check_author, check_language, \
     check_category, check_isbn, \
@@ -88,7 +88,7 @@ class BookForm(LibraryItemForm):
                                     'placeholder': 'Title'}))
 
     isbn = StringField('ISBN number',
-                       validators=[DataRequired(), check_isbn],
+                       validators=[check_isbn],
                        render_kw=({'class': 'inputs',
                                    'id': 'isbn',
                                    'placeholder': 'ISBN number'}))
@@ -98,7 +98,7 @@ class BookForm(LibraryItemForm):
                                              'id': 'original_title',
                                              'placeholder': 'Original title'}))
     publisher = StringField('Publisher',
-                            validators=[DataRequired()],
+                            validators=[],
                             render_kw=({'class': 'inputs',
                                         'id': 'publisher',
                                         'placeholder': 'Publisher'}))
@@ -134,8 +134,7 @@ class BookForm(LibraryItemForm):
 
 class MagazineForm(LibraryItemForm):
     title_of_magazine = StringField('Title',
-                                    validators=[DataRequired(),
-                                                Length(3)],
+                                    validators=[DataRequired()],
                                     render_kw=({'class': 'inputs',
                                                 'id': 'title_of_magazine',
                                                 'placeholder':

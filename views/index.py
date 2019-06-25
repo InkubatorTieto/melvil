@@ -55,8 +55,8 @@ def index():
 @require_not_logged_in()
 def login():
 
-    """Login view for client.
-
+    """
+    Login view for client.
     Connects to active directory check credentials
     and login.
     Retrieves desired data about user from LDAP.

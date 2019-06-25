@@ -34,24 +34,6 @@ def surname(form, field):
         raise ValidationError('Insert valid surname.')
 
 
-def check_password(form, field):
-    if len(field.data) < 8:
-        ValidationError("Make sure your password is at least 8 letters")
-    if re.search('[0-9]+', field.data) is None:
-        raise ValidationError("Make sure your password has a number in it")
-    if re.search("[A-ZĄĆŚĘŃŁÓŻŹ]+", field.data) is None:
-        raise ValidationError(
-            "Make sure your password has a capital letter in it")
-    if re.search("[!#@\$%^&*()\[\]{};<>-_]+", field.data) is None:
-        raise ValidationError(
-            "Make sure your password has a special character in"
-            " it, for example: '! @ #'")
-    if re.search("[\.\,]+", field.data) is not None:
-        raise ValidationError(
-            "Your password has a dot or comma, "
-            "these characters are not allowed")
-
-
 def check_author(form, field):
     if field.data != '':
         if not re.compile('^([A-ZĄŚĆĘŁŃÓŻŹ]{1}.*[A-ZĄĆŚŃĘŁÓŻŹa-ząćęłśóńżź]*'
