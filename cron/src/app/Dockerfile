@@ -6,9 +6,9 @@ RUN apt-get update && \
 RUN mkdir /app
 COPY update_reservation_status.py data_access_layer.py requirements.txt /app/
 COPY cron /etc/cron.d/
+RUN crontab /etc/cron.d/cron
 
 WORKDIR /app
 RUN pip install -r requirements.txt
-RUN mkfifo /var/log/cron.log
 
-CMD cron && tail -f /var/log/cron.log
+CMD ["cron", "-f"]
