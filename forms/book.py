@@ -98,7 +98,6 @@ class BookForm(LibraryItemForm):
                                              'id': 'original_title',
                                              'placeholder': 'Original title'}))
     publisher = StringField('Publisher',
-                            validators=[],
                             render_kw=({'class': 'inputs',
                                         'id': 'publisher',
                                         'placeholder': 'Publisher'}))
