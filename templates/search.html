@@ -23,6 +23,7 @@
         <thead>
         <th scope="col">Title</th>
         <th scope="col">Author</th>
+        <th scope="col">Publication year</th>
         <th></th>
         </thead>
         {% if all_query|length == 0 %}
@@ -48,6 +49,9 @@
                 {% elif item['type'] == 'magazine' %}
                 <p>Issue no.: {{ item['issue'] }}</p>
                 {% endif %}
+            </td>
+            <td>
+                {{item['pub_date'].year}}
             </td>
             <td style="width: 10px;">
                 {% if item['type'] == 'book' %}
