@@ -8,11 +8,10 @@ from wtforms import (
     TextAreaField,
     SelectField,
 )
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm
 
-from forms.custom_validators import check_pub_date
-
+from forms.custom_validators import check_pub_date, tieto_email
 
 
 class LoginForm(FlaskForm):
