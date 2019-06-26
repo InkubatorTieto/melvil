@@ -41,11 +41,10 @@ def check_category(form, field):
 
 def check_isbn(form, field):
     field.data = field.data.replace("-", "").replace(" ", "")
-    if (
-        not is_isbn10(field.data)
-        and not is_isbn13(field.data)
-        and not field.data == ''
+    if not any(
+            [is_isbn10(field.data), is_isbn13(field.data), field.data == '']
     ):
+
         raise ValidationError("ISBN number is incorrect!")
 
     if Book.query.filter_by(isbn=field.data).first():
