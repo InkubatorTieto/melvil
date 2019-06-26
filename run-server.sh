@@ -14,13 +14,14 @@ if [ "$1" == "tests" ] ; then
   #remove tests
   remove_container t
   # run tests
-  docker-compose -f $DEV_DOCKER run --name melvil_tests web pytest
+  docker-compose -f $DEV_DOCKER run --name melvil_tests web pytest tests
+  docker-compose -f $DEV_DOCKER run cron pytest
 
    if [ "$2" == "cov" ] ; then
     docker-compose -f $DEV_DOCKER run web pytest --cov
    fi
    # run tests
-   docker-compose -f $DEV_DOCKER run web pytest
+   docker-compose -f $DEV_DOCKER run web pytest tests
 
 elif [ "$1" == "-p" ] ; then
     # production server

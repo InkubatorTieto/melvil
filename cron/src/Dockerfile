@@ -4,7 +4,7 @@ RUN apt-get update && \
     apt-get --assume-yes install cron libpq-dev gcc
 
 RUN mkdir /app
-COPY update_reservation_status.py data_access_layer.py requirements.txt /app/
+COPY update_reservation_status.py data_access_layer.py requirements.txt test_update_reservation_status.py /app/
 COPY start_container.sh /bin/
 COPY cron /etc/cron.d/
 

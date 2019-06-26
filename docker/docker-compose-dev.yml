@@ -12,7 +12,6 @@ services:
       - DB_HOST=postgresql
       - DB_PORT=5432
       - DB_ENGINE=postgresql
-      - FLASK_ENV=development
     container_name: melvil_cron
   web:
     build:
