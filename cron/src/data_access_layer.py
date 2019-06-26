@@ -13,15 +13,16 @@ class BookStatus(Enum):
 
 class DataAccessLayer:
     connection = None
+    metadata = None
     engine = None
     copy = None
     rental_log = None
 
     def __init__(self, *args):
-        metadata = MetaData()
+        self.metadata = MetaData()
 
         self.copy = Table('copy',
-                          metadata,
+                          self.metadata,
                           Column('id', Integer, primary_key=True),
                           Column('asset_code', String, unique=True),
                           Column('library_item_id', Integer),
@@ -31,7 +32,7 @@ class DataAccessLayer:
                                  ChoiceType(BookStatus, impl=Integer())))
 
         self.rental_log = Table('rental_log',
-                                metadata,
+                                self.metadata,
                                 Column('id', Integer, primary_key=True),
                                 Column('copy_id',
                                        Integer,

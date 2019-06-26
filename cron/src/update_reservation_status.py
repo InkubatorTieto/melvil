@@ -21,6 +21,7 @@ def get_url():
 def check_reservation_status_db(dal):
     connection = dal.connection.execution_options(
         isolation_level="REPEATABLE READ")
+
     rental_log = dal.rental_log
     copy = dal.copy
 
@@ -36,7 +37,7 @@ def check_reservation_status_db(dal):
             .where(rental_log.c.book_status == BookStatus.RESERVED)
         ).fetchall()
         for copy_id, library_item_id, renatl_log_id, reservation_end in items:
-            if True:  # reservation_end <= datetime.now():
+            if reservation_end <= datetime.now():
                 # pylint: disable=no-value-for-parameter
                 connection.execute(
                     rental_log
