@@ -5,10 +5,12 @@ RUN apt-get update && \
 
 RUN mkdir /app
 COPY update_reservation_status.py data_access_layer.py requirements.txt /app/
+COPY start_container.sh /bin/
 COPY cron /etc/cron.d/
-RUN crontab /etc/cron.d/cron
+
+RUN chmod 755 /bin/start_container.sh
 
 WORKDIR /app
 RUN pip install -r requirements.txt
 
-CMD ["cron", "-f"]
+CMD ["start_container.sh"]
