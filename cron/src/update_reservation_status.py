@@ -32,7 +32,7 @@ def check_reservation_status_db(dal):
                 copy.c.library_item_id,
                 rental_log.c.id,
                 rental_log.c._reservation_end
-                ])
+            ])
             .select_from(copy.join(rental_log))
             .where(rental_log.c.book_status == BookStatus.RESERVED)
         ).fetchall()

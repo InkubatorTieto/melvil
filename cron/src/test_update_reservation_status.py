@@ -66,14 +66,14 @@ def test_clears_reservations_for_outdated_positions(data_access_layer):
     check_reservation_status_db(data_access_layer)
 
     copies = connection.execute(
-            select([copy])
-            .where(copy.c.available_status == BookStatus.RESERVED)
-        ).fetchall()
+        select([copy])
+        .where(copy.c.available_status == BookStatus.RESERVED)
+    ).fetchall()
 
     rentals = connection.execute(
-            select([rental_log])
-            .where(rental_log.c.book_status == BookStatus.RESERVED)
-        ).fetchall()
+        select([rental_log])
+        .where(rental_log.c.book_status == BookStatus.RESERVED)
+    ).fetchall()
 
     assert len(copies) == 0 and len(rentals) == 0
 
@@ -87,14 +87,14 @@ def test_does_not_clear_valid_reservations(data_access_layer):
     check_reservation_status_db(data_access_layer)
 
     copies = connection.execute(
-            select([copy])
-            .where(copy.c.available_status == BookStatus.RESERVED)
-        ).fetchall()
+        select([copy])
+        .where(copy.c.available_status == BookStatus.RESERVED)
+    ).fetchall()
 
     rentals = connection.execute(
-            select([rental_log])
-            .where(rental_log.c.book_status == BookStatus.RESERVED)
-        ).fetchall()
+        select([rental_log])
+        .where(rental_log.c.book_status == BookStatus.RESERVED)
+    ).fetchall()
 
     assert len(copies) == 1 and len(rentals) == 1
 
