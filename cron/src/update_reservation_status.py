@@ -20,7 +20,7 @@ def get_url():
 
 def check_reservation_status_db(dal):
     connection = dal.connection.execution_options(
-        isolation_level="REPEATABLE READ")
+        isolation_level="SERIALIZABLE")
 
     rental_log = dal.rental_log
     copy = dal.copy

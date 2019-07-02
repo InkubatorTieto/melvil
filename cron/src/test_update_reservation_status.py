@@ -29,6 +29,14 @@ def prepare_db(dal):
                 'shelf': 'None',
                 'has_cd_disk': False,
                 'available_status': BookStatus.RESERVED
+            },
+            {
+                'id': 3,
+                'asset_code': '3',
+                'library_item_id': 33,
+                'shelf': 'None',
+                'has_cd_disk': False,
+                'available_status': BookStatus.RESERVED
             }
         ])
 
@@ -39,6 +47,12 @@ def prepare_db(dal):
                 'copy_id': 2,
                 'book_status': BookStatus.RESERVED,
                 '_reservation_end': datetime(2030, 5, 5)
+            },
+            {
+                'id': 33,
+                'copy_id': 3,
+                'book_status': BookStatus.RESERVED,
+                '_reservation_end': datetime(2030, 5, 7)
             }
         ]
     )
@@ -75,7 +89,7 @@ def test_clears_reservations_for_outdated_positions(data_access_layer):
         .where(rental_log.c.book_status == BookStatus.RESERVED)
     ).fetchall()
 
-    assert len(copies) == 0 and len(rentals) == 0
+    assert len(copies) == 1 and len(rentals) == 1
 
 
 @freeze_time(datetime(2030, 5, 4))
@@ -96,7 +110,7 @@ def test_does_not_clear_valid_reservations(data_access_layer):
         .where(rental_log.c.book_status == BookStatus.RESERVED)
     ).fetchall()
 
-    assert len(copies) == 1 and len(rentals) == 1
+    assert len(copies) == 2 and len(rentals) == 2
 
 
 def test_sets_repeatable_read_isolation_level(data_access_layer):
@@ -111,4 +125,4 @@ def test_sets_repeatable_read_isolation_level(data_access_layer):
 
     check_reservation_status_db(data_access_layer)
 
-    assert isolation_level == "REPEATABLE READ"
+    assert isolation_level == "SERIALIZABLE"
