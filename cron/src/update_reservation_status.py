@@ -1,7 +1,7 @@
 from os import getenv
 from datetime import datetime
 from urllib.parse import quote_plus
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, bindparam
 from sqlalchemy.engine.url import URL
 from dotenv import load_dotenv
 
@@ -25,35 +25,45 @@ def check_reservation_status_db(dal):
     rental_log = dal.rental_log
     copy = dal.copy
 
+    items = None
     with connection.begin():
         items = connection.execute(
             select([
                 copy.c.id,
                 copy.c.library_item_id,
                 rental_log.c.id,
-                rental_log.c._reservation_end
             ])
             .select_from(copy.join(rental_log))
             .where(rental_log.c.book_status == BookStatus.RESERVED)
+            .where(rental_log.c._reservation_end <= datetime.utcnow())
         ).fetchall()
-        for copy_id, library_item_id, renatl_log_id, reservation_end in items:
-            if reservation_end <= datetime.now():
-                # pylint: disable=no-value-for-parameter
-                connection.execute(
-                    rental_log
-                    .update()
-                    .where(rental_log.c.id == renatl_log_id)
-                    .values(book_status=BookStatus.RETURNED)
-                )
-                connection.execute(
-                    copy
-                    .update()
-                    .where(copy.c.id == copy_id)
-                    .values(available_status=BookStatus.RETURNED)
-                )
-                # pylint: enable=no-value-for-parameter
-                print("[{}] Cancelled reservation for library item id: {}"
-                      .format(datetime.now(), library_item_id))
+
+        if not items:
+            return
+
+        bind_items = [
+            {'copy_id': item[0], 'renatl_log_id': item[2]}
+            for item in items]
+
+        connection.execute(
+            rental_log
+            .update()
+            .where(rental_log.c.id == bindparam('renatl_log_id'))
+            .values(book_status=BookStatus.RETURNED),
+            bind_items
+        )
+
+        connection.execute(
+            copy
+            .update()
+            .where(copy.c.id == bindparam('copy_id'))
+            .values(available_status=BookStatus.RETURNED),
+            bind_items
+        )
+
+    print("[{}] Cancelled reservation for library item id: {}"
+          .format(datetime.now(),
+                  ', '.format([item[1] for item in items])))
 
 
 if __name__ == '__main__':
