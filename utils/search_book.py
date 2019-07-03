@@ -1,6 +1,3 @@
-import sys
-sys.path.append("..")
-
 from flask import abort
 from sqlalchemy import or_
 from models import Author, LibraryItem
