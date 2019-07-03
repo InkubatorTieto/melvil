@@ -17,9 +17,17 @@ class DataAccessLayer:
     engine = None
     copy = None
     rental_log = None
+    users = None
 
     def __init__(self, *args):
         self.metadata = MetaData()
+
+        self.users = Table('users',
+                           self.metadata,
+                           Column('id', Integer, primary_key=True),
+                           Column('email', String(128)),
+                           Column('first_name', String(64)),
+                           Column('surname', String(64)))
 
         self.copy = Table('copy',
                           self.metadata,
@@ -37,6 +45,10 @@ class DataAccessLayer:
                                 Column('copy_id',
                                        Integer,
                                        ForeignKey("copy.id"),
+                                       nullable=False),
+                                Column('users_id',
+                                       Integer,
+                                       ForeignKey("users.id"),
                                        nullable=False),
                                 Column('_borrow_time', DateTime),
                                 Column('_return_time', DateTime),

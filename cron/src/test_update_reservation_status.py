@@ -11,6 +11,24 @@ def prepare_db(dal):
     connection = dal.connection
     copy = dal.copy
     rental_log = dal.rental_log
+    users = dal.users
+
+    connection.execute(
+        users.insert(), [
+            {
+                'id': 1,
+                'email': 'id_1@example.com',
+                'first_name': 'id_1_first_name',
+                'surname': 'id_1_surname'
+            },
+            {
+                'id': 2,
+                'email': 'id_2@example.com',
+                'first_name': 'id_2_first_name',
+                'surname': 'id_2_surname'
+            }
+        ]
+    )
 
     connection.execute(
         copy.insert(), [
@@ -45,12 +63,14 @@ def prepare_db(dal):
             {
                 'id': 1,
                 'copy_id': 2,
+                'users_id': 1,
                 'book_status': BookStatus.RESERVED,
                 '_reservation_end': datetime(2030, 5, 5)
             },
             {
                 'id': 33,
                 'copy_id': 3,
+                'users_id': 1,
                 'book_status': BookStatus.RESERVED,
                 '_reservation_end': datetime(2030, 5, 7)
             }
