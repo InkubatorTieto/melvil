@@ -3,10 +3,15 @@ version: '3'
 services:
   cron:
     build:
-      context: ..
-      dockerfile: './docker/Dockerfile-cron'
+      context: ../cron/src
+      dockerfile: Dockerfile
     environment:
-        - CRON_MINUTE=* * * * * root curl http://web:5000/check_reservation_status_db
+      - DB_USER=psql_user
+      - DB_PASSWORD=Ab132xw
+      - DB_NAME=psql_db
+      - DB_HOST=postgresql
+      - DB_PORT=5432
+      - DB_ENGINE=postgresql
     container_name: melvil_cron
   web:
     build:

@@ -248,21 +248,6 @@ def reserve(copy_id):
         'library_book_borrowing_dashboard.book_borrowing_dashboad'))
 
 
-@library.route('/check_reservation_status_db')
-def check_reservation_status_db():
-    reserved_list = db.session.query(RentalLog) \
-        .filter(RentalLog.book_status == BookStatus.RESERVED) \
-        .all()
-    for obj in reserved_list:
-        end_date = obj._reservation_end
-        if end_date <= datetime.now():
-            obj.book_status = BookStatus.RETURNED
-            copy_list = Copy.query.filter_by(id=obj.copy_id)
-            copy_list.available_status = BookStatus.RETURNED
-            db.session.commit()
-    return 'OK'
-
-
 @library.route('/remove_item/<int:item_id>', methods=['GET', 'POST'])
 @require_role('ADMIN')
 def remove_item(item_id):
