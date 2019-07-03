@@ -1,3 +1,10 @@
+**/*.venv
+**/*.env
+**/__pycache__
+**/.cache/
+**/.pytest_cache
+
+.vscode
 .idea/*
 venv
 env
@@ -5,11 +12,3 @@ env
 *.*~
 data/
 ENV/
-views/__pycache__
-tests/.pytest_cache/
-.cache/
-.pytest_cache
-models/.pytest_cache/
-.pytest_cache/
-.cache/
-docker/.env
