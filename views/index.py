@@ -41,6 +41,8 @@ from models.decorators_roles import (
     require_not_logged_in
 )
 from send_email.emails import send_email
+from utils.search_book import search_book
+
 
 library = Blueprint('library', __name__,
                     template_folder='templates')
@@ -165,14 +167,13 @@ def search():
                 return ErrorMessage.message('Cannot connect to database!')
         elif request.args.get('query'):
             form = SearchForm()
+            search_by = request.args.get('search_by')
             query_str = request.args.get('query')
             page = request.args.get('page', 1, type=int)
             try:
-                paginate_query = (
-                    LibraryItem.query.filter(LibraryItem.title.ilike(
-                        '%{}%'.format(query_str)))).paginate(page,
-                                                             error_out=True,
-                                                             max_per_page=10)
+                paginate_query = LibraryItem.query.filter(
+                    search_book(search_by, query_str)
+                ).paginate(page, error_out=True, max_per_page=10)
                 output = [d.serialize() for d in paginate_query.items]
             except RuntimeError:
                 return ErrorMessage.message('Cannot connect to database!')
