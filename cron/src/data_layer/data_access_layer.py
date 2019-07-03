@@ -1,20 +1,15 @@
-from enum import Enum
 from sqlalchemy import Table, Column, Integer, String, Boolean, \
     MetaData, ForeignKey, DateTime, create_engine
 from sqlalchemy.engine import Connection
 from sqlalchemy_utils import ChoiceType
-
-
-class BookStatus(Enum):
-    RESERVED = 1
-    BORROWED = 2
-    RETURNED = 3
+from .book_status import BookStatus
 
 
 class DataAccessLayer:
     connection = None
     metadata = None
     engine = None
+    library_item = None
     copy = None
     rental_log = None
     users = None
@@ -22,18 +17,27 @@ class DataAccessLayer:
     def __init__(self, *args):
         self.metadata = MetaData()
 
+        self.library_item = Table('library_item',
+                                  self.metadata,
+                                  Column('id', Integer, primary_key=True),
+                                  Column('title', String(256)))
+
         self.users = Table('users',
                            self.metadata,
                            Column('id', Integer, primary_key=True),
                            Column('email', String(128)),
                            Column('first_name', String(64)),
-                           Column('surname', String(64)))
+                           Column('surname', String(64)),
+                           Column('employee_id', String(64)))
 
         self.copy = Table('copy',
                           self.metadata,
                           Column('id', Integer, primary_key=True),
                           Column('asset_code', String, unique=True),
-                          Column('library_item_id', Integer),
+                          Column('library_item_id',
+                                 Integer,
+                                 ForeignKey("library_item.id"),
+                                 nullable=False),
                           Column('shelf', String),
                           Column('has_cd_disk', Boolean),
                           Column('available_status',
