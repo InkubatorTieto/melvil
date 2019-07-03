@@ -230,14 +230,17 @@ def password_generator(chars=string.ascii_letters):
 
 
 @pytest.fixture(scope='module')
-def user(app):
+def user(app,
+         password_generator,
+         text_generator_no_whitespaces,
+         text_generator):
     data = {
         'email': g.person.email(),
         'first_name': g.person.name(),
         'surname': g.person.surname(),
-        'password': password_generator(),
-        'title': text_generator_no_whitespaces(),
-        'message': text_generator()}
+        'password': password_generator,
+        'title': text_generator_no_whitespaces,
+        'message': text_generator}
     yield data
 
 
