@@ -2,6 +2,7 @@ from sqlalchemy import func
 
 import flask
 from flask import url_for
+from utils.search_book import search_book
 
 from models.users import RoleEnum, Role
 from models.library import LibraryItem
@@ -49,16 +50,23 @@ def test_search_any(app_session, search_form):
         assert True, "There are no such items in library"
 
 
-def test_search_query(app_session, get_title):
-    lib_items = LibraryItem.query.filter(
-        func.lower(LibraryItem.title).like("%{}%".format(get_title.title)))
-
+def test_search_by_title(app_session, get_title):
+    lib_items = LibraryItem.query.filter(search_book('title', get_title.title))
     if lib_items:
         for item in lib_items:
             assert item.type == 'book' or item.type == 'magazine', \
                 'Wrong objects queried!'
             assert get_title.title in item.title, \
                 'Search query does not match title of item!'
+
+
+def test_search_by_author(app_session, get_book):
+    author = get_book.authors[0].last_name
+    print(author)
+    search_result = LibraryItem.query.filter(
+        search_book('author', author)
+    ).first()
+    assert search_result.authors[0].last_name == author
 
 
 def test_search_pagination(app):

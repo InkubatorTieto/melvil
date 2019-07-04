@@ -642,6 +642,15 @@ def get_title(session, client):
 
 
 @pytest.fixture(scope="function")
+def get_book(session, client):
+    """
+    Get data of book from library
+    """
+    book = Book.query.first()
+    yield book
+
+
+@pytest.fixture(scope="function")
 def get_wish(session, client):
     """
     Get title of wish in wishlist db

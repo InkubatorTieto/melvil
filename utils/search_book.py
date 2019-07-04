@@ -10,15 +10,12 @@ def search_book(search_by, query_str):
         )
     elif search_by == 'author':
         query = [string.capitalize() for string in query_str.split()]
-        # print(Author.query.filter(Author.first_name.ilike('rex')).first().books)
         authors = Author.query.filter(
             or_(Author.first_name.in_(query), Author.last_name.in_(query))
         ).all()
-        books = list()
-        for author in authors:
-            for book in author.books:
-                books.append(book.title)
-        return LibraryItem.title.in_(books)
-
+        books = LibraryItem.id.in_(
+            book.id for book in sum((author.books for author in authors), [])
+        )
+        return books
     else:
         abort(404)
