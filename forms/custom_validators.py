@@ -17,41 +17,6 @@ def tieto_email(form, field):
         raise ValidationError('Only Tieto emails are accepted.')
 
 
-def name(form, field):
-    if not re.compile('^[A-ZĄĆŚĘŁŃÓŻŹ]{1}[a-ząćęłńśóżź]*$').match(field.data):
-        raise ValidationError('Insert valid name.')
-
-
-def surname(form, field):
-    if not re.compile(
-            '^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*$'
-    ).match(field.data) and not \
-            re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*'
-                       '-?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$').match(field.data) \
-            and not re.compile('^[A-ZĄĆŚĘŃŁÓŻŹ]{1}[a-ząćęśłńóżź]*'
-                               '\s?[A-ZĄĆĘŃŁÓŻŹ]?[a-ząćęłśńóżź]*$'
-                               ).match(field.data):
-        raise ValidationError('Insert valid surname.')
-
-
-def check_password(form, field):
-    if len(field.data) < 8:
-        ValidationError("Make sure your password is at least 8 letters")
-    if re.search('[0-9]+', field.data) is None:
-        raise ValidationError("Make sure your password has a number in it")
-    if re.search("[A-ZĄĆŚĘŃŁÓŻŹ]+", field.data) is None:
-        raise ValidationError(
-            "Make sure your password has a capital letter in it")
-    if re.search("[!#@\$%^&*()\[\]{};<>-_]+", field.data) is None:
-        raise ValidationError(
-            "Make sure your password has a special character in"
-            " it, for example: '! @ #'")
-    if re.search("[\.\,]+", field.data) is not None:
-        raise ValidationError(
-            "Your password has a dot or comma, "
-            "these characters are not allowed")
-
-
 def check_author(form, field):
     if field.data != '':
         if not re.compile('^([A-ZĄŚĆĘŁŃÓŻŹ]{1}.*[A-ZĄĆŚŃĘŁÓŻŹa-ząćęłśóńżź]*'
@@ -76,7 +41,10 @@ def check_category(form, field):
 
 def check_isbn(form, field):
     field.data = field.data.replace("-", "").replace(" ", "")
-    if not is_isbn10(field.data) and not is_isbn13(field.data):
+    if not any(
+            [is_isbn10(field.data), is_isbn13(field.data), field.data == '']
+    ):
+
         raise ValidationError("ISBN number is incorrect!")
 
     if Book.query.filter_by(isbn=field.data).first():

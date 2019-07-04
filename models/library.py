@@ -174,10 +174,13 @@ class LibraryItem(db.Model):
                 'title': self.title,
                 'authors': self.authors_string.split(', '),
                 'type': self.type,
+                'pub_date': self.pub_date
             }
         else:
             return {
                 'id': self.id,
                 'title': self.title,
                 'issue': self.issue,
-                'type': self.type}
+                'type': self.type,
+                'pub_date': self.year
+            }

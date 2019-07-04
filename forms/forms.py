@@ -8,16 +8,10 @@ from wtforms import (
     TextAreaField,
     SelectField
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm
 
-from forms.custom_validators import (
-    tieto_email,
-    name,
-    surname,
-    check_password,
-    check_pub_date
-)
+from forms.custom_validators import check_pub_date, tieto_email
 
 
 class LoginForm(FlaskForm):
@@ -36,60 +30,9 @@ class LoginForm(FlaskForm):
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
-class RegistrationForm(FlaskForm):
-    email = StringField('Email',
-                        validators=[tieto_email],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Email'}))
-    first_name = StringField('First name',
-                             validators=[DataRequired(), Length(3), name],
-                             render_kw=({'class': 'inputs',
-                                         'placeholder': 'First Name'}))
-    surname = StringField('Surname',
-                          validators=[DataRequired(), Length(3), surname],
-                          render_kw=({'class': 'inputs',
-                                      'placeholder': 'Last Name'}))
-    password = PasswordField(
-        'Password',
-        validators=[DataRequired(), check_password,
-                    EqualTo('confirm_pass',
-                            message='Passwords must match.')],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Password'}))
-    confirm_pass = PasswordField(
-        'Confirm password',
-        validators=[DataRequired(), check_password],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Sign Up',
-                         render_kw=({'class': 'btn btn-primary submits'}))
-
-
-class EditPasswordForm(FlaskForm):
-    password = PasswordField(
-        'Password',
-        validators=[DataRequired()],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Password'}))
-    new_password = PasswordField(
-        'Password',
-        validators=[DataRequired(),
-                    EqualTo('confirm_password',
-                            message='Passwords must match.')],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'New Password'}))
-    confirm_password = PasswordField(
-        'Confirm password',
-        validators=[DataRequired()],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Save',
-                         render_kw=({'class': 'btn btn-primary submits'}))
-
-
 class ContactForm(FlaskForm):
     email = StringField('email',
-                        validators=[Email()],
+                        validators=[tieto_email],
                         render_kw=({'class': 'inputs',
                                     'placeholder': 'Email'}))
     title = StringField('title',
@@ -115,25 +58,6 @@ class SearchForm(FlaskForm):
         choices=[('title', 'Title'), ('author', 'Author')],
         render_kw=({'class': 'inputs custom-select input-search-type'})
     )
-
-
-class ForgotPass(FlaskForm):
-    email = StringField('email',
-                        validators=[tieto_email],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Enter Email Address'}))
-    submit = SubmitField('Submit',
-                         render_kw=({'class': 'btn btn-primary submits'}))
-
-
-class PasswordForm(FlaskForm):
-    password = PasswordField('Password',
-                             validators=[DataRequired()],
-                             render_kw=({'class': 'inputs',
-                                         'placeholder': 'Enter new password'})
-                             )
-    submit = SubmitField('Submit',
-                         render_kw=({'class': 'btn btn-primary submits'}))
 
 
 class WishlistForm(FlaskForm):
