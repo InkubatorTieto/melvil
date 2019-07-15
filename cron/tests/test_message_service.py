@@ -45,19 +45,15 @@ class TestMessageService():
         service = MessageService(sender)
         messages = list(service.compose_messages('', test_data))
 
-        assert len(
-            [
-                m for m in messages if
-                m['To'] == 'borrower_surname_1 '
-                           + 'borrower_name_1 <borrower_email_1@example.com>']
-        ) == 1
+        assert len([
+            m for m in messages if
+            m['To'] == 'borrower_surname_1 ' +
+                       'borrower_name_1 <borrower_email_1@example.com>']) == 1
 
-        assert len(
-            [
-                m for m in messages if
-                m['To'] == 'borrower_surname_2 '
-                           + 'borrower_name_2 <borrower_email_2@example.com>']
-        ) == 1
+        assert len([
+            m for m in messages if
+            m['To'] == 'borrower_surname_2 ' +
+                       'borrower_name_2 <borrower_email_2@example.com>']) == 1
 
     @freeze_time(datetime(2012, 5, 20))
     def test_compose_messages_items(self, test_data):
