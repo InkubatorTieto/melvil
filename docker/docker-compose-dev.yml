@@ -3,7 +3,7 @@ version: '3'
 services:
   cron:
     build:
-      context: ../cron/src
+      context: ../cron
       dockerfile: Dockerfile
     environment:
       - DB_USER=psql_user

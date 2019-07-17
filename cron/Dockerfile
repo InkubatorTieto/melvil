@@ -4,7 +4,8 @@ RUN apt-get update && \
     apt-get --assume-yes install cron libpq-dev gcc
 
 RUN mkdir /app
-COPY update_reservation_status.py data_access_layer.py requirements.txt test_update_reservation_status.py /app/
+COPY .flake8 requirements.txt /app/
+COPY src/ /app/
 COPY start_container.sh /bin/
 COPY cron_job /etc/cron.d/
 
