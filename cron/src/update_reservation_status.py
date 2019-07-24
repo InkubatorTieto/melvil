@@ -63,7 +63,7 @@ def check_reservation_status_db(dal):
 
     print("[{}] Cancelled reservation for library item id: {}"
           .format(datetime.now(),
-                  ', '.format([item[1] for item in items])))
+                  ', '.join([str(item[1]) for item in items])))
 
 
 if __name__ == '__main__':
