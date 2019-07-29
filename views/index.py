@@ -543,11 +543,11 @@ def admin_dashboard():
         borrow_form = BorrowForm(prefix="borrow")
         return_form = ReturnForm(prefix="return")
         if borrow_form.submit.data and borrow_form.validate_on_submit():
-            copy_asset = request.args.get('asset')
-            borrow_item = Copy.query.filter_by(asset_code=copy_asset). \
+            copy_id = request.args.get('copy_id')
+            borrow_item = Copy.query.filter_by(id=copy_id). \
                 first_or_404()
             rental_log_change = RentalLog.query.filter_by(
-                copy_id=borrow_item.id
+                copy_id=copy_id
             ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_item.available_status = BookStatus.BORROWED
