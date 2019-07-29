@@ -30,9 +30,7 @@
     {% if copy.available_status|string() == "BookStatus.RESERVED" %}
     <td>
         <div class="tooltip">
-            <center>
                 Reserved </br> expiry date {{copy.reservation_end().strftime('%Y-%m-%d')}}
-            </center> 
             <span class="tooltiptext">This copy has been reserved,
                 its status will change to "Borrowed" or "Available"
                 within 2 days.</span>
@@ -41,9 +39,7 @@
     {% elif copy.available_status|string() == "BookStatus.BORROWED" %}
     <td>
         <div class="tooltip">
-            <center>
                 Borrowed </br> return date {{copy.reservation_end().strftime('%Y-%m-%d')}}
-            </center>
             <span class="tooltiptext">This copy has been borrowed,
                 it may take a while until it becomes available.</span>
         </div>
