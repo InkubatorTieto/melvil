@@ -231,6 +231,8 @@ def logout():
 def reserve(copy_id):
     try:
         copy = Copy.query.get(copy_id)
+        if copy.available_status != BookStatus.RETURNED:
+            abort(409)
         copy.available_status = BookStatus.RESERVED
         res = RentalLog(
             copy_id=copy_id,
@@ -606,6 +608,15 @@ def method_not_allowed(error):
     return render_template('message.html',
                            message_title=message_title,
                            message_body=message_body), 405
+
+
+@library.errorhandler(409)
+def conflict(error):
+    message_body = 'Someone already changed this resource!'
+    message_title = 'Conflict!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 409
 
 
 @library.errorhandler(500)
