@@ -167,12 +167,11 @@ def search():
                 return ErrorMessage.message('Cannot connect to database!')
         elif request.args.get('query'):
             form = SearchForm()
-            search_by = request.args.get('search_by')
             query_str = request.args.get('query')
             page = request.args.get('page', 1, type=int)
             try:
                 paginate_query = LibraryItem.query.filter(
-                    search_book(search_by, query_str)
+                    search_book(query_str)
                 ).paginate(page, error_out=True, max_per_page=10)
                 output = [d.serialize() for d in paginate_query.items]
             except RuntimeError:
@@ -183,8 +182,7 @@ def search():
                                    endpoint='library.search',
                                    admin=admin,
                                    form=form,
-                                   query_str=query_str,
-                                   search_by=search_by)
+                                   query_str=query_str)
         else:
             abort(405)
 

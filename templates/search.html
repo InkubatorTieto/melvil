@@ -17,9 +17,6 @@
 </div>
 <form action="" method="get" id=query_form>
     {{ input(form.query) }}
-</br>
-</br>
-    Search by: {{ form.search_by}}
 </form>
 <table class="table table-sm">
     <thead>
@@ -66,7 +63,7 @@
     </tbody>
 </table>
 <nav aria-label="Page navigation search">
-    {{ render_pagination(pagination, endpoint, query_str=query_str, search_by=search_by) }}
+    {{ render_pagination(pagination, endpoint, query_str=query_str) }}
 </nav>
 {% endif %}
 
