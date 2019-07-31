@@ -234,13 +234,18 @@ def reserve(copy_id):
         if copy.available_status != BookStatus.RETURNED:
             abort(409)
         copy.available_status = BookStatus.RESERVED
+        reservation_begin = datetime.now(tz=pytz.utc)
+
         res = RentalLog(
             copy_id=copy_id,
             user_id=session['id'],
             book_status=BookStatus.RESERVED,
-            reservation_begin=datetime.now(tz=pytz.utc),
-            reservation_end=datetime.now(
-                tz=pytz.utc) + timedelta(days=2))
+            reservation_begin=reservation_begin,
+            reservation_end=(
+                reservation_begin
+                .replace(hour=23, minute=59, second=59, microsecond=0)
+                + timedelta(days=2))
+            )
         db.session.add(res)
         db.session.commit()
         flash('Pick up the book within two days!')
@@ -552,11 +557,14 @@ def admin_dashboard():
                 copy_id=copy_id
             ).order_by(RentalLog.id.desc()).first_or_404()
             try:
+                borrow_time = datetime.now(tz=pytz.utc)
+
                 borrow_item.available_status = BookStatus.BORROWED
                 rental_log_change.book_status = BookStatus.BORROWED
-                rental_log_change._borrow_time = datetime.now(tz=pytz.utc)
-                rental_log_change._return_time = \
-                    (datetime.now(tz=pytz.utc) + timedelta(days=30))
+                rental_log_change._borrow_time = borrow_time
+                rental_log_change._return_time = borrow_time \
+                    .replace(hour=23, minute=59, second=59, microsecond=0) \
+                    + timedelta(days=30)
                 db.session.commit()
             except exc.SQLAlchemyError:
                 abort(500)
