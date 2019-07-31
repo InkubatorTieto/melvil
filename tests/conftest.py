@@ -28,8 +28,7 @@ from forms.copy import CopyAddForm, CopyEditForm
 from forms.forms import (
     SearchForm,
     WishlistForm,
-    LoginForm,
-    EditPasswordForm
+    LoginForm
 )
 from tests.populate import (
     populate_copies,
@@ -706,15 +705,3 @@ def user_reservations(session, mock_ldap):
     for m in magazines:
         session.delete(m)
     session.commit()
-
-
-@pytest.fixture(scope="function")
-def password_edition_form(db_user):
-    password = g.person.password(length=8)
-    new_password = g.person.password(length=8)
-    form = EditPasswordForm(
-        password=password,
-        new_password=new_password,
-        confirm_password=new_password,
-    )
-    yield form

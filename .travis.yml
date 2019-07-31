@@ -20,4 +20,5 @@ branches:
   except:
   - /wip*/
 script:
-  - docker-compose -f $DOCKER_FILE run web pytest
+  - docker-compose -f $DOCKER_FILE run web pytest tests
+  - docker-compose -f $DOCKER_FILE run cron pytest
