@@ -61,7 +61,7 @@
                 <th scope="row">{{reservation.copy.library_item.title}}</th>
                 <th scope="row">{{reservation.copy.asset_code}}</th>
                 <th scope="row">
-                    <form action="{{ url_for ('library.admin_dashboard', asset=reservation.copy.asset_code) }}"
+                    <form action="{{ url_for ('library.admin_dashboard', copy_id=reservation.copy.id) }}"
                           class="borrowBtn"
                           method="post"
                           id="borrowBtn_{{ reservation.copy.asset_code }}">
