@@ -21,8 +21,7 @@ from models import (
     Copy,
     WishListItem,
     Author,
-    Tag,
-    LibraryItem
+    Tag
 )
 from models.users import Role, RoleEnum
 from forms.copy import CopyAddForm, CopyEditForm
@@ -630,24 +629,6 @@ def wishlist_query(session, client):
     session.commit()
 
     yield wishlist
-
-
-@pytest.fixture(scope="function")
-def get_title(session, client):
-    """
-    Get title of item in Library
-    """
-    item = LibraryItem.query.first()
-    yield item
-
-
-@pytest.fixture(scope="function")
-def get_book(session, client):
-    """
-    Get data of book from library
-    """
-    book = Book.query.first()
-    yield book
 
 
 @pytest.fixture(scope="function")

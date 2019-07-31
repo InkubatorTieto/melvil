@@ -1,32 +1,29 @@
-from flask import abort
-from sqlalchemy import or_, select
-from models import Author, LibraryItem, Book
+from sqlalchemy import or_
+from models import Author, LibraryItem
 
 
 def search_book(query_str):
-    query_str = 'jiri'
-    query_words = query_str.split()
+    query_words = list(map(
+        lambda x: '%{}%'.format(x),
+        query_str.split()
+    ))
     items_id = []
     for word in query_words:
         title_search = LibraryItem.query.filter(
-            LibraryItem.title.ilike('%{}%'.format(word))
+            LibraryItem.title.ilike(word)
         ).all()
-        author_name_search = Author.query.filter(
-            Author.first_name.ilike('%{}%'.format(word))
-        ).all()
-        for search_result in [title_search, author_name_search]:
-            items_id += [item.id for item in search_result]
+        author_search = _search_by_author(word)
+        items_id += [item.id for item in title_search + author_search]
+    return LibraryItem.id.in_(items_id)
 
-    print('#########')
-    print(items_id)
-    # title_search = LibraryItem.title.ilike(
-    #     '%{}%'.format(query_str)
-    # )
-    # query = [string.capitalize() for string in query_str.split()]
-    # authors = Author.query.filter(
-    #     or_(Author.first_name.in_(query), Author.last_name.in_(query))
-    # ).all()
-    # authors_search = LibraryItem.id.in_(
-    #     book.id for book in sum((author.books for author in authors), [])
-    # )
-    # return or_(title_search, authors_search)
+
+def _search_by_author(query_str):
+    author_search = Author.query.filter(
+        or_(
+            Author.first_name.ilike(query_str),
+            Author.last_name.ilike(query_str)
+        )).all()
+    return sum(
+        map(lambda x: x.books, author_search),
+        []
+    )
