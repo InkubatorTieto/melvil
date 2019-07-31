@@ -243,9 +243,10 @@ def reserve(copy_id):
             reservation_begin=reservation_begin,
             reservation_end=(
                 reservation_begin
-                .replace(hour=23, minute=59, second=59, microsecond=0)
-                + timedelta(days=2))
+                .replace(hour=23, minute=59, second=59, microsecond=0) +
+                timedelta(days=2)
             )
+        )
         db.session.add(res)
         db.session.commit()
         flash('Pick up the book within two days!')
