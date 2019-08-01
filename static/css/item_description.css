@@ -61,6 +61,7 @@ table.copies-info {
     font-style: inherit;
     font-size: inherit;
     opacity: inherit;
+    text-align: center;
 }
 
 .tooltip .tooltiptext {

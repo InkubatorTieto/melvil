@@ -34,6 +34,16 @@ class Copy(db.Model):
                                   backref=db.backref(
                                       'copy', uselist=False))
 
+    def reservation_end(self):
+        return RentalLog.query.filter(
+            RentalLog.copy_id == self.id
+        ).first()._reservation_end
+
+    def return_time(self):
+        return RentalLog.query.filter(
+            RentalLog.copy_id == self.id
+        ).first()._return_time
+
     def __str__(self):
         return "Copy asset_code: {}, type/title: {}/{}".format(
             self.asset_code,
