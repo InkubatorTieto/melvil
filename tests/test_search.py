@@ -49,18 +49,6 @@ def test_search_any(app_session, search_form):
         assert True, "There are no such items in library"
 
 
-def test_search_query(app_session, get_title):
-    lib_items = LibraryItem.query.filter(
-        func.lower(LibraryItem.title).like("%{}%".format(get_title.title)))
-
-    if lib_items:
-        for item in lib_items:
-            assert item.type == 'book' or item.type == 'magazine', \
-                'Wrong objects queried!'
-            assert get_title.title in item.title, \
-                'Search query does not match title of item!'
-
-
 def test_search_pagination(app):
     with app.test_request_context(f"/search?page="):
         assert flask.request.path == '/search'

@@ -6,7 +6,7 @@ from wtforms import (
     BooleanField,
     SubmitField,
     TextAreaField,
-    SelectField,
+    SelectField
 )
 from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm
@@ -53,7 +53,11 @@ class SearchForm(FlaskForm):
                         render_kw=({'class': 'inputs',
                                     'type': 'text',
                                     'placeholder': 'Search...'}))
-    submit = SubmitField('Search')
+    search_by = SelectField(
+        'Search Type',
+        choices=[('title', 'Title'), ('author', 'Author')],
+        render_kw=({'class': 'inputs custom-select input-search-type'})
+    )
 
 
 class WishlistForm(FlaskForm):

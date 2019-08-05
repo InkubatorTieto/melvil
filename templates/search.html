@@ -9,66 +9,62 @@
 {% block content %}
 {% from "macros.html" import input, render_pagination, flashed_message with context %}
 
-<div class="book_borrowing_dashboard">
-      <p class="form-title">Search</p>
-    <div>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {{ flashed_message(messages) }}
-        {% endwith %}
-    </div>
-    <form action="" method="get" id=query_form>
-        {{ input(form.query) }}
-    </form>
-    <table class="table table-sm">
-        <thead>
-        <th scope="col">Title</th>
-        <th scope="col">Author</th>
-        <th scope="col">Publication year</th>
-        <th></th>
-        </thead>
-        {% if all_query|length == 0 %}
-        <tr>No result found!</tr>
-        {% else %}
-        <tbody>
-        {% for item in all_query %}
-        <tr>
-            <td>
-                <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
-                    {{ item['title'] }}
-                </a>
-            </td>
-            <td>
-                {% if item['type'] == 'book' %}
-                {% for author in item['authors'] %}
-                <p>{% if loop.last %}
-                    {{ author }}
-                    {% else %}
-                    {{ author }},
-                    {% endif %}</p>
-                {% endfor %}
-                {% elif item['type'] == 'magazine' %}
-                <p>Issue no.: {{ item['issue'] }}</p>
-                {% endif %}
-            </td>
-            <td>
-                {{item['pub_date'].year}}
-            </td>
-            <td style="width: 10px;">
-                {% if item['type'] == 'book' %}
-                <img src="../../static/img/i_book.png"
-                        alt='book'/>{% endif %}
-                {% if item['type'] == 'magazine' %}
-                <img src="../../static/img/i_newspaper.png"
-                        alt='journal'/>{% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <nav aria-label="Page navigation search">
-        {{ render_pagination(pagination, endpoint, query_str=query_str) }}
-    </nav>
-    {% endif %}
+    <p class="form-title">Search</p>
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {{ flashed_message(messages) }}
+    {% endwith %}
 </div>
+<form action="" method="get" id=query_form>
+    {{ input(form.query) }}
+</form>
+<table class="table table-sm">
+    <thead>
+    <th scope="col">Title</th>
+    <th scope="col">Author</th>
+    <th></th>
+    </thead>
+    {% if all_query|length == 0 %}
+    <tr>No result found!</tr>
+    {% else %}
+    <tbody>
+    {% for item in all_query %}
+    <tr>
+        <td>
+            <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
+                {{ item['title'] }}
+            </a>
+        </td>
+        <td>
+            {% if item['type'] == 'book' %}
+            {% for author in item['authors'] %}
+            <p>{% if loop.last %}
+                {{ author }}
+                {% else %}
+                {{ author }},
+                {% endif %}</p>
+            {% endfor %}
+            {% elif item['type'] == 'magazine' %}
+            <p>Issue no.: {{ item['issue'] }}</p>
+            {% endif %}
+        </td>
+        <td style="width: 10px;">
+            <button type="button"
+                    class="btn question_mark_btn"
+                    id="type_{{ loop.index }}"
+                    data-toggle="tooltip"
+                    data-placement="right"
+                    title="{{ item['type'].capitalize() }}">
+                ?
+            </button>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<nav aria-label="Page navigation search">
+    {{ render_pagination(pagination, endpoint, query_str=query_str) }}
+</nav>
+{% endif %}
 
 {% endblock %}
