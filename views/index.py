@@ -50,6 +50,7 @@ library = Blueprint('library', __name__,
 
 @library.route('/')
 def index():
+    search_book('')
     return render_template('index.html')
 
 
