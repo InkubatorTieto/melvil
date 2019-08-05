@@ -79,6 +79,9 @@ p.label {
     outline: 0;
 }
 
+.input-search-type {
+    width: 20%;
+}
 
 /*
 Table properties
