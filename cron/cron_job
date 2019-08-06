@@ -1,0 +1,2 @@
+* * * * * root . $HOME/.env.sh; /usr/local/bin/python /app/src/run_task.py invalidate_overdue_reservations > /proc/1/fd/1 2>/proc/1/fd/2
+0 3 * * * root . $HOME/.env.sh; /usr/local/bin/python /app/src/run_task.py send_notifications > /proc/1/fd/1 2>/proc/1/fd/2
