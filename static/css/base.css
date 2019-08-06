@@ -79,7 +79,6 @@ p.label {
     outline: 0;
 }
 
-
 /*
 Table properties
  */
@@ -129,6 +128,13 @@ Close button
 .close {
     color: white;
     text-shadow: none;
+}
+
+.radio_but {
+    display: inline-flex;
+    list-style-type: none;
+    color: #ffffff;
+
 }
 
 /*
