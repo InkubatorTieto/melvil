@@ -223,20 +223,14 @@ def text_generator_no_whitespaces(chars=string.ascii_letters + 'ąćęłóżź')
 
 
 @pytest.fixture(scope='module')
-def password_generator(chars=string.ascii_letters):
-    size = random.randint(10, 25)
-    return ''.join(random.choice(chars) for _ in range(size))
-
-
-@pytest.fixture(scope='module')
-def user(app):
+def user(text_generator_no_whitespaces, text_generator):
     data = {
         'email': g.person.email(),
         'first_name': g.person.name(),
         'surname': g.person.surname(),
-        'password': password_generator(),
-        'title': text_generator_no_whitespaces(),
-        'message': text_generator()}
+        'password': g.person.password(length=12),
+        'title': text_generator_no_whitespaces,
+        'message': text_generator}
     yield data
 
 

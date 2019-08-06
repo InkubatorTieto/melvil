@@ -6,7 +6,7 @@ from wtforms import (
     BooleanField,
     SubmitField,
     TextAreaField,
-    SelectField
+    SelectField,
 )
 from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm

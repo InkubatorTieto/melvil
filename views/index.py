@@ -233,14 +233,22 @@ def logout():
 def reserve(copy_id):
     try:
         copy = Copy.query.get(copy_id)
+        if copy.available_status != BookStatus.RETURNED:
+            abort(409)
         copy.available_status = BookStatus.RESERVED
+        reservation_begin = datetime.now(tz=pytz.utc)
+
         res = RentalLog(
             copy_id=copy_id,
             user_id=session['id'],
             book_status=BookStatus.RESERVED,
-            reservation_begin=datetime.now(tz=pytz.utc),
-            reservation_end=datetime.now(
-                tz=pytz.utc) + timedelta(days=2))
+            reservation_begin=reservation_begin,
+            reservation_end=(
+                reservation_begin
+                .replace(hour=23, minute=59, second=59, microsecond=0) +
+                timedelta(days=2)
+            )
+        )
         db.session.add(res)
         db.session.commit()
         flash('Pick up the book within two days!')
@@ -545,18 +553,21 @@ def admin_dashboard():
         borrow_form = BorrowForm(prefix="borrow")
         return_form = ReturnForm(prefix="return")
         if borrow_form.submit.data and borrow_form.validate_on_submit():
-            copy_asset = request.args.get('asset')
-            borrow_item = Copy.query.filter_by(asset_code=copy_asset). \
+            copy_id = request.args.get('copy_id')
+            borrow_item = Copy.query.filter_by(id=copy_id). \
                 first_or_404()
             rental_log_change = RentalLog.query.filter_by(
-                copy_id=borrow_item.id
+                copy_id=copy_id
             ).order_by(RentalLog.id.desc()).first_or_404()
             try:
+                borrow_time = datetime.now(tz=pytz.utc)
+
                 borrow_item.available_status = BookStatus.BORROWED
                 rental_log_change.book_status = BookStatus.BORROWED
-                rental_log_change._borrow_time = datetime.now(tz=pytz.utc)
-                rental_log_change._return_time = \
-                    (datetime.now(tz=pytz.utc) + timedelta(days=30))
+                rental_log_change._borrow_time = borrow_time
+                rental_log_change._return_time = borrow_time \
+                    .replace(hour=23, minute=59, second=59, microsecond=0) \
+                    + timedelta(days=30)
                 db.session.commit()
             except exc.SQLAlchemyError:
                 abort(500)
@@ -608,6 +619,15 @@ def method_not_allowed(error):
     return render_template('message.html',
                            message_title=message_title,
                            message_body=message_body), 405
+
+
+@library.errorhandler(409)
+def conflict(error):
+    message_body = 'Someone already changed this resource!'
+    message_title = 'Conflict!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 409
 
 
 @library.errorhandler(500)
