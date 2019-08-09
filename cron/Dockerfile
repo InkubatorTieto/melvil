@@ -5,7 +5,7 @@ RUN apt-get update && \
 
 RUN mkdir /app
 COPY .flake8 requirements.txt /app/
-COPY src/ /app/
+COPY src /app/src
 COPY start_container.sh /bin/
 COPY cron_job /etc/cron.d/
 

@@ -3,7 +3,6 @@ from enum import Enum
 from sqlalchemy.engine.url import URL
 from dotenv import load_dotenv
 from os import environ
-from urllib.parse import quote_plus
 from datetime import datetime, timedelta
 
 from data_layer.data_access_layer import DataAccessLayer
@@ -21,11 +20,11 @@ def send_notifications():
     due_date_diff = environ["NOTIFICATIONS_DUE_DATE_DIFF_HOURS"]
     smtp_host = environ["NOTIFICATIONS_SMPT_HOST"]
     smtp_port = environ["NOTIFICATIONS_SMPT_PORT"]
-    smtp_user = environ["NOTIFICATIONS_SMPT_USER"]
-    smtp_password = environ["NOTIFICATIONS_SMPT_PASSWORD"]
+    smtp_user = environ.get("NOTIFICATIONS_SMPT_USER")
+    smtp_password = environ.get("NOTIFICATIONS_SMPT_PASSWORD")
     smtp_sender = environ["NOTIFICATIONS_SMPT_SENDER"]
 
-    due_date = datetime.utcnow() + timedelta(hours=due_date_diff)
+    due_date = datetime.utcnow() + timedelta(hours=int(due_date_diff))
     database_connection_url = __get_database_connection_url()
     data_access_layer = DataAccessLayer(database_connection_url)
 
@@ -37,10 +36,10 @@ def send_notifications():
         user=smtp_user,
         password=smtp_password)
 
-    with open('email_template.html') as file_template:
+    with open('notifications/email_template.html') as file_template:
         template = file_template.read()
         records = books_catalog.get_overdue_books(due_date)
-        for message in message_service.compose_message(template, records):
+        for message in message_service.compose_messages(template, records):
             smtp.send(message)
 
 
@@ -58,7 +57,7 @@ def __get_database_connection_url():
     return URL(
         drivername=environ["DB_ENGINE"],
         username=environ["DB_USER"],
-        password=quote_plus(environ["DB_PASSWORD"]),
+        password=environ["DB_PASSWORD"],
         host=environ["DB_HOST"],
         port=environ["DB_PORT"],
         database=environ["DB_NAME"])

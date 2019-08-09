@@ -50,7 +50,7 @@ class DataAccessLayer:
                                        Integer,
                                        ForeignKey("copy.id"),
                                        nullable=False),
-                                Column('users_id',
+                                Column('user_id',
                                        Integer,
                                        ForeignKey("users.id"),
                                        nullable=False),
