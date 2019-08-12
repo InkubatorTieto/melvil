@@ -4,11 +4,11 @@ python:
 # command to install dependencies
 env:
   - DOCKER_FILE=docker/docker-compose.yml
-  - DOCKER_FILE_CRON=docker/docker-compose-dev.yml  
 services:
   - docker
 install:
   - pip install -r requirements.txt
+  - touch cron/.env
 before_script:
 # Let's stop postgresql
   - sudo service postgresql stop
@@ -22,4 +22,4 @@ branches:
   - /wip*/
 script:
   - docker-compose -f $DOCKER_FILE run web pytest tests
-  - docker-compose -f $DOCKER_FILE_CRON run cron pytest
+  - docker-compose -f $DOCKER_FILE run cron pytest
