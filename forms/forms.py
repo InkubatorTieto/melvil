@@ -56,7 +56,7 @@ class SearchForm(FlaskForm):
     search_by = SelectField(
         'Search Type',
         choices=[('title', 'Title'), ('author', 'Author')],
-        render_kw=({'class': 'inputs custom-select input-search-type'})
+        render_kw=({'class': 'inputs input-search-type'})
     )
 
 
