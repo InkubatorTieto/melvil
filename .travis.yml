@@ -8,6 +8,7 @@ services:
   - docker
 install:
   - pip install -r requirements.txt
+  - touch cron/.env
 before_script:
 # Let's stop postgresql
   - sudo service postgresql stop

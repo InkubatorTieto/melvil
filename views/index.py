@@ -17,7 +17,7 @@ from flask import (
     json
 )
 
-from config import DevConfig
+from config import Config
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.forms import (
     BorrowForm,
@@ -196,14 +196,14 @@ def contact():
         try:
             send_email(
                 'Contact confirmation, title: ' + form.title.data,
-                DevConfig.MAIL_USERNAME,
+                Config.MAIL_SENDER,
                 [form.email.data],
                 None,
                 email_template)
             send_email(
                 'Contact form: ' + form.title.data,
-                DevConfig.MAIL_USERNAME,
-                [DevConfig.MAIL_USERNAME],
+                Config.MAIL_SENDER,
+                [Config.MAIL_ADMINS],
                 'Send by: ' + form.email.data + '\n\n' + form.message.data,
                 None)
             return SuccessMessage \
