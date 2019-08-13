@@ -203,7 +203,7 @@ def contact():
             send_email(
                 'Contact form: ' + form.title.data,
                 Config.MAIL_SENDER,
-                [Config.ADMINS],
+                [Config.MAIL_ADMINS],
                 'Send by: ' + form.email.data + '\n\n' + form.message.data,
                 None)
             return SuccessMessage \
