@@ -2,9 +2,8 @@ from datetime import datetime, timedelta
 
 from sqlalchemy import exc
 from sqlalchemy.exc import IntegrityError
-
+from werkzeug.datastructures import MultiDict
 import pytz
-
 from flask import (
     abort,
     Blueprint,
@@ -148,7 +147,7 @@ def search():
     except Exception:
         abort(500)
     if request.method == 'GET':
-        if not request.args or not request.args.get('query'):
+        if not request.args.get('query'):
             form = SearchForm()
             page = request.args.get('page', 1, type=int)
             try:
@@ -166,7 +165,10 @@ def search():
             except RuntimeError:
                 return ErrorMessage.message('Cannot connect to database!')
         elif request.args.get('query'):
-            form = SearchForm()
+            form = SearchForm(formdata=MultiDict({
+                'query': request.args.get('query'),
+                'search_by': request.args.get('search_by')
+            }))
             search_by = request.args.get('search_by')
             query_str = request.args.get('query')
             page = request.args.get('page', 1, type=int)
