@@ -13,6 +13,8 @@ class Config(object):
     MAIL_USE_SSL = getenv("MAIL_USE_SSL") == "True"
     MAIL_USERNAME = getenv("MAIL_USERNAME")
     MAIL_PASSWORD = getenv("MAIL_PASSWORD")
+    MAIL_SENDER = getenv("MAIL_SENDER")
+    MAIL_ADMINS = getenv("MAIL_ADMINS")
     ADMINS = [getenv("MAIL_USERNAME")]
 
     # database
