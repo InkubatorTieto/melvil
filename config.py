@@ -7,12 +7,14 @@ class Config(object):
     DATABASE_URI = ""
 
     # email server
-    MAIL_SERVER = "smtp.gmail.com"
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
-    MAIL_USE_SSL = False
+    MAIL_SERVER = getenv("MAIL_SERVER")
+    MAIL_PORT = getenv("MAIL_PORT")
+    MAIL_USE_TLS = getenv("MAIL_USE_TLS") == "True"
+    MAIL_USE_SSL = getenv("MAIL_USE_SSL") == "True"
     MAIL_USERNAME = getenv("MAIL_USERNAME")
     MAIL_PASSWORD = getenv("MAIL_PASSWORD")
+    MAIL_SENDER = getenv("MAIL_SENDER")
+    MAIL_ADMINS = getenv("MAIL_ADMINS")
     ADMINS = [getenv("MAIL_USERNAME")]
 
     # database

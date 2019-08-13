@@ -100,7 +100,7 @@ def prepare_db(dal):
             {
                 'id': 1,
                 'copy_id': 2,
-                'users_id': 1,
+                'user_id': 1,
                 'book_status': BookStatus.RESERVED,
                 '_reservation_end': datetime(2030, 5, 4),
                 '_return_time': None
@@ -108,7 +108,7 @@ def prepare_db(dal):
             {
                 'id': 2,
                 'copy_id': 3,
-                'users_id': 1,
+                'user_id': 1,
                 'book_status': BookStatus.RESERVED,
                 '_reservation_end': datetime(2030, 5, 5),
                 '_return_time': None
@@ -116,7 +116,7 @@ def prepare_db(dal):
             {
                 'id': 3,
                 'copy_id': 4,
-                'users_id': 1,
+                'user_id': 1,
                 'book_status': BookStatus.RESERVED,
                 '_reservation_end': datetime(2030, 5, 7),
                 '_return_time': None
@@ -124,7 +124,7 @@ def prepare_db(dal):
             {
                 'id': 4,
                 'copy_id': 1,
-                'users_id': 1,
+                'user_id': 1,
                 'book_status': BookStatus.BORROWED,
                 '_reservation_end': datetime(2030, 5, 7),
                 '_return_time': datetime(2030, 5, 7)
@@ -132,7 +132,7 @@ def prepare_db(dal):
             {
                 'id': 5,
                 'copy_id': 5,
-                'users_id': 1,
+                'user_id': 1,
                 'book_status': BookStatus.BORROWED,
                 '_reservation_end': datetime(2030, 5, 7),
                 '_return_time': datetime(2030, 5, 7)
@@ -140,7 +140,7 @@ def prepare_db(dal):
             {
                 'id': 6,
                 'copy_id': 6,
-                'users_id': 2,
+                'user_id': 2,
                 'book_status': BookStatus.BORROWED,
                 '_reservation_end': datetime(2030, 5, 7),
                 '_return_time': datetime(2030, 5, 7)
