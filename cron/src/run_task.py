@@ -36,7 +36,7 @@ def send_notifications():
         user=smtp_user,
         password=smtp_password)
 
-    with open('notifications/email_template.html') as file_template:
+    with open('/app/src/notifications/email_template.html') as file_template:
         template = file_template.read()
         records = books_catalog.get_overdue_books(due_date)
         for message in message_service.compose_messages(template, records):

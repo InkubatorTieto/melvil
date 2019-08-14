@@ -9,7 +9,8 @@ COPY src /app/src
 COPY start_container.sh /bin/
 COPY cron_job /etc/cron.d/
 
-RUN chmod 755 /bin/start_container.sh
+RUN chmod 755 /bin/start_container.sh && \
+    chmod 755 /etc/cron.d/cron_job
 
 WORKDIR /app
 RUN pip install -r requirements.txt
