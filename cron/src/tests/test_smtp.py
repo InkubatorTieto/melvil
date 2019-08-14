@@ -11,7 +11,7 @@ class TestSmtp():
             password='password')
         smtp_client_mock = Mock()
 
-        def context_manager_getter(port, host, use_tls):
+        def context_manager_getter(port, host):
             return Mock(
                 __enter__=lambda x: smtp_client_mock,
                 __exit__=Mock())
@@ -22,8 +22,6 @@ class TestSmtp():
 
         smtp_client_mock.helo.assert_called_once()
         smtp_client_mock.starttls.assert_not_called()
-        smtp_client_mock.login.assert_called_once_with(
-            user='user', password='password')
         smtp_client_mock.send_message.assert_called_once_with('message')
 
     def test_send_with_tls(self):
@@ -35,7 +33,7 @@ class TestSmtp():
             use_tls=True)
         smtp_client_mock = Mock()
 
-        def context_manager_getter(port, host, use_tls):
+        def context_manager_getter(port, host):
             return Mock(
                 __enter__=lambda x: smtp_client_mock,
                 __exit__=Mock())

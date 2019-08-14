@@ -17,7 +17,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8080:8080"
+      - "8080:80"
     depends_on:
       - "postgresql"
     container_name: melvil_web_prod
