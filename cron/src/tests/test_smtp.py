@@ -3,12 +3,12 @@ from unittest.mock import Mock
 
 
 class TestSmtp():
-    def test_send_without_tls(self):
+    def test_send_without_tls_and_without_auth(self):
         smtp = smtp_client.Smtp(
             host='host',
             port='port',
-            user='user',
-            password='password')
+            user=None,
+            password=None)
         smtp_client_mock = Mock()
 
         def context_manager_getter(port, host):
@@ -22,9 +22,10 @@ class TestSmtp():
 
         smtp_client_mock.helo.assert_called_once()
         smtp_client_mock.starttls.assert_not_called()
+        smtp_client_mock.login.assert_not_called()
         smtp_client_mock.send_message.assert_called_once_with('message')
 
-    def test_send_with_tls(self):
+    def test_send_with_tls_and_with_auth(self):
         smtp = smtp_client.Smtp(
             host='host',
             port='port',
@@ -44,3 +45,5 @@ class TestSmtp():
 
         smtp_client_mock.ehlo.assert_called_once()
         smtp_client_mock.starttls.assert_called_once()
+        smtp_client_mock.login.assert_called_once()
+        smtp_client_mock.send_message.assert_called_once_with('message')
