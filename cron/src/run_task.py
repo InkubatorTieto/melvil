@@ -36,10 +36,27 @@ def send_notifications():
         user=smtp_user,
         password=smtp_password)
 
-    with open('/app/src/notifications/email_template.html') as file_template:
+    with open(
+        '/app/src/notifications/user_email_template.html'
+    ) as file_template:
         template = file_template.read()
         records = books_catalog.get_overdue_books(due_date)
-        for message in message_service.compose_messages(template, records):
+        for message in message_service.compose_user_messages(
+            template,
+            records
+        ):
+            smtp.send(message)
+
+    now = datetime.utcnow()
+    with open(
+        '/app/src/notifications/admin_email_template.html'
+    ) as file_template:
+        template = file_template.read()
+        records = books_catalog.get_overdue_books(now)
+        for message in message_service.compose_admin_messages(
+            template,
+            records
+        ):
             smtp.send(message)
 
 

@@ -1,6 +1,8 @@
 from datetime import datetime
 from itertools import groupby
+from os import getenv
 from pystache import render
+
 from email.message import EmailMessage
 
 
@@ -8,7 +10,7 @@ class MessageService():
     def __init__(self, sender):
         self.__sender = sender
 
-    def compose_messages(self, template, books_records):
+    def compose_user_messages(self, template, books_records):
         now = datetime.utcnow()
         subject = 'Reminder from Melvil Library'
 
@@ -36,6 +38,31 @@ class MessageService():
                     key.borrower_name,
                     key.borrower_email)
             )
+            message['Subject'] = subject
+            message.set_content(html_document, subtype='html')
+
+            yield message
+
+    def compose_admin_messages(self, template, books_records):
+        subject = 'Overdue books'
+
+        for admin in getenv('MAIL_ADMINS').split():
+            data = dict(items=[])
+            for record in books_records:
+                row = {
+                    'borrower_name': record.borrower_name,
+                    'borrower_surname': record.borrower_surname,
+                    'borrower_email': record.borrower_email,
+                    'book_title': record.book_title,
+                    'book_due_date': record.book_due_date
+                }
+                data['items'].append(row)
+
+            html_document = render(template, data)
+
+            message = EmailMessage()
+            message['From'] = self.__sender
+            message['To'] = admin
             message['Subject'] = subject
             message.set_content(html_document, subtype='html')
 
