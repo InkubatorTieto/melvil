@@ -50,11 +50,11 @@ class MessageService():
             data = dict(items=[])
             for record in books_records:
                 row = {
-                    'borrower_name': record.borrower_name,
-                    'borrower_surname': record.borrower_surname,
-                    'borrower_email': record.borrower_email,
-                    'book_title': record.book_title,
-                    'book_due_date': record.book_due_date
+                    'borrower_name': record.borrower_info.borrower_name,
+                    'borrower_surname': record.borrower_info.borrower_surname,
+                    'borrower_email': record.borrower_info.borrower_email,
+                    'book_title': record.book_info.book_title,
+                    'book_due_date': record.book_info.book_due_date
                 }
                 data['items'].append(row)
 
