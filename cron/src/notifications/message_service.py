@@ -6,7 +6,7 @@ from email.message import EmailMessage
 
 class MessageService():
     def __init__(self, sender):
-        self.__sender = sender
+        self._sender = sender
 
     def compose_messages(self, template, books_records):
         now = datetime.utcnow()
@@ -28,7 +28,7 @@ class MessageService():
             html_document = render(template, data)
 
             message = EmailMessage()
-            message['From'] = self.__sender
+            message['From'] = self._sender
             message['To'] = (
                 '{} {} <{}>'
                 .format(

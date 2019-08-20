@@ -7,12 +7,12 @@ from data_layer.book_status import BookStatus
 
 class ReservationService():
     def __init__(self, data_access_layer):
-        self.__data_access_layer = data_access_layer
+        self._data_access_layer = data_access_layer
 
     def invalidate_overdue_reservations(self):
-        connection = self.__data_access_layer.connection
-        rental_log = self.__data_access_layer.rental_log
-        copy = self.__data_access_layer.copy
+        connection = self._data_access_layer.connection
+        rental_log = self._data_access_layer.rental_log
+        copy = self._data_access_layer.copy
 
         connection = connection.execution_options(
             isolation_level="SERIALIZABLE")

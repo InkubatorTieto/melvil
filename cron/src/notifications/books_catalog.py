@@ -5,14 +5,14 @@ from data_layer.book_status import BookStatus
 
 class BooksCatalog():
     def __init__(self, data_access_layer):
-        self.__data_access_layer = data_access_layer
+        self._data_access_layer = data_access_layer
 
     def get_overdue_books(self, return_time_delta):
-        connection = self.__data_access_layer.connection
-        library_item = self.__data_access_layer.library_item
-        copy = self.__data_access_layer.copy
-        rental_log = self.__data_access_layer.rental_log
-        users = self.__data_access_layer.users
+        connection = self._data_access_layer.connection
+        library_item = self._data_access_layer.library_item
+        copy = self._data_access_layer.copy
+        rental_log = self._data_access_layer.rental_log
+        users = self._data_access_layer.users
 
         select_stmt = (
             select([
