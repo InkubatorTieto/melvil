@@ -44,26 +44,25 @@ class MessageService():
             yield message
 
     def compose_admin_messages(self, template, books_records):
-        subject = 'Overdue books'
 
-        for admin in getenv('MAIL_ADMINS').split():
-            data = dict(items=[])
-            for record in books_records:
-                row = {
-                    'borrower_name': record.borrower_info.borrower_name,
-                    'borrower_surname': record.borrower_info.borrower_surname,
-                    'borrower_email': record.borrower_info.borrower_email,
-                    'book_title': record.book_info.book_title,
-                    'book_due_date': record.book_info.book_due_date
-                }
-                data['items'].append(row)
+        data = dict(items=[])
+        for record in books_records:
+            row = {
+                'borrower_name': record.borrower_info.borrower_name,
+                'borrower_surname': record.borrower_info.borrower_surname,
+                'borrower_email': record.borrower_info.borrower_email,
+                'book_title': record.book_info.book_title,
+                'book_due_date': record.book_info.book_due_date
+            }
+            data['items'].append(row)
 
-            html_document = render(template, data)
+        html_document = render(template, data)
 
-            message = EmailMessage()
+        message = EmailMessage()
+        if books_records:
             message['From'] = self.__sender
-            message['To'] = admin
-            message['Subject'] = subject
+            message['To'] = ','.join(getenv('MAIL_ADMINS').split())
+            message['Subject'] = 'Overdue books'
             message.set_content(html_document, subtype='html')
 
-            yield message
+        yield message

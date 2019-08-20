@@ -57,7 +57,10 @@ def send_notifications():
             template,
             records
         ):
-            smtp.send(message)
+            try:
+                smtp.send(message)
+            except TypeError:
+                pass
 
 
 def invalidate_overdue_reservations():
