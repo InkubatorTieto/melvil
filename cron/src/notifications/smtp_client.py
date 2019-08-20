@@ -14,11 +14,16 @@ class Smtp():
             host=self._host,
             port=self._port
         ) as smtp_client:
+
             if self._use_tls:
                 smtp_client.ehlo()
                 smtp_client.starttls()
             else:
                 smtp_client.helo()
+
+            if self._user is not None:
+                smtp_client.login(user=self._host, password=self._password)
+
             smtp_client.send_message(message)
 
 

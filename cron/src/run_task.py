@@ -3,6 +3,8 @@ from enum import Enum
 from sqlalchemy.engine.url import URL
 from dotenv import load_dotenv
 from os import environ
+import logging
+from sys import stdout
 from datetime import datetime, timedelta
 
 from data_layer.data_access_layer import DataAccessLayer
@@ -63,6 +65,15 @@ def __get_database_connection_url():
         database=environ["DB_NAME"])
 
 
+def __setup_logging():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)-5.5s] %(message)s",
+        handlers=[
+            logging.StreamHandler(stream=stdout)
+        ])
+
+
 if __name__ == '__main__':
     class TaskType(Enum):
         send_notifications = 'send_notifications'
@@ -71,6 +82,9 @@ if __name__ == '__main__':
         def __str__(self):
             return self.value
 
+    __setup_logging()
+
+    logging.info('foo')
     parser = ArgumentParser()
     parser.add_argument(
         'task',
