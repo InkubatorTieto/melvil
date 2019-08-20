@@ -1,49 +1,43 @@
 import logging
 from datetime import datetime
-from pytest import fixture
+import pytest
 from freezegun import freeze_time
 from notifications.message_service import MessageService
 from notifications.definitions import RecordInfo, BookInfo, BorrowerInfo
 
 
 class TestMessageService():
-    def test_compose_messages_senders(self, test_data):
+    @pytest.mark.parametrize(
+        'test_method, lenght',
+        [('compose_user_messages', 2), ('compose_admin_messages', 1)]
+    )
+    def test_compose_messages_senders(self, test_data, test_method, lenght):
         sender = 'foo <foo@example.com>'
         template = '{{recipient_surname}}, {{recipient_name}}'
         service = MessageService(sender)
-        messages = list(service.compose_messages(template, test_data))
-
-        def recipient_match(message, recipient_name, recipient_surname):
-            return str(message.get_content()) == '{}, {}\n'.format(
-                recipient_surname,
-                recipient_name)
+        messages = list(getattr(service, test_method)(template, test_data))
 
         for m in messages:
             logging.info(m)
 
-        assert len(messages) == 2
-        assert len([
-            m for m in messages
-            if recipient_match(
-                m, 'borrower_name_1', 'borrower_surname_1')]) == 1
+        assert len(messages) == lenght
 
-        assert len([
-            m for m in messages
-            if recipient_match(
-                m, 'borrower_name_2', 'borrower_surname_2')]) == 1
-
-    def test_compose_messages_from(self, test_data):
+    @pytest.mark.parametrize(
+        'test_method',
+        ['compose_user_messages', 'compose_admin_messages']
+    )
+    def test_compose_messages_from(self, test_data, test_method):
         sender = 'foo <foo@example.com>'
         service = MessageService(sender)
-        messages = list(service.compose_messages('', test_data))
+        messages = list(getattr(service, test_method)('', test_data))
 
-        assert messages[0]['From'] == 'foo <foo@example.com>'
-        assert messages[1]['From'] == 'foo <foo@example.com>'
+        for m in messages:
+            assert m['From'] == 'foo <foo@example.com>'
 
-    def test_compose_messages_to(self, test_data):
+    def test_compose_messages_to_user(self, test_data):
         sender = 'foo <foo@example.com>'
         service = MessageService(sender)
-        messages = list(service.compose_messages('', test_data))
+        messages = list(service.compose_user_messages('', test_data))
 
         assert len([
             m for m in messages if
@@ -55,12 +49,20 @@ class TestMessageService():
             m['To'] == 'borrower_surname_2 ' +
                        'borrower_name_2 <borrower_email_2@example.com>']) == 1
 
+    def test_compose_messages_to_admin(self, test_data):
+        sender = 'foo <foo@example.com>'
+        service = MessageService(sender)
+        messages = service.compose_admin_messages('', test_data)
+
+        for m in messages:
+            assert m['To'] == 'test'
+
     @freeze_time(datetime(2012, 5, 20))
     def test_compose_messages_items(self, test_data):
         sender = 'foo <foo@example.com>'
         service = MessageService(sender)
         template = '{{#items}}{{title}} {{days_left}} |{{/items}}'
-        messages = list(service.compose_messages(template, test_data))
+        messages = list(service.compose_user_messages(template, test_data))
 
         for m in messages:
             logging.info(m)
@@ -74,7 +76,7 @@ class TestMessageService():
             str(m.get_content()) == 'book3 3 |\n']) == 1
 
 
-@fixture()
+@pytest.fixture()
 def test_data():
     return [
         RecordInfo(
