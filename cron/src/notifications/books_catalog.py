@@ -1,7 +1,6 @@
 from logging import debug
 from sqlalchemy.sql import select
 from data_layer.book_status import BookStatus
-from .definitions import BookInfo, BorrowerInfo, RecordInfo
 
 
 class BooksCatalog():
@@ -33,8 +32,18 @@ class BooksCatalog():
         debug('Executing :\n{}'.format(str(select_stmt)))
 
         return [
-            RecordInfo(
-                BorrowerInfo(*item[0:4]),
-                BookInfo(*item[4:7])
-            ) for item in connection.execute(select_stmt).fetchall()
+            {
+                'borrower_info': {
+                    'borrower_id': item[0],
+                    'borrower_email': item[1],
+                    'borrower_name': item[2],
+                    'borrower_surname': item[3]
+                },
+                'book_info': {
+                    'book_title': item[4],
+                    'book_borrow_date': item[5],
+                    'book_due_date': item[6]
+                }
+            }
+            for item in connection.execute(select_stmt).fetchall()
         ]
