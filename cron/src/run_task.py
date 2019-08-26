@@ -27,7 +27,7 @@ def send_notifications():
     smtp_sender = environ["NOTIFICATIONS_SMPT_SENDER"]
 
     due_date = datetime.utcnow() + timedelta(hours=int(due_date_diff))
-    database_connection_url = __get_database_connection_url()
+    database_connection_url = get_database_connection_url()
     data_access_layer = DataAccessLayer(database_connection_url)
 
     books_catalog = BooksCatalog(data_access_layer)
@@ -48,14 +48,14 @@ def send_notifications():
 def invalidate_overdue_reservations():
     load_dotenv()
 
-    database_connection_url = __get_database_connection_url()
+    database_connection_url = get_database_connection_url()
     data_access_layer = DataAccessLayer(database_connection_url)
 
     reservation_service = ReservationService(data_access_layer)
     reservation_service.invalidate_overdue_reservations()
 
 
-def __get_database_connection_url():
+def get_database_connection_url():
     return URL(
         drivername=environ["DB_ENGINE"],
         username=environ["DB_USER"],
@@ -65,7 +65,7 @@ def __get_database_connection_url():
         database=environ["DB_NAME"])
 
 
-def __setup_logging():
+def setup_logging():
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)-5.5s] %(message)s",
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         def __str__(self):
             return self.value
 
-    __setup_logging()
+    setup_logging()
 
     logging.info('foo')
     parser = ArgumentParser()

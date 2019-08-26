@@ -11,16 +11,16 @@ class TestBooksCatalog():
 
         assert len(books) == 3
 
-        assert _contains_book(books, 'Very interesing book', '1')
-        assert _contains_book(books, 'The book part 2', '1')
-        assert _contains_book(books, 'The book part 2', '2')
+        assert contains_book(books, 'Very interesing book', '1')
+        assert contains_book(books, 'The book part 2', '1')
+        assert contains_book(books, 'The book part 2', '2')
 
 
-def _contains_book(books, book_title, borrower_id):
+def contains_book(books, book_title, borrower_id):
     try:
         next(book for book in books if
-             book.book_info.book_title == book_title and
-             book.borrower_info.borrower_id == borrower_id)
+             book['book_info']['book_title'] == book_title and
+             book['borrower_info']['borrower_id'] == borrower_id)
         return True
     except StopIteration:
         return False

@@ -1,5 +1,5 @@
 from notifications import smtp_client
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 
 class TestSmtp():
@@ -11,14 +11,13 @@ class TestSmtp():
             password=None)
         smtp_client_mock = Mock()
 
-        def context_manager_getter(port, host):
+        def smtp_context(port, host):
             return Mock(
                 __enter__=lambda x: smtp_client_mock,
                 __exit__=Mock())
 
-        smtp_client._get_smtp_client = context_manager_getter
-
-        smtp.send('message')
+        with patch('notifications.smtp_client.SMTP', new=smtp_context):
+            smtp.send('message')
 
         smtp_client_mock.helo.assert_called_once()
         smtp_client_mock.starttls.assert_not_called()
@@ -34,14 +33,13 @@ class TestSmtp():
             use_tls=True)
         smtp_client_mock = Mock()
 
-        def context_manager_getter(port, host):
+        def smtp_context(port, host):
             return Mock(
                 __enter__=lambda x: smtp_client_mock,
                 __exit__=Mock())
 
-        smtp_client._get_smtp_client = context_manager_getter
-
-        smtp.send('message')
+        with patch('notifications.smtp_client.SMTP', new=smtp_context):
+            smtp.send('message')
 
         smtp_client_mock.ehlo.assert_called_once()
         smtp_client_mock.starttls.assert_called_once()

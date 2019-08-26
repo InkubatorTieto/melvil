@@ -10,11 +10,7 @@ class Smtp():
         self._use_tls = use_tls
 
     def send(self, message):
-        with _get_smtp_client(
-            host=self._host,
-            port=self._port
-        ) as smtp_client:
-
+        with SMTP(host=self._host, port=self._port) as smtp_client:
             if self._use_tls:
                 smtp_client.ehlo()
                 smtp_client.starttls()
@@ -25,7 +21,3 @@ class Smtp():
                 smtp_client.login(user=self._host, password=self._password)
 
             smtp_client.send_message(message)
-
-
-def _get_smtp_client(host, port):
-    return SMTP(host=host, port=port)

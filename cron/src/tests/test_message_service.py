@@ -3,7 +3,6 @@ from datetime import datetime
 from pytest import fixture
 from freezegun import freeze_time
 from notifications.message_service import MessageService
-from notifications.definitions import RecordInfo, BookInfo, BorrowerInfo
 
 
 class TestMessageService():
@@ -77,37 +76,43 @@ class TestMessageService():
 @fixture()
 def test_data():
     return [
-        RecordInfo(
-            borrower_info=BorrowerInfo(
-                borrower_id='borrower_id_1',
-                borrower_email='borrower_email_1@example.com',
-                borrower_name='borrower_name_1',
-                borrower_surname='borrower_surname_1'),
-            book_info=BookInfo(
-                book_title='book1',
-                book_borrow_date=datetime(2012, 5, 20),
-                book_due_date=datetime(2012, 5, 21))
-        ),
-        RecordInfo(
-            borrower_info=BorrowerInfo(
-                borrower_id='borrower_id_1',
-                borrower_email='borrower_email_1@example.com',
-                borrower_name='borrower_name_1',
-                borrower_surname='borrower_surname_1'),
-            book_info=BookInfo(
-                book_title='book2',
-                book_borrow_date=datetime(2012, 5, 20),
-                book_due_date=datetime(2012, 5, 22))
-        ),
-        RecordInfo(
-            borrower_info=BorrowerInfo(
-                borrower_id='borrower_id_2',
-                borrower_email='borrower_email_2@example.com',
-                borrower_name='borrower_name_2',
-                borrower_surname='borrower_surname_2'),
-            book_info=BookInfo(
-                book_title='book3',
-                book_borrow_date=datetime(2012, 5, 20),
-                book_due_date=datetime(2012, 5, 23))
-        ),
+        {
+            'borrower_info': {
+                'borrower_id': 'borrower_id_1',
+                'borrower_email': 'borrower_email_1@example.com',
+                'borrower_name': 'borrower_name_1',
+                'borrower_surname': 'borrower_surname_1'
+            },
+            'book_info': {
+                'book_title': 'book1',
+                'book_borrow_date': datetime(2012, 5, 20),
+                'book_due_date': datetime(2012, 5, 21)
+            }
+        },
+        {
+            'borrower_info': {
+                'borrower_id': 'borrower_id_1',
+                'borrower_email': 'borrower_email_1@example.com',
+                'borrower_name': 'borrower_name_1',
+                'borrower_surname': 'borrower_surname_1'
+            },
+            'book_info': {
+                'book_title': 'book2',
+                'book_borrow_date': datetime(2012, 5, 20),
+                'book_due_date': datetime(2012, 5, 22)
+            }
+        },
+        {
+            'borrower_info': {
+                'borrower_id': 'borrower_id_2',
+                'borrower_email': 'borrower_email_2@example.com',
+                'borrower_name': 'borrower_name_2',
+                'borrower_surname': 'borrower_surname_2'
+            },
+            'book_info': {
+                'book_title': 'book3',
+                'book_borrow_date': datetime(2012, 5, 20),
+                'book_due_date': datetime(2012, 5, 23)
+            }
+        }
     ]
