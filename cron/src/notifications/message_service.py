@@ -43,7 +43,7 @@ class MessageService():
 
             yield message
 
-    def compose_admin_messages(self, template, books_records):
+    def compose_admin_messages(self, template, books_records, admin_emails):
 
         data = dict(items=[])
         for record in books_records:
@@ -61,8 +61,8 @@ class MessageService():
         message = EmailMessage()
         if books_records:
             message['From'] = self.__sender
-            message['To'] = ','.join(getenv('MAIL_ADMINS').split())
+            message['To'] = ','.join(admin_emails.split())
             message['Subject'] = 'Overdue books'
             message.set_content(html_document, subtype='html')
 
-        yield message
+        return message
