@@ -20,7 +20,7 @@
 
     <form class="wishlist_add" action="" method="post">
         {{ form.hidden_tag() }}
-        <label>{{form.type.label}}</label>
+        {{form.type.label}}
         {{ input( form.type, error['type'])}}
         {{ input( form.authors, error['authors'])}}
         {{ input( form.title, error['title'] ) }}

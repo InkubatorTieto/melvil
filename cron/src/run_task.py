@@ -25,6 +25,7 @@ def send_notifications():
     smtp_user = environ.get("NOTIFICATIONS_SMPT_USER")
     smtp_password = environ.get("NOTIFICATIONS_SMPT_PASSWORD")
     smtp_sender = environ["NOTIFICATIONS_SMPT_SENDER"]
+    admin_emails = environ["MAIL_ADMINS"]
 
     due_date = datetime.utcnow() + timedelta(hours=int(due_date_diff))
     database_connection_url = get_database_connection_url()
@@ -38,11 +39,32 @@ def send_notifications():
         user=smtp_user,
         password=smtp_password)
 
-    with open('/app/src/notifications/email_template.html') as file_template:
+    with open(
+        '/app/src/notifications/user_email_template.html'
+    ) as file_template:
         template = file_template.read()
         records = books_catalog.get_overdue_books(due_date)
-        for message in message_service.compose_messages(template, records):
+        for message in message_service.compose_user_messages(
+            template,
+            records
+        ):
             smtp.send(message)
+
+    now = datetime.utcnow()
+    with open(
+        '/app/src/notifications/admin_email_template.html'
+    ) as file_template:
+        template = file_template.read()
+        records = books_catalog.get_overdue_books(now)
+        message = message_service.compose_admin_messages(
+            template,
+            records,
+            admin_emails
+        )
+        try:
+            smtp.send(message)
+        except TypeError:
+            pass
 
 
 def invalidate_overdue_reservations():
