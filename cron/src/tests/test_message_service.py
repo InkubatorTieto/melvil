@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 import pytest
 from freezegun import freeze_time
@@ -46,7 +45,7 @@ class TestMessageService():
             test_data,
             admin_mails_data
         )
-        
+
         assert str(message.get_content()) == '{} {}, {} {}, {} {}, \n'.format(
             'borrower_name_1',
             'borrower_surname_1',

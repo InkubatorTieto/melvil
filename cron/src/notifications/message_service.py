@@ -1,6 +1,5 @@
 from datetime import datetime
 from itertools import groupby
-from os import getenv
 from pystache import render
 
 from email.message import EmailMessage
