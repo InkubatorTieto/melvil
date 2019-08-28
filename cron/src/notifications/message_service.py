@@ -45,13 +45,13 @@ class MessageService():
     def compose_admin_messages(self, template, books_records, admin_emails):
 
         data = dict(items=[])
-        for record in books_records:
+        for rec in books_records:
             row = {
-                'borrower_name': record.borrower_info.borrower_name,
-                'borrower_surname': record.borrower_info.borrower_surname,
-                'borrower_email': record.borrower_info.borrower_email,
-                'book_title': record.book_info.book_title,
-                'book_due_date': record.book_info.book_due_date
+                'borrower_name': rec['borrower_info']['borrower_name'],
+                'borrower_surname': rec['borrower_info']['borrower_surname'],
+                'borrower_email': rec['borrower_info']['borrower_email'],
+                'book_title': rec['book_info']['book_title'],
+                'book_due_date': rec['book_info']['book_due_date']
             }
             data['items'].append(row)
 
@@ -59,7 +59,7 @@ class MessageService():
 
         message = EmailMessage()
         if books_records:
-            message['From'] = self.__sender
+            message['From'] = self._sender
             message['To'] = ','.join(admin_emails.split())
             message['Subject'] = 'Overdue books'
             message.set_content(html_document, subtype='html')
