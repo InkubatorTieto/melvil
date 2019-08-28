@@ -193,10 +193,7 @@ def search():
 
 @library.route('/contact', methods=['GET', 'POST'])
 def contact():
-    email = session['email'] if 'email' in session else ''
-    form = ContactForm(
-        formdata=MultiDict({'email': email})
-    )
+    form = ContactForm()
     if form.validate_on_submit():
         email_template = open(
             './templates/email_template/contact_confirmation.html', 'r').read()
