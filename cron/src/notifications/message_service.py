@@ -60,7 +60,7 @@ class MessageService():
         message = EmailMessage()
         if books_records:
             message['From'] = self._sender
-            message['To'] = ','.join(admin_emails.split())
+            message['To'] = ','.join(admin_emails.replace("'", '').split())
             message['Subject'] = 'Overdue books'
             message.set_content(html_document, subtype='html')
 
