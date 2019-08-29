@@ -3,7 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}/">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/search.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -17,54 +17,53 @@
 </div>
 <form action="" method="get" id=query_form>
     {{ input(form.query) }}
-</br>
-</br>
+    </br>
+    </br>
     Search by: {{ form.search_by }}
 </form>
 <table class="table table-sm">
     <thead>
-    <th scope="col">Title</th>
-    <th scope="col">Author</th>
-    <th scope="col">Publication year</th>
-    <th></th>
+        <th scope="col">Title</th>
+        <th scope="col" class="author-column">Author</th>
+        <th scope="col">Publication year</th>
+        <th></th>
     </thead>
     {% if all_query|length == 0 %}
     <tr>No result found!</tr>
     {% else %}
     <tbody>
-    {% for item in all_query %}
-    <tr>
-        <td>
-            <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
-                {{ item['title'] }}
-            </a>
-        </td>
-        <td>
-            {% if item['type'] == 'book' %}
-            {% for author in item['authors'] %}
-            <p>{% if loop.last %}
-                {{ author }}
-                {% else %}
-                {{ author }},
-                {% endif %}</p>
-            {% endfor %}
-            {% elif item['type'] == 'magazine' %}
-            <p>Issue no.: {{ item['issue'] }}</p>
-            {% endif %}
-        </td>
-        <td>
-            {{item['pub_date'].year}}
-        </td>
-        <td style="width: 10px;">
-            {% if item['type'] == 'book' %}
-            <img src="../../static/img/i_book.png"
-                    alt='book'/>{% endif %}
-            {% if item['type'] == 'magazine' %}
-            <img src="../../static/img/i_newspaper.png"
-                    alt='journal'/>{% endif %}
-        </td>
-    </tr>
-    {% endfor %}
+        {% for item in all_query %}
+        <tr>
+            <td>
+                <a href="{{ url_for('library.item_description', item_id=item['id']) }}">
+                    <p class="title-paragraph" title="{{ item['title'] }}">
+                        {{ item['title'] }}
+                    </p>
+                    
+                </a>
+            </td>
+            <td>
+                {% if item['type'] == 'book' %}
+                <ul class="author-list author-paragraph" title="{{ ', '.join(item['authors']) }}">
+                    {% for author in item['authors'] %}
+                    <li class="author-list-item">{{author}}</li>
+                    {% endfor %}
+                </ul>
+                {% elif item['type'] == 'magazine' %}
+                <p class="author-paragraph">Issue no.: {{ item['issue'] }}</p>
+                {% endif %}
+            </td>
+            <td>
+                {{item['pub_date'].year}}
+            </td>
+            <td style="width: 10px;">
+                {% if item['type'] == 'book' %}
+                <img src="../../static/img/i_book.png" alt='book' />{% endif %}
+                {% if item['type'] == 'magazine' %}
+                <img src="../../static/img/i_newspaper.png" alt='journal' />{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
     </tbody>
 </table>
 <nav aria-label="Page navigation search">
@@ -72,4 +71,4 @@
 </nav>
 {% endif %}
 
-{% endblock %}  
+{% endblock %}

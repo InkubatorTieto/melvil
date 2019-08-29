@@ -24,3 +24,38 @@ a:hover {
     background-color: #ffffff00;
     color: white;
 }
+
+.author-column {
+    width:150px;
+}
+
+.title-paragraph {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;  
+}
+
+.author-paragraph {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;  
+}
+
+.author-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 200px;
+}
+  
+.author-list-item {
+    display: inline;
+}
+
+.author-list-item:not(:last-child)::after {
+    content: ", ";
+}

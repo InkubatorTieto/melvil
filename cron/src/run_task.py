@@ -106,7 +106,6 @@ if __name__ == '__main__':
 
     setup_logging()
 
-    logging.info('foo')
     parser = ArgumentParser()
     parser.add_argument(
         'task',
