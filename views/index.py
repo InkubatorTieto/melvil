@@ -28,7 +28,7 @@ from forms.forms import (
     RemoveForm
 )
 from init_db import db
-from ldap_utils.ldap_utils import ldap_client, refine_data
+from utils.ldap_utils import ldap_client, refine_data
 from messages import ErrorMessage, SuccessMessage
 from models import LibraryItem
 from models.library import RentalLog, Copy, BookStatus
