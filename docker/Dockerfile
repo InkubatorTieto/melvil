@@ -7,7 +7,6 @@ RUN apt-get update ; apt-get -y upgrade
 RUN apt-get -y install libldap2-dev libsasl2-dev
 ADD requirements.txt /code
 RUN pip install -r requirements.txt
-ADD ldap_utils/proper_ldap_file.py /code
-RUN mv proper_ldap_file.py /usr/local/lib/python3.6/site-packages/ldap/filter.py
+ADD utils/ldap_proper_file.py /code
+RUN mv ldap_proper_file.py /usr/local/lib/python3.6/site-packages/ldap/filter.py
 ADD . /code/
-

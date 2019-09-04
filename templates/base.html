@@ -80,6 +80,31 @@
     {% endblock %}
 </div>
 
+{% block footer %}
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100px;
+        background: rgba(0, 0, 0, 0.8);
+        font-size: 80%;
+        text-align: center;
+    }
+    .footer-link{
+        color: rgb(170, 170, 170);
+    }
+
+</style>
+<footer>
+    <a 
+        href="https://tietocorporation-my.sharepoint.com/:w:/g/personal/katarzyna_kaminska_tieto_com/ERr6hnyANjNMm4L_EX0bfAIBLuQ4Rq_vhw0BnTYL2UdATw?rtime=8M7bx1Mw10g"
+        target="_blank"
+        class="footer-link"
+    >
+        <i class="fas fa-info-circle"></i> regulations
+    </a>
+</footer> 
+{% endblock %}
 
 {% block scripts %}
 {% endblock %}
