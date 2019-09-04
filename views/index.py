@@ -20,7 +20,8 @@ from config import Config
 from forms.copy import CopyAddForm, CopyEditForm
 from forms.forms import (
     BorrowForm,
-    ContactForm,
+    ContactFormLogin,
+    ContactFormNoLogin,
     LoginForm,
     ReturnForm,
     SearchForm,
@@ -193,7 +194,12 @@ def search():
 
 @library.route('/contact', methods=['GET', 'POST'])
 def contact():
-    form = ContactForm()
+    if 'logged_in' in session and session['logged_in']:
+        form = ContactFormLogin()
+        email_address = session['email']
+    else:
+        form = ContactFormNoLogin()
+        email_address = form.email.data
     if form.validate_on_submit():
         email_template = open(
             './templates/email_template/contact_confirmation.html', 'r').read()
@@ -201,14 +207,14 @@ def contact():
             send_email(
                 'Contact confirmation, title: ' + form.title.data,
                 Config.MAIL_SENDER,
-                [form.email.data],
+                [email_address],
                 None,
                 email_template)
             send_email(
                 'Contact form: ' + form.title.data,
                 Config.MAIL_SENDER,
                 Config.MAIL_ADMINS.split(),
-                'Send by: ' + form.email.data + '\n\n' + form.message.data,
+                'Send by: ' + email_address + '\n\n' + form.message.data,
                 None)
             return SuccessMessage \
                 .message('Your email has been sent to administrator!')
