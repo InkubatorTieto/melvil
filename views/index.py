@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from sqlalchemy import exc
+from sqlalchemy import exc, or_
 from sqlalchemy.exc import IntegrityError
 from werkzeug.datastructures import MultiDict
 import pytz
@@ -31,7 +31,7 @@ from forms.forms import (
 from init_db import db
 from utils.ldap_utils import ldap_client, refine_data
 from messages import ErrorMessage, SuccessMessage
-from models import LibraryItem
+from models import LibraryItem, Author
 from models.library import RentalLog, Copy, BookStatus
 from models.users import User
 from models.wishlist import WishListItem, Like
@@ -41,8 +41,6 @@ from models.decorators_roles import (
     require_not_logged_in
 )
 from send_email.emails import send_email
-from utils.search_book import search_book
-
 
 library = Blueprint('library', __name__,
                     template_folder='templates')
@@ -167,16 +165,32 @@ def search():
                 return ErrorMessage.message('Cannot connect to database!')
         elif request.args.get('query'):
             form = SearchForm(formdata=MultiDict({
-                'query': request.args.get('query'),
-                'search_by': request.args.get('search_by')
+                'query': request.args.get('query')
             }))
-            search_by = request.args.get('search_by')
             query_str = request.args.get('query')
             page = request.args.get('page', 1, type=int)
             try:
-                paginate_query = LibraryItem.query.filter(
-                    search_book(search_by, query_str)
-                ).paginate(page, error_out=True, max_per_page=10)
+                SEARCH_LENGTH = 10
+                query_list = list(set(query_str.split()))[:SEARCH_LENGTH]
+
+                library_item_condition = [
+                    LibraryItem.title.ilike('%{}%'.format(word))
+                    for word in query_list]
+                library_item_query = db.session.query(LibraryItem).filter(
+                    or_(*library_item_condition)
+                )
+
+                author_condition = [
+                    or_(
+                        Author.first_name.ilike('%{}%'.format(word)),
+                        Author.last_name.ilike('%{}%'.format(word))
+                    ) for word in query_list]
+                author_query = db.session.query(LibraryItem).filter(
+                    or_(*author_condition)
+                ).join(Author.books)
+
+                paginate_query = author_query.union(library_item_query) \
+                    .paginate(page, error_out=True, max_per_page=10)
                 output = [d.serialize() for d in paginate_query.items]
             except RuntimeError:
                 return ErrorMessage.message('Cannot connect to database!')
@@ -186,8 +200,7 @@ def search():
                                    endpoint='library.search',
                                    admin=admin,
                                    form=form,
-                                   query_str=query_str,
-                                   search_by=search_by)
+                                   query_str=query_str)
         else:
             abort(405)
 

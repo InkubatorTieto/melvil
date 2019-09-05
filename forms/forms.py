@@ -56,11 +56,6 @@ class SearchForm(FlaskForm):
                         render_kw=({'class': 'inputs',
                                     'type': 'text',
                                     'placeholder': 'Search...'}))
-    search_by = SelectField(
-        'Search Type',
-        choices=[('title', 'Title'), ('author', 'Author')],
-        render_kw=({'class': 'input-search'})
-    )
 
 
 class WishlistForm(FlaskForm):
