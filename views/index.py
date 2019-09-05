@@ -135,7 +135,7 @@ def login():
 
 
 @library.route('/search', methods=['GET'])
-# @require_logged_in()
+@require_logged_in()
 def search():
     try:
         user = User.query.get(session['id'])
