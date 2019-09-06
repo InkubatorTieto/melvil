@@ -64,7 +64,7 @@
                     <form action="{{ url_for ('library.admin_dashboard', copy_id=reservation.copy.id) }}"
                           class="borrowBtn"
                           method="post"
-                          id="borrowBtn_{{ reservation.copy.asset_code }}">
+                          id="borrowBtn_{{ reservation.copy.id }}">
                         {{ borrow_form.hidden_tag() }}
                         {{ input(borrow_form.submit) }}
                     </form>
@@ -101,10 +101,10 @@
                 <th scope="row">{{borrow.copy.library_item.title}}</th>
                 <th scope="row">{{borrow.copy.asset_code}}</th>
                 <th scope="row">
-                    <form action="{{ url_for ('library.admin_dashboard', asset=borrow.copy.asset_code) }}"
+                    <form action="{{ url_for ('library.admin_dashboard', copy_id=borrow.copy.id) }}"
                           class="returnBtn"
                           method="post"
-                          id="returnBtn_{{ borrow.copy.asset_code }}">
+                          id="returnBtn_{{ borrow.copy.id }}">
                         {{ return_form.hidden_tag() }}
                         {{ input(return_form.submit) }}
                     </form>
