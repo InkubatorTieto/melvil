@@ -464,13 +464,13 @@ def db_magazine(session):
 
 @pytest.fixture(scope="function")
 def db_copies(session, db_book):
-    copy_available = Copy(
+    copy_available = [Copy(
         asset_code='{}{}'.format(
             g.code.locale_code()[:2],
             g.code.pin(mask='######')),
         library_item=db_book,
         available_status=BookStatus.RETURNED
-    )
+    ) for _ in range(4)]
     copy_reserved = Copy(
         asset_code='{}{}'.format(
             g.code.locale_code()[:2],
@@ -485,10 +485,10 @@ def db_copies(session, db_book):
         library_item=db_book,
         available_status=BookStatus.BORROWED
     )
-    session.add_all([copy_available, copy_reserved, copy_borrowed])
+    session.add_all([*copy_available, copy_reserved, copy_borrowed])
     session.commit()
 
-    yield (copy_available, copy_reserved, copy_borrowed)
+    yield (*copy_available, copy_reserved, copy_borrowed)
 
 
 @pytest.fixture
