@@ -249,9 +249,9 @@ def logout():
     return render_template('index.html')
 
 
-@library.route('/reservation/<copy_id>')
+@library.route('/reservation/<item_id>/<copy_id>')
 @require_logged_in()
-def reserve(copy_id):
+def reserve(item_id, copy_id):
     try:
         copy = Copy.query.get(copy_id)
         if copy.available_status != BookStatus.RETURNED:
@@ -264,7 +264,10 @@ def reserve(copy_id):
         usr_items = db.session.query(RentalLog).filter(query).all()
         if len(usr_items) >= 3:
             flash('You can borrow up to 3 books and magazines.')
-            return redirect(url_for('library.search'))
+            return redirect(url_for(
+                'library.item_description',
+                item_id=item_id
+            ))
         # change book status
         copy.available_status = BookStatus.RESERVED
         reservation_begin = datetime.now(tz=pytz.utc)
