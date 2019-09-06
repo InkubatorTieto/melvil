@@ -30,11 +30,7 @@ class LoginForm(FlaskForm):
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
-class ContactForm(FlaskForm):
-    email = StringField('email',
-                        validators=[tieto_email],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Email'}))
+class ContactFormLogin(FlaskForm):
     title = StringField('title',
                         validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
@@ -46,6 +42,13 @@ class ContactForm(FlaskForm):
     send_message = SubmitField(
         'Send message',
         render_kw=({'class': 'btn btn-primary submits'}))
+
+
+class ContactFormNoLogin(ContactFormLogin):
+    email = StringField('email',
+                        validators=[tieto_email],
+                        render_kw=({'class': 'inputs',
+                                    'placeholder': 'Email'}))
 
 
 class SearchForm(FlaskForm):
