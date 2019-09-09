@@ -561,16 +561,33 @@ def admin_dashboard():
             query_str = request.args.get('search-query')
             reserv_page = request.args.get('page', 1, type=int)
             borrow_page = request.args.get('page', 1, type=int)
-            reserv_query = RentalLog.query.filter_by(book_status=1).order_by(
-                RentalLog._reservation_begin.asc())
-            reserv_filter = reserv_query.filter(
-                User.surname.ilike("%{}%".format(query_str))).paginate(
-                reserv_page, 10, False)
-            borrow_query = RentalLog.query.filter_by(book_status=2).order_by(
-                RentalLog._return_time.asc())
-            borrow_filter = borrow_query.filter(
-                User.surname.ilike("%{}%".format(query_str))).paginate(
-                borrow_page, 10, False)
+            user_id = [user_query.id for user_query in User.query.filter(
+                User.surname.ilike("%{}%".format(query_str))
+            ).all()]
+            reserv_filter = RentalLog.query.filter(
+                and_(
+                    RentalLog.book_status == 1,
+                    RentalLog.user_id.in_(user_id)
+                )
+            ).order_by(
+                RentalLog._return_time.asc()
+            ).paginate(
+                borrow_page,
+                10,
+                False
+            )
+            borrow_filter = RentalLog.query.filter(
+                and_(
+                    RentalLog.book_status == 2,
+                    RentalLog.user_id.in_(user_id)
+                )
+            ).order_by(
+                RentalLog._return_time.asc()
+            ).paginate(
+                borrow_page,
+                10,
+                False
+            )
             return render_template('admin.html',
                                    reservations=reserv_filter.items,
                                    borrows=borrow_filter.items,
