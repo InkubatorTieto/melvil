@@ -561,7 +561,7 @@ def admin_dashboard():
             query_str = request.args.get('search-query')
             reserv_page = request.args.get('page', 1, type=int)
             borrow_page = request.args.get('page', 1, type=int)
-            user_id = [user.id for user in User.query.filter(
+            user_id = [user_query.id for user_query in User.query.filter(
                 User.surname.ilike("%{}%".format(query_str))
             ).all()]
             reserv_filter = RentalLog.query.filter(
