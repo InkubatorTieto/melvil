@@ -1,7 +1,6 @@
 import xlrd
 
 from datetime import datetime
-from random import choice, randint
 
 from nameparser import HumanName
 
@@ -38,16 +37,7 @@ def create_library_item(session, model, **kwargs):
     if library_item:
         return library_item
     else:
-        language = choice(['polish', 'other', 'english'])
-        if model.__name__ == "Book":
-            rand_date = datetime.\
-                strptime(str(randint(1978, int(datetime.today().year))),
-                         '%Y')
-            instance = model(language=language, pub_date=rand_date, **kwargs)
-        elif model.__name__ == "Magazine":
-            instance = model(language=language, **kwargs)
-        else:
-            instance = model(**kwargs)
+        instance = model(**kwargs)
         session.add(instance)
         session.commit()
         return instance
@@ -169,7 +159,12 @@ def get_books(file_location):
             id_of_auth = author.id
             authors_id.append(id_of_auth)
             list_of_authors.append(author)
-            book = create_library_item(db.session, Book, title=title)
+            book = create_library_item(
+                db.session,
+                Book,
+                title=title,
+                language=''
+            )
             book.authors.append(author)
             create_copy(book, asset)
 
@@ -184,8 +179,12 @@ def get_books(file_location):
                 id_of_auth = author.id
                 authors_id.append(id_of_auth)
                 list_of_authors.append(author)
-                book = create_library_item(db.session, Book,
-                                           title=title)
+                book = create_library_item(
+                    db.session,
+                    Book,
+                    title=title,
+                    language=''
+                )
                 book.authors.append(author)
                 create_copy(book, asset)
 
@@ -198,19 +197,27 @@ def get_magazines(file_location):
         issue = str(i['issue'])
         year = i['year']
         if not year:
-            magazine = create_library_item(db.session, Magazine,
-                                           title=title,
-                                           issue=issue)
+            magazine = create_library_item(
+                db.session,
+                Magazine,
+                title=title,
+                issue=issue,
+                language=''
+            )
 
             create_library_item(db.session, Copy,
                                 library_item_id=magazine.id,
                                 library_item=magazine)
         else:
             year = datetime.strptime(str(int(i['year'])), '%Y')
-            magazine = create_library_item(db.session, Magazine,
-                                           title=title,
-                                           year=year,
-                                           issue=issue)
+            magazine = create_library_item(
+                db.session,
+                Magazine,
+                title=title,
+                year=year,
+                issue=issue,
+                language=''
+            )
 
             create_library_item(db.session, Copy,
                                 library_item_id=magazine.id,
