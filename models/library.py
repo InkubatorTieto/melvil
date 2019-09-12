@@ -155,7 +155,7 @@ class LibraryItem(db.Model):
     __tablename__ = 'library_item'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256))
-    table_of_contents = db.Column(db.String(256))
+    table_of_contents = db.Column(db.Text)
     language = db.Column(db.String(56))
     category = db.Column(db.String(56))
     tags = db.relationship('Tag',
