@@ -40,6 +40,7 @@ class Config(object):
 
     # admin users
     ADMIN_LIST = getenv("ADMIN_LIST")
+    ADMIN_NAME = getenv("ADMIN_NAME")
 
 
 class DevConfig(Config):

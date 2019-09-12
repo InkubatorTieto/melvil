@@ -285,7 +285,10 @@ def reserve(item_id, copy_id):
         )
         db.session.add(res)
         db.session.commit()
-        flash('Pick up the book within two days!')
+        flash((
+            'Pick up the book from {} within two days! '
+            'In case of troubles use contact form.'
+        ).format(Config.ADMIN_NAME))
     except IntegrityError:
         abort(500)
     return redirect(url_for(
