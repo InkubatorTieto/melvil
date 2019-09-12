@@ -44,10 +44,12 @@ def check_isbn(form, field):
     if not any(
             [is_isbn10(field.data), is_isbn13(field.data), field.data == '']
     ):
-
         raise ValidationError("ISBN number is incorrect!")
 
-    if Book.query.filter_by(isbn=field.data).first():
+    if (
+        Book.query.filter_by(isbn=field.data).first() and
+        field.data != ''
+    ):
         raise ValidationError("This book is already in the database.")
 
 

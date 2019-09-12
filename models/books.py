@@ -15,7 +15,7 @@ book_author = db.Table('books_authors',
 class Book(LibraryItem):
     __tablename__ = "books"
     id = db.Column(db.ForeignKey("library_item.id"), primary_key=True)
-    isbn = db.Column(db.String(128), unique=True)
+    isbn = db.Column(db.String(128))
     authors = db.relationship(
         "Author",
         secondary="books_authors",
