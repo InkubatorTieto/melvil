@@ -1,5 +1,5 @@
-from send_email.emails import send_email
 from config import DevConfig
+from send_email.emails import send_email
 
 
 def test_send(mailbox,

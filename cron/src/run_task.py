@@ -1,18 +1,17 @@
-from argparse import ArgumentParser
-from enum import Enum
-from sqlalchemy.engine.url import URL
-from dotenv import load_dotenv
-from os import environ
 import logging
-from sys import stdout
+from argparse import ArgumentParser
 from datetime import datetime, timedelta
+from enum import Enum
+from os import environ
+from sys import stdout
+
+from sqlalchemy.engine.url import URL
 
 from data_layer.data_access_layer import DataAccessLayer
-
+from dotenv import load_dotenv
 from notifications.books_catalog import BooksCatalog
 from notifications.message_service import MessageService
 from notifications.smtp_client import Smtp
-
 from reservations.reservation_service import ReservationService
 
 

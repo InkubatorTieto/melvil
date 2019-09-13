@@ -1,8 +1,8 @@
 from flask import url_for
 
 from models import LibraryItem
-from models.users import RoleEnum, Role
 from models.library import BookStatus
+from models.users import Role, RoleEnum
 
 
 def test_status_code(client, db_book, app_session):

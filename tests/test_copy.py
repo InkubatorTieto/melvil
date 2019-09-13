@@ -2,7 +2,7 @@ import re
 from unittest import mock
 
 import pytest
-from flask import url_for, session
+from flask import session, url_for
 
 from models import Copy
 

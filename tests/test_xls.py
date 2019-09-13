@@ -1,9 +1,5 @@
-from utils.xlsx_reader import (get_books, get_magazines)
-from models import (
-    Author,
-    Book,
-    Magazine,
-    Copy)
+from models import Author, Book, Copy, Magazine
+from utils.xlsx_reader import get_books, get_magazines
 
 
 def test_loading_from_xlsx(session):

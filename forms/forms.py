@@ -1,15 +1,9 @@
 from datetime import datetime
 
-from wtforms import (
-    StringField,
-    PasswordField,
-    BooleanField,
-    SubmitField,
-    TextAreaField,
-    SelectField,
-)
-from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm
+from wtforms import (BooleanField, PasswordField, SelectField, StringField,
+                     SubmitField, TextAreaField)
+from wtforms.validators import DataRequired
 
 from forms.custom_validators import check_pub_date, tieto_email
 

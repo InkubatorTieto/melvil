@@ -1,46 +1,27 @@
 from datetime import datetime, timedelta
 
-from sqlalchemy import exc, or_, and_, not_
+import pytz
+from flask import (Blueprint, abort, flash, json, redirect, render_template,
+                   request, session, url_for)
+from sqlalchemy import and_, exc, not_, or_
 from sqlalchemy.exc import IntegrityError
 from werkzeug.datastructures import MultiDict
-import pytz
-from flask import (
-    abort,
-    Blueprint,
-    flash,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-    json
-)
 
 from config import Config
 from forms.copy import CopyAddForm, CopyEditForm
-from forms.forms import (
-    BorrowForm,
-    ContactFormLogin,
-    ContactFormNoLogin,
-    LoginForm,
-    ReturnForm,
-    SearchForm,
-    WishlistForm,
-    RemoveForm
-)
+from forms.forms import (BorrowForm, ContactFormLogin, ContactFormNoLogin,
+                         LoginForm, RemoveForm, ReturnForm, SearchForm,
+                         WishlistForm)
 from init_db import db
-from utils.ldap_utils import ldap_client, refine_data
 from messages import ErrorMessage, SuccessMessage
-from models import LibraryItem, Author
-from models.library import RentalLog, Copy, BookStatus
+from models.books import Author
+from models.decorators_roles import (require_logged_in, require_not_logged_in,
+                                     require_role)
+from models.library import BookStatus, Copy, LibraryItem, RentalLog
 from models.users import User
-from models.wishlist import WishListItem, Like
-from models.decorators_roles import (
-    require_role,
-    require_logged_in,
-    require_not_logged_in
-)
+from models.wishlist import Like, WishListItem
 from send_email.emails import send_email
+from utils.ldap_utils import ldap_client, refine_data
 
 library = Blueprint('library', __name__,
                     template_folder='templates')
@@ -289,6 +270,20 @@ def reserve(item_id, copy_id):
             'Pick up the book from {} within two days! '
             'In case of troubles use contact form.'
         ).format(Config.ADMIN_NAME))
+        # Send email to admin.
+        email_content = (
+            'Book "{}" was just reserved by user {}'.format(
+                LibraryItem.query.get(item_id).title,
+                session['email']
+            )
+        )
+        send_email(
+            'New reservation',
+            Config.MAIL_SENDER,
+            Config.MAIL_ADMINS.split(),
+            email_content,
+            None
+        )
     except IntegrityError:
         abort(500)
     return redirect(url_for(

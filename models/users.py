@@ -1,11 +1,9 @@
 import enum
 
+from flask_user import UserMixin
 from sqlalchemy import event
 
-from flask_user import UserMixin
-
 from init_db import db
-
 
 user_roles = db.Table(
     "user_roles",

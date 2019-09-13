@@ -1,6 +1,7 @@
-from init_db import db
 from sqlalchemy import func, select
 from sqlalchemy.ext.hybrid import hybrid_property
+
+from init_db import db
 
 
 class Like(db.Model):

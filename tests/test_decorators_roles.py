@@ -1,11 +1,9 @@
 import pytest
-from mimesis import Generic
 from flask import session
-from models.decorators_roles import (
-    require_logged_in,
-    require_not_logged_in,
-    require_role
-)
+from mimesis import Generic
+
+from models.decorators_roles import (require_logged_in, require_not_logged_in,
+                                     require_role)
 from models.users import Role, RoleEnum
 
 g = Generic('en')

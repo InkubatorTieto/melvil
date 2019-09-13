@@ -1,9 +1,9 @@
 from unittest import mock
-from flask import url_for, session
-from views.book_borrowing_dashboard import (
-    get_reserved_items,
-    get_borrowed_items
-)
+
+from flask import session, url_for
+
+from views.book_borrowing_dashboard import (get_borrowed_items,
+                                            get_reserved_items)
 
 
 def check_lib_item_status(

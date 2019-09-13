@@ -1,8 +1,8 @@
 from datetime import datetime
-from itertools import groupby
-from pystache import render
-
 from email.message import EmailMessage
+from itertools import groupby
+
+from pystache import render
 
 
 class MessageService():

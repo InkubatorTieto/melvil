@@ -1,8 +1,8 @@
-from datetime import datetime
 import random
-from random import choice, randint
 import string
+from datetime import datetime
 from os import getenv
+from random import choice, randint
 
 import pytest
 from mimesis import Generic
@@ -12,35 +12,17 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from forms.book import BookForm, MagazineForm,\
-    AddNewItemBookForm, AddNewItemMagazineForm
-from models import (
-    User,
-    Book,
-    Magazine,
-    Copy,
-    WishListItem,
-    Author,
-    Tag,
-    LibraryItem
-)
-from models.users import Role, RoleEnum
+from forms.book import (AddNewItemBookForm, AddNewItemMagazineForm, BookForm,
+                        MagazineForm)
 from forms.copy import CopyAddForm, CopyEditForm
-from forms.forms import (
-    SearchForm,
-    WishlistForm,
-    LoginForm
-)
-from tests.populate import (
-    populate_copies,
-    populate_authors,
-    populate_books,
-    populate_rental_logs,
-    populate_magazines,
-    populate_wish_list_items
-)
+from forms.forms import LoginForm, SearchForm, WishlistForm
+from models import (Author, Book, Copy, LibraryItem, Magazine, Tag, User,
+                    WishListItem)
 from models.library import BookStatus
-
+from models.users import Role, RoleEnum
+from tests.populate import (populate_authors, populate_books, populate_copies,
+                            populate_magazines, populate_rental_logs,
+                            populate_wish_list_items)
 
 g = Generic('en')
 
@@ -496,6 +478,7 @@ def app_session(client, db_user):
     with client.session_transaction() as app_session:
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
+        app_session['email'] = db_user.email
         return app_session
 
 
