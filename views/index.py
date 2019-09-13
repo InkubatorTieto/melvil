@@ -31,8 +31,8 @@ from forms.forms import (
 from init_db import db
 from utils.ldap_utils import ldap_client, refine_data
 from messages import ErrorMessage, SuccessMessage
-from models import LibraryItem, Author
-from models.library import RentalLog, Copy, BookStatus
+from models.books import Author
+from models.library import RentalLog, Copy, BookStatus, LibraryItem
 from models.users import User
 from models.wishlist import WishListItem, Like
 from models.decorators_roles import (
@@ -289,6 +289,20 @@ def reserve(item_id, copy_id):
             'Pick up the book from {} within two days! '
             'In case of troubles use contact form.'
         ).format(Config.ADMIN_NAME))
+        # Send email to admin.
+        email_content = (
+            'Book "{}" was just reserved by user {}'.format(
+                LibraryItem.query.get(item_id).title,
+                session['email']
+            )
+        )
+        send_email(
+            'New reservation',
+            Config.MAIL_SENDER,
+            Config.MAIL_ADMINS.split(),
+            email_content,
+            None
+        )
     except IntegrityError:
         abort(500)
     return redirect(url_for(
