@@ -496,6 +496,7 @@ def app_session(client, db_user):
     with client.session_transaction() as app_session:
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
+        app_session['email'] = db_user.email
         return app_session
 
 
