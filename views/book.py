@@ -1,12 +1,11 @@
 from datetime import datetime
 
-from flask import Blueprint
-from flask import render_template, request, session, abort
+from flask import Blueprint, abort, render_template, request, session
 
-from forms.book import BookForm, MagazineForm,\
-    AddNewItemBookForm, AddNewItemMagazineForm
+from forms.book import (AddNewItemBookForm, AddNewItemMagazineForm, BookForm,
+                        MagazineForm)
 from init_db import db
-from models import User, Tag, Magazine, Book, Author, LibraryItem
+from models import Author, Book, LibraryItem, Magazine, Tag, User
 from models.decorators_roles import require_role
 
 library_books = Blueprint('library_books', __name__,

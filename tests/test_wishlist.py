@@ -2,11 +2,11 @@ import datetime as d
 from datetime import datetime
 
 import flask
-from flask import url_for
 import pytest
+from flask import url_for
 from sqlalchemy import func
 
-from models import (WishListItem, Like)
+from models import Like, WishListItem
 
 
 def test_add_wishlist_item_from_view(client, view_wish_list):

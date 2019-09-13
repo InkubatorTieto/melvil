@@ -1,6 +1,6 @@
+from flask_wtf import FlaskForm
 from wtforms.validators import Regexp
 from wtforms_alchemy import ModelForm
-from flask_wtf import FlaskForm
 
 from models import Copy
 

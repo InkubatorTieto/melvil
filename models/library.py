@@ -1,6 +1,8 @@
 from enum import Enum
+
 import pytz
 from sqlalchemy_utils import ChoiceType
+
 from init_db import db
 
 

@@ -1,10 +1,9 @@
-from sqlalchemy import func
-
 import flask
 from flask import url_for
+from sqlalchemy import func
 
-from models.users import RoleEnum, Role
 from models.library import LibraryItem
+from models.users import Role, RoleEnum
 
 
 def test_search_get(client, app_session):

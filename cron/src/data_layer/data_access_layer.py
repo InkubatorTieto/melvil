@@ -1,7 +1,8 @@
-from sqlalchemy import Table, Column, Integer, String, Boolean, \
-    MetaData, ForeignKey, DateTime, create_engine
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer,
+                        MetaData, String, Table, create_engine)
 from sqlalchemy.engine import Connection
 from sqlalchemy_utils import ChoiceType
+
 from .book_status import BookStatus
 
 

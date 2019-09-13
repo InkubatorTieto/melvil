@@ -1,7 +1,6 @@
 from subprocess import call
 from unittest import mock
 
-
 from config import Config
 from models.users import User
 

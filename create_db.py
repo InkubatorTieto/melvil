@@ -1,5 +1,6 @@
+from flask_migrate import current, stamp
+
 from app import app, db
-from flask_migrate import stamp, current
 
 with app.app_context():
     db.create_all()
