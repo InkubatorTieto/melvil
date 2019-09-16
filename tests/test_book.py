@@ -1,16 +1,14 @@
-from flask import session
 import datetime
+import sys
 from random import choice, randint
 from unittest import mock
-import sys
 
-from flask import url_for
-from mimesis import Generic
 import pytest
+from flask import session, url_for
+from mimesis import Generic
 
-from models import Author, Book, Tag, Magazine, LibraryItem
 from forms.book import BookForm, MagazineForm
-
+from models import Author, Book, LibraryItem, Magazine, Tag
 
 year_now = datetime.datetime.now().year
 

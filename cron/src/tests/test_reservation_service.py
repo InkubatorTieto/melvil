@@ -1,10 +1,10 @@
 from datetime import datetime
-from freezegun import freeze_time
 
 from sqlalchemy.sql import select
 
-from reservations.reservation_service import ReservationService
 from data_layer.book_status import BookStatus
+from freezegun import freeze_time
+from reservations.reservation_service import ReservationService
 
 
 @freeze_time(datetime(2030, 5, 6))

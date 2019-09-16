@@ -1,7 +1,9 @@
-from data_layer.data_access_layer import DataAccessLayer
-from data_layer.book_status import BookStatus
 from datetime import datetime
+
 import pytest
+
+from data_layer.book_status import BookStatus
+from data_layer.data_access_layer import DataAccessLayer
 
 
 def prepare_db(dal):

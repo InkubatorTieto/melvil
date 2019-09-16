@@ -1,10 +1,10 @@
-from flask import render_template, session
-from flask import Blueprint
-from init_db import db
+from flask import Blueprint, render_template, session
 from sqlalchemy import desc
+
+from init_db import db
 from models import LibraryItem
-from models.library import RentalLog, Copy, BookStatus
 from models.decorators_roles import require_logged_in
+from models.library import BookStatus, Copy, RentalLog
 
 library_book_borrowing_dashboard = \
     Blueprint('library_book_borrowing_dashboard', __name__,

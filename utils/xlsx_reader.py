@@ -1,11 +1,10 @@
-import xlrd
-
 from datetime import datetime
 
+import xlrd
 from nameparser import HumanName
 
-from models import (Book, Author, Copy, Magazine)
 from init_db import db
+from models import Author, Book, Copy, Magazine
 
 
 def load_file(file_location):

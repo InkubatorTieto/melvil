@@ -1,5 +1,7 @@
 from datetime import datetime
+
 import pytest
+
 from freezegun import freeze_time
 from notifications.message_service import MessageService
 

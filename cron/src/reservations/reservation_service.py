@@ -1,6 +1,7 @@
-from logging import debug, info
 from datetime import datetime
-from sqlalchemy.sql import select, bindparam
+from logging import debug, info
+
+from sqlalchemy.sql import bindparam, select
 
 from data_layer.book_status import BookStatus
 

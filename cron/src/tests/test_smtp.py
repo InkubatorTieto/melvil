@@ -1,5 +1,6 @@
-from notifications import smtp_client
 from unittest.mock import Mock, patch
+
+from notifications import smtp_client
 
 
 class TestSmtp():

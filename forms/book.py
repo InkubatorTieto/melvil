@@ -1,18 +1,12 @@
-from flask_wtf import FlaskForm
 from datetime import datetime
-from wtforms import (
-    StringField,
-    SubmitField,
-    TextAreaField,
-    SelectField,
-    RadioField
 
-)
+from flask_wtf import FlaskForm
+from wtforms import (RadioField, SelectField, StringField, SubmitField,
+                     TextAreaField)
 from wtforms.validators import DataRequired
-from forms.custom_validators import \
-    check_author, check_language, \
-    check_category, check_isbn, \
-    check_pub_date
+
+from forms.custom_validators import (check_author, check_category, check_isbn,
+                                     check_language, check_pub_date)
 
 
 class LibraryItemForm(FlaskForm):

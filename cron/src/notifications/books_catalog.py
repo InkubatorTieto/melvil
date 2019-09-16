@@ -1,5 +1,7 @@
 from logging import debug
+
 from sqlalchemy.sql import select
+
 from data_layer.book_status import BookStatus
 
 

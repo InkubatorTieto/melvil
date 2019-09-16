@@ -1,20 +1,11 @@
 from datetime import datetime
-from random import randint, choice
+from random import choice, randint
 
 import pytz
 from mimesis import Generic
 
-from models import (
-    RentalLog,
-    Copy,
-    Book,
-    Author,
-    Tag,
-    User,
-    Magazine,
-    WishListItem
-)
-
+from models import (Author, Book, Copy, Magazine, RentalLog, Tag, User,
+                    WishListItem)
 
 g = Generic('en')
 
