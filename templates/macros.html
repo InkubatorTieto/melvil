@@ -39,7 +39,7 @@
     {% elif copy.available_status|string() == "BookStatus.BORROWED" %}
     <td>
         <div class="tooltip">
-                Borrowed </br> return date {{copy.reservation_end().strftime('%Y-%m-%d')}}
+                Borrowed </br> return date {{copy.return_time().strftime('%Y-%m-%d')}}
             <span class="tooltiptext">This copy has been borrowed,
                 it may take a while until it becomes available.</span>
         </div>
