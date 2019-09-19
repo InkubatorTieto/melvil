@@ -48,6 +48,7 @@ library = Blueprint('library', __name__,
 
 
 @library.route('/')
+@require_logged_in(show_login_required_message=False)
 def index():
     return render_template('index.html')
 
@@ -227,7 +228,7 @@ def contact():
 @require_logged_in()
 def logout():
     session.clear()
-    return render_template('index.html')
+    return redirect(url_for('library.login'))
 
 
 @library.route('/reservation/<copy_id>')
