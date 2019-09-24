@@ -12,7 +12,7 @@ from config import DevConfig, ProdConfig
 from init_db import db
 from utils.create_admin_user import create_super_user
 from utils.ldap_utils import ldap_client
-from utils.xlsx_reader import get_books, get_magazines
+from utils.xlsx_reader import get_books, get_magazines, get_user_data
 from views.book import library_books
 from views.book_borrowing_dashboard import library_book_borrowing_dashboard
 from views.index import library

@@ -4,7 +4,8 @@ import xlrd
 from nameparser import HumanName
 
 from init_db import db
-from models import Author, Book, Copy, Magazine
+from models import Author, Book, Copy, Magazine, User
+from utils.ldap_utils import ldap_client, refine_data
 
 
 def load_file(file_location):
@@ -95,26 +96,20 @@ def get_book_data(file_location):
             title = (current_sheet.cell_value(row_index, 1)).strip()
             authors = current_sheet.cell_value(row_index, 2)
             author = get_authors_data(authors)
-
-            if current_shelf == 'General':
-                author = get_authors_data(authors)
-                asset = str(current_sheet.cell_value(row_index, 3))
-                book_properties = {
+            asset = str(current_sheet.cell_value(row_index, 3))
+            borrower_data = current_sheet.cell_value(row_index, 4)
+            borrow_date = current_sheet.cell_value(row_index, 5)
+            book_properties = {
                     'authors': author,
                     'title': title,
-                    'asset': asset
+                    'asset': asset,
+                    'borrower_data': borrower_data,
+                    'borrow_date': borrow_date
                 }
-                book_list.append(book_properties)
 
-            else:
-                asset = str(current_sheet.cell_value(row_index, 3))
-                book_properties = {
-                    'authors': author,
-                    'current_shelf': current_shelf,
-                    'title': title,
-                    'asset': asset
-                }
-                book_list.append(book_properties)
+            if current_shelf != 'General':
+                book_properties['current_shelf'] = current_shelf
+            book_list.append(book_properties)
 
     return book_list
 
@@ -136,45 +131,64 @@ def get_magazine_data(file_location):
     return magazines_list
 
 
+# reading user data from LDAP and inserting it to database
+def get_user_data(book_data):
+    # extracts username from name and surname
+    if not len(book_data['borrower_data']):
+        return
+    user_data = book_data['borrower_data'].lower().split()
+    surname_len = len(user_data[1])
+    if surname_len < 5:
+        surname_part = (
+            user_data[1][:surname_len] +
+            user_data[1][-1] * (5-surname_len)
+        )
+    else:
+        surname_part = user_data[1][:5]
+    name_part = user_data[0][:3]
+    user_name = surname_part + name_part
+    # checks if user already in database, and insert it if needed
+    ldap_user = ldap_client.get_object_details(user=user_name)
+    ldap_employee_id = refine_data(ldap_user, 'employeeID')
+    db_user = User.query.filter_by(employee_id=ldap_employee_id).first()
+    if not db_user:
+        new_user = User(
+            email=refine_data(ldap_user, 'mail'),
+            first_name=refine_data(ldap_user, 'givenName'),
+            surname=refine_data(ldap_user, 'sn'),
+            employee_id=refine_data(ldap_user, 'employeeID'),
+            active=True
+        )
+        db.session.add(new_user)
+        db.session.commit()
+    db_user = User.query.filter_by(employee_id=ldap_employee_id).first()
+    # search for borrowed copy id
+
+
 # writing authors, books and copies data in database
 def get_books(file_location):
     books_properties = get_book_data(file_location)
     asset_codes = []
 
     for book in books_properties:
-        title = book['title']
-        asset = book['asset']
-        asset_codes.append(asset)
-        authors = book['authors']
-        list_of_authors = []
+        try:
+            get_user_data(book)
+            title = book['title']
+            asset = book['asset']
+            asset_codes.append(asset)
+            authors = book['authors']
+            list_of_authors = []
 
-        if isinstance(authors, tuple):
-            authors_id = []
-            first_name = str(authors[0])
-            last_name = str(authors[1])
-            author = create_library_item(db.session, Author,
-                                         last_name=last_name,
-                                         first_name=first_name)
-            id_of_auth = author.id
-            authors_id.append(id_of_auth)
-            list_of_authors.append(author)
-            book = create_library_item(
-                db.session,
-                Book,
-                title=title,
-                language=''
-            )
-            book.authors.append(author)
-            create_copy(book, asset)
-
-        elif isinstance(authors, list):
-            authors_id = []
-            for auth_name in authors:
-                f_name = str(auth_name[0])
-                l_name = str(auth_name[1])
-                author = create_library_item(db.session, Author,
-                                             last_name=l_name,
-                                             first_name=f_name)
+            if isinstance(authors, tuple):
+                authors_id = []
+                first_name = str(authors[0])
+                last_name = str(authors[1])
+                author = create_library_item(
+                    db.session,
+                    Author,
+                    last_name=last_name,
+                    first_name=first_name
+                )
                 id_of_auth = author.id
                 authors_id.append(id_of_auth)
                 list_of_authors.append(author)
@@ -186,6 +200,32 @@ def get_books(file_location):
                 )
                 book.authors.append(author)
                 create_copy(book, asset)
+
+            elif isinstance(authors, list):
+                authors_id = []
+                for auth_name in authors:
+                    f_name = str(auth_name[0])
+                    l_name = str(auth_name[1])
+                    author = create_library_item(
+                        db.session,
+                        Author,
+                        last_name=l_name,
+                        first_name=f_name
+                    )
+                    id_of_auth = author.id
+                    authors_id.append(id_of_auth)
+                    list_of_authors.append(author)
+                    book = create_library_item(
+                        db.session,
+                        Book,
+                        title=title,
+                        language=''
+                    )
+                    book.authors.append(author)
+                    create_copy(book, asset)
+        except TypeError:
+            message = '\nuser not found in ldap - entry info:\n {}\n'
+            print(message.format(book))
 
 
 # writing magazine's data in database
