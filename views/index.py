@@ -610,7 +610,6 @@ def admin_dashboard():
             ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_time = datetime.now(tz=pytz.utc)
-
                 borrow_item.available_status = BookStatus.BORROWED
                 rental_log_change.book_status = BookStatus.BORROWED
                 rental_log_change._borrow_time = borrow_time

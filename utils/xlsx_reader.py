@@ -1,10 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
+import pytz
 import xlrd
 from nameparser import HumanName
+from sqlalchemy import and_
 
 from init_db import db
-from models import Author, Book, Copy, Magazine, User
+from models import Author, Book, Copy, Magazine, User, RentalLog, BookStatus
 from utils.ldap_utils import ldap_client, refine_data
 
 
@@ -161,18 +163,47 @@ def get_user_data(book_data):
         )
         db.session.add(new_user)
         db.session.commit()
-    db_user = User.query.filter_by(employee_id=ldap_employee_id).first()
-    # search for borrowed copy id
+    return User.query.filter_by(employee_id=ldap_employee_id).first()
+
+
+def reserve_copy(book_data, lib_item_id, asset_code):
+    user = get_user_data(book_data)
+    if asset_code:
+        copy = Copy.query.filter(
+            and_(
+                Copy.library_item_id == lib_item_id,
+                Copy.asset_code == asset_code
+            )
+        ).all()
+    else:
+        copy = Copy.query.filter_by(library_item_id=lib_item_id).all()
+    if len(copy) > 1 and user:
+        print('\nBook {} have multiple copies'.format(book_data))
+        return
+    elif user:
+        copy[0].available_status = BookStatus.BORROWED
+        return_time = datetime.now(tz=pytz.utc).replace(
+            hour=23,
+            minute=59,
+            second=59,
+            microsecond=0
+        ) + timedelta(days=30)
+        borrow = RentalLog(
+            copy_id=copy[0].id,
+            user_id=user.id,
+            book_status=BookStatus.BORROWED,
+            _return_time=return_time
+        )
+        db.session.add(borrow)
+        db.session.commit()
 
 
 # writing authors, books and copies data in database
 def get_books(file_location):
     books_properties = get_book_data(file_location)
     asset_codes = []
-
     for book in books_properties:
         try:
-            get_user_data(book)
             title = book['title']
             asset = book['asset']
             asset_codes.append(asset)
@@ -192,14 +223,15 @@ def get_books(file_location):
                 id_of_auth = author.id
                 authors_id.append(id_of_auth)
                 list_of_authors.append(author)
-                book = create_library_item(
+                lib_item = create_library_item(
                     db.session,
                     Book,
                     title=title,
                     language=''
                 )
-                book.authors.append(author)
-                create_copy(book, asset)
+                lib_item.authors.append(author)
+                create_copy(lib_item, asset)
+                reserve_copy(book, lib_item.id, asset)
 
             elif isinstance(authors, list):
                 authors_id = []
@@ -215,14 +247,15 @@ def get_books(file_location):
                     id_of_auth = author.id
                     authors_id.append(id_of_auth)
                     list_of_authors.append(author)
-                    book = create_library_item(
+                    lib_item = create_library_item(
                         db.session,
                         Book,
                         title=title,
                         language=''
                     )
-                    book.authors.append(author)
-                    create_copy(book, asset)
+                    lib_item.authors.append(author)
+                create_copy(lib_item, asset)
+                reserve_copy(book, lib_item.id, asset)
         except TypeError:
             message = '\nuser not found in ldap - entry info:\n {}\n'
             print(message.format(book))
