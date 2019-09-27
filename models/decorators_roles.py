@@ -20,20 +20,21 @@ from models.users import User
 #     ...
 
 
-def require_logged_in(redirect_page="library.login"):
+def require_logged_in(
+        redirect_page="library.login",
+        show_login_required_message=True):
     def decorator(func):
         @wraps(func)
         def inner_func(*args, **kwargs):
             login_required_msg = "Please, login first to access this page!"
-            if "logged_in" in session:
-                if session["logged_in"]:
-                    return func(*args, **kwargs)
-                else:
-                    flash(login_required_msg)
-                    return redirect(url_for(redirect_page))
-            else:
+
+            if "logged_in" in session and session["logged_in"]:
+                return func(*args, **kwargs)
+
+            if show_login_required_message:
                 flash(login_required_msg)
-                return redirect(url_for(redirect_page))
+
+            return redirect(url_for(redirect_page))
 
         return inner_func
 
