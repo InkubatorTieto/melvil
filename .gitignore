@@ -12,3 +12,4 @@ env
 *.*~
 data/
 ENV/
+./lib-data.xlsx
