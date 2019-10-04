@@ -30,8 +30,10 @@ $ . run-server.sh create-db
 >run-server.bat create-db
 ```
 
-If you want to load book data from xls to the database
-specify proper path of the file in app.py and then run:
+If you want to load book and borrow data from xls to the database
+specify proper path of the file in app.py, note that proper xls file
+is not present in repository because it contain sensitive data.
+When you have proper file and path in app.py run following commands:
 
 ```bash
 $ . run-server.sh load-xls
@@ -51,7 +53,7 @@ $ . run-server.sh create-admin
 >run-server.bat create-admin
 ```
 
-2. And start it on localhost:5000  
+1. And start it on localhost:5000  
 
 ```bash
 . run-server.sh

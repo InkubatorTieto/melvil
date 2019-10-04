@@ -104,11 +104,12 @@ def mock_ldap(db, session):
     class MockLdap():
         # those properties correspond to use cases
         # for example user not present in ldap try to log in
-        def __init__(self, user, non_user, user_not_wroc, admin):
+        def __init__(self, user, non_user, user_not_wroc, admin, xls_usr):
             self.user = user
             self.non_user = non_user
             self.user_not_wroc = user_not_wroc
             self.admin = admin
+            self.xls_usr = xls_usr
 
         # check if credentials are valid
         def bind_user(self, user_name, passwd):
@@ -124,19 +125,30 @@ def mock_ldap(db, session):
 
         # return employee data
         def get_object_details(self, user):
-            users = [self.user, self.admin, self.user_not_wroc]
+            users = [self.user, self.admin, self.user_not_wroc, self.xls_usr]
             for usr in users:
                 if user == usr['user_name'][0].decode():
                     return usr
 
     # create fake user data
-    def create_user(wroclaw_usr=True, non_user=False, admin=False):
-        login = g.person.identifier(mask='@@@@@@@@').lower()
+    def create_user(
+        wroclaw_usr=True,
+        non_user=False,
+        admin=False,
+        xls_usr=False
+    ):
         email = g.person.email(['@tieto.com'])
         passwd = g.person.password(length=12)
-        name = g.person.name()
-        surname = g.person.last_name()
         identifier = g.person.identifier(mask='#####')
+
+        if xls_usr:
+            login = xls_usr['user_name']
+            name = xls_usr['name']
+            surname = xls_usr['surname']
+        else:
+            login = g.person.identifier(mask='@@@@@@@@').lower()
+            name = g.person.name()
+            surname = g.person.last_name()
 
         if wroclaw_usr:
             location = 'Wroclaw'
@@ -145,8 +157,10 @@ def mock_ldap(db, session):
                 location = g.address.city()
                 if location != 'Wroclaw':
                     break
+
         if non_user:
             return dict(user_name=login, passwd=passwd)
+
         if admin:
             email = getenv("ADMIN_LIST")
             new_user = User(
@@ -172,6 +186,7 @@ def mock_ldap(db, session):
         db.session.add(new_user)
         db.session.commit()
         db_id = User.query.filter_by(employee_id=identifier).first().id
+
         return dict(
             user_name=[login.encode()],
             passwd=[passwd.encode()],
@@ -183,12 +198,20 @@ def mock_ldap(db, session):
             db_id=db_id
         )
 
-    # substitute ldap-like object
+    # fake user data from xls file
+    xls_usr = dict(
+        user_name='testtpan',
+        name='Pan',
+        surname='Testtest'
+    )
+
+    # substitute ldap object
     return MockLdap(
         create_user(),
         create_user(non_user=True),
         create_user(wroclaw_usr=False),
-        create_user(admin=True)
+        create_user(admin=True),
+        create_user(xls_usr=xls_usr)
     )
 
 
