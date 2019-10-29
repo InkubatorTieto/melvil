@@ -131,7 +131,6 @@ def mock_ldap(db, session):
 
     # create fake user data
     def create_user(wroclaw_usr=True, non_user=False, admin=False):
-        login = g.person.identifier(mask='@@@@@@@@').lower()
         email = g.person.email(['@tieto.com'])
         passwd = g.person.password(length=12)
         name = g.person.name()
@@ -140,7 +139,12 @@ def mock_ldap(db, session):
 
         if wroclaw_usr:
             location = 'Wroclaw'
+            while True:
+                login = g.person.identifier(mask='@@@@@@@@').lower()
+                if login != 'abcdefgh':
+                    break
         else:
+            login = 'abcdefgh'
             while True:
                 location = g.address.city()
                 if location != 'Wroclaw':
@@ -174,6 +178,7 @@ def mock_ldap(db, session):
         db_id = User.query.filter_by(employee_id=identifier).first().id
         return dict(
             user_name=[login.encode()],
+            sAMAccountName=[login.encode()],
             passwd=[passwd.encode()],
             mail=[email.encode()],
             givenName=[name.encode()],
@@ -190,6 +195,16 @@ def mock_ldap(db, session):
         create_user(wroclaw_usr=False),
         create_user(admin=True)
     )
+
+
+@pytest.fixture(scope='module')
+def mock_auth_users():
+    # this fixture mocks environmental variable AUTH_USERS needed
+    # to specify users out of Wroclaw that are able to login
+    class MockAuthUsers:
+        AUTH_USERS = ['abcdefgh']
+
+    return MockAuthUsers
 
 
 @pytest.fixture(scope='module')
@@ -577,6 +592,30 @@ def login_form_admin_credentials(mock_ldap):
 
 
 @pytest.fixture(scope="function")
+def login_form_invalid(mock_ldap):
+    """
+    Returns login form containing invalid data.
+    """
+    form = LoginForm(
+        email=mock_ldap.non_user['user_name'],
+        password=mock_ldap.non_user['passwd']
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def login_form_not_wroclaw(mock_ldap):
+    """
+    Returns login form with user not from Wroclaw
+    """
+    form = LoginForm(
+        username=mock_ldap.user_not_wroc['user_name'],
+        password=mock_ldap.user_not_wroc['passwd']
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
 def search_query(session, client):
     """
     Create db entries for books and magazines
@@ -633,18 +672,6 @@ def get_wish(session, client):
     """
     item = WishListItem.query.first()
     yield item
-
-
-@pytest.fixture(scope="function")
-def login_form_invalid(mock_ldap):
-    """
-    Returns login form containing invalid data.
-    """
-    form = LoginForm(
-        email=mock_ldap.non_user['user_name'],
-        password=mock_ldap.non_user['passwd']
-    )
-    yield form
 
 
 @pytest.fixture

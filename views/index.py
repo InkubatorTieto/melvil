@@ -59,7 +59,12 @@ def login():
                 )
             else:
                 user_ldap = ldap_client.get_object_details(user=user)
-                if refine_data(user_ldap, 'l') != 'Wroclaw':
+                if (
+                    refine_data(user_ldap, 'l') != 'Wroclaw' and
+                    refine_data(
+                        user_ldap, 'sAMAccountName'
+                    ) not in Config.AUTH_USERS
+                ):
                     message_body = 'Only employees from Wroclaw are accepted'
                     return render_template(
                         'message.html',
