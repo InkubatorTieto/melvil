@@ -36,8 +36,31 @@ def test_login_invalid_data_inserted(app, login_form_invalid, mock_ldap):
         'views.index.ldap_client', mock_ldap
     ):
         session['logged_in'] = False
-        c.post(url_for('library.login'),
-               data=login_form_invalid.data)
+        c.post(url_for('library.login'), data=login_form_invalid.data)
+        assert 'logged_in' not in session, \
+            "Login view, user with invalid data logged in"
+        session.clear()
+
+
+def test_login_not_wroclaw_auth(
+    app, login_form_not_wroclaw, mock_ldap, mock_auth_users
+):
+    with app.test_client() as c, \
+            mock.patch('views.index.ldap_client', mock_ldap), \
+            mock.patch('views.index.Config', mock_auth_users):
+        session['logged_in'] = False
+        c.post(url_for('library.login'), data=login_form_not_wroclaw.data)
+        assert session.get('logged_in') is True, \
+            "Login view, user with valid data hasn't logged in"
+        session.clear()
+
+
+def test_login_not_wroclaw_not_auth(app, login_form_not_wroclaw, mock_ldap):
+    with app.test_client() as c, mock.patch(
+        'views.index.ldap_client', mock_ldap
+    ):
+        session['logged_in'] = False
+        c.post(url_for('library.login'), data=login_form_not_wroclaw.data)
         assert 'logged_in' not in session, \
             "Login view, user with invalid data logged in"
         session.clear()
