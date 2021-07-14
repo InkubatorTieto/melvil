@@ -5,13 +5,17 @@ services:
     build:
       context: ../cron
       dockerfile: Dockerfile
+    restart: always
     env_file:
       - ../cron/.env
+
   web:
     build:
       context: ..
-      dockerfile: './docker/Dockerfile'
+      dockerfile: ./docker/Dockerfile
     command: sh ./docker/run.sh -p
+    container_name: melvil_web_prod
+    restart: always
     volumes:
       - ..:/code
     env_file:
@@ -19,14 +23,13 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - "postgresql"
-    container_name: melvil_web_prod
+      - postgresql
 
   postgresql:
       image: postgres
+      container_name: melvil_postgres_prod
       restart: always
       volumes:
         - ./data/web/postgresql:/var/lib/postgresql
       env_file:
         - .env
-      container_name: melvil_postgres_prod
