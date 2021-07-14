@@ -1,19 +1,20 @@
 from logging import debug
+
 from sqlalchemy.sql import select
+
 from data_layer.book_status import BookStatus
-from .definitions import BookInfo, BorrowerInfo, RecordInfo
 
 
 class BooksCatalog():
     def __init__(self, data_access_layer):
-        self.__data_access_layer = data_access_layer
+        self._data_access_layer = data_access_layer
 
     def get_overdue_books(self, return_time_delta):
-        connection = self.__data_access_layer.connection
-        library_item = self.__data_access_layer.library_item
-        copy = self.__data_access_layer.copy
-        rental_log = self.__data_access_layer.rental_log
-        users = self.__data_access_layer.users
+        connection = self._data_access_layer.connection
+        library_item = self._data_access_layer.library_item
+        copy = self._data_access_layer.copy
+        rental_log = self._data_access_layer.rental_log
+        users = self._data_access_layer.users
 
         select_stmt = (
             select([
@@ -33,8 +34,18 @@ class BooksCatalog():
         debug('Executing :\n{}'.format(str(select_stmt)))
 
         return [
-            RecordInfo(
-                BorrowerInfo(*item[0:4]),
-                BookInfo(*item[4:7])
-            ) for item in connection.execute(select_stmt).fetchall()
+            {
+                'borrower_info': {
+                    'borrower_id': item[0],
+                    'borrower_email': item[1],
+                    'borrower_name': item[2],
+                    'borrower_surname': item[3]
+                },
+                'book_info': {
+                    'book_title': item[4],
+                    'book_borrow_date': item[5],
+                    'book_due_date': item[6]
+                }
+            }
+            for item in connection.execute(select_stmt).fetchall()
         ]

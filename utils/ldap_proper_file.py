@@ -8,11 +8,10 @@ Compatibility:
 - Tested with Python 2.0+
 """
 
-from ldap import __version__
-
-from ldap.functions import strf_secs
-
 import time
+
+from ldap import __version__
+from ldap.functions import strf_secs
 
 
 def escape_filter_chars(assertion_value,escape_mode=0):

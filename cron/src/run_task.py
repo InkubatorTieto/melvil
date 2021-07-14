@@ -1,16 +1,17 @@
+import logging
 from argparse import ArgumentParser
-from enum import Enum
-from sqlalchemy.engine.url import URL
-from dotenv import load_dotenv
-from os import environ
 from datetime import datetime, timedelta
+from enum import Enum
+from os import environ
+from sys import stdout
+
+from sqlalchemy.engine.url import URL
 
 from data_layer.data_access_layer import DataAccessLayer
-
+from dotenv import load_dotenv
 from notifications.books_catalog import BooksCatalog
 from notifications.message_service import MessageService
 from notifications.smtp_client import Smtp
-
 from reservations.reservation_service import ReservationService
 
 
@@ -23,9 +24,10 @@ def send_notifications():
     smtp_user = environ.get("NOTIFICATIONS_SMPT_USER")
     smtp_password = environ.get("NOTIFICATIONS_SMPT_PASSWORD")
     smtp_sender = environ["NOTIFICATIONS_SMPT_SENDER"]
+    admin_emails = environ["MAIL_ADMINS"]
 
     due_date = datetime.utcnow() + timedelta(hours=int(due_date_diff))
-    database_connection_url = __get_database_connection_url()
+    database_connection_url = get_database_connection_url()
     data_access_layer = DataAccessLayer(database_connection_url)
 
     books_catalog = BooksCatalog(data_access_layer)
@@ -36,24 +38,45 @@ def send_notifications():
         user=smtp_user,
         password=smtp_password)
 
-    with open('notifications/email_template.html') as file_template:
+    with open(
+        '/app/src/notifications/user_email_template.html'
+    ) as file_template:
         template = file_template.read()
         records = books_catalog.get_overdue_books(due_date)
-        for message in message_service.compose_messages(template, records):
+        for message in message_service.compose_user_messages(
+            template,
+            records
+        ):
             smtp.send(message)
+
+    now = datetime.utcnow()
+    with open(
+        '/app/src/notifications/admin_email_template.html'
+    ) as file_template:
+        template = file_template.read()
+        records = books_catalog.get_overdue_books(now)
+        message = message_service.compose_admin_messages(
+            template,
+            records,
+            admin_emails
+        )
+        try:
+            smtp.send(message)
+        except TypeError:
+            pass
 
 
 def invalidate_overdue_reservations():
     load_dotenv()
 
-    database_connection_url = __get_database_connection_url()
+    database_connection_url = get_database_connection_url()
     data_access_layer = DataAccessLayer(database_connection_url)
 
     reservation_service = ReservationService(data_access_layer)
     reservation_service.invalidate_overdue_reservations()
 
 
-def __get_database_connection_url():
+def get_database_connection_url():
     return URL(
         drivername=environ["DB_ENGINE"],
         username=environ["DB_USER"],
@@ -63,6 +86,15 @@ def __get_database_connection_url():
         database=environ["DB_NAME"])
 
 
+def setup_logging():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)-5.5s] %(message)s",
+        handlers=[
+            logging.StreamHandler(stream=stdout)
+        ])
+
+
 if __name__ == '__main__':
     class TaskType(Enum):
         send_notifications = 'send_notifications'
@@ -70,6 +102,8 @@ if __name__ == '__main__':
 
         def __str__(self):
             return self.value
+
+    setup_logging()
 
     parser = ArgumentParser()
     parser.add_argument(

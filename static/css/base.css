@@ -1,5 +1,5 @@
 body {
-    background: url("../../img/book.jpg") no-repeat center center fixed;
+    background: url("../img/book.jpg") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -57,11 +57,6 @@ p.label {
     float: left;
 }
 
-.inputs-with-label {
-    width: 15%;
-    margin: 0.2rem 0;
-}
-
 .inputs {
     width: 100%;
     margin: 0;
@@ -77,6 +72,26 @@ p.label {
     margin-bottom: 5px;
     color: rgba(255, 255, 255, 1);
     outline: 0;
+}
+
+.input-search {
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 1);
+    outline: 0;
+    font-style: italic;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: rgba(255, 255, 255, 1);
+    outline: 0;
+    width: 10%;
+    margin: 0;
+    padding: 5px 10px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url("/static/img/down-arrow.png") 96% / 10% no-repeat;
 }
 
 /*

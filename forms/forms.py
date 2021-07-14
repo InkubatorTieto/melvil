@@ -1,23 +1,11 @@
 from datetime import datetime
 
-from wtforms import (
-    StringField,
-    PasswordField,
-    BooleanField,
-    SubmitField,
-    TextAreaField,
-    SelectField,
-)
-from wtforms.validators import DataRequired, Email, EqualTo, Length
 from flask_wtf import FlaskForm
+from wtforms import (BooleanField, PasswordField, SelectField, StringField,
+                     SubmitField, TextAreaField)
+from wtforms.validators import DataRequired
 
-from forms.custom_validators import (
-    tieto_email,
-    name,
-    surname,
-    check_password,
-    check_pub_date
-)
+from forms.custom_validators import check_pub_date, tieto_email
 
 
 class LoginForm(FlaskForm):
@@ -36,62 +24,7 @@ class LoginForm(FlaskForm):
                          render_kw=({'class': 'btn btn-primary submits'}))
 
 
-class RegistrationForm(FlaskForm):
-    email = StringField('Email',
-                        validators=[tieto_email],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Email'}))
-    first_name = StringField('First name',
-                             validators=[DataRequired(), Length(3), name],
-                             render_kw=({'class': 'inputs',
-                                         'placeholder': 'First Name'}))
-    surname = StringField('Surname',
-                          validators=[DataRequired(), Length(3), surname],
-                          render_kw=({'class': 'inputs',
-                                      'placeholder': 'Last Name'}))
-    password = PasswordField(
-        'Password',
-        validators=[DataRequired(), check_password,
-                    EqualTo('confirm_pass',
-                            message='Passwords must match.')],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Password'}))
-    confirm_pass = PasswordField(
-        'Confirm password',
-        validators=[DataRequired(), check_password],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Sign Up',
-                         render_kw=({'class': 'btn btn-primary submits'}))
-
-
-class EditPasswordForm(FlaskForm):
-    password = PasswordField(
-        'Password',
-        validators=[DataRequired()],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Password'}))
-    new_password = PasswordField(
-        'Password',
-        validators=[DataRequired(),
-                    EqualTo('confirm_password',
-                            message='Passwords must match.')],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'New Password'}))
-    confirm_password = PasswordField(
-        'Confirm password',
-        validators=[DataRequired()],
-        render_kw=({'class': 'inputs',
-                    'placeholder': 'Confirm Password'}))
-    submit = SubmitField('Save',
-                         render_kw=({'class': 'btn btn-primary submits'}))
-
-
-class ContactForm(FlaskForm):
-    email = StringField('email',
-                        validators=[Email()],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Email'}))
+class ContactFormLogin(FlaskForm):
     title = StringField('title',
                         validators=[DataRequired()],
                         render_kw=({'class': 'inputs',
@@ -105,31 +38,18 @@ class ContactForm(FlaskForm):
         render_kw=({'class': 'btn btn-primary submits'}))
 
 
+class ContactFormNoLogin(ContactFormLogin):
+    email = StringField('email',
+                        validators=[tieto_email],
+                        render_kw=({'class': 'inputs',
+                                    'placeholder': 'Email'}))
+
+
 class SearchForm(FlaskForm):
     query = StringField('Search',
                         render_kw=({'class': 'inputs',
                                     'type': 'text',
                                     'placeholder': 'Search...'}))
-    submit = SubmitField('Search')
-
-
-class ForgotPass(FlaskForm):
-    email = StringField('email',
-                        validators=[tieto_email],
-                        render_kw=({'class': 'inputs',
-                                    'placeholder': 'Enter Email Address'}))
-    submit = SubmitField('Submit',
-                         render_kw=({'class': 'btn btn-primary submits'}))
-
-
-class PasswordForm(FlaskForm):
-    password = PasswordField('Password',
-                             validators=[DataRequired()],
-                             render_kw=({'class': 'inputs',
-                                         'placeholder': 'Enter new password'})
-                             )
-    submit = SubmitField('Submit',
-                         render_kw=({'class': 'btn btn-primary submits'}))
 
 
 class WishlistForm(FlaskForm):

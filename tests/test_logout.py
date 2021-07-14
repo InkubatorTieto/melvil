@@ -1,7 +1,6 @@
 from unittest import mock
 
-from flask import url_for
-from flask import session
+from flask import session, url_for
 
 
 def test_logout_status_code_for_get(client):

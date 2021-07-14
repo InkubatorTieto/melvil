@@ -1,9 +1,8 @@
 from flask import url_for
+
 from models import Copy
 from models.users import Role, RoleEnum
-from tests.populate import (
-    populate_copies,
-    populate_books)
+from tests.populate import populate_books, populate_copies
 
 
 def test_remove_copy(session, db_user, client, app_session):

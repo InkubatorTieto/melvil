@@ -1,7 +1,7 @@
 from config import Config
 from init_db import db
-from ldap_utils.ldap_utils import ldap_client, refine_data
-from models.users import User, Role, RoleEnum
+from models.users import Role, RoleEnum, User
+from utils.ldap_utils import ldap_client, refine_data
 
 
 def create_super_user():

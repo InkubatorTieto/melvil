@@ -10,9 +10,9 @@ from sqlalchemy.exc import OperationalError, TimeoutError
 
 from config import DevConfig, ProdConfig
 from init_db import db
-from ldap_utils.ldap_utils import register_hooks, ldap_client
-from utils.xlsx_reader import get_books, get_magazines
 from utils.create_admin_user import create_super_user
+from utils.ldap_utils import ldap_client
+from utils.xlsx_reader import get_books, get_magazines
 from views.book import library_books
 from views.book_borrowing_dashboard import library_book_borrowing_dashboard
 from views.index import library
@@ -30,7 +30,6 @@ else:
 def create_app(config=config_env):
     app = Flask(__name__)
     app.config.from_object(config)
-    register_hooks(app)
     app.register_blueprint(library)
     app.register_blueprint(library_books)
     app.register_blueprint(library_book_borrowing_dashboard)

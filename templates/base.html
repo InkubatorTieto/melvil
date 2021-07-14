@@ -9,7 +9,7 @@
           crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}/">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
   
     {% block styles %}
     {% endblock %}
@@ -80,6 +80,31 @@
     {% endblock %}
 </div>
 
+{% block footer %}
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100px;
+        background: rgba(0, 0, 0, 0.8);
+        font-size: 80%;
+        text-align: center;
+    }
+    .footer-link{
+        color: rgb(170, 170, 170);
+    }
+
+</style>
+<footer>
+    <a 
+        href="https://tietocorporation.sharepoint.com/sites/myemployment/SiteAssets/SitePages/TietoEVRY-library/Rules-2021.pdf"
+        target="_blank"
+        class="footer-link"
+    >
+        <i class="fas fa-info-circle"></i> regulations
+    </a>
+</footer> 
+{% endblock %}
 
 {% block scripts %}
 {% endblock %}

@@ -1,4 +1,4 @@
-from sqlalchemy.orm import class_mapper, ColumnProperty
+from sqlalchemy.orm import ColumnProperty, class_mapper
 
 from init_db import db
 from models.library import LibraryItem

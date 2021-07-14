@@ -1,8 +1,8 @@
-from datetime import datetime
 import random
-from random import choice, randint
 import string
+from datetime import datetime
 from os import getenv
+from random import choice, randint
 
 import pytest
 from mimesis import Generic
@@ -12,36 +12,17 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 from app import db as _db
 from app import mail as _mail
-from forms.book import BookForm, MagazineForm,\
-    AddNewItemBookForm, AddNewItemMagazineForm
-from models import (
-    User,
-    Book,
-    Magazine,
-    Copy,
-    WishListItem,
-    Author,
-    Tag,
-    LibraryItem
-)
-from models.users import Role, RoleEnum
+from forms.book import (AddNewItemBookForm, AddNewItemMagazineForm, BookForm,
+                        MagazineForm)
 from forms.copy import CopyAddForm, CopyEditForm
-from forms.forms import (
-    SearchForm,
-    WishlistForm,
-    LoginForm,
-    EditPasswordForm
-)
-from tests.populate import (
-    populate_copies,
-    populate_authors,
-    populate_books,
-    populate_rental_logs,
-    populate_magazines,
-    populate_wish_list_items
-)
+from forms.forms import LoginForm, SearchForm, WishlistForm
+from models import (Author, Book, Copy, LibraryItem, Magazine, Tag, User,
+                    WishListItem)
 from models.library import BookStatus
-
+from models.users import Role, RoleEnum
+from tests.populate import (populate_authors, populate_books, populate_copies,
+                            populate_magazines, populate_rental_logs,
+                            populate_wish_list_items)
 
 g = Generic('en')
 
@@ -150,7 +131,6 @@ def mock_ldap(db, session):
 
     # create fake user data
     def create_user(wroclaw_usr=True, non_user=False, admin=False):
-        login = g.person.identifier(mask='@@@@@@@@').lower()
         email = g.person.email(['@tieto.com'])
         passwd = g.person.password(length=12)
         name = g.person.name()
@@ -159,7 +139,12 @@ def mock_ldap(db, session):
 
         if wroclaw_usr:
             location = 'Wroclaw'
+            while True:
+                login = g.person.identifier(mask='@@@@@@@@').lower()
+                if login != 'abcdefgh':
+                    break
         else:
+            login = 'abcdefgh'
             while True:
                 location = g.address.city()
                 if location != 'Wroclaw':
@@ -193,6 +178,7 @@ def mock_ldap(db, session):
         db_id = User.query.filter_by(employee_id=identifier).first().id
         return dict(
             user_name=[login.encode()],
+            sAMAccountName=[login.encode()],
             passwd=[passwd.encode()],
             mail=[email.encode()],
             givenName=[name.encode()],
@@ -212,6 +198,16 @@ def mock_ldap(db, session):
 
 
 @pytest.fixture(scope='module')
+def mock_auth_users():
+    # this fixture mocks environmental variable AUTH_USERS needed
+    # to specify users out of Wroclaw that are able to login
+    class MockAuthUsers:
+        AUTH_USERS = ['abcdefgh']
+
+    return MockAuthUsers
+
+
+@pytest.fixture(scope='module')
 def text_generator(chars=string.ascii_letters + 'ąćęłóżź \n\t'):
     size = random.randint(25, 40)
     return ''.join(random.choice(chars) for _ in range(size))
@@ -224,21 +220,12 @@ def text_generator_no_whitespaces(chars=string.ascii_letters + 'ąćęłóżź')
 
 
 @pytest.fixture(scope='module')
-def password_generator(chars=string.ascii_letters):
-    size = random.randint(10, 25)
-    return ''.join(random.choice(chars) for _ in range(size))
-
-
-@pytest.fixture(scope='module')
-def user(app,
-         password_generator,
-         text_generator_no_whitespaces,
-         text_generator):
+def user(text_generator_no_whitespaces, text_generator):
     data = {
         'email': g.person.email(),
         'first_name': g.person.name(),
         'surname': g.person.surname(),
-        'password': password_generator,
+        'password': g.person.password(length=12),
         'title': text_generator_no_whitespaces,
         'message': text_generator}
     yield data
@@ -474,13 +461,13 @@ def db_magazine(session):
 
 @pytest.fixture(scope="function")
 def db_copies(session, db_book):
-    copy_available = Copy(
+    copy_available = [Copy(
         asset_code='{}{}'.format(
             g.code.locale_code()[:2],
             g.code.pin(mask='######')),
         library_item=db_book,
         available_status=BookStatus.RETURNED
-    )
+    ) for _ in range(4)]
     copy_reserved = Copy(
         asset_code='{}{}'.format(
             g.code.locale_code()[:2],
@@ -495,10 +482,10 @@ def db_copies(session, db_book):
         library_item=db_book,
         available_status=BookStatus.BORROWED
     )
-    session.add_all([copy_available, copy_reserved, copy_borrowed])
+    session.add_all([*copy_available, copy_reserved, copy_borrowed])
     session.commit()
 
-    yield (copy_available, copy_reserved, copy_borrowed)
+    yield (*copy_available, copy_reserved, copy_borrowed)
 
 
 @pytest.fixture
@@ -506,6 +493,7 @@ def app_session(client, db_user):
     with client.session_transaction() as app_session:
         app_session['logged_in'] = True
         app_session['id'] = db_user.id
+        app_session['email'] = db_user.email
         return app_session
 
 
@@ -604,6 +592,30 @@ def login_form_admin_credentials(mock_ldap):
 
 
 @pytest.fixture(scope="function")
+def login_form_invalid(mock_ldap):
+    """
+    Returns login form containing invalid data.
+    """
+    form = LoginForm(
+        email=mock_ldap.non_user['user_name'],
+        password=mock_ldap.non_user['passwd']
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
+def login_form_not_wroclaw(mock_ldap):
+    """
+    Returns login form with user not from Wroclaw
+    """
+    form = LoginForm(
+        username=mock_ldap.user_not_wroc['user_name'],
+        password=mock_ldap.user_not_wroc['passwd']
+    )
+    yield form
+
+
+@pytest.fixture(scope="function")
 def search_query(session, client):
     """
     Create db entries for books and magazines
@@ -645,24 +657,21 @@ def get_title(session, client):
 
 
 @pytest.fixture(scope="function")
+def get_book(session, client):
+    """
+    Get data of book from library
+    """
+    book = Book.query.first()
+    yield book
+
+
+@pytest.fixture(scope="function")
 def get_wish(session, client):
     """
     Get title of wish in wishlist db
     """
     item = WishListItem.query.first()
     yield item
-
-
-@pytest.fixture(scope="function")
-def login_form_invalid(mock_ldap):
-    """
-    Returns login form containing invalid data.
-    """
-    form = LoginForm(
-        email=mock_ldap.non_user['user_name'],
-        password=mock_ldap.non_user['passwd']
-    )
-    yield form
 
 
 @pytest.fixture
@@ -719,15 +728,3 @@ def user_reservations(session, mock_ldap):
     for m in magazines:
         session.delete(m)
     session.commit()
-
-
-@pytest.fixture(scope="function")
-def password_edition_form(db_user):
-    password = g.person.password(length=8)
-    new_password = g.person.password(length=8)
-    form = EditPasswordForm(
-        password=password,
-        new_password=new_password,
-        confirm_password=new_password,
-    )
-    yield form

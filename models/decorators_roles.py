@@ -1,7 +1,8 @@
-from flask import session, redirect, url_for, flash
 from functools import wraps
-from models.users import User
 
+from flask import flash, redirect, session, url_for
+
+from models.users import User
 
 # README
 # Use parenthesis when you use these decorators

@@ -40,6 +40,10 @@ class Config(object):
 
     # admin users
     ADMIN_LIST = getenv("ADMIN_LIST")
+    ADMIN_NAME = getenv("ADMIN_NAME")
+
+    # users outside Wroclaw authorized to login
+    AUTH_USERS = getenv("AUTH_USERS").split(',')
 
 
 class DevConfig(Config):

@@ -1,46 +1,27 @@
 from datetime import datetime, timedelta
 
-from sqlalchemy import exc
-from sqlalchemy.exc import IntegrityError
-
 import pytz
-
-from flask import (
-    abort,
-    Blueprint,
-    flash,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-    json
-)
+from flask import (Blueprint, abort, flash, json, redirect, render_template,
+                   request, session, url_for)
+from sqlalchemy import and_, exc, not_, or_
+from sqlalchemy.exc import IntegrityError
+from werkzeug.datastructures import MultiDict
 
 from config import Config
 from forms.copy import CopyAddForm, CopyEditForm
-from forms.forms import (
-    BorrowForm,
-    ContactForm,
-    LoginForm,
-    ReturnForm,
-    SearchForm,
-    WishlistForm,
-    RemoveForm
-)
+from forms.forms import (BorrowForm, ContactFormLogin, ContactFormNoLogin,
+                         LoginForm, RemoveForm, ReturnForm, SearchForm,
+                         WishlistForm)
 from init_db import db
-from ldap_utils.ldap_utils import ldap_client, refine_data
 from messages import ErrorMessage, SuccessMessage
-from models import LibraryItem
-from models.library import RentalLog, Copy, BookStatus
+from models.books import Author
+from models.decorators_roles import (require_logged_in, require_not_logged_in,
+                                     require_role)
+from models.library import BookStatus, Copy, LibraryItem, RentalLog
 from models.users import User
-from models.wishlist import WishListItem, Like
-from models.decorators_roles import (
-    require_role,
-    require_logged_in,
-    require_not_logged_in
-)
+from models.wishlist import Like, WishListItem
 from send_email.emails import send_email
+from utils.ldap_utils import ldap_client, refine_data
 
 library = Blueprint('library', __name__,
                     template_folder='templates')
@@ -55,8 +36,8 @@ def index():
 @require_not_logged_in()
 def login():
 
-    """Login view for client.
-
+    """
+    Login view for client.
     Connects to active directory check credentials
     and login.
     Retrieves desired data about user from LDAP.
@@ -78,7 +59,12 @@ def login():
                 )
             else:
                 user_ldap = ldap_client.get_object_details(user=user)
-                if refine_data(user_ldap, 'l') != 'Wroclaw':
+                if (
+                    refine_data(user_ldap, 'l') != 'Wroclaw' and
+                    refine_data(
+                        user_ldap, 'sAMAccountName'
+                    ) not in Config.AUTH_USERS
+                ):
                     message_body = 'Only employees from Wroclaw are accepted'
                     return render_template(
                         'message.html',
@@ -146,7 +132,7 @@ def search():
     except Exception:
         abort(500)
     if request.method == 'GET':
-        if not request.args or not request.args.get('query'):
+        if not request.args.get('query'):
             form = SearchForm()
             page = request.args.get('page', 1, type=int)
             try:
@@ -164,15 +150,33 @@ def search():
             except RuntimeError:
                 return ErrorMessage.message('Cannot connect to database!')
         elif request.args.get('query'):
-            form = SearchForm()
+            form = SearchForm(formdata=MultiDict({
+                'query': request.args.get('query')
+            }))
             query_str = request.args.get('query')
             page = request.args.get('page', 1, type=int)
             try:
-                paginate_query = (
-                    LibraryItem.query.filter(LibraryItem.title.ilike(
-                        '%{}%'.format(query_str)))).paginate(page,
-                                                             error_out=True,
-                                                             max_per_page=10)
+                SEARCH_LENGTH = 10
+                query_list = list(set(query_str.split()))[:SEARCH_LENGTH]
+
+                library_item_condition = [
+                    LibraryItem.title.ilike('%{}%'.format(word))
+                    for word in query_list]
+                library_item_query = db.session.query(LibraryItem).filter(
+                    or_(*library_item_condition)
+                )
+
+                author_condition = [
+                    or_(
+                        Author.first_name.ilike('%{}%'.format(word)),
+                        Author.last_name.ilike('%{}%'.format(word))
+                    ) for word in query_list]
+                author_query = db.session.query(LibraryItem).filter(
+                    or_(*author_condition)
+                ).join(Author.books)
+
+                paginate_query = author_query.union(library_item_query) \
+                    .paginate(page, error_out=True, max_per_page=10)
                 output = [d.serialize() for d in paginate_query.items]
             except RuntimeError:
                 return ErrorMessage.message('Cannot connect to database!')
@@ -189,7 +193,12 @@ def search():
 
 @library.route('/contact', methods=['GET', 'POST'])
 def contact():
-    form = ContactForm()
+    if 'logged_in' in session and session['logged_in']:
+        form = ContactFormLogin()
+        email_address = session['email']
+    else:
+        form = ContactFormNoLogin()
+        email_address = form.email.data
     if form.validate_on_submit():
         email_template = open(
             './templates/email_template/contact_confirmation.html', 'r').read()
@@ -197,14 +206,14 @@ def contact():
             send_email(
                 'Contact confirmation, title: ' + form.title.data,
                 Config.MAIL_SENDER,
-                [form.email.data],
+                [email_address],
                 None,
                 email_template)
             send_email(
                 'Contact form: ' + form.title.data,
                 Config.MAIL_SENDER,
-                [Config.MAIL_ADMINS],
-                'Send by: ' + form.email.data + '\n\n' + form.message.data,
+                Config.MAIL_ADMINS.split(),
+                'Send by: ' + email_address + '\n\n' + form.message.data,
                 None)
             return SuccessMessage \
                 .message('Your email has been sent to administrator!')
@@ -226,22 +235,60 @@ def logout():
     return render_template('index.html')
 
 
-@library.route('/reservation/<copy_id>')
+@library.route('/reservation/<item_id>/<copy_id>')
 @require_logged_in()
-def reserve(copy_id):
+def reserve(item_id, copy_id):
     try:
         copy = Copy.query.get(copy_id)
+        if copy.available_status != BookStatus.RETURNED:
+            abort(409)
+        # check if user have more than 3 books borrowed/reserved
+        query = and_(
+            RentalLog.user_id == session['id'],
+            not_(RentalLog.book_status == BookStatus.RETURNED)
+        )
+        usr_items = db.session.query(RentalLog).filter(query).all()
+        if len(usr_items) >= 3:
+            flash('You can borrow up to 3 books and magazines.')
+            return redirect(url_for(
+                'library.item_description',
+                item_id=item_id
+            ))
+        # change book status
         copy.available_status = BookStatus.RESERVED
+        reservation_begin = datetime.now(tz=pytz.utc)
+
         res = RentalLog(
             copy_id=copy_id,
             user_id=session['id'],
             book_status=BookStatus.RESERVED,
-            reservation_begin=datetime.now(tz=pytz.utc),
-            reservation_end=datetime.now(
-                tz=pytz.utc) + timedelta(days=2))
+            reservation_begin=reservation_begin,
+            reservation_end=(
+                reservation_begin
+                .replace(hour=23, minute=59, second=59, microsecond=0) +
+                timedelta(days=2)
+            )
+        )
         db.session.add(res)
         db.session.commit()
-        flash('Pick up the book within two days!')
+        flash((
+            'Pick up the book from {} within two days! '
+            'In case of troubles use contact form.'
+        ).format(Config.ADMIN_NAME))
+        # Send email to admin.
+        email_content = (
+            'Book "{}" was just reserved by user {}'.format(
+                LibraryItem.query.get(item_id).title,
+                session['email']
+            )
+        )
+        send_email(
+            'New reservation',
+            Config.MAIL_SENDER,
+            Config.MAIL_ADMINS.split(),
+            email_content,
+            None
+        )
     except IntegrityError:
         abort(500)
     return redirect(url_for(
@@ -517,16 +564,33 @@ def admin_dashboard():
             query_str = request.args.get('search-query')
             reserv_page = request.args.get('page', 1, type=int)
             borrow_page = request.args.get('page', 1, type=int)
-            reserv_query = RentalLog.query.filter_by(book_status=1).order_by(
-                RentalLog._reservation_begin.asc())
-            reserv_filter = reserv_query.filter(
-                User.surname.ilike("%{}%".format(query_str))).paginate(
-                reserv_page, 10, False)
-            borrow_query = RentalLog.query.filter_by(book_status=2).order_by(
-                RentalLog._return_time.asc())
-            borrow_filter = borrow_query.filter(
-                User.surname.ilike("%{}%".format(query_str))).paginate(
-                borrow_page, 10, False)
+            user_id = [user_query.id for user_query in User.query.filter(
+                User.surname.ilike("%{}%".format(query_str))
+            ).all()]
+            reserv_filter = RentalLog.query.filter(
+                and_(
+                    RentalLog.book_status == 1,
+                    RentalLog.user_id.in_(user_id)
+                )
+            ).order_by(
+                RentalLog._return_time.asc()
+            ).paginate(
+                borrow_page,
+                10,
+                False
+            )
+            borrow_filter = RentalLog.query.filter(
+                and_(
+                    RentalLog.book_status == 2,
+                    RentalLog.user_id.in_(user_id)
+                )
+            ).order_by(
+                RentalLog._return_time.asc()
+            ).paginate(
+                borrow_page,
+                10,
+                False
+            )
             return render_template('admin.html',
                                    reservations=reserv_filter.items,
                                    borrows=borrow_filter.items,
@@ -543,18 +607,20 @@ def admin_dashboard():
         borrow_form = BorrowForm(prefix="borrow")
         return_form = ReturnForm(prefix="return")
         if borrow_form.submit.data and borrow_form.validate_on_submit():
-            copy_asset = request.args.get('asset')
-            borrow_item = Copy.query.filter_by(asset_code=copy_asset). \
+            copy_id = request.args.get('copy_id')
+            borrow_item = Copy.query.filter_by(id=copy_id). \
                 first_or_404()
             rental_log_change = RentalLog.query.filter_by(
-                copy_id=borrow_item.id
+                copy_id=copy_id
             ).order_by(RentalLog.id.desc()).first_or_404()
             try:
+                borrow_time = datetime.now(tz=pytz.utc)
                 borrow_item.available_status = BookStatus.BORROWED
                 rental_log_change.book_status = BookStatus.BORROWED
-                rental_log_change._borrow_time = datetime.now(tz=pytz.utc)
-                rental_log_change._return_time = \
-                    (datetime.now(tz=pytz.utc) + timedelta(days=30))
+                rental_log_change._borrow_time = borrow_time
+                rental_log_change._return_time = borrow_time \
+                    .replace(hour=23, minute=59, second=59, microsecond=0) \
+                    + timedelta(days=30)
                 db.session.commit()
             except exc.SQLAlchemyError:
                 abort(500)
@@ -562,15 +628,14 @@ def admin_dashboard():
             return redirect(url_for('library.admin_dashboard'))
 
         if return_form.submit.data and return_form.validate_on_submit():
-            copy_asset = request.args.get('asset')
-            borrow_item = Copy.query.filter_by(asset_code=copy_asset).first()
+            copy_id = request.args.get('copy_id')
+            borrow_item = Copy.query.filter_by(id=copy_id).first_or_404()
             rental_log_change = RentalLog.query.filter_by(
-                copy_id=borrow_item.id
+                copy_id=copy_id
             ).order_by(RentalLog.id.desc()).first_or_404()
             try:
                 borrow_item.available_status = BookStatus.RETURNED
                 rental_log_change.book_status = BookStatus.RETURNED
-                rental_log_change._borrow_time = None
                 rental_log_change._return_time = datetime.now(tz=pytz.utc)
                 db.session.commit()
             except exc.SQLAlchemyError:
@@ -606,6 +671,15 @@ def method_not_allowed(error):
     return render_template('message.html',
                            message_title=message_title,
                            message_body=message_body), 405
+
+
+@library.errorhandler(409)
+def conflict(error):
+    message_body = 'Someone already changed this resource!'
+    message_title = 'Conflict!'
+    return render_template('message.html',
+                           message_title=message_title,
+                           message_body=message_body), 409
 
 
 @library.errorhandler(500)

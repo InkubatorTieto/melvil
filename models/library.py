@@ -1,6 +1,8 @@
 from enum import Enum
+
 import pytz
 from sqlalchemy_utils import ChoiceType
+
 from init_db import db
 
 
@@ -33,6 +35,16 @@ class Copy(db.Model):
                                   cascade='all, delete-orphan',
                                   backref=db.backref(
                                       'copy', uselist=False))
+
+    def reservation_end(self):
+        return RentalLog.query.filter(
+            RentalLog.copy_id == self.id
+        ).first()._reservation_end
+
+    def return_time(self):
+        return RentalLog.query.filter(
+            RentalLog.copy_id == self.id
+        ).first()._return_time
 
     def __str__(self):
         return "Copy asset_code: {}, type/title: {}/{}".format(
@@ -145,7 +157,7 @@ class LibraryItem(db.Model):
     __tablename__ = 'library_item'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256))
-    table_of_contents = db.Column(db.String(256))
+    table_of_contents = db.Column(db.Text)
     language = db.Column(db.String(56))
     category = db.Column(db.String(56))
     tags = db.relationship('Tag',
@@ -174,10 +186,13 @@ class LibraryItem(db.Model):
                 'title': self.title,
                 'authors': self.authors_string.split(', '),
                 'type': self.type,
+                'pub_date': self.pub_date
             }
         else:
             return {
                 'id': self.id,
                 'title': self.title,
                 'issue': self.issue,
-                'type': self.type}
+                'type': self.type,
+                'pub_date': self.year
+            }

@@ -1,18 +1,12 @@
-from flask_wtf import FlaskForm
 from datetime import datetime
-from wtforms import (
-    StringField,
-    SubmitField,
-    TextAreaField,
-    SelectField,
-    RadioField
 
-)
-from wtforms.validators import DataRequired, Length
-from forms.custom_validators import \
-    check_author, check_language, \
-    check_category, check_isbn, \
-    check_pub_date
+from flask_wtf import FlaskForm
+from wtforms import (RadioField, SelectField, StringField, SubmitField,
+                     TextAreaField)
+from wtforms.validators import DataRequired
+
+from forms.custom_validators import (check_author, check_category, check_isbn,
+                                     check_language, check_pub_date)
 
 
 class LibraryItemForm(FlaskForm):
@@ -88,7 +82,7 @@ class BookForm(LibraryItemForm):
                                     'placeholder': 'Title'}))
 
     isbn = StringField('ISBN number',
-                       validators=[DataRequired(), check_isbn],
+                       validators=[check_isbn],
                        render_kw=({'class': 'inputs',
                                    'id': 'isbn',
                                    'placeholder': 'ISBN number'}))
@@ -98,7 +92,6 @@ class BookForm(LibraryItemForm):
                                              'id': 'original_title',
                                              'placeholder': 'Original title'}))
     publisher = StringField('Publisher',
-                            validators=[DataRequired()],
                             render_kw=({'class': 'inputs',
                                         'id': 'publisher',
                                         'placeholder': 'Publisher'}))
@@ -134,8 +127,7 @@ class BookForm(LibraryItemForm):
 
 class MagazineForm(LibraryItemForm):
     title_of_magazine = StringField('Title',
-                                    validators=[DataRequired(),
-                                                Length(3)],
+                                    validators=[DataRequired()],
                                     render_kw=({'class': 'inputs',
                                                 'id': 'title_of_magazine',
                                                 'placeholder':
