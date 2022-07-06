@@ -11,7 +11,7 @@ flake8==3.7.7
 freezegun==0.3.12
 idna==2.8
 importlib-metadata==0.18
-lxml==4.3.4
+lxml==4.9.1
 mccabe==0.6.1
 more-itertools==7.0.0
 packaging==19.0
