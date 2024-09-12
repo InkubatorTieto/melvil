@@ -50,9 +50,9 @@
     <header class="masthead mb-auto">
         <div class="inner">
             <nav class="nav nav-masthead justify-content-center">
+                {% if session['id'] %}
                 {{ nav_button('index', 'library.index', 'Home' ) }}
                 {{ nav_button('contact', 'library.contact', 'Contact Us' ) }}
-                {% if session['id'] %}
                 {{ nav_button('search', 'library.search', 'Search' ) }}
                 {{ nav_button('book_borrowing_dashboad',
                 'library_book_borrowing_dashboard.book_borrowing_dashboad', 'My Books' )
@@ -63,8 +63,6 @@
                 {{ nav_button('reservations', 'library.admin_dashboard', 'Rentals') }}
                 {% endif %}
                 {{ downout_button('library.logout' ) }}
-                {% else %}
-                {{ downlog_button('library.login') }}
                 {% endif %}
             </nav>
         </div>
